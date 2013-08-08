@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<project name="igneous" default="compile">
+		<!-- Change me as needed -->
+	<property name="catalina.home" value="/opt/tomcat" />
+
+	<!--
+	<taskdef resource="yuicompressor.tasks">
+		<classpath>
+			<fileset file="${ant.library.dir}/optional/yuicompressor-2.4.8pre.jar" />
+			<fileset file="${ant.library.dir}/optional/yuicompressor-taskdef-1.0.jar" />
+		</classpath>
+	</taskdef>
+
+	<taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
+		classpath="${ant.library.dir}/optional/closure-compiler.jar" />
+	-->
+
+
+	<target name="clean">
+		<delete>
+			<fileset dir="classes" includes="**/*.class" />
+			<fileset dir="../js" includes="*-min.js" />
+			<fileset dir="../css" includes="*-min.css" />
+		</delete>
+	</target>
+
+
+	<target name="compile">
+		<mkdir dir="classes" />
+
+		<javac srcdir="src" destdir="classes" includeantruntime="false">
+			<classpath>
+				<fileset dir="lib" includes="*.jar" />
+				<fileset dir="${catalina.home}/lib" includes="*.jar" />
+			</classpath>
+		</javac>
+	</target>
+
+
+	<!--
+	<target name="compress">
+		<jscomp compilationLevel="simple" warning="default"
+			debug="false" output="../js/search-min.js">
+
+			<sources dir="../js">
+				<file name="search.js" />
+				<file name="searchtool.js" />
+			</sources>
+		</jscomp>
+
+		<yuicompressor todir="../css">
+			<mapper type="glob" from="*.css" to="*-min.css"/>
+				<fileset dir="../css" includes="*.css" excludes="*-min.css" />
+		</yuicompressor>
+	</target>
+	-->
+
+
+        <!--
+                Only deploys code and dependencies. Does not deploy configurati n
+                as that needs to be changed between production and development
+        -->
+        <!--
+        <target name="deploy">
+                <input message="Password: " addproperty="ssh.password" />
+                <scp todir="${user.name}:${ssh.password}@serac:/usr/share/tomca 5/webapps/${ant.project.name}">
+                        <fileset dir="${basedir}" includes="**/**">
+                                <exclude name="WEB-INF/src/**" />
+                                <exclude name="META-INF/context.xml" />
+                                <exclude name="WEB-INF/web.xml" />
+                                <exclude name="WEB-INF/sphinx.conf" />
+                                <exclude name="WEB-INF/build.xml" />
+                                <exclude name=".git/**" />
+                                <exclude name=".gitignore" />
+                                <exclude name="TODO" />
+                                <exclude name="js/**" />
+                                <exclude name="css/**" />
+                        </fileset>
+                        <fileset dir="${basedir}" includes="js/*-min.js" />
+                        <fileset dir="${basedir}" includes="css/*-min.css" />
+                </scp>
+        </target>
+        -->
+</project>
+
