@@ -30,10 +30,7 @@ public class IgneousFactory implements ServletContextListener
 
 		FileInputStream fin = null;
 		try {
-			fin = new FileInputStream(
-				context.getRealPath("/WEB-INF/mybatis.xml")
-			);
-
+			fin = new FileInputStream(context.getRealPath("/WEB-INF/mybatis.xml"));
 			factory = builder.build(fin);
 			context.setAttribute("factory", factory);
 		} catch(Exception ex){

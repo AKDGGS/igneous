@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gov.alaska.dggs.igneous.Inventory">
+	<select id="getResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
+			kw.keyword_id, kw.name AS keyword_name,
+			ibr.inventory_branch_id, ibr.name AS branch_name,
+			ibr.description AS branch_description,
+			bh.borehole_id, bh.borehole_name, bh.alt_borehole_names,
+			bh.prospect_name, bh.alt_prospect_names, bh.ardf_number
+		FROM inventory AS iv
+		LEFT OUTER JOIN inventory_keyword AS ikw
+			ON ikw.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN keyword AS kw
+			ON kw.keyword_id = ikw.keyword_id
+		LEFT OUTER JOIN inventory_borehole AS ibh
+			ON ibh.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN borehole AS bh
+			ON bh.borehole_id = ibh.borehole_id
+		JOIN inventory_branch AS ibr
+			ON ibr.inventory_branch_id = iv.inventory_branch_id
+		WHERE iv.inventory_id IN
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		ORDER BY
+		<foreach item="item" index="index" collection="array" separator=",">
+			iv.inventory_id = #{item}
+		</foreach>
+	</select>
+
+	<resultMap id="InventoryMap" type="Inventory">
+		<id property="id" column="inventory_id" />
+		<result property="samplenumber" column="sample_number" />
+		<result property="barcode" column="barcode" />
+
+		<association property="branch" javaType="InventoryBranch">
+			<id property="id" column="branch_id" />
+			<result property="name" column="branch_name" />
+			<result property="description" column="branch_description" />
+		</association>
+
+		<collection property="keywords" ofType="Keyword">
+			<id property="id" column="keyword_id" />
+			<result property="name" column="keyword_name" />
+		</collection>
+
+		<collection property="boreholes" ofType="Borehole">
+			<id property="id" column="borehole_id" />
+			<result property="name" column="borehole_name" />
+			<result property="alt_names" column="alt_borehole_names" />
+			<result property="prospect_name" column="prospect_name" />
+			<result property="alt_prospect_names" column="alt_prospect_names" />
+			<result property="ardf" column="ardf_number" />
+		</collection>
+	</resultMap>
+</mapper>

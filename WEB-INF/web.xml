@@ -6,6 +6,28 @@
 
 	<display-name>igneous</display-name>
 
+	<context-param>
+		<description>Sphinx host/IP</description>
+		<param-name>sphinx_host</param-name>
+		<param-value>localhost</param-value>
+	</context-param>
+
+	<context-param>
+		<description>Sphinx port</description>
+		<param-name>sphinx_port</param-name>
+		<param-value>9312</param-value>
+	</context-param>
+
+	<servlet>
+		<servlet-name>InventoryServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.InventoryServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>InventoryServlet</servlet-name>
+		<url-pattern>/inventory</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

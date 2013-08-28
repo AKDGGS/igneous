@@ -2,7 +2,15 @@
 <!DOCTYPE configuration
 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
 <configuration>
+	<typeAliases>
+		<typeAlias alias="Inventory" type="gov.alaska.dggs.igneous.model.Inventory" />
+		<typeAlias alias="InventoryBranch" type="gov.alaska.dggs.igneous.model.InventoryBranch" />
+		<typeAlias alias="Borehole" type="gov.alaska.dggs.igneous.model.Borehole" />
+		<typeAlias alias="Keyword" type="gov.alaska.dggs.igneous.model.Keyword" />
+	</typeAliases>
+
   <environments default="development">
     <environment id="development">
       <transactionManager type="JDBC" />
@@ -11,7 +19,8 @@
       </dataSource>
     </environment>
   </environments>
-  <mappers>
-		<package name="gov.alaska.dggs.igneous.mapper" />
+
+	<mappers>
+		<mapper resource="inventory.xml" />
 	</mappers>
 </configuration>
