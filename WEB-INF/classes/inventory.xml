@@ -25,10 +25,6 @@
 		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
 			#{item}
 		</foreach>
-		ORDER BY
-		<foreach item="item" index="index" collection="array" separator=",">
-			iv.inventory_id = #{item}
-		</foreach>
 	</select>
 
 	<resultMap id="InventoryMap" type="Inventory">

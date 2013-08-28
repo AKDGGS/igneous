@@ -18,6 +18,12 @@
 		<param-value>9312</param-value>
 	</context-param>
 
+	<context-param>
+		<description>Sphinx max matches</description>
+		<param-name>sphinx_max_matches</param-name>
+		<param-value>1000</param-value>
+	</context-param>
+
 	<servlet>
 		<servlet-name>InventoryServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.InventoryServlet</servlet-class>

@@ -63,6 +63,23 @@ public class InventoryServlet extends HttpServlet
 		SphinxClient sphinx = new SphinxClient(sphinx_host, sphinx_port);
 		try {
 			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED);
+
+			int start = 0;
+			try { start = Integer.parseInt(request.getParameter("start")); }
+			catch(Exception ex){ }
+
+			int max = 25;
+			try { max = Integer.parseInt(request.getParameter("max")); }
+			catch(Exception ex){ }
+
+			int max_matches = 1000;
+			try {
+				max_matches = Integer.parseInt(
+					context.getInitParameter("sphinx_max_matches")
+				);
+			} catch(Exception ex){ }
+
+			sphinx.SetLimits(start, max, max_matches);
 			
 			StringBuilder query = new StringBuilder();
 			if(request.getParameter("q") != null){
