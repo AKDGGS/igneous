@@ -5,11 +5,27 @@
 <mapper namespace="gov.alaska.dggs.igneous.Inventory">
 	<select id="getResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
+			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
 			kw.keyword_id, kw.name AS keyword_name,
 			ibr.inventory_branch_id, ibr.name AS branch_name,
 			ibr.description AS branch_description,
 			bh.borehole_id, bh.borehole_name, bh.alt_borehole_names,
-			bh.prospect_name, bh.alt_prospect_names, bh.ardf_number
+			bh.prospect_name, bh.alt_prospect_names, bh.ardf_number,
+			(
+				SELECT STRING_AGG(name, '/') FROM (
+					WITH RECURSIVE t AS (
+						SELECT 0 AS level, container_id, parent_container_id, name
+						FROM container
+						WHERE container_id = iv.container_id
+
+						UNION ALL
+
+						SELECT level+1, c.container_id, c.parent_container_id, c.name
+						FROM container AS c
+						JOIN t AS t ON c.container_id = t.parent_container_id
+					) SELECT name FROM t ORDER BY level DESC
+				) AS tree
+			) AS container_path
 		FROM inventory AS iv
 		LEFT OUTER JOIN inventory_keyword AS ikw
 			ON ikw.inventory_id = iv.inventory_id
@@ -31,6 +47,11 @@
 		<id property="id" column="inventory_id" />
 		<result property="samplenumber" column="sample_number" />
 		<result property="barcode" column="barcode" />
+		<result property="container_path" column="container_path" />
+		<result property="box" column="box_number" />
+		<result property="set" column="set_number" />
+		<result property="core" column="core_number" />
+		<result property="state" column="state_number" />
 
 		<association property="branch" javaType="InventoryBranch">
 			<id property="id" column="branch_id" />

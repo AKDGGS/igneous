@@ -52,6 +52,7 @@ public class InventoryServlet extends HttpServlet
 	{
 		ServletContext context = getServletContext();
 
+		int max_matches = Integer.parseInt(context.getInitParameter("sphinx_max_matches"));
 		int sphinx_port = Integer.parseInt(context.getInitParameter("sphinx_port"));
 		String sphinx_host = (String)context.getInitParameter("sphinx_host");
 
@@ -71,13 +72,6 @@ public class InventoryServlet extends HttpServlet
 			int max = 25;
 			try { max = Integer.parseInt(request.getParameter("max")); }
 			catch(Exception ex){ }
-
-			int max_matches = 1000;
-			try {
-				max_matches = Integer.parseInt(
-					context.getInitParameter("sphinx_max_matches")
-				);
-			} catch(Exception ex){ }
 
 			sphinx.SetLimits(start, max, max_matches);
 			

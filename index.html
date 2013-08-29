@@ -38,15 +38,20 @@
 			<div class="panel panel-default" id="inventory_panel">
 				<div class="panel-heading">Inventory</div>
 				<div class="panel-body" id="inventory_header"></div>
-				<table id="inventory_table" class="table">
+				<table id="inventory_table" class="table table-striped">
 					<thead>
 						<tr>
 							<th>ID</th>
 							<th>Barcode</th>
-							<th>Sample Number</th>
+							<th>Sample</th>
+							<th>Core</th>
+							<th>Box</th>
+							<th>Set</th>
+							<th>State</th>
 							<th>Branch</th>
 							<th>Keywords</th>
-							<th>Related</tH>
+							<th>Related</th>
+							<th>Location</th>
 						</tr>
 					</thead>
 					<tbody id="inventory_body"></tbody>
@@ -127,6 +132,38 @@
 										tr.appendChild(td);
 
 										td = document.createElement('td');
+										if(json[i]['core'] !== null){
+											td.appendChild(document.createTextNode(
+												json[i]['core']
+											));
+										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										if(json[i]['box'] !== null){
+											td.appendChild(document.createTextNode(
+												json[i]['box']
+											));
+										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										if(json[i]['set'] !== null){
+											td.appendChild(document.createTextNode(
+												json[i]['set']
+											));
+										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										if(json[i]['state'] !== null){
+											td.appendChild(document.createTextNode(
+												json[i]['state']
+											));
+										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
 										td.appendChild(document.createTextNode(
 											json[i]['branch']['name']
 										));
@@ -154,12 +191,27 @@
 											a = document.createElement('a');
 											a.href = '#';
 											a.appendChild(document.createTextNode(
+												borehole['prospectName']
+											));
+											div.appendChild(a);
+
+											div.appendChild(document.createTextNode(' '));
+
+											a = document.createElement('a');
+											a.href = '#';
+											a.appendChild(document.createTextNode(
 												borehole['name']
 											));
 											div.appendChild(a);
 
 											td.appendChild(div);
 										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										td.appendChild(document.createTextNode(
+											json[i]['containerPath']
+										));
 										tr.appendChild(td);
 
 										body.appendChild(tr);
