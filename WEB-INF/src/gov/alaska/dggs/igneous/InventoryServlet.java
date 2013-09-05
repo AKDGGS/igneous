@@ -37,9 +37,14 @@ public class InventoryServlet extends HttpServlet
 		exclude("keywords.description");
 		exclude("branch.description");
 		exclude("branch.class");
+		exclude("collection.description");
+		exclude("collection.class");
 		exclude("boreholes.class");
-		exclude("boreholes.altNames");
-		exclude("boreholes.altProspectNames");
+		exclude("boreholes.prospect.class");
+		exclude("intervalUnit.class");
+		exclude("intervalUnit.description");
+		exclude("coreDiameter.class");
+		exclude("coreDiameter.unit.class");
 	}};
 
 

@@ -42,15 +42,17 @@
 					<thead>
 						<tr>
 							<th>ID</th>
-							<th>Barcode</th>
+							<th>Related</th>
 							<th>Sample</th>
 							<th>Core</th>
 							<th>Box</th>
 							<th>Set</th>
-							<th>State</th>
+							<th>Top</th>
+							<th>Bottom</th>
+							<th>Diameter</th>
 							<th>Branch</th>
+							<th>Collection</th>
 							<th>Keywords</th>
-							<th>Related</th>
 							<th>Location</th>
 						</tr>
 					</thead>
@@ -104,6 +106,8 @@
 									}
 
 									for(var i in json){
+										var branch = json[i]['branch']['name'];
+
 										var tr = document.createElement('tr');
 
 										var td = document.createElement('td');
@@ -115,14 +119,46 @@
 										td.appendChild(a);
 										tr.appendChild(td);
 
+										// Begin related
 										td = document.createElement('td');
-										if(json[i]['barcode'] !== null){
-											td.appendChild(document.createTextNode(
-												json[i]['barcode']
+										for(var j in json[i]['boreholes']){
+											var borehole = json[i]['boreholes'][j];
+
+											var div = document.createElement('div');
+											if(borehole['prospect'] !== null){
+												div.appendChild(document.createTextNode(
+													'Prospect: '
+												));
+												var prospect = borehole['prospect'];
+
+												a = document.createElement('a');
+												a.href = '#';
+												a.appendChild(document.createTextNode(
+													prospect['name']
+												));
+												if(prospect['altNames'] !== null){
+													a.appendChild(document.createTextNode(
+														' (' + prospect['altNames'] + ')'
+													));
+												}
+												div.appendChild(a);
+
+												div.appendChild(document.createElement('br'));
+											}
+
+											div.appendChild(document.createTextNode(
+												'Borehole: '
 											));
+											a = document.createElement('a');
+											a.href = '#';
+											a.appendChild(document.createTextNode(
+												borehole['name']
+											));
+											div.appendChild(a);
+
+											td.appendChild(div);
 										}
 										tr.appendChild(td);
-
 										td = document.createElement('td');
 										if(json[i]['sampleNumber'] !== null){
 											td.appendChild(document.createTextNode(
@@ -130,6 +166,7 @@
 											));
 										}
 										tr.appendChild(td);
+										// End Related
 
 										td = document.createElement('td');
 										if(json[i]['core'] !== null){
@@ -156,17 +193,60 @@
 										tr.appendChild(td);
 
 										td = document.createElement('td');
-										if(json[i]['state'] !== null){
+										if(json[i]['intervalTop'] !== null){
 											td.appendChild(document.createTextNode(
-												json[i]['state']
+												json[i]['intervalTop']
 											));
+											if(json[i]['intervalUnit'] !== null){
+												td.appendChild(document.createTextNode(
+													json[i]['intervalUnit']['abbr']
+												));
+											}
 										}
 										tr.appendChild(td);
 
 										td = document.createElement('td');
-										td.appendChild(document.createTextNode(
-											json[i]['branch']['name']
-										));
+										if(json[i]['intervalBottom'] !== null){
+											td.appendChild(document.createTextNode(
+												json[i]['intervalBottom']
+											));
+											if(json[i]['intervalUnit'] !== null){
+												td.appendChild(document.createTextNode(
+													json[i]['intervalUnit']['abbr']
+												));
+											}
+										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										if(json[i]['coreDiameter'] !== null){
+											if(branch === 'energy' && json[i]['coreDiameter']['name'] !== null){
+												td.appendChild(document.createTextNode(
+													json[i]['coreDiameter']['name']
+												));
+											} else {
+												td.appendChild(document.createTextNode(
+													json[i]['coreDiameter']['diameter']
+												));
+												if(json[i]['coreDiameter']['unit'] !== null){
+													td.appendChild(document.createTextNode(
+														json[i]['coreDiameter']['unit']['abbr']
+													));
+												}
+											}
+										}
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										td.appendChild(document.createTextNode(branch));
+										tr.appendChild(td);
+
+										td = document.createElement('td');
+										if(json[i]['collection'] !== null){
+											td.appendChild(document.createTextNode(
+												json[i]['collection']['name']
+											));
+										}
 										tr.appendChild(td);
 
 										td = document.createElement('td');
@@ -179,34 +259,7 @@
 										}
 										tr.appendChild(td);
 
-										td = document.createElement('td');
-										for(var j in json[i]['boreholes']){
-											var borehole = json[i]['boreholes'][j];
 
-											var div = document.createElement('div');
-											div.appendChild(document.createTextNode(
-												'Borehole: '
-											));
-
-											a = document.createElement('a');
-											a.href = '#';
-											a.appendChild(document.createTextNode(
-												borehole['prospectName']
-											));
-											div.appendChild(a);
-
-											div.appendChild(document.createTextNode(' '));
-
-											a = document.createElement('a');
-											a.href = '#';
-											a.appendChild(document.createTextNode(
-												borehole['name']
-											));
-											div.appendChild(a);
-
-											td.appendChild(div);
-										}
-										tr.appendChild(td);
 
 										td = document.createElement('td');
 										td.appendChild(document.createTextNode(

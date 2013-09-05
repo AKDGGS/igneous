@@ -6,17 +6,32 @@
 	<select id="getResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
 			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
+			iv.interval_top, iv.interval_bottom,
+			iun.unit_id AS interval_unit_id,
+			iun.name AS interval_unit_name,
+			iun.abbr AS interval_unit_abbr,
 			kw.keyword_id, kw.name AS keyword_name,
 			ibr.inventory_branch_id, ibr.name AS branch_name,
 			ibr.description AS branch_description,
+			cl.collection_id, cl.name AS collection_name,
+			cl.description AS collection_description,
+			cd.core_diameter_id, cd.name AS core_diameter_name,
+			cd.core_diameter AS core_diameter_diameter,
+			cdun.unit_id AS core_diameter_unit_id,
+			cdun.name AS core_diameter_unit_name,
+			cdun.abbr AS core_diameter_unit_abbr,
 			bh.borehole_id, bh.borehole_name, bh.alt_borehole_names,
-			bh.prospect_name, bh.alt_prospect_names, bh.ardf_number,
+			ph.prospect_id, ph.prospect_name, ph.alt_prospect_names,
+			ph.ardf_number,
 			(
 				SELECT STRING_AGG(name, '/') FROM (
 					WITH RECURSIVE t AS (
-						SELECT 0 AS level, container_id, parent_container_id, name
-						FROM container
-						WHERE container_id = iv.container_id
+						(SELECT 0 AS level, co.container_id,
+							co.parent_container_id, co.name
+						FROM inventory_container AS ic
+						JOIN container AS co ON co.container_id = ic.container_id
+						WHERE ic.inventory_id = iv.inventory_id
+						ORDER BY log_date DESC LIMIT 1)
 
 						UNION ALL
 
@@ -31,10 +46,20 @@
 			ON ikw.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN keyword AS kw
 			ON kw.keyword_id = ikw.keyword_id
+		LEFT OUTER JOIN collection AS cl
+			ON cl.collection_id = iv.collection_id
+		LEFT OUTER JOIN unit AS iun
+			ON iun.unit_id = iv.interval_unit_id
 		LEFT OUTER JOIN inventory_borehole AS ibh
 			ON ibh.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN borehole AS bh
 			ON bh.borehole_id = ibh.borehole_id
+		LEFT OUTER JOIN prospect AS ph
+			ON ph.prospect_id = bh.prospect_id
+		LEFT OUTER JOIN core_diameter AS cd
+			ON cd.core_diameter_id = iv.core_diameter_id
+		LEFT OUTER JOIN unit AS cdun
+			ON cdun.unit_id = cd.unit_id
 		JOIN inventory_branch AS ibr
 			ON ibr.inventory_branch_id = iv.inventory_branch_id
 		WHERE iv.inventory_id IN
@@ -52,11 +77,37 @@
 		<result property="set" column="set_number" />
 		<result property="core" column="core_number" />
 		<result property="state" column="state_number" />
+		<result property="interval_top" column="interval_top" />
+		<result property="interval_bottom" column="interval_bottom" />
+
+		<association property="interval_unit" javaType="Unit">
+			<id property="id" column="interval_unit_id" />
+			<result property="abbr" column="interval_unit_abbr" />
+			<result property="name" column="interval_unit_name" />
+		</association>
+
+		<association property="core_diameter" javaType="CoreDiameter">
+			<id property="id" column="core_diameter_id" />
+			<result property="name" column="core_diameter_name" />
+			<result property="diameter" column="core_diameter_diameter" />
+
+			<association property="unit" javaType="Unit">
+				<id property="id" column="core_diameter_unit_id" />
+				<result property="name" column="core_diameter_unit_name" />
+				<result property="abbr" column="core_diameter_unit_abbr" />
+			</association>
+		</association>
 
 		<association property="branch" javaType="InventoryBranch">
 			<id property="id" column="branch_id" />
 			<result property="name" column="branch_name" />
 			<result property="description" column="branch_description" />
+		</association>
+
+		<association property="collection" javaType="iCollection">
+			<id property="id" column="collection_id" />
+			<result property="name" column="collection_name" />
+			<result property="description" column="collection_description" />
 		</association>
 
 		<collection property="keywords" ofType="Keyword">
@@ -68,9 +119,13 @@
 			<id property="id" column="borehole_id" />
 			<result property="name" column="borehole_name" />
 			<result property="alt_names" column="alt_borehole_names" />
-			<result property="prospect_name" column="prospect_name" />
-			<result property="alt_prospect_names" column="alt_prospect_names" />
-			<result property="ardf" column="ardf_number" />
+
+			<association property="prospect" javaType="Prospect">
+				<id property="id" column="prospect_id" />
+				<result property="name" column="prospect_name" />
+				<result property="alt_names" column="alt_prospect_names" />
+				<result property="ardf" column="ardf_number" />
+			</association>
 		</collection>
 	</resultMap>
 </mapper>
