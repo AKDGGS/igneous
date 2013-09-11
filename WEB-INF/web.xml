@@ -6,6 +6,19 @@
 
 	<display-name>igneous</display-name>
 
+	<welcome-file-list>
+		<welcome-file>search</welcome-file>
+	</welcome-file-list>
+
+	<context-param>
+		<description>
+			Development mode - if enabled uncompiled scripts/css are used
+			and more debugging information is present
+		</description>
+		<param-name>dev_mode</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
 	<context-param>
 		<description>Sphinx host/IP</description>
 		<param-name>sphinx_host</param-name>
@@ -32,6 +45,36 @@
 	<servlet-mapping>
 		<servlet-name>InventoryServlet</servlet-name>
 		<url-pattern>/inventory</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SearchPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.SearchPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SearchPageServlet</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>BoreholeServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.BoreholeServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>BoreholeServlet</servlet-name>
+		<url-pattern>/borehole</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>BoreholeViewPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.BoreholeViewPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>BoreholeViewPageServlet</servlet-name>
+		<url-pattern>/borehole/*</url-pattern>
 	</servlet-mapping>
 
 	<listener>

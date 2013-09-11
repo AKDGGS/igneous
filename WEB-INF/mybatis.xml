@@ -26,5 +26,6 @@
 
 	<mappers>
 		<mapper resource="inventory.xml" />
+		<mapper resource="borehole.xml" />
 	</mappers>
 </configuration>

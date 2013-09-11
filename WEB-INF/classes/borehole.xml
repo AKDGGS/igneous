@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Borehole">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
+		SELECT borehole_id, borehole_name, alt_borehole_names,
+			is_onshore, completion_date,
+			
+			measured_depth, mdu.unit_id AS mdu_unit_id,
+			mdu.abbr AS mdu_unit_abbr, mdu.name AS mdu_unit_name,
+
+			elevation, evu.unit_id AS evu_unit_id,
+			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name,
+
+			prospect.prospect_id, prospect.prospect_name,
+			prospect.alt_prospect_names, prospect.ardf_number
+		FROM borehole
+		LEFT OUTER JOIN unit AS mdu
+			ON mdu.unit_id = measured_depth_unit_id
+		LEFT OUTER JOIN unit AS evu
+			ON evu.unit_id = elevation_unit_id
+		LEFT OUTER JOIN prospect
+			ON prospect.prospect_id = borehole.prospect_id
+		WHERE borehole_id = #{id}
+	</select>
+
+	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+		SELECT k.name, COUNT(k.keyword_id) AS count
+		FROM inventory_borehole AS ib
+		JOIN inventory AS i
+			ON i.inventory_id = ib.inventory_id
+		JOIN inventory_keyword AS ik
+			ON ik.inventory_id = i.inventory_id
+		JOIN keyword AS k
+			ON k.keyword_id = ik.keyword_id
+		WHERE ib.borehole_id = #{id}
+		GROUP BY k.name
+
+		UNION ALL
+
+		SELECT '_total', COUNT(i.inventory_id)
+		FROM inventory_borehole AS ib
+		JOIN inventory AS i
+			ON i.inventory_id = ib.inventory_id
+		WHERE ib.borehole_id = 10
+	</select>
+
+	<resultMap id="BoreholeMap" type="Borehole">
+		<id property="id" column="borehole_id" />
+
+		<result property="name" column="borehole_name" />
+		<result property="alt_names" column="alt_borehole_names" />
+		<result property="is_onshore" column="is_onshore" />
+		<result property="completion" column="completion_date" />
+
+		<result property="measured_depth" column="measured_depth" />
+		<result property="elevation" column="elevation" />
+
+		<association property="measured_depth_unit" javaType="Unit">
+			<id property="id" column="mdu_unit_id" />
+			<result property="abbr" column="mdu_unit_abbr" />
+			<result property="name" column="mdu_unit_name" />
+		</association>
+
+		<association property="elevation_unit" javaType="Unit">
+			<id property="id" column="evu_unit_id" />
+			<result property="abbr" column="evu_unit_abbr" />
+			<result property="name" column="evu_unit_name" />
+		</association>
+
+		<association property="prospect" javaType="Prospect">
+			<id property="id" column="prospect_id" />
+			<result property="name" column="prospect_name" />
+			<result property="alt_names" column="alt_prospect_names" />
+			<result property="ardf" column="ardf_number" />
+		</association>
+
+		<collection property="inventory_summary" column="borehole_id" ofType="HashMap" select="getInventorySummary" />
+	</resultMap>
+</mapper>
