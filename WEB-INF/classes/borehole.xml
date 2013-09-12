@@ -27,24 +27,22 @@
 	</select>
 
 	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
-		SELECT k.name, COUNT(k.keyword_id) AS count
-		FROM inventory_borehole AS ib
-		JOIN inventory AS i
-			ON i.inventory_id = ib.inventory_id
-		JOIN inventory_keyword AS ik
-			ON ik.inventory_id = i.inventory_id
-		JOIN keyword AS k
-			ON k.keyword_id = ik.keyword_id
-		WHERE ib.borehole_id = #{id}
-		GROUP BY k.name
-
-		UNION ALL
-
-		SELECT '_total', COUNT(i.inventory_id)
-		FROM inventory_borehole AS ib
-		JOIN inventory AS i
-			ON i.inventory_id = ib.inventory_id
-		WHERE ib.borehole_id = 10
+		SELECT DISTINCT ids, keywords, count
+		FROM (
+			SELECT STRING_AGG(keyword_id::varchar, ',') AS ids,
+				STRING_AGG(name, '; ') AS keywords,
+				COUNT(inventory_id) AS count
+			FROM (
+				SELECT k.keyword_id, k.name, i.inventory_id
+				FROM inventory_borehole AS ib
+				JOIN inventory AS i ON i.inventory_id = ib.inventory_id
+				JOIN inventory_keyword AS ik ON ik.inventory_id = i.inventory_id
+				JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+				WHERE ib.borehole_id = #{id}
+				ORDER BY i.inventory_id, LOWER(k.name)
+			) AS k1
+			GROUP BY inventory_id
+		) AS k2
 	</select>
 
 	<resultMap id="BoreholeMap" type="Borehole">

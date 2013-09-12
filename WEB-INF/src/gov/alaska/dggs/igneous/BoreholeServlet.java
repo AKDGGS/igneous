@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -64,9 +65,9 @@ public class BoreholeServlet extends HttpServlet
 			response.setContentType("application/json");
 			serializer.serialize(borehole, response.getWriter());
 		} catch(Exception ex){
+			ex.printStackTrace();
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
-			ex.printStackTrace();
 		} finally {
 			sess.close();	
 		}
