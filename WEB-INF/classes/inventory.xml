@@ -20,8 +20,10 @@
 			cdun.unit_id AS core_diameter_unit_id,
 			cdun.name AS core_diameter_unit_name,
 			cdun.abbr AS core_diameter_unit_abbr,
-			bh.borehole_id, bh.borehole_name, bh.alt_borehole_names,
-			ph.prospect_id, ph.prospect_name, ph.alt_prospect_names,
+			bh.borehole_id, bh.name AS borehole_name,
+			bh.alt_names AS alt_borehole_names,
+			ph.prospect_id, ph.name AS prospect_name,
+			ph.alt_names AS alt_prospect_names,
 			ph.ardf_number,
 			(
 				SELECT STRING_AGG(name, '/') FROM (

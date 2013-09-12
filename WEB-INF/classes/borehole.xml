@@ -5,7 +5,9 @@
 
 <mapper namespace="gov.alaska.dggs.igneous.Borehole">
 	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
-		SELECT borehole_id, borehole_name, alt_borehole_names,
+		SELECT borehole_id,
+			borehole.name AS borehole_name,
+			borehole.alt_names AS alt_borehole_names,
 			is_onshore, completion_date,
 			
 			measured_depth, mdu.unit_id AS mdu_unit_id,
@@ -14,8 +16,10 @@
 			elevation, evu.unit_id AS evu_unit_id,
 			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name,
 
-			prospect.prospect_id, prospect.prospect_name,
-			prospect.alt_prospect_names, prospect.ardf_number
+			prospect.prospect_id,
+			prospect.name AS prospect_name,
+			prospect.alt_names AS alt_prospect_names,
+			prospect.ardf_number
 		FROM borehole
 		LEFT OUTER JOIN unit AS mdu
 			ON mdu.unit_id = measured_depth_unit_id
