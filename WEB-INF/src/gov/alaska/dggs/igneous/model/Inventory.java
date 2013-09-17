@@ -23,6 +23,7 @@ public class Inventory implements Serializable
 
 	private List<Keyword> keywords;
 	private List<Borehole> boreholes;
+	private List<Well> wells;
 
 	public long getID(){ return id; }
 	public String getBarcode(){ return barcode; }
@@ -44,4 +45,5 @@ public class Inventory implements Serializable
 
 	public List<Keyword> getKeywords(){ return keywords; }
 	public List<Borehole> getBoreholes(){ return boreholes; }
+	public List<Well> getWells(){ return wells; }
 }

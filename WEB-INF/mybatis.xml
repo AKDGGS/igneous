@@ -13,6 +13,7 @@
 		<typeAlias alias="iCollection" type="gov.alaska.dggs.igneous.model.Collection" />
 		<typeAlias alias="Unit" type="gov.alaska.dggs.igneous.model.Unit" />
 		<typeAlias alias="CoreDiameter" type="gov.alaska.dggs.igneous.model.CoreDiameter" />
+		<typeAlias alias="Well" type="gov.alaska.dggs.igneous.model.Well" />
 	</typeAliases>
 
   <environments default="development">
