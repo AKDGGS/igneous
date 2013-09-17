@@ -38,13 +38,13 @@
 	</context-param>
 
 	<servlet>
-		<servlet-name>InventoryServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.InventoryServlet</servlet-class>
+		<servlet-name>SearchServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>InventoryServlet</servlet-name>
-		<url-pattern>/inventory</url-pattern>
+		<servlet-name>SearchServlet</servlet-name>
+		<url-pattern>/search.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -64,7 +64,7 @@
 
 	<servlet-mapping>
 		<servlet-name>BoreholeServlet</servlet-name>
-		<url-pattern>/borehole</url-pattern>
+		<url-pattern>/borehole.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

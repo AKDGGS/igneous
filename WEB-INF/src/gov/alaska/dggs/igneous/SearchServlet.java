@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import flexjson.JSONSerializer;
 
@@ -25,26 +26,27 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 
 
-public class InventoryServlet extends HttpServlet
+public class SearchServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("keywords");
-		include("boreholes");
+		include("list");
+		include("list.keywords");
+		include("list.boreholes");
 
-		exclude("class");	
-		exclude("keywords.class");
-		exclude("keywords.code");
-		exclude("keywords.description");
-		exclude("branch.description");
-		exclude("branch.class");
-		exclude("collection.description");
-		exclude("collection.class");
-		exclude("boreholes.class");
-		exclude("boreholes.prospect.class");
-		exclude("intervalUnit.class");
-		exclude("intervalUnit.description");
-		exclude("coreDiameter.class");
-		exclude("coreDiameter.unit.class");
+		exclude("list.class");	
+		exclude("list.keywords.class");
+		exclude("list.keywords.code");
+		exclude("list.keywords.description");
+		exclude("list.branch.description");
+		exclude("list.branch.class");
+		exclude("list.collection.description");
+		exclude("list.collection.class");
+		exclude("list.boreholes.class");
+		exclude("list.boreholes.prospect.class");
+		exclude("list.intervalUnit.class");
+		exclude("list.intervalUnit.description");
+		exclude("list.coreDiameter.class");
+		exclude("list.coreDiameter.unit.class");
 	}};
 
 
@@ -95,20 +97,26 @@ public class InventoryServlet extends HttpServlet
 				ids[i] = sr.matches[i].docId;
 			}
 
+			HashMap json = new HashMap();
+			json.put("size", sr.total);
+			json.put("found", sr.totalFound);
+
 			if(ids.length > 0){
 				SqlSession sess = IgneousFactory.openSession();
 				try {
-					List<Inventory> items = sess.selectList("gov.alaska.dggs.igneous.Inventory.getResults", ids);
-
-					response.setContentType("application/json");
-					serializer.serialize(items, response.getWriter());
+					List<Inventory> items = sess.selectList(
+						"gov.alaska.dggs.igneous.Inventory.getResults", ids
+					);
+					json.put("list", items);
 				} finally {
 					sess.close();	
 				}
 			} else {
-				response.setContentType("application/json");
-				serializer.serialize(new ArrayList(0), response.getWriter());
+				json.put("list", new ArrayList(0));
 			}
+
+			response.setContentType("application/json");
+			serializer.serialize(json, response.getWriter());
 		} catch(Exception ex){
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
