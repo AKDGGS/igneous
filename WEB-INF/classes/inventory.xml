@@ -3,6 +3,19 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="gov.alaska.dggs.igneous.Inventory">
+	<select id="getKeywords" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="KeywordMap">
+		SELECT k.keyword_id, k.name
+		FROM inventory_keyword AS ik
+		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+		WHERE ik.inventory_id = #{id}
+	</select>
+
+	<resultMap id="KeywordMap" type="Keyword">
+		<id property="id" column="keyword_id" />
+		<result property="name" column="keyword_name" />
+	</resultMap>
+
+
 	<select id="getResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
 			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
@@ -112,10 +125,7 @@
 			<result property="description" column="collection_description" />
 		</association>
 
-		<collection property="keywords" ofType="Keyword">
-			<id property="id" column="keyword_id" />
-			<result property="name" column="keyword_name" />
-		</collection>
+		<collection property="keywords" column="inventory_id" ofType="Keyword" select="getKeywords" />
 
 		<collection property="boreholes" ofType="Borehole">
 			<id property="id" column="borehole_id" />
