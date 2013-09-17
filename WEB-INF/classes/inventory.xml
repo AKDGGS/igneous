@@ -23,7 +23,6 @@
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
 			iun.abbr AS interval_unit_abbr,
-			kw.keyword_id, kw.name AS keyword_name,
 			ibr.inventory_branch_id, ibr.name AS branch_name,
 			ibr.description AS branch_description,
 			cl.collection_id, cl.name AS collection_name,
@@ -57,10 +56,6 @@
 				) AS tree
 			) AS container_path
 		FROM inventory AS iv
-		LEFT OUTER JOIN inventory_keyword AS ikw
-			ON ikw.inventory_id = iv.inventory_id
-		LEFT OUTER JOIN keyword AS kw
-			ON kw.keyword_id = ikw.keyword_id
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
