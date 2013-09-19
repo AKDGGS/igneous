@@ -38,16 +38,6 @@
 	</context-param>
 
 	<servlet>
-		<servlet-name>SearchServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/search.json</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
 		<servlet-name>SearchPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchPageServlet</servlet-class>
 	</servlet>
@@ -55,6 +45,26 @@
 	<servlet-mapping>
 		<servlet-name>SearchPageServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>BoreholeViewPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.BoreholeViewPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>BoreholeViewPageServlet</servlet-name>
+		<url-pattern>/borehole/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SearchServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SearchServlet</servlet-name>
+		<url-pattern>/search.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -68,13 +78,13 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>BoreholeViewPageServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.BoreholeViewPageServlet</servlet-class>
+		<servlet-name>InventoryServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.InventoryServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>BoreholeViewPageServlet</servlet-name>
-		<url-pattern>/borehole/*</url-pattern>
+		<servlet-name>InventoryServlet</servlet-name>
+		<url-pattern>/inventory.json</url-pattern>
 	</servlet-mapping>
 
 	<listener>

@@ -145,10 +145,18 @@ function load(id)
 					a.onclick = function(){
 						var keyword_ids = set['ids'].split(',');
 						var borehole_id = json['ID'];
+
 						return function(){
-							console.log(keyword_ids);
-							console.log(borehole_id);
-						}
+							$(this).parents('ul').find('li').removeClass('active');
+							$(this).parent('li').addClass('active');
+
+							inventory_show(encodeParameters({
+								'keyword_id': keyword_ids, 
+								'borehole_id': borehole_id
+							}));
+
+							return false;
+						};
 					}();
 					a.appendChild(document.createTextNode(set['keywords']));
 					a.appendChild(span);
@@ -165,6 +173,20 @@ function load(id)
 
 				var a = document.createElement('a');
 				a.href = '#';
+				a.onclick = function(){
+					var borehole_id = json['ID'];
+
+					return function(){
+						$(this).parents('ul').find('li').removeClass('active');
+						$(this).parent('li').addClass('active');
+
+						inventory_show(encodeParameters({
+							'borehole_id': borehole_id
+						}));
+
+						return false;
+					};
+				}();
 				a.appendChild(document.createTextNode('All'));
 				a.appendChild(span);
 
@@ -178,4 +200,105 @@ function load(id)
 			}
 		}
 	});
+}
+
+
+function inventory_show(params)
+{
+	$.ajax({
+		url: '../inventory.json', dataType: 'json', data: params,
+		error: function(xhr){
+			$('#error_body').text(xhr.responseText);
+			$('#error_modal').modal({ show: true });
+			$('#inventory').hide();
+		},
+		success: function(json){
+			var body = document.getElementById('inventory_body');
+			while(body.hasChildNodes()){ body.removeChild(body.firstChild); }
+
+			for(var i in json){
+				var obj = json[i];
+				var tr = document.createElement('tr');
+
+				var td = document.createElement('td');
+				var a = document.createElement('a');
+				a.href = '../inventory/' + obj['ID'];
+				a.appendChild(document.createTextNode(obj['ID']));
+				td.appendChild(a);
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				if(obj['intervalTop'] !== null){
+					td.appendChild(document.createTextNode(obj['intervalTop']));
+					if(obj['intervalUnit'] !== null){
+						td.appendChild(document.createTextNode(
+							' ' + obj['intervalUnit']['abbr']
+						));
+					}
+				}
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				if(obj['intervalBottom'] !== null){
+					td.appendChild(document.createTextNode(
+						obj['intervalBottom']
+					));
+					if(obj['intervalUnit'] !== null){
+						td.appendChild(document.createTextNode(
+							' ' + obj['intervalUnit']['abbr']
+						));
+					}
+				}
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				if(obj['box'] !== null){
+					td.appendChild(document.createTextNode(obj['box']));
+				}
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				if(obj['barcode'] !== null){
+					td.appendChild(document.createTextNode(obj['barcode']));
+				}
+				tr.appendChild(td);
+
+				td = document.createElement('td');
+				td.appendChild(document.createTextNode(
+					obj['containerPath']
+				));
+				tr.appendChild(td);
+
+				body.appendChild(tr);
+			}
+			$('#inventory').show();
+		}
+	});
+}
+
+
+// Encodes an object into a URI form (e.g. "search=monkey&limit=10")
+// Use this function instead of $.param, as $.param uses
+// old stype + as space encoding for URLs.
+function encodeParameters(o, l)
+{
+	var r = '';
+	if(o == null){ return r; }
+	for(var k in o){
+		if(typeof o[k] === 'object'){
+			var t = this.encodeParameters(o[k], k);
+			if(t.length > 0){
+				if(r.length > 0){ r += '&'; }
+				r += t;
+			}
+		} else {
+			var t = encodeURIComponent(o[k]);
+			if(t.length > 0){
+				if(r.length > 0){ r += '&'; }
+				r += encodeURIComponent(typeof l !== 'undefined' ? l : k) +
+					'=' + t;
+			}
+		}
+	}
+	return r;
 }

@@ -8,6 +8,9 @@
 		<script src="${pageContext.request.contextPath}/js/html5shiv.js"></script>
 		<script src="${pageContext.request.contextPath}/js/respond.min.js"></script>
 		<![endif]-->
+		<style>
+			#inventory { display: none; }
+		</style>
 	</head>
 	<body>
 		<div class="container">
@@ -16,6 +19,23 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-6" id="summary"></div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<table id="inventory" class="table table-striped table-condensed" style="margin-bottom: 0">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Top</th>
+								<th>Bottom</th>
+								<th>Box</th>
+								<th>Barcode</th>
+								<th>Location</th>
+							</tr>
+						</thead>
+						<tbody id="inventory_body"></tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 
