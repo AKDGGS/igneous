@@ -37,13 +37,12 @@
 				STRING_AGG(name, '; ') AS keywords,
 				COUNT(inventory_id) AS count
 			FROM (
-				SELECT k.keyword_id, k.name, i.inventory_id
+				SELECT k.keyword_id, k.name, ib.inventory_id
 				FROM inventory_borehole AS ib
-				JOIN inventory AS i ON i.inventory_id = ib.inventory_id
-				JOIN inventory_keyword AS ik ON ik.inventory_id = i.inventory_id
+				JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
 				JOIN keyword AS k ON k.keyword_id = ik.keyword_id
 				WHERE ib.borehole_id = #{id}
-				ORDER BY i.inventory_id, LOWER(k.name)
+				ORDER BY ib.inventory_id, LOWER(k.name)
 			) AS k1
 			GROUP BY inventory_id
 		) AS k2

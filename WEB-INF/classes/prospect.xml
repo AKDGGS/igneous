@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Prospect">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="ProspectMap">
+		SELECT prospect_id, name, alt_names, ardf_number
+		FROM prospect
+		WHERE prospect_id = #{id}
+	</select>
+
+	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+    SELECT DISTINCT ids, keywords, count
+    FROM (
+      SELECT STRING_AGG(keyword_id::varchar, ',') AS ids,
+        STRING_AGG(name, '; ') AS keywords,
+        COUNT(inventory_id) AS count
+      FROM (
+        SELECT k.keyword_id, k.name, ib.inventory_id
+        FROM inventory_borehole AS ib
+		JOIN borehole AS b ON b.borehole_id = ib.borehole_id
+		JOIN prospect AS p ON p.prospect_id = b.prospect_id
+        JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
+        JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+        WHERE p.prospect_id = #{prospect_id}
+        ORDER BY ib.inventory_id, LOWER(k.name)
+      ) AS k1
+      GROUP BY inventory_id
+    ) AS k2
+	</select>
+
+	<resultMap id="ProspectMap" type="Prospect">
+		<id property="id" column="prospect_id" />
+
+		<result property="name" column="name" />
+		<result property="alt_names" column="alt_names" />
+		<result property="ardf" column="ardf_number" />
+
+		<collection property="inventory_summary" column="prospect_id" ofType="HashMap" select="getInventorySummary" />
+	</resultMap>
+</mapper>

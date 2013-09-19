@@ -188,7 +188,7 @@ function search_parse(json, start, max)
 					var prospect = borehole['prospect'];
 
 					a = document.createElement('a');
-					a.href = '#';
+					a.href = 'prospect/' + prospect['ID'];
 					a.appendChild(document.createTextNode(
 						prospect['name']
 					));

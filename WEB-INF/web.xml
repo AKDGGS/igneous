@@ -58,6 +58,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>ProspectViewPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.ProspectViewPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ProspectViewPageServlet</servlet-name>
+		<url-pattern>/prospect/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>SearchServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
 	</servlet>
@@ -75,6 +85,16 @@
 	<servlet-mapping>
 		<servlet-name>BoreholeServlet</servlet-name>
 		<url-pattern>/borehole.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ProspectServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.ProspectServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ProspectServlet</servlet-name>
+		<url-pattern>/prospect.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
