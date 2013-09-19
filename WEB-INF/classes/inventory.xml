@@ -190,18 +190,13 @@
 			FROM inventory_borehole AS ib
 			JOIN inventory_keyword AS ik
 				ON ik.inventory_id = ib.inventory_id
-			<where>
-				<if test="borehole_id != null">
-					borehole_id = #{borehole_id}
-				</if>
-
-				<if test="keyword_ids != null">
-					AND keyword_id IN
-					<foreach item="keyword_id" index="index" collection="keyword_ids" open="(" separator="," close=")">
-						#{keyword_id}
-					</foreach>
-				</if>
-			</where>
+			WHERE borehole_id = #{borehole_id}
+			<if test="keyword_ids != null">
+				AND keyword_id IN
+				<foreach item="keyword_id" index="index" collection="keyword_ids" open="(" separator="," close=")">
+					#{keyword_id}
+				</foreach>
+			</if>
 		)
 	</select>
 </mapper>

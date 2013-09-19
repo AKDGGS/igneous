@@ -71,7 +71,7 @@ function load(id)
 					a.href = '#';
 					a.onclick = function(){
 						var keyword_ids = set['ids'].split(',');
-						var borehole_id = json['ID'];
+						var prospect_id = json['ID'];
 
 						return function(){
 							$(this).parents('ul').find('li').removeClass('active');
@@ -79,7 +79,7 @@ function load(id)
 
 							inventory_show(encodeParameters({
 								'keyword_id': keyword_ids, 
-								'borehole_id': borehole_id
+								'prospect_id': prospect_id
 							}));
 
 							return false;
@@ -101,14 +101,14 @@ function load(id)
 				var a = document.createElement('a');
 				a.href = '#';
 				a.onclick = function(){
-					var borehole_id = json['ID'];
+					var prospect_id = json['ID'];
 
 					return function(){
 						$(this).parents('ul').find('li').removeClass('active');
 						$(this).parent('li').addClass('active');
 
 						inventory_show(encodeParameters({
-							'borehole_id': borehole_id
+							'prospect_id': prospect_id
 						}));
 
 						return false;
