@@ -16,7 +16,7 @@
 	</resultMap>
 
 
-	<select id="getResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+	<select id="getSearchResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
 			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
 			iv.interval_top, iv.interval_bottom,
@@ -32,11 +32,19 @@
 			cdun.unit_id AS core_diameter_unit_id,
 			cdun.name AS core_diameter_unit_name,
 			cdun.abbr AS core_diameter_unit_abbr,
-			bh.borehole_id, bh.name AS borehole_name,
+
+			bh.borehole_id,
+			bh.name AS borehole_name,
 			bh.alt_names AS alt_borehole_names,
-			ph.prospect_id, ph.name AS prospect_name,
+			ph.prospect_id,
+			ph.name AS prospect_name,
 			ph.alt_names AS alt_prospect_names,
 			ph.ardf_number,
+
+			w.well_id, 
+			w.name AS well_name,
+			w.alt_names AS alt_well_names,
+			w.well_number, w.api_number,
 			(
 				SELECT STRING_AGG(name, '/') FROM (
 					WITH RECURSIVE t AS (
@@ -70,6 +78,10 @@
 			ON cd.core_diameter_id = iv.core_diameter_id
 		LEFT OUTER JOIN unit AS cdun
 			ON cdun.unit_id = cd.unit_id
+		LEFT OUTER JOIN inventory_well AS iw
+			ON iw.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN well AS w
+			ON w.well_id = iw.well_id
 		JOIN inventory_branch AS ibr
 			ON ibr.inventory_branch_id = iv.inventory_branch_id
 		WHERE iv.inventory_id IN
@@ -133,6 +145,14 @@
 				<result property="alt_names" column="alt_prospect_names" />
 				<result property="ardf" column="ardf_number" />
 			</association>
+		</collection>
+
+		<collection property="wells" ofType="Well">
+			<id property="id" column="well_id" />
+			<result property="name" column="well_name" />
+			<result property="alt_names" column="alt_well_names" />
+			<result property="well_number" column="well_number" />
+			<result property="api_number" column="api_number" />
 		</collection>
 	</resultMap>
 </mapper>

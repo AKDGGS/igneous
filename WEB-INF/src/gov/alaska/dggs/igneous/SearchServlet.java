@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import java.util.zip.GZIPOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class SearchServlet extends HttpServlet
 		include("list");
 		include("list.keywords");
 		include("list.boreholes");
+		include("list.wells");
 
 		exclude("list.class");	
 		exclude("list.keywords.class");
@@ -43,6 +45,7 @@ public class SearchServlet extends HttpServlet
 		exclude("list.collection.class");
 		exclude("list.boreholes.class");
 		exclude("list.boreholes.prospect.class");
+		exclude("list.wells.class");	
 		exclude("list.intervalUnit.class");
 		exclude("list.intervalUnit.description");
 		exclude("list.coreDiameter.class");
@@ -105,7 +108,7 @@ public class SearchServlet extends HttpServlet
 				SqlSession sess = IgneousFactory.openSession();
 				try {
 					List<Inventory> items = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getResults", ids
+						"gov.alaska.dggs.igneous.Inventory.getSearchResults", ids
 					);
 					json.put("list", items);
 				} finally {
@@ -116,7 +119,25 @@ public class SearchServlet extends HttpServlet
 			}
 
 			response.setContentType("application/json");
-			serializer.serialize(json, response.getWriter());
+
+			OutputStreamWriter out = null;
+			GZIPOutputStream gos = null;
+			try { 
+				// If GZIP is supported by the requesting browser, use it.
+				String encoding = request.getHeader("Accept-Encoding");
+				if(encoding != null && encoding.contains("gzip")){
+					response.setHeader("Content-Encoding", "gzip");
+					gos = new GZIPOutputStream(response.getOutputStream(), 8196);
+					out = new OutputStreamWriter(gos, "utf-8");
+				} else {
+					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+				}
+
+				serializer.serialize(json, out);
+			} finally {
+				if(out != null){ out.close(); }
+				if(gos != null){ gos.close(); }
+			}
 		} catch(Exception ex){
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());

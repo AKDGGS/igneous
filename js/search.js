@@ -175,6 +175,8 @@ function search_parse(json, start, max)
 
 			// Begin related
 			td = document.createElement('td');
+
+			// Boreholes
 			for(var j in obj['boreholes']){
 				var borehole = obj['boreholes'][j];
 
@@ -200,19 +202,32 @@ function search_parse(json, start, max)
 					div.appendChild(document.createElement('br'));
 				}
 
-				div.appendChild(document.createTextNode(
-					'Borehole: '
-				));
+				div.appendChild(document.createTextNode('Borehole: '));
 				a = document.createElement('a');
 				a.href = 'borehole/' + borehole['ID'];
-				a.appendChild(document.createTextNode(
-					borehole['name']
-				));
+				a.appendChild(document.createTextNode(borehole['name']));
+				div.appendChild(a);
+
+				td.appendChild(div);
+			}
+
+			// Wells
+			for(var j in obj['wells']){
+				var well = obj['wells'][j];
+
+				var div = document.createElement('div');
+				div.appendChild(document.createTextNode('Well: '));
+				a = document.createElement('a');
+				a.href = 'well/' + well['ID'];
+				a.appendChild(document.createTextNode(well['name']));
 				div.appendChild(a);
 
 				td.appendChild(div);
 			}
 			tr.appendChild(td);
+			// End Related
+
+
 			td = document.createElement('td');
 			if(obj['sampleNumber'] !== null){
 				td.appendChild(document.createTextNode(
@@ -220,7 +235,6 @@ function search_parse(json, start, max)
 				));
 			}
 			tr.appendChild(td);
-			// End Related
 
 			td = document.createElement('td');
 			if(obj['core'] !== null){

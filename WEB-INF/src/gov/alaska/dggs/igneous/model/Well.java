@@ -12,7 +12,7 @@ public class Well implements Serializable
 
 	private long id;
 	private String name, alt_names;
-	private String api_number;
+	private String well_number, api_number;
 	private boolean is_onshore;
 	private Date completion, spud;
 	private long measured_depth;
@@ -27,6 +27,8 @@ public class Well implements Serializable
 	public long getID(){ return id; }
 	public String getName(){ return name; }
 	public String getAltNames(){ return alt_names; }
+	public String getAPINumber(){ return api_number; }
+	public String getWellNumber(){ return well_number; }
 	public boolean isOnshore(){ return is_onshore; }
 	public Date getCompletion(){ return completion; }
 	public Date getSpud(){ return spud; }
