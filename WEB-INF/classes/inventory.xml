@@ -155,4 +155,27 @@
 			<result property="api_number" column="api_number" />
 		</collection>
 	</resultMap>
+
+
+	<select id="getByKeywordBorehole" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
+			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
+			iv.interval_top, iv.interval_bottom,
+			iun.unit_id AS interval_unit_id,
+			iun.name AS interval_unit_name,
+			iun.abbr AS interval_unit_abbr,
+		JOIN inventory AS iv
+		LEFT OUTER JOIN unit AS iun
+			ON iun.unit_id = iv.interval_unit_id
+		WHERE iv.inventory_id IN (
+			SELECT DISTINCT ib.inventory_id
+			FROM inventory_borehole AS ib
+			JOIN inventory_keyword AS ik
+				ON ik.inventory_id = ib.inventory_id
+			WHERE borehole_id = #{borehole_id} AND
+				keyword_id IN
+		<foreach item="keyword_id" index="index" collection="keyword_ids" open="(" separator="," close=")">
+			#{keyword_id}
+		</foreach>
+	</select>
 </mapper>

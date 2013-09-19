@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import java.util.zip.GZIPOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -29,12 +30,12 @@ import gov.alaska.dggs.igneous.model.Borehole;
 public class BoreholeServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
+		include("inventorySummary");
+
 		exclude("class");	
 		exclude("prospect.class");
 		exclude("elevationUnit.class");
 		exclude("measuredDepthUnit.class");
-
-		include("inventorySummary");
 	}};
 
 
@@ -63,7 +64,25 @@ public class BoreholeServlet extends HttpServlet
 			);
 
 			response.setContentType("application/json");
-			serializer.serialize(borehole, response.getWriter());
+
+			OutputStreamWriter out = null;
+			GZIPOutputStream gos = null;
+			try { 
+				// If GZIP is supported by the requesting browser, use it.
+				String encoding = request.getHeader("Accept-Encoding");
+				if(encoding != null && encoding.contains("gzip")){
+					response.setHeader("Content-Encoding", "gzip");
+					gos = new GZIPOutputStream(response.getOutputStream(), 8196);
+					out = new OutputStreamWriter(gos, "utf-8");
+				} else {
+					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+				}
+
+				serializer.serialize(borehole, out);
+			} finally {
+				if(out != null){ out.close(); }
+				if(gos != null){ gos.close(); }
+			}
 		} catch(Exception ex){
 			ex.printStackTrace();
 			response.setContentType("text/plain");

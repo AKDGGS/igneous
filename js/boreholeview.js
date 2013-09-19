@@ -1,7 +1,7 @@
 function load(id)
 {
 	$.ajax({
-		url: '../borehole', dataType: 'json', data: { 'id': id },
+		url: '../borehole.json', dataType: 'json', data: { 'id': id },
 		error: function(xhr){
 			$('#error_body').text(xhr.responseText);
 			$('#error_modal').modal({ show: true });
@@ -142,6 +142,14 @@ function load(id)
 
 					var a = document.createElement('a');
 					a.href = '#';
+					a.onclick = function(){
+						var keyword_ids = set['ids'].split(',');
+						var borehole_id = json['ID'];
+						return function(){
+							console.log(keyword_ids);
+							console.log(borehole_id);
+						}
+					}();
 					a.appendChild(document.createTextNode(set['keywords']));
 					a.appendChild(span);
 
