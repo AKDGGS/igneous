@@ -33,7 +33,7 @@ function load(id)
 
 				dd = document.createElement('dd');
 				dd.appendChild(document.createTextNode(
-					json['prospect']['altNames'])
+					json['altNames'])
 				);
 				dl.appendChild(dd);
 			}
