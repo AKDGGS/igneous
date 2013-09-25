@@ -57,8 +57,7 @@ function search_fetch(start, max)
 			url: 'search.json', dataType: 'json',
 			data: { 'q': q, 'start': start, 'max': max },
 			error: function(xhr){
-				$('#error_body').text(xhr.responseText);
-				$('#error_modal').modal({ show: true });
+				alert(xhr.responseText);
 			},
 			success: function(json){ search_parse(json, start, max); }
 		});
@@ -68,26 +67,15 @@ function search_fetch(start, max)
 
 function search_parse(json, start, max)
 {
-	var ipanel = $('#inventory_panel');
-
 	if(json['list'].length == 0){
 		$('#inventory_table').hide();
-		$('#inventory_message').text(
+		alert(
 			'No results have been found for your query. ' +
 			'Please narrow the search parameters and try again.'
-		).show();
-
-		if(ipanel.hasClass('panel-info')){
-			ipanel.removeClass('panel-info');
-		}
-		if(!ipanel.hasClass('panel-warning')){
-			ipanel.addClass('panel-warning');
-		}
+		);
 	} else {
 		var body = document.getElementById('inventory_body');
-		while(body.hasChildNodes()){
-			body.removeChild(body.firstChild);
-		}
+		while(body.hasChildNodes()){ body.removeChild(body.firstChild); }
 
 		// Begin page math
 		var current_page = 1 + Math.floor((start + 1) / max);
@@ -327,19 +315,8 @@ function search_parse(json, start, max)
 
 			body.appendChild(tr);
 		}
-
-		$('#inventory_message').hide();
 		$('#inventory_table').show();
-
-		if(ipanel.hasClass('panel-warning')){
-			ipanel.removeClass('panel-warning');
-		}
-		if(!ipanel.hasClass('panel-info')){
-			ipanel.addClass('panel-info');
-		}
 	}
-	ipanel.show();
-
 }
 
 
@@ -352,6 +329,10 @@ $(function(){
 
 		search_fetch(start, max);
 		return false;
+	});
+
+	$('#q').keypress(function(e){
+		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
 	document.getElementById('max').onchange = function(){ search_page(1); };
