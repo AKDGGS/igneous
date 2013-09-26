@@ -62,12 +62,10 @@
 						<th>Core</th>
 						<th>Box</th>
 						<th>Set</th>
-						<th>Top</th>
-						<th>Bottom</th>
+						<th>Top /<br>Bottom</th>
 						<th>Diameter</th>
-						<th>Branch</th>
+						<th>Branch /<br>Keywords</th>
 						<th>Collection</th>
-						<th>Keywords</th>
 						<th>Location</th>
 					</tr>
 				</thead>

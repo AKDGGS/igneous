@@ -268,12 +268,16 @@ a:hover, a:focus { color:#2a6496;text-decoration:underline; }
 .text-smaller { font-size: 75%; }
 .text-smallest { font-size: 50%; }
 
-.panel { border-radius: 4px; border: 1px solid transparent; }
-.panel > .panel-head { padding: 4px 8px; }
+.panel { border-radius: 4px; border: 1px solid #e7e7e7; margin: 4px 8px; }
+.panel > .panel-head { font-weight: bold; padding: 4px 8px; border-bottom: 1px solid #e7e7e7; background-color: #f8f8f8; }
+.panel > .panel-body { padding: 4px 8px; }
+
 .panel-info { border-color: #bce8f1; }
-.panel-info > .panel-head { color: #3a87ad; background-color: #d9edf7; }
+.panel-info > .panel-head { color: #3a87ad; background-color: #d9edf7; border-bottom: 1px solid #bce8f1; }
 .panel-warning { border-color: #fbeed5; }
-.panel-warning > .panel-head { color: #c09853; background-color: #fcf8e3; }
+.panel-warning > .panel-head { color: #c09853; background-color: #fcf8e3; border-bottom: 1px solid #fbeed5; }
+.panel-danger { border-color: #eed3d7; }
+.panel-danger > .panel-head { color: #b94a48; background-color: #f2dede; border-bottom: 1px solid #eed3d7; }
 
 .pagination { display: inline-block; padding: 0px; margin: 0px; }
 .pagination > li { display: inline; }
@@ -316,7 +320,9 @@ a:hover, a:focus { color:#2a6496;text-decoration:underline; }
 .datagrid > thead > tr > td { padding: 8px 4px; vertical-align: middle; }
 .datagrid > thead > tr > th {
 	background-color: #fff;
-	padding: 4px 4px; text-align: left; border-bottom: 1px solid #ddd;
+	padding: 4px 4px; text-align: left;
+	border-bottom: 1px solid #ddd;
+	vertical-align: bottom;
 }
 .datagrid > tbody > tr > td {
 	padding: 4px 4px; text-align: left;
