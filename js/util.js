@@ -16,11 +16,9 @@ Search.prototype = {
 	hashwrapper: function()
 	{
 		if(this.ignorehashchange){
-			console.log('hash ignored');
 			this.ignorehashchange = false; return;
 		}
 
-		console.log('onhashchange');
 		this.onhashchange();
 	},
 	
@@ -209,7 +207,10 @@ Search.prototype = {
 	{
 		if(request.readyState === 4){
 			if(request.status !== 200){
-				this.onerror('Fetch error', request.statusText);
+				this.onerror(
+					'Fetch error',
+					request.statusText + ': ' + request.responseText
+				);
 			} else {
 				var json = JSON.parse(request.responseText);
 				if(!('start' in params)){ params['start'] = 0; }

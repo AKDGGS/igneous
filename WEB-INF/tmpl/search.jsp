@@ -50,6 +50,14 @@
 							<label for="sort">Sort by</label>
 							<select name="sort" id="sort">
 								<option value="0">Best Match</option>
+								<option value="1">Collection</option>
+								<option value="2">Core Number</option>
+								<option value="3">Location</option>
+								<option value="4">Set Number</option>
+								<option value="5">Top</option>
+								<option value="6">Bottom</option>
+								<option value="7">Well Name</option>
+								<option value="8">Well Number</option>
 							</select>
 
 							<span class="spacer">|</span>

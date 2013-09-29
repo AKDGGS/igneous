@@ -52,11 +52,11 @@ $(function(){
 			if(restore()){ this.execute(false); }
 		},
 
-		onerror: function(d){
+		onerror: function(t, d){
 			clearmap();
 			document.getElementById('inventory_container').style.display = 'none';
 
-			AlertTool.error('Search Error', d);
+			AlertTool.error(t, d);
 		},
 
 		onparam: function(o){

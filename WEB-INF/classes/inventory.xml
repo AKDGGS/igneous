@@ -44,22 +44,9 @@
 			w.alt_names AS alt_well_names,
 			w.well_number, w.api_number,
 			(
-				SELECT STRING_AGG(name, '/') FROM (
-					WITH RECURSIVE t AS (
-						(SELECT 0 AS level, co.container_id,
-							co.parent_container_id, co.name
-						FROM inventory_container AS ic
-						JOIN container AS co ON co.container_id = ic.container_id
-						WHERE ic.inventory_id = iv.inventory_id
-						ORDER BY log_date DESC LIMIT 1)
-
-						UNION ALL
-
-						SELECT level+1, c.container_id, c.parent_container_id, c.name
-						FROM container AS c
-						JOIN t AS t ON c.container_id = t.parent_container_id
-					) SELECT name FROM t ORDER BY level DESC
-				) AS tree
+				SELECT il.location
+				FROM inventory_location AS il
+				WHERE il.inventory_id = iv.inventory_id
 			) AS container_path,
 			(
 				SELECT ST_AsText(geom)
@@ -90,6 +77,11 @@
 		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
 			#{item}
 		</foreach>
+		ORDER BY CASE iv.inventory_id
+		<foreach item="item" index="index" collection="array"> 
+			WHEN #{item} THEN #{index}
+		</foreach>
+		END
 	</select>
 
 	<resultMap id="InventoryMap" type="Inventory">

@@ -84,6 +84,70 @@ public class SearchServlet extends HttpServlet
 			catch(Exception ex){ }
 
 			sphinx.SetLimits(start, max, max_matches);
+
+			int sort = 0;
+			try { sort = Integer.parseInt(request.getParameter("sort")); }
+			catch(Exception ex){ }
+
+			switch(sort){
+				case 1:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_collection DESC, collection ASC"
+					);
+				break;
+
+				case 2:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_core DESC, core ASC"
+					);
+				break;
+
+				case 3:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_location DESC, location ASC"
+					);
+				break;
+
+				case 4:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_set DESC, set ASC"
+					);
+				break;
+
+				case 5:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_top DESC, top ASC"
+					);
+				break;
+
+				case 6:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_bottom DESC, bottom ASC"
+					);
+				break;
+
+				case 7:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_well DESC, well ASC"
+					);
+				break;
+
+				case 8:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_well_number DESC, well_number ASC"
+					);
+				break;
+
+				default: sphinx.SetSortMode(SphinxClient.SPH_SORT_RELEVANCE, null);
+			}
 			
 			StringBuilder query = new StringBuilder();
 			if(request.getParameter("q") != null){
@@ -139,6 +203,7 @@ public class SearchServlet extends HttpServlet
 				if(gos != null){ gos.close(); }
 			}
 		} catch(Exception ex){
+			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
 			ex.printStackTrace();
