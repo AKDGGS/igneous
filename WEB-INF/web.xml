@@ -107,6 +107,16 @@
 		<url-pattern>/inventory.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>BarcodeServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.BarcodeServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>BarcodeServlet</servlet-name>
+		<url-pattern>/barcode</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

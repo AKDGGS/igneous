@@ -23,8 +23,6 @@
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
 			iun.abbr AS interval_unit_abbr,
-			ibr.inventory_branch_id, ibr.name AS branch_name,
-			ibr.description AS branch_description,
 			cl.collection_id, cl.name AS collection_name,
 			cl.description AS collection_description,
 			cd.core_diameter_id, cd.name AS core_diameter_name,
@@ -82,8 +80,6 @@
 			ON iw.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN well AS w
 			ON w.well_id = iw.well_id
-		JOIN inventory_branch AS ibr
-			ON ibr.inventory_branch_id = iv.inventory_branch_id
 		WHERE iv.inventory_id IN
 		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
 			#{item}

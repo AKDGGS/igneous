@@ -3,7 +3,11 @@
 	<head>
 		<title>Alaska Geologic Materials Center</title>
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
-		<style> #inventory_table { display: none; } </style>
+		<style>
+			.barcode { min-width: 205px; }
+			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
+			#inventory_table { display: none; }
+		</style>
 	</head>
 	<body>
 		<div class="navbar">
@@ -41,7 +45,6 @@
 							<label for="sort">Sort by</label>
 							<select name="sort" id="sort">
 								<option value="0">Best Match</option>
-								<option value="1">Branch</option>
 							</select>
 
 							<span class="spacer">|</span>
@@ -64,8 +67,9 @@
 						<th>Set</th>
 						<th>Top /<br>Bottom</th>
 						<th>Diameter</th>
-						<th>Branch /<br>Keywords</th>
+						<th>Keywords</th>
 						<th>Collection</th>
+						<th>Barcode</th>
 						<th>Location</th>
 					</tr>
 				</thead>
@@ -74,6 +78,7 @@
 		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 		<script src="${pageContext.request.contextPath}/js/search${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 	</body>
 </html>
