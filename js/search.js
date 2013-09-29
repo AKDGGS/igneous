@@ -60,7 +60,8 @@ $(function(){
 		},
 
 		onparam: function(o){
-			var q = document.getElementById('q').value.trim();
+			var q = document.getElementById('q').value;
+
 			if(q.length === 0){
 				clearmap();
 				document.getElementById('inventory_container').style.display = 'none';
