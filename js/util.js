@@ -321,7 +321,7 @@ var AlertTool = {
 
 		var panel = document.createElement('div');
 		panel.id = 'alert_panel';
-		panel.className = 'panel panel-' + type + ' space-top';
+		panel.className = 'panel panel-' + type;
 		panel.appendChild(panel_head);
 		panel.appendChild(panel_body);
 

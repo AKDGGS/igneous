@@ -6,7 +6,8 @@
 		<style>
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
-			#inventory_table { display: none; }
+			#inventory_container { display: none; }
+			#map { width: 100%; height: 450px; }
 		</style>
 	</head>
 	<body>
@@ -24,7 +25,11 @@
 		</div>
 
 		<div class="container">
-			<table class="datagrid datagrid-info space-top" id="inventory_table">
+			<div id="map"></div>
+		</div>
+
+		<div id="inventory_container" class="container">
+			<table class="datagrid datagrid-info"> 
 				<thead>
 					<tr>
 						<td colspan="13" style="text-align: right">
@@ -78,6 +83,7 @@
 		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+		<script src="${pageContext.request.contextPath}/ol/2.12/OpenLayers.js"></script>
 		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 		<script src="${pageContext.request.contextPath}/js/search${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 	</body>

@@ -1,4 +1,39 @@
-var search;
+var search, map;
+
+
+function reset()
+{
+	$('#max').val(25);
+	$('#start, #sort').val(0);
+	$('#q').val('').blur();
+}
+
+
+function restore()
+{
+	if(window.location.hash.length > 1){
+		reset();
+
+		var hash = window.location.hash.substr(1).split('&');
+		for(var i in hash){
+			var st = hash[i].indexOf('=') + 1;
+			if(st === hash[i].length){ st = -1; }
+
+			var key = decodeURIComponent(st >= 0 ? hash[i].substr(0, st-1) : hash[i]);
+			var val = decodeURIComponent(st >= 0 ? hash[i].substr(st) : '');
+
+			if(val.length > 0){
+				switch(key){
+					default: $('#'+key).val(val);
+				}
+			}
+		}
+
+		return true;
+	}
+}
+
+
 $(function(){
 	search = new Search({
 		url: 'search.json',
@@ -8,7 +43,8 @@ $(function(){
 		},
 
 		onerror: function(d){
-			document.getElementById('inventory_table').style.display = 'none';
+			document.getElementById('inventory_container').style.display = 'none';
+
 			AlertTool.error('Search Error', d);
 		},
 
@@ -25,7 +61,8 @@ $(function(){
 
 		onparse: function(json){
 			if(json['list'].length == 0){
-				document.getElementById('inventory_table').style.display = 'none';
+				document.getElementById('inventory_container').style.display = 'none';
+
 				AlertTool.warning(
 					'Inventory Results',	
 					'No results have been found for your query. ' +
@@ -213,7 +250,7 @@ $(function(){
 
 					body.appendChild(tr);
 				}
-				document.getElementById('inventory_table').style.display = 'table';
+				document.getElementById('inventory_container').style.display = 'block';
 			}
 		} // End onparse
 	});
@@ -223,7 +260,7 @@ $(function(){
 		return false;
 	});
 
-	$('#sort, #max').change(function(){ SearchTool.execute(); });
+	$('#sort, #max').change(function(){ search.execute(); });
 
 	$('#q').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }
@@ -233,35 +270,39 @@ $(function(){
 	search.setuponhashchange();
 });
 
+$(window).load(function(){
+	OpenLayers.Map.prototype.zoomToMaxExtent = function(o){
+		this.setCenter( new OpenLayers.LonLat(-16446500, 9562680) );
+		this.zoomTo(3);
+	};
 
-function reset()
-{
-	$('#max').val(25);
-	$('#start, #sort').val(0);
-	$('#q').val('').blur();
-}
-
-
-function restore()
-{
-	if(window.location.hash.length > 1){
-		reset();
-
-		var hash = window.location.hash.substr(1).split('&');
-		for(var i in hash){
-			var st = hash[i].indexOf('=') + 1;
-			if(st === hash[i].length){ st = -1; }
-
-			var key = decodeURIComponent(st >= 0 ? hash[i].substr(0, st-1) : hash[i]);
-			var val = decodeURIComponent(st >= 0 ? hash[i].substr(st) : '');
-
-			if(val.length > 0){
-				switch(key){
-					default: $('#'+key).val(val);
+	map = new OpenLayers.Map('map', {
+		maxExtent: new OpenLayers.Bounds(
+			-20037508,-20037508,20037508,20037508
+		),
+		numZoomLevels: 18,
+		maxResolution: 156543.0339,
+		units: 'm',
+		projection: new OpenLayers.Projection('EPSG:3857'),
+		center: new OpenLayers.LonLat(0,0),
+		layers: [
+			new OpenLayers.Layer.XYZ('GINA Satellite',
+				'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/${x}/${y}/${z}', {
+					isBaseLayer: true, sphericalMercator: true,
+					transitionEffect: 'resize', wrapDateLine: true
 				}
-			}
-		}
+			)
+		],
+		controls: [
+			new OpenLayers.Control.PanZoom(),
+			new OpenLayers.Control.LayerSwitcher({
+				'ascending' : true, 'title': 'Click to toggle layers'
+			}),
+			new OpenLayers.Control.ScaleLine({ geodetic: true }),
+			new OpenLayers.Control.Navigation()
+		]
+	});
+	map.zoomToMaxExtent();
 
-		return true;
-	}
-}
+
+});
