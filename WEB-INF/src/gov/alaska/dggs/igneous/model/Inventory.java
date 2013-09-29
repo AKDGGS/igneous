@@ -12,6 +12,7 @@ public class Inventory implements Serializable
 	private long id;
 	private String samplenumber, barcode;
 	private String box, set, core, state;
+	private String wkt;
 	private int interval_top, interval_bottom;
 	private Unit interval_unit;
 	private InventoryBranch branch;
@@ -33,6 +34,7 @@ public class Inventory implements Serializable
 	public String getState(){ return state; }
 	public String getCore(){ return core; }
 	public String getSet(){ return set; }
+	public String getWKT(){ return wkt; }
 
 	public int getIntervalTop(){ return interval_top; }
 	public int getIntervalBottom(){ return interval_bottom; }

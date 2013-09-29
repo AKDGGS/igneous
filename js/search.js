@@ -9,6 +9,14 @@ function reset()
 }
 
 
+function clearmap()
+{
+	var layer = map.getLayersByName('Result Layer')[0];
+	layer.destroyFeatures();
+	return layer;
+}
+
+
 function restore()
 {
 	if(window.location.hash.length > 1){
@@ -35,6 +43,8 @@ function restore()
 
 
 $(function(){
+	var wkt_parser = new OpenLayers.Format.WKT();
+
 	search = new Search({
 		url: 'search.json',
 
@@ -43,6 +53,7 @@ $(function(){
 		},
 
 		onerror: function(d){
+			clearmap();
 			document.getElementById('inventory_container').style.display = 'none';
 
 			AlertTool.error('Search Error', d);
@@ -51,6 +62,9 @@ $(function(){
 		onparam: function(o){
 			var q = document.getElementById('q').value.trim();
 			if(q.length === 0){
+				clearmap();
+				document.getElementById('inventory_container').style.display = 'none';
+
 				AlertTool.warning('Empty Search', 'Search cannot be empty.');
 				return false;
 			}
@@ -61,6 +75,7 @@ $(function(){
 
 		onparse: function(json){
 			if(json['list'].length == 0){
+				clearmap();
 				document.getElementById('inventory_container').style.display = 'none';
 
 				AlertTool.warning(
@@ -71,11 +86,18 @@ $(function(){
 			} else {
 				AlertTool.clear();
 
+				var layer = clearmap();
 				var body = document.getElementById('inventory_body');
 				while(body.hasChildNodes()){ body.removeChild(body.firstChild); }
 
+				var features = [];
 				for(var i in json['list']){
 					var obj = json['list'][i];
+
+					if(obj['WKT'] !== null){
+						features.push( wkt_parser.read(obj['WKT']));
+					}
+
 					var tr = document.createElement('tr');
 
 					var td = document.createElement('td');
@@ -250,6 +272,9 @@ $(function(){
 
 					body.appendChild(tr);
 				}
+
+				if(features.length > 0){ layer.addFeatures(features); }
+
 				document.getElementById('inventory_container').style.display = 'block';
 			}
 		} // End onparse
@@ -291,7 +316,8 @@ $(window).load(function(){
 					isBaseLayer: true, sphericalMercator: true,
 					transitionEffect: 'resize', wrapDateLine: true
 				}
-			)
+			),
+			new OpenLayers.Layer.Vector('Result Layer')
 		],
 		controls: [
 			new OpenLayers.Control.PanZoom(),
@@ -303,6 +329,4 @@ $(window).load(function(){
 		]
 	});
 	map.zoomToMaxExtent();
-
-
 });

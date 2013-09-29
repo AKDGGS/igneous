@@ -60,7 +60,13 @@
 						JOIN t AS t ON c.container_id = t.parent_container_id
 					) SELECT name FROM t ORDER BY level DESC
 				) AS tree
-			) AS container_path
+			) AS container_path,
+			(
+				SELECT ST_AsText(geom)
+				FROM inventory_geom AS ig
+				WHERE ig.inventory_id = iv.inventory_id
+				LIMIT 1
+			) AS wkt
 		FROM inventory AS iv
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
@@ -97,6 +103,7 @@
 		<result property="state" column="state_number" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
+		<result property="wkt" column="wkt" />
 
 		<association property="interval_unit" javaType="Unit">
 			<id property="id" column="interval_unit_id" />
