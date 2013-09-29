@@ -155,7 +155,19 @@ $(function(){
 						a = document.createElement('a');
 						a.href = 'well/' + well['ID'];
 						a.appendChild(document.createTextNode(well['name']));
+						if(well['wellNumber'] !== null){
+							a.appendChild(document.createTextNode(
+								' - ' + well['wellNumber']
+							));
+						}
 						div.appendChild(a);
+
+						if(well['APINumber'] !== null){
+							var div2 = document.createElement('div');
+							div2.appendChild(document.createTextNode('API: '));
+							div2.appendChild(document.createTextNode(well['APINumber']));
+							div.appendChild(div2);
+						}
 
 						td.appendChild(div);
 					}
