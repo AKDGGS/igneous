@@ -34,6 +34,7 @@
 			bh.borehole_id,
 			bh.name AS borehole_name,
 			bh.alt_names AS alt_borehole_names,
+
 			ph.prospect_id,
 			ph.name AS prospect_name,
 			ph.alt_names AS alt_prospect_names,
@@ -43,6 +44,11 @@
 			w.name AS well_name,
 			w.alt_names AS alt_well_names,
 			w.well_number, w.api_number,
+
+			o.outcrop_id,
+			o.name AS outcrop_name,
+			o.outcrop_number,
+
 			(
 				SELECT il.location
 				FROM inventory_location AS il
@@ -73,6 +79,10 @@
 			ON iw.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN well AS w
 			ON w.well_id = iw.well_id
+		LEFT OUTER JOIN inventory_outcrop AS io
+			ON io.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN outcrop AS o
+			ON o.outcrop_id = io.outcrop_id
 		WHERE iv.inventory_id IN
 		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
 			#{item}
@@ -148,6 +158,12 @@
 			<result property="alt_names" column="alt_well_names" />
 			<result property="well_number" column="well_number" />
 			<result property="api_number" column="api_number" />
+		</collection>
+
+		<collection property="outcrops" ofType="Outcrop">
+			<id property="id" column="outcrop_id" />
+			<result property="name" column="outcrop_name" />
+			<result property="outcrop_number" column="outcrop_number" />
 		</collection>
 	</resultMap>
 

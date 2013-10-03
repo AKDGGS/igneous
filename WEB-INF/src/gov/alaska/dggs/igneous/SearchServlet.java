@@ -46,6 +46,7 @@ public class SearchServlet extends HttpServlet
 		exclude("list.boreholes.class");
 		exclude("list.boreholes.prospect.class");
 		exclude("list.wells.class");	
+		exclude("list.outcrops.class");	
 		exclude("list.intervalUnit.class");
 		exclude("list.intervalUnit.description");
 		exclude("list.coreDiameter.class");

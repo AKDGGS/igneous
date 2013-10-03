@@ -1,3 +1,14 @@
+function search_enable()
+{
+	$('#search').click(function(){
+		window.location.href = '../search#q=' + $('#q').val();
+	});
+
+	$('#q').keypress(function(e){
+		if(e.keyCode === 13){ $('#search').click(); }
+	});
+}
+
 function load(id)
 {
 	$.ajax({
@@ -54,6 +65,9 @@ function load(id)
 			overview.appendChild(dl);
 
 			if(json['inventorySummary'] !== null && json['inventorySummary'].length > 0){
+				var keywords = document.getElementById('keywords');
+				var keyword_groups = document.getElementById('keyword_groups');
+
 				var ul = document.createElement('ul');
 				ul.className = 'nav nav-pills';
 
@@ -61,10 +75,9 @@ function load(id)
 
 				for(var i in json['inventorySummary']){
 					var set = json['inventorySummary'][i];
-					total += set['count'];
 
 					var span = document.createElement('span');
-					span.className = 'badge pull-right';
+					span.className = 'badge';
 					span.appendChild(document.createTextNode(set['count']));
 
 					var a = document.createElement('a');
@@ -74,7 +87,7 @@ function load(id)
 						var prospect_id = json['ID'];
 
 						return function(){
-							$(this).parents('ul').find('li').removeClass('active');
+							$('#keyword_controls').find('li').removeClass('active');
 							$(this).parent('li').addClass('active');
 
 							inventory_show(encodeParameters({
@@ -91,11 +104,16 @@ function load(id)
 					var li = document.createElement('li');
 					li.appendChild(a);
 
-					ul.appendChild(li);
+					if(set['type'] === 1){
+						keywords.appendChild(li);
+					} else {
+						total += set['count'];
+						keyword_groups.appendChild(li);
+					}
 				}
 
 				var span = document.createElement('span');
-				span.className = 'badge pull-right';
+				span.className = 'badge';
 				span.appendChild(document.createTextNode(total));
 
 				var a = document.createElement('a');
@@ -104,7 +122,7 @@ function load(id)
 					var prospect_id = json['ID'];
 
 					return function(){
-						$(this).parents('ul').find('li').removeClass('active');
+						$('#keyword_controls').find('li').removeClass('active');
 						$(this).parent('li').addClass('active');
 
 						inventory_show(encodeParameters({
@@ -120,10 +138,7 @@ function load(id)
 				var li = document.createElement('li');
 				li.appendChild(a);
 
-				ul.appendChild(li);
-
-				var summary = document.getElementById('summary');
-				summary.appendChild(ul);
+				keyword_groups.appendChild(li);
 			}
 		}
 	});
@@ -198,7 +213,9 @@ function inventory_show(params)
 
 				body.appendChild(tr);
 			}
+
 			$('#inventory').show();
+			$('#keyword_controls').show();
 		}
 	});
 }

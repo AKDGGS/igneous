@@ -171,6 +171,26 @@ $(function(){
 
 						td.appendChild(div);
 					}
+
+					// Outcrops
+					for(var j in obj['outcrops']){
+						var outcrop = obj['outcrops'][j];
+
+						var div = document.createElement('div');
+						div.appendChild(document.createTextNode('Outcrop: '));
+						a = document.createElement('a');
+						a.href = 'outcrop/' + outcrop['ID'];
+						a.appendChild(document.createTextNode(outcrop['name']));
+						if(outcrop['outcropNumber'] !== null){
+							a.appendChild(document.createTextNode(
+								' - ' + outcrop['outcropNumber']
+							));
+						}
+						div.appendChild(a);
+
+						td.appendChild(div);
+					}
+
 					tr.appendChild(td);
 					// End Related
 
