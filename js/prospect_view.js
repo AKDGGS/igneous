@@ -140,6 +140,8 @@ function load(id)
 
 				keyword_groups.appendChild(li);
 			}
+
+			$('#keyword_controls').show();
 		}
 	});
 }
@@ -215,7 +217,6 @@ function inventory_show(params)
 			}
 
 			$('#inventory').show();
-			$('#keyword_controls').show();
 		}
 	});
 }

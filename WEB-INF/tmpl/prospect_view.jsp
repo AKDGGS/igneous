@@ -7,7 +7,7 @@
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			#inventory_container { display: none; }
-			#keyword_control { display: none; }
+			#keyword_controls { display: none; }
 			#map { width: 100%; height: 450px; }
 		</style>
 	</head>
@@ -97,11 +97,15 @@
 			</table>
 		</div>
 
-
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.12/OpenLayers.js"></script>
 		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 		<script src="${pageContext.request.contextPath}/js/prospect_view${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
-		<script>$(function(){ load(${id}); });</script>
+		<script>
+			$(function(){
+				search_enable();
+				load(${id});
+			});
+		</script>
 	</body>
 </html>
