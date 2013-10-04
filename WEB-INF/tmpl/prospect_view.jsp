@@ -14,7 +14,7 @@
 	<body>
 		<div class="navbar">
 			<div class="navbar-head">
-				<a href="#">Geologic Materials Center</a>
+				<a href="${pageContext.request.contextPath}/">Geologic Materials Center</a>
 			</div>
 
 			<div class="navbar-form">

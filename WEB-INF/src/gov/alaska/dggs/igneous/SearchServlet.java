@@ -136,14 +136,14 @@ public class SearchServlet extends HttpServlet
 				case 7:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_well DESC, well ASC"
+						"sort_well_null DESC, sort_well ASC"
 					);
 				break;
 
 				case 8:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_well_number DESC, well_number ASC"
+						"sort_well_number_null DESC, sort_well_number ASC"
 					);
 				break;
 
