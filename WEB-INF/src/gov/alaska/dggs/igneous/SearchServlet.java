@@ -77,18 +77,18 @@ public class SearchServlet extends HttpServlet
 			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED);
 
 			int start = 0;
-			try { start = Integer.parseInt(request.getParameter("start")); }
-			catch(Exception ex){ }
+			String s_start = request.getParameter("start");
+			if(s_start != null){ start = Integer.parseInt(s_start); }
 
 			int max = 25;
-			try { max = Integer.parseInt(request.getParameter("max")); }
-			catch(Exception ex){ }
-
+			String s_max = request.getParameter("max");
+			if(s_max != null){ max = Integer.parseInt(s_max); }
+				
 			sphinx.SetLimits(start, max, max_matches);
 
 			int sort = 0;
-			try { sort = Integer.parseInt(request.getParameter("sort")); }
-			catch(Exception ex){ }
+			String s_sort = request.getParameter("sort");
+			if(s_sort != null){ sort = Integer.parseInt(s_sort); }
 
 			switch(sort){
 				case 1:
@@ -149,7 +149,31 @@ public class SearchServlet extends HttpServlet
 
 				default: sphinx.SetSortMode(SphinxClient.SPH_SORT_RELEVANCE, null);
 			}
-			
+
+			String[] keywords = request.getParameterValues("keyword_id");
+			if(keywords != null){
+				for(String keyword : keywords){
+					try {
+						long keyword_id = Long.parseLong(keyword);
+						sphinx.SetFilter("keyword_id", keyword_id, false);
+					} catch(Exception ex){
+						// Explicitly ignore faulty IDs
+					}
+				}
+			}
+
+			String borehole = request.getParameter("borehole_id");
+			if(borehole != null){
+				long borehole_id = Long.parseLong(borehole);
+				sphinx.SetFilter("borehole_id", borehole_id, false);
+			}
+
+			String prospect = request.getParameter("prospect_id");
+			if(prospect != null){
+				long prospect_id = Long.parseLong(prospect);
+				sphinx.SetFilter("prospect_id", prospect_id, false);
+			}
+
 			StringBuilder query = new StringBuilder();
 			if(request.getParameter("q") != null){
 				query.append(request.getParameter("q").trim());
