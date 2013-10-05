@@ -98,16 +98,6 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>InventoryServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.InventoryServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>InventoryServlet</servlet-name>
-		<url-pattern>/inventory.json</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
 		<servlet-name>BarcodeServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.BarcodeServlet</servlet-class>
 	</servlet>

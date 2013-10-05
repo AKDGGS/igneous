@@ -166,48 +166,4 @@
 			<result property="outcrop_number" column="outcrop_number" />
 		</collection>
 	</resultMap>
-
-
-	<select id="getByKeywordBorehole" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
-		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
-			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
-			iv.interval_top, iv.interval_bottom,
-			iun.unit_id AS interval_unit_id,
-			iun.name AS interval_unit_name,
-			iun.abbr AS interval_unit_abbr,
-			(
-				SELECT STRING_AGG(name, '/') FROM (
-					WITH RECURSIVE t AS (
-						(SELECT 0 AS level, co.container_id,
-							co.parent_container_id, co.name
-						FROM inventory_container AS ic
-						JOIN container AS co ON co.container_id = ic.container_id
-						WHERE ic.inventory_id = iv.inventory_id
-						ORDER BY log_date DESC LIMIT 1)
-
-						UNION ALL
-
-						SELECT level+1, c.container_id, c.parent_container_id, c.name
-						FROM container AS c
-						JOIN t AS t ON c.container_id = t.parent_container_id
-					) SELECT name FROM t ORDER BY level DESC
-				) AS tree
-			) AS container_path
-		FROM inventory AS iv
-		LEFT OUTER JOIN unit AS iun
-			ON iun.unit_id = iv.interval_unit_id
-		WHERE iv.inventory_id IN (
-			SELECT DISTINCT ib.inventory_id
-			FROM inventory_borehole AS ib
-			JOIN inventory_keyword AS ik
-				ON ik.inventory_id = ib.inventory_id
-			WHERE borehole_id = #{borehole_id}
-			<if test="keyword_ids != null">
-				AND keyword_id IN
-				<foreach item="keyword_id" index="index" collection="keyword_ids" open="(" separator="," close=")">
-					#{keyword_id}
-				</foreach>
-			</if>
-		)
-	</select>
 </mapper>

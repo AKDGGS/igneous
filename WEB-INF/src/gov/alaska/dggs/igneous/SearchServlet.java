@@ -90,60 +90,76 @@ public class SearchServlet extends HttpServlet
 			String s_sort = request.getParameter("sort");
 			if(s_sort != null){ sort = Integer.parseInt(s_sort); }
 
+			int dir = 0;
+			String s_dir = request.getParameter("dir");
+			if(s_dir != null){ dir = Integer.parseInt(s_dir); }
+
 			switch(sort){
 				case 1:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_collection DESC, collection ASC"
+						"sort_collection DESC, collection " +
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 2:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_core DESC, core ASC"
+						"sort_core DESC, core " + 
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 3:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_location DESC, location ASC"
+						"sort_location DESC, location " + 
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 4:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_set DESC, set ASC"
+						"sort_set DESC, set " + 
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 5:
+					System.out.println(
+							"sort_top DESC, top " +
+						(dir == 0 ? "ASC" : "DESC")
+					);
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_top DESC, top ASC"
+						"sort_top DESC, top " +
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 6:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_bottom DESC, bottom ASC"
+						"sort_bottom DESC, bottom " + 
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 7:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_well_null DESC, sort_well ASC"
+						"sort_well_null DESC, sort_well " +
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 
 				case 8:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_well_number_null DESC, sort_well_number ASC"
+						"sort_well_number_null DESC, sort_well_number " +
+						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;
 

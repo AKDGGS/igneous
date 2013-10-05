@@ -66,17 +66,6 @@
 		)
 	</select>
 
-	<!--
-		SELECT DISTINCT k.keyword_id, k.name
-		FROM inventory_well AS iw
-		JOIN inventory_keyword AS ik
-			ON iw.inventory_id = ik.inventory_id
-		JOIN keyword AS k
-			ON k.keyword_id = ik.keyword_id
-		WHERE iw.well_id = 3937
-		ORDER BY k.name
-	-->
-
 	<resultMap id="BoreholeMap" type="Borehole">
 		<id property="id" column="borehole_id" />
 

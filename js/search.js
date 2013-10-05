@@ -4,7 +4,7 @@ var search, map;
 function reset()
 {
 	$('#max').val(25);
-	$('#start, #sort').val(0);
+	$('#start, #sort, #dir').val(0);
 	$('#q').val('').blur();
 }
 
@@ -318,7 +318,7 @@ $(function(){
 		return false;
 	});
 
-	$('#sort, #max').change(function(){ search.execute(); });
+	$('#sort, #max, #dir').change(function(){ search.execute(); });
 
 	$('#q').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }

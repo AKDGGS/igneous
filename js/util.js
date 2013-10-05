@@ -2,6 +2,7 @@ var Search = function(o)
 {
 	this.lastsearch = '';
 	this.ignorehashchange = false;
+	this.updatehash = true;
 
 	for(var i in o){ this[i] = o[i]; }
 };
@@ -38,6 +39,11 @@ Search.prototype = {
 
 	getSort: function(){
 		var e = document.getElementById('sort');
+		return Number(e.options[e.selectedIndex].value);
+	},
+
+	getDir: function(){
+		var e = document.getElementById('dir');
 		return Number(e.options[e.selectedIndex].value);
 	},
 
@@ -163,7 +169,8 @@ Search.prototype = {
 
 	execute: function(updatehash)
 	{
-		updatehash = typeof updatehash !== 'undefined' ? updatehash : true;
+		updatehash = typeof updatehash !== 'undefined' ?
+			updatehash : this.updatehash;
 
 		var self = this;
 		var params = {};
@@ -173,6 +180,9 @@ Search.prototype = {
 
 			var sort = this.getSort();
 			if(sort !== 0){ params['sort'] = sort; }
+
+			var dir = this.getDir();
+			if(dir !== 0){ params['dir'] = dir; }
 			
 			var currsearch = this.encodeParameters(params);
 			if(this.lastsearch.length > 0 && currsearch !== this.lastsearch){

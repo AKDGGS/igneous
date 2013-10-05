@@ -71,6 +71,11 @@
 								<option value="8">Well Number</option>
 							</select>
 
+							<select name="dir" id="dir">
+								<option value="0">Ascending</option>
+								<option value="1">Descending</option>
+							</select>
+
 							<span class="spacer">|</span>
 
 							Displaying <span id="page_start"></span>

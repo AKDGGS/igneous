@@ -1,3 +1,5 @@
+var search;
+
 function search_enable()
 {
 	$('#search').click(function(){
@@ -90,11 +92,8 @@ function load(id)
 							$('#keyword_controls').find('li').removeClass('active');
 							$(this).parent('li').addClass('active');
 
-							inventory_show(encodeParameters({
-								'keyword_id': keyword_ids, 
-								'prospect_id': prospect_id
-							}));
-
+							search['keyword_id'] = keyword_ids;
+							search.execute();
 							return false;
 						};
 					}();
@@ -125,10 +124,8 @@ function load(id)
 						$('#keyword_controls').find('li').removeClass('active');
 						$(this).parent('li').addClass('active');
 
-						inventory_show(encodeParameters({
-							'prospect_id': prospect_id
-						}));
-
+						delete search['keyword_id'];
+						search.execute();
 						return false;
 					};
 				}();
@@ -144,106 +141,149 @@ function load(id)
 			$('#keyword_controls').show();
 		}
 	});
-}
 
+  $('#sort, #max, #dir').change(function(){ search.execute(); });
 
-function inventory_show(params)
-{
-	$.ajax({
-		url: '../inventory.json', dataType: 'json', data: params,
-		error: function(xhr){
-			$('#error_body').text(xhr.responseText);
-			$('#error_modal').modal({ show: true });
-			$('#inventory').hide();
+	search = new Search({
+		url: '../search.json',
+
+		updatehash: false,
+
+		onerror: function(t, d){
+			document.getElementById('inventory_container').style.display = 'none';
+			AlertTool.error(t, d);
 		},
-		success: function(json){
-			var body = document.getElementById('inventory_body');
-			while(body.hasChildNodes()){ body.removeChild(body.firstChild); }
 
-			for(var i in json){
-				var obj = json[i];
-				var tr = document.createElement('tr');
+		onparam: function(o){
+			o['prospect_id'] = id;
+			if('keyword_id' in this){ o['keyword_id'] = this['keyword_id']; }
+			return true;
+		},
 
-				var td = document.createElement('td');
-				var a = document.createElement('a');
-				a.href = '../inventory/' + obj['ID'];
-				a.appendChild(document.createTextNode(obj['ID']));
-				td.appendChild(a);
-				tr.appendChild(td);
+		onparse: function(json){
+			if(json['list'].length == 0){
+				document.getElementById('inventory_container').style.display = 'none';
 
-				td = document.createElement('td');
-				if(obj['intervalTop'] !== null){
-					td.appendChild(document.createTextNode(obj['intervalTop']));
-					if(obj['intervalUnit'] !== null){
+				AlertTool.warning(
+					'Inventory Results',	
+					'No results have been found for your query. ' +
+					'Please narrow the search parameters and try again.'
+				);
+			} else {
+				AlertTool.clear();
+
+				var body = document.getElementById('inventory_body');
+				while(body.hasChildNodes()){ body.removeChild(body.firstChild); }
+
+				var features = [];
+				for(var i in json['list']){
+					var obj = json['list'][i];
+
+					var tr = document.createElement('tr');
+
+					var td = document.createElement('td');
+					var a = document.createElement('a');
+					a.href = 'detail/' + obj['ID'];
+					a.appendChild(document.createTextNode(obj['ID']));
+					td.appendChild(a);
+					tr.appendChild(td);
+
+					// Boreholes
+					td = document.createElement('td');
+					for(var j in obj['boreholes']){
+						var borehole = obj['boreholes'][j];
+
+						var div = document.createElement('div');
+						a = document.createElement('a');
+						a.href = 'borehole/' + borehole['ID'];
+						a.appendChild(document.createTextNode(borehole['name']));
+						div.appendChild(a);
+
+						td.appendChild(div);
+					}
+					tr.appendChild(td);
+
+					// Box
+					td = document.createElement('td');
+					if(obj['box'] !== null){
+						td.appendChild(document.createTextNode(obj['box']));
+					}
+					tr.appendChild(td);
+
+					// Top / Bottom
+					td = document.createElement('td');
+					if(obj['intervalTop'] !== null){
+						td.appendChild(document.createTextNode(obj['intervalTop']));
+						if(obj['intervalUnit'] !== null){
+							td.appendChild(document.createTextNode(
+								' ' + obj['intervalUnit']['abbr']
+							));
+						}
+					}
+
+					if(obj['intervalBottom'] !== null){
+						td.appendChild(document.createElement('br'));
+					}
+
+					if(obj['intervalBottom'] !== null){
 						td.appendChild(document.createTextNode(
-							' ' + obj['intervalUnit']['abbr']
+							obj['intervalBottom']
+						));
+						if(obj['intervalUnit'] !== null){
+							td.appendChild(document.createTextNode(
+								' ' + obj['intervalUnit']['abbr']
+							));
+						}
+					}
+					tr.appendChild(td);
+
+					// Keywords
+					td = document.createElement('td');
+					for(var j in obj['keywords']){
+						var keyword = obj['keywords'][j];
+						td.appendChild(document.createTextNode(
+							(j > 0 ? ', ' : '') +
+							keyword['name']
 						));
 					}
-				}
-				tr.appendChild(td);
+					tr.appendChild(td);
 
-				td = document.createElement('td');
-				if(obj['intervalBottom'] !== null){
+					td = document.createElement('td');
+					if(obj['collection'] !== null){
+						td.appendChild(document.createTextNode(
+							obj['collection']['name']
+						));
+					}
+					tr.appendChild(td);
+
+					// Barcode
+					td = document.createElement('td');
+					td.className = 'barcode';
+					if(obj['barcode'] !== null){
+						var img = document.createElement('img');
+						img.height = 20;
+						img.src = '../barcode?c=' + obj['barcode'];
+						td.appendChild(img);
+
+						var div = document.createElement('div');
+						div.appendChild(document.createTextNode(obj['barcode']));
+						td.appendChild(div);
+					}
+					tr.appendChild(td);
+
+					// Location
+					td = document.createElement('td');
 					td.appendChild(document.createTextNode(
-						obj['intervalBottom']
+						obj['containerPath']
 					));
-					if(obj['intervalUnit'] !== null){
-						td.appendChild(document.createTextNode(
-							' ' + obj['intervalUnit']['abbr']
-						));
-					}
+					tr.appendChild(td);
+
+					body.appendChild(tr);
 				}
-				tr.appendChild(td);
 
-				td = document.createElement('td');
-				if(obj['box'] !== null){
-					td.appendChild(document.createTextNode(obj['box']));
-				}
-				tr.appendChild(td);
-
-				td = document.createElement('td');
-				if(obj['barcode'] !== null){
-					td.appendChild(document.createTextNode(obj['barcode']));
-				}
-				tr.appendChild(td);
-
-				td = document.createElement('td');
-				td.appendChild(document.createTextNode(
-					obj['containerPath']
-				));
-				tr.appendChild(td);
-
-				body.appendChild(tr);
+				document.getElementById('inventory_container').style.display = 'block';
 			}
-
-			$('#inventory').show();
-		}
+		} // End onparse
 	});
 }
 
-
-// Encodes an object into a URI form (e.g. "search=monkey&limit=10")
-// Use this function instead of $.param, as $.param uses
-// old stype + as space encoding for URLs.
-function encodeParameters(o, l)
-{
-	var r = '';
-	if(o == null){ return r; }
-	for(var k in o){
-		if(typeof o[k] === 'object'){
-			var t = this.encodeParameters(o[k], k);
-			if(t.length > 0){
-				if(r.length > 0){ r += '&'; }
-				r += t;
-			}
-		} else {
-			var t = encodeURIComponent(o[k]);
-			if(t.length > 0){
-				if(r.length > 0){ r += '&'; }
-				r += encodeURIComponent(typeof l !== 'undefined' ? l : k) +
-					'=' + t;
-			}
-		}
-	}
-	return r;
-}

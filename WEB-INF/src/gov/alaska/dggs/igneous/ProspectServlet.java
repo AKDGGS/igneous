@@ -80,9 +80,10 @@ public class ProspectServlet extends HttpServlet
 				if(gos != null){ gos.close(); }
 			}
 		} catch(Exception ex){
-			ex.printStackTrace();
+			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
+			ex.printStackTrace();
 		} finally {
 			sess.close();	
 		}
