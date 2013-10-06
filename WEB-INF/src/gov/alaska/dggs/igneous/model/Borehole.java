@@ -20,8 +20,6 @@ public class Borehole implements Serializable
 	private long elevation;
 	private Unit elevation_unit;
 	private List<Inventory> inventory;
-	private List<Map> inventory_summary;
-
 
 	public long getID(){ return id; }
 	public String getName(){ return name; }
@@ -34,5 +32,4 @@ public class Borehole implements Serializable
 	public long getElevation(){ return elevation; }
 	public Unit getElevationUnit(){ return elevation_unit; }
 	public List<Inventory> getInventory(){ return inventory; }
-	public List<Map> getInventorySummary(){ return inventory_summary; }
 }

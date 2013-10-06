@@ -12,6 +12,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import java.util.zip.GZIPOutputStream;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -30,7 +32,13 @@ import gov.alaska.dggs.igneous.model.Prospect;
 public class ProspectServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("inventorySummary");
+		include("prospect.boreholes");
+		include("prospect");
+		include("summary");
+
+		exclude("prospect.boreholes.prospect");
+		exclude("prospect.boreholes.class");
+		exclude("prospect.class");
 		exclude("class");	
 	}};
 
@@ -60,6 +68,14 @@ public class ProspectServlet extends HttpServlet
 			);
 			if(prospect == null){ throw new Exception("Prospect not found."); }
 
+			List<Object> summary = sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getInventorySummary", id
+			);
+
+			HashMap map = new HashMap();
+			map.put("summary", summary);
+			map.put("prospect", prospect);
+
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;
@@ -75,7 +91,7 @@ public class ProspectServlet extends HttpServlet
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
 
-				serializer.serialize(prospect, out);
+				serializer.serialize(map, out);
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }

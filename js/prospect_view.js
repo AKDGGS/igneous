@@ -32,6 +32,8 @@ function load(id)
 				overview.removeChild(overview.firstChild);
 			}
 
+			var prospect = json['prospect'];
+
 			var dl = document.createElement('dl');
 			dl.className = 'dl-horizontal';
 
@@ -40,39 +42,56 @@ function load(id)
 			dl.appendChild(dt);
 
 			var dd = document.createElement('dd');
-			dd.appendChild(document.createTextNode(json['name']));
+			dd.appendChild(document.createTextNode(prospect['name']));
 			dl.appendChild(dd);
 
-			if(json['altNames'] !== null){
+			if(prospect['altNames'] !== null){
 				dt = document.createElement('dt');
-				dt.appendChild(document.createTextNode(
-					'Alt. Prospect Names:'
-				));
+				dt.appendChild(document.createTextNode('Alt. Prospect Names:'));
 				dl.appendChild(dt);
 
 				dd = document.createElement('dd');
 				dd.appendChild(document.createTextNode(
-					json['altNames'])
+					prospect['altNames'])
 				);
 				dl.appendChild(dd);
 			}
 
-			if(json['ARDF'] !== null){
+			if(prospect['ARDF'] !== null){
 				dt = document.createElement('dt');
-				dt.appendChild(document.createTextNode(
-					'ARDF:'
-				));
+				dt.appendChild(document.createTextNode('ARDF:'));
 				dl.appendChild(dt);
 
 				dd = document.createElement('dd');
 				dd.appendChild(document.createTextNode(
-					json['ARDF']
+					prospect['ARDF']
 				));
 				dl.appendChild(dd);
 			}
+
+			if(prospect['boreholes'] !== null){
+				dt = document.createElement('dt');
+				dt.appendChild(document.createTextNode('Boreholes:'));
+				dl.appendChild(dt);
+
+				dd = document.createElement('dd');
+				for(var i in prospect['boreholes']){
+					var borehole = prospect['boreholes'][i];
+					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
+
+					var a = document.createElement('a');
+					a.href = '../borehole/' + borehole['ID'];
+					a.appendChild(document.createTextNode(borehole['name']));
+					
+					dd.appendChild(a);
+				}
+				dl.appendChild(dd);
+			}
+
 			overview.appendChild(dl);
 
-			if(json['inventorySummary'] !== null && json['inventorySummary'].length > 0){
+			var summary = json['summary'];
+			if(summary !== null && summary.length > 0){
 				var keywords = document.getElementById('keywords');
 				var keyword_groups = document.getElementById('keyword_groups');
 
@@ -81,8 +100,8 @@ function load(id)
 
 				var total = 0;
 
-				for(var i in json['inventorySummary']){
-					var set = json['inventorySummary'][i];
+				for(var i in summary){
+					var set = summary[i];
 
 					var span = document.createElement('span');
 					span.className = 'badge';
@@ -92,7 +111,7 @@ function load(id)
 					a.href = '#';
 					a.onclick = function(){
 						var keyword_ids = set['ids'].split(',');
-						var prospect_id = json['ID'];
+						var prospect_id = prospect['ID'];
 
 						return function(){
 							$('#keyword_controls').find('li').removeClass('active');
@@ -124,7 +143,7 @@ function load(id)
 				var a = document.createElement('a');
 				a.href = '#';
 				a.onclick = function(){
-					var prospect_id = json['ID'];
+					var prospect_id = prospect['ID'];
 
 					return function(){
 						$('#keyword_controls').find('li').removeClass('active');

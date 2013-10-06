@@ -12,6 +12,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import java.util.zip.GZIPOutputStream;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -30,12 +32,14 @@ import gov.alaska.dggs.igneous.model.Borehole;
 public class BoreholeServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("inventorySummary");
+		include("borehole");
+		include("summary");
 
-		exclude("class");	
-		exclude("prospect.class");
-		exclude("elevationUnit.class");
-		exclude("measuredDepthUnit.class");
+		exclude("class");
+		exclude("borehole.class");
+		exclude("borehole.prospect.class");
+		exclude("borehole.elevationUnit.class");
+		exclude("borehole.measuredDepthUnit.class");
 	}};
 
 
@@ -64,6 +68,14 @@ public class BoreholeServlet extends HttpServlet
 			);
 			if(borehole == null){ throw new Exception("Borehole not found."); }
 
+			List<Object> summary = sess.selectList(
+				"gov.alaska.dggs.igneous.Borehole.getInventorySummary", id
+			);
+
+			HashMap map = new HashMap();
+			map.put("summary", summary);
+			map.put("borehole", borehole);
+
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;
@@ -79,7 +91,7 @@ public class BoreholeServlet extends HttpServlet
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
 
-				serializer.serialize(borehole, out);
+				serializer.serialize(map, out);
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }

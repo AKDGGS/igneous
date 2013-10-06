@@ -9,14 +9,18 @@ public class Prospect implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
+
 	private long id;
 	private String name, alt_names;
 	private String ardf;
-	private List<Map> inventory_summary;
+	private List<Borehole> boreholes;
+
 
 	public long getID(){ return id; }
 	public String getName(){ return name; }
 	public String getAltNames(){ return alt_names; }
 	public String getARDF(){ return ardf; }
-	public List<Map> getInventorySummary(){ return inventory_summary; }
+
+	public List<Borehole> getBoreholes(){ return boreholes; }
+	public void setBoreholes(List<Borehole> boreholes){ this.boreholes = boreholes; }
 }
