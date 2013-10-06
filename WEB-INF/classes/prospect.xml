@@ -63,9 +63,10 @@
 			SELECT ST_AsText(p.geom)
 			FROM borehole_point AS bp
 			JOIN point AS p ON p.point_id = bp.point_id
+			WHERE bp.borehole_id = bh.borehole_id
 			LIMIT 1
 		) AS wkt
 		FROM borehole AS bh
-		WHERE bh.prospect_id = 4
+		WHERE bh.prospect_id = #{id}
 	</select>
 </mapper>
