@@ -159,6 +159,30 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				case 9:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_barcode DESC, barcode " +
+						(dir == 0 ? "ASC" : "DESC")
+					);
+				break;
+
+				case 10:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_borehole_null DESC, sort_borehole " +
+						(dir == 0 ? "ASC" : "DESC")
+					);
+				break;
+
+				case 11:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_box DESC, box " +
+						(dir == 0 ? "ASC" : "DESC")
+					);
+				break;
+
 				default: sphinx.SetSortMode(SphinxClient.SPH_SORT_RELEVANCE, null);
 			}
 
