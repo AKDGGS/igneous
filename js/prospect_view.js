@@ -63,9 +63,10 @@ function load(id)
 				dl.appendChild(dt);
 
 				dd = document.createElement('dd');
-				dd.appendChild(document.createTextNode(
-					prospect['ARDF']
-				));
+				var a = document.createElement('a');
+				a.href = '#'; // Change me to ARDF link
+				a.appendChild(document.createTextNode(prospect['ARDF']));
+				dd.appendChild(a);
 				dl.appendChild(dd);
 			}
 
