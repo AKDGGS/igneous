@@ -1,4 +1,5 @@
-var search;
+var detail, search;
+
 
 function search_enable()
 {
@@ -11,15 +12,20 @@ function search_enable()
 	});
 }
 
+
 function load(id)
 {
-	$.ajax({
-		url: '../prospect.json', dataType: 'json', data: { 'id': id },
-		error: function(xhr){
-			$('#error_body').text(xhr.responseText);
-			$('#error_modal').modal({ show: true });
+  $('#sort, #max, #dir').change(function(){ search.execute(); });
+
+	detail = new Detail({
+		url: '../prospect.json',
+
+		onerror: function(t, d){
+			$('#overview').hide();
+			AlertTool.error(t, d);
 		},
-		success: function(json){
+
+		onparse: function(json){
 			var overview = document.getElementById('overview');
 
 			while(overview.hasChildNodes()){
@@ -142,7 +148,6 @@ function load(id)
 		}
 	});
 
-  $('#sort, #max, #dir').change(function(){ search.execute(); });
 
 	search = new Search({
 		url: '../search.json',
@@ -285,5 +290,6 @@ function load(id)
 			}
 		} // End onparse
 	});
-}
 
+	detail.fetch(id);
+}

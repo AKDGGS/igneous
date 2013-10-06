@@ -62,6 +62,7 @@ public class BoreholeServlet extends HttpServlet
 			Borehole borehole = (Borehole)sess.selectOne(
 				"gov.alaska.dggs.igneous.Borehole.getByID", id
 			);
+			if(borehole == null){ throw new Exception("Borehole not found."); }
 
 			response.setContentType("application/json");
 

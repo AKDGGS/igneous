@@ -128,10 +128,6 @@ public class SearchServlet extends HttpServlet
 				break;
 
 				case 5:
-					System.out.println(
-							"sort_top DESC, top " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
 						"sort_top DESC, top " +

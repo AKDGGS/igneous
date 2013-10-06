@@ -58,6 +58,7 @@ public class ProspectServlet extends HttpServlet
 			Prospect prospect = (Prospect)sess.selectOne(
 				"gov.alaska.dggs.igneous.Prospect.getByID", id
 			);
+			if(prospect == null){ throw new Exception("Prospect not found."); }
 
 			response.setContentType("application/json");
 

@@ -10,9 +10,9 @@ var Search = function(o)
 Search.prototype = {
 	// These functions should be overridden, inside the object
 	onhashchange: function(){ },
-	onerror: function(){ },
-	onparam: function(){ return false; },
-	onparse: function(){ },
+	onerror: function(title, description){ },
+	onparam: function(obj){ return false; },
+	onparse: function(json){ },
 
 	hashwrapper: function()
 	{
@@ -308,6 +308,46 @@ Search.prototype = {
       }
     } else { o[k] = v; }
   }
+};
+
+
+var Detail = function(o){
+	for(var i in o){ this[i] = o[i]; }
+};
+
+Detail.prototype = {
+	onerror: function(title, description){ },
+	onparse: function(json){ },
+
+	fetch: function(id)
+	{
+		var self = this;
+
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			self.statechange(this, id);
+		};
+		request.open('POST', this.url, true);
+		request.setRequestHeader(
+			'Content-type', 'application/x-www-form-urlencoded'
+		);
+		request.send('id=' + id);
+	},
+
+	statechange: function(request, id)
+	{
+		if(request.readyState === 4){
+			if(request.status !== 200){
+				this.onerror(
+					'Fetch error',
+					request.statusText + ': ' + request.responseText
+				);
+			} else {
+				var json = JSON.parse(request.responseText);
+				this.onparse(json);
+			}
+		}
+	}
 };
 
 
