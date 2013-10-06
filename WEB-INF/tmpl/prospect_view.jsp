@@ -7,8 +7,10 @@
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			#inventory_container { display: none; }
-			#keyword_controls { display: none; }
-			#map { width: 100%; height: 450px; }
+			#keyword_controls { display: none; margin: 0px; }
+			#keyword_controls > div { margin-bottom: 4px; }
+			.half-left { width: 50%; float: left; }
+			#map { width: 50%; height: 400px; background-color: black; margin: 0px 0px 0px auto !important; }
 		</style>
 	</head>
 	<body>
@@ -25,19 +27,26 @@
 			</div>
 		</div>
 
-		<div id="overview" class="container"> Loading .. </div>
+		<div class="container" id="overview_container">
+			<div class="half-left">
+				<dl id="overview">Loading..</dl>
 
-		<div id="keyword_controls">
-			<div class="container">
-				<span class="label label-info">Keyword Groups</span>
-				<ul class="nav nav-pills" id="keyword_groups"></ul>
+				<div id="keyword_controls">
+					<div>
+						<span class="label label-info">Keyword Groups</span>
+						<ul class="nav nav-pills" id="keyword_groups"></ul>
+					</div>
+
+					<div>
+						<span class="label label-info">Keywords</span>
+						<ul class="nav nav-pills" id="keywords"></ul>
+					</div>
+				</div>
 			</div>
 
-			<div class="container">
-				<span class="label label-info">Keywords</span>
-				<ul class="nav nav-pills" id="keywords"></ul>
-			</div>
+			<div id="map"></div>
 		</div>
+
 
 		<div id="inventory_container" class="container">
 			<table class="datagrid datagrid-info"> 
@@ -105,15 +114,10 @@
 			</table>
 		</div>
 
+		<script>var id = ${id};</script>
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.12/OpenLayers.js"></script>
 		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 		<script src="${pageContext.request.contextPath}/js/prospect_view${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
-		<script>
-			$(function(){
-				search_enable();
-				load(${id});
-			});
-		</script>
 	</body>
 </html>

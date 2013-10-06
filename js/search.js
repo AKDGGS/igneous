@@ -324,8 +324,6 @@ $(function(){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
-	if(restore()){ search.execute(false); }
-	search.setuponhashchange();
 });
 
 $(window).load(function(){
@@ -362,4 +360,7 @@ $(window).load(function(){
 		]
 	});
 	map.zoomToMaxExtent();
+
+	if(restore()){ search.execute(false); }
+	search.setuponhashchange();
 });

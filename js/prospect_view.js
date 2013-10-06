@@ -1,8 +1,9 @@
 var detail, search;
 
 
-function search_enable()
-{
+$(function(){
+  $('#sort, #max, #dir').change(function(){ search.execute(); });
+
 	$('#search').click(function(){
 		window.location.href = '../search#q=' + $('#q').val();
 	});
@@ -10,32 +11,33 @@ function search_enable()
 	$('#q').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
-}
-
-
-function load(id)
-{
-  $('#sort, #max, #dir').change(function(){ search.execute(); });
 
 	detail = new Detail({
 		url: '../prospect.json',
 
 		onerror: function(t, d){
-			$('#overview').hide();
+			$('#overview_container').hide();
 			AlertTool.error(t, d);
 		},
 
 		onparse: function(json){
-			var overview = document.getElementById('overview');
-
-			while(overview.hasChildNodes()){
-				overview.removeChild(overview.firstChild);
-			}
-
 			var prospect = json['prospect'];
 
-			var dl = document.createElement('dl');
-			dl.className = 'dl-horizontal';
+			if(json['wkts'] != null){
+				var wkt_parser = new OpenLayers.Format.WKT();
+				var features = [];
+				for(var i in json['wkts']){
+					features.push(wkt_parser.read(json['wkts'][i]['wkt']));
+				}
+
+				if(features.length > 0){
+				  var layer = map.getLayersByName('Result Layer')[0];
+					layer.addFeatures(features);
+				}
+			}
+
+			var dl = document.getElementById('overview');
+			while(dl.hasChildNodes()){ dl.removeChild(dl.firstChild); }
 
 			var dt = document.createElement('dt');
 			dt.appendChild(document.createTextNode('Prospect Name:'));
@@ -88,8 +90,6 @@ function load(id)
 				}
 				dl.appendChild(dd);
 			}
-
-			overview.appendChild(dl);
 
 			var summary = json['summary'];
 			if(summary !== null && summary.length > 0){
@@ -162,9 +162,8 @@ function load(id)
 				li.appendChild(a);
 
 				keyword_groups.appendChild(li);
+				$('#keyword_controls').show();
 			}
-
-			$('#keyword_controls').show();
 		}
 	});
 
@@ -175,7 +174,7 @@ function load(id)
 		updatehash: false,
 
 		onerror: function(t, d){
-			document.getElementById('inventory_container').style.display = 'none';
+			$('#inventory_container').hide();
 			AlertTool.error(t, d);
 		},
 
@@ -187,13 +186,8 @@ function load(id)
 
 		onparse: function(json){
 			if(json['list'].length == 0){
-				document.getElementById('inventory_container').style.display = 'none';
-
-				AlertTool.warning(
-					'Inventory Results',	
-					'No results have been found for your query. ' +
-					'Please narrow the search parameters and try again.'
-				);
+				$('#inventory_container').hide();
+				AlertTool.warning('Inventory Results', 'No results have been found');
 			} else {
 				AlertTool.clear();
 
@@ -306,10 +300,47 @@ function load(id)
 					body.appendChild(tr);
 				}
 
-				document.getElementById('inventory_container').style.display = 'block';
+				$('#inventory_container').show();
 			}
 		} // End onparse
 	});
+});
+
+
+$(window).load(function(){
+	OpenLayers.Map.prototype.zoomToMaxExtent = function(o){
+		this.setCenter( new OpenLayers.LonLat(-16446500, 9562680) );
+		this.zoomTo(3);
+	};
+
+	map = new OpenLayers.Map('map', {
+		maxExtent: new OpenLayers.Bounds(
+			-20037508,-20037508,20037508,20037508
+		),
+		numZoomLevels: 18,
+		maxResolution: 156543.0339,
+		units: 'm',
+		projection: new OpenLayers.Projection('EPSG:3857'),
+		center: new OpenLayers.LonLat(0,0),
+		layers: [
+			new OpenLayers.Layer.XYZ('GINA Satellite',
+				'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/${x}/${y}/${z}', {
+					isBaseLayer: true, sphericalMercator: true,
+					transitionEffect: 'resize', wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.Vector('Result Layer')
+		],
+		controls: [
+			new OpenLayers.Control.PanZoom(),
+			new OpenLayers.Control.LayerSwitcher({
+				'ascending' : true, 'title': 'Click to toggle layers'
+			}),
+			new OpenLayers.Control.ScaleLine({ geodetic: true }),
+			new OpenLayers.Control.Navigation()
+		]
+	});
+	map.zoomToMaxExtent();
 
 	detail.fetch(id);
-}
+});

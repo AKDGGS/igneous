@@ -57,4 +57,15 @@
 			GROUP BY keywords, ids
 		)
 	</select>
+
+	<select id="getWKT" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+		SELECT bh.borehole_id, bh.name, (
+			SELECT ST_AsText(p.geom)
+			FROM borehole_point AS bp
+			JOIN point AS p ON p.point_id = bp.point_id
+			LIMIT 1
+		) AS wkt
+		FROM borehole AS bh
+		WHERE bh.prospect_id = 4
+	</select>
 </mapper>

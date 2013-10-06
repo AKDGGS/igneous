@@ -35,6 +35,7 @@ public class ProspectServlet extends HttpServlet
 		include("prospect.boreholes");
 		include("prospect");
 		include("summary");
+		include("wkts");
 
 		exclude("prospect.boreholes.prospect");
 		exclude("prospect.boreholes.class");
@@ -72,9 +73,14 @@ public class ProspectServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Prospect.getInventorySummary", id
 			);
 
+			List<Object> wkts = sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getWKT", id
+			);
+
 			HashMap map = new HashMap();
 			map.put("summary", summary);
 			map.put("prospect", prospect);
+			map.put("wkts", wkts);
 
 			response.setContentType("application/json");
 
