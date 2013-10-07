@@ -18,7 +18,7 @@
 
 			<div class="navbar-form">
 				<input type="text" id="q" name="q" tabindex="1">
-				<button id="search">
+				<button class="btn btn-primary" id="search">
 					<span class="glyphicon glyphicon-search"></span> Search
 				</button>
 			</div>

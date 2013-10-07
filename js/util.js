@@ -383,3 +383,44 @@ var AlertTool = {
 	warning: function(t, d){ this.create(t, d, 'warning'); },
 	error: function(t, d){ this.create(t, d, 'danger'); }
 };
+
+
+function getFeaturesAtXY(xy, layer, tolerance)
+{
+	// Generate two pairs of longitude and latitudes, one straight
+	// from the click location, the other that adds in the tolerance
+	var ll = map.getLonLatFromPixel(xy);
+	var lx = map.getLonLatFromPixel(xy.add(tolerance, tolerance));
+
+	// Figure out the actual tolerance by comparing the two
+	// sets of lon/lats.
+	var lon = Math.round(Math.abs(lx.lon - ll.lon));
+	var lat = Math.round(Math.abs(lx.lat - ll.lat));
+
+	// Generate a square around the click location using the
+	// tolerance as it's bounds. This is where we look for
+	// intersecting features
+	var point = new OpenLayers.Geometry.Point(ll.lon, ll.lat);
+	var poly = OpenLayers.Geometry.Polygon.createRegularPolygon(
+		point, (lat/2), 4, 90
+	);
+
+	// Search for matching features. This search uses two schemes,
+	// the first, which runs first, creates a bounding box for
+	// all of the geometries inside each feature and compares it
+	// to our point within a certain tolerance. This scheme is fast.
+	// The second is a precise comparison of each geoemtry
+	// inside each feature. This is slow.
+	// If both line up, add to the feature list
+	var features = [];
+	for(var i in layer.features){
+		if(layer.features[i].renderIntent !== 'aoi' &&
+			 layer.features[i].geometry.atPoint(ll, lon, lat) &&
+			 layer.features[i].geometry.intersects(poly)){
+
+			features.push(layer.features[i]);
+		}
+	}
+
+	return features;
+}
