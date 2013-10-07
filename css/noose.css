@@ -458,3 +458,23 @@ a:hover, a:focus { color:#2a6496;text-decoration:underline; }
 .datagrid-warning { border-color: #fbeed5; }
 .datagrid-warning > thead > tr > td { background-color: #fcf8e3; }
 .datagrid-warning > thead > tr:last-child > th { border-top: 1px solid #fbeed5; }
+
+/* Disables accelerated transformations, fixing the "white line" bug
+ * in many browsers. */
+img.olTileImage {
+	-webkit-transform: inherit;
+	-moz-transform: inherit;
+	-o-transform: inherit;
+	-ms-transform: inherit;
+	transform: inherit;
+	-webkit-backface-visibility: inherit;
+	-moz-backface-visibility: inherit;
+	-ms-backface-visibility: inherit;
+	backface-visibility: inherit;
+	-webkit-perspective: inherit;
+	-moz-perspective: inherit;
+	-ms-perspective: inherit;
+	perspective: inherit;
+}
+
+

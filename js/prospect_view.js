@@ -72,7 +72,7 @@ $(function(){
 
 				dd = document.createElement('dd');
 				var a = document.createElement('a');
-				a.href = '#'; // Change me to ARDF link
+				a.href = 'http://tin.er.usgs.gov/ardf/show.php?labno=' + prospect['ARDF'];
 				a.appendChild(document.createTextNode(prospect['ARDF']));
 				dd.appendChild(a);
 				dl.appendChild(dd);

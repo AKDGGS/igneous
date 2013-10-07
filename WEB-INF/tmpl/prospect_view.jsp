@@ -11,6 +11,7 @@
 			#keyword_controls > div { margin-bottom: 4px; }
 			.half-left { width: 50%; float: left; }
 			#map { width: 50%; height: 400px; background-color: black; margin: 0px 0px 0px auto !important; }
+			dd a { white-space: nowrap; }
 		</style>
 	</head>
 	<body>
