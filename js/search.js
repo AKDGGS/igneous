@@ -323,15 +323,10 @@ $(function(){
 	$('#q').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
-
 });
 
-$(window).load(function(){
-	OpenLayers.Map.prototype.zoomToMaxExtent = function(o){
-		this.setCenter( new OpenLayers.LonLat(-16446500, 9562680) );
-		this.zoomTo(3);
-	};
 
+$(window).load(function(){
 	map = new OpenLayers.Map('map', {
 		maxExtent: new OpenLayers.Bounds(
 			-20037508,-20037508,20037508,20037508
@@ -340,7 +335,10 @@ $(window).load(function(){
 		maxResolution: 156543.0339,
 		units: 'm',
 		projection: new OpenLayers.Projection('EPSG:3857'),
-		center: new OpenLayers.LonLat(0,0),
+		center: [-16446500, 9562680],
+		zoom: 3,
+		transitionEffect: null,
+		zoomMethod: null,
 		layers: [
 			new OpenLayers.Layer.XYZ('GINA Satellite',
 				'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/${x}/${y}/${z}', {
@@ -359,7 +357,6 @@ $(window).load(function(){
 			new OpenLayers.Control.Navigation()
 		]
 	});
-	map.zoomToMaxExtent();
 
 	if(restore()){ search.execute(false); }
 	search.setuponhashchange();
