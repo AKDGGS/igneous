@@ -459,6 +459,10 @@ a:hover, a:focus { color:#2a6496;text-decoration:underline; }
 .datagrid-warning > thead > tr > td { background-color: #fcf8e3; }
 .datagrid-warning > thead > tr:last-child > th { border-top: 1px solid #fbeed5; }
 
+.al-r { text-align: right !important; }
+
+
+/*** Open Layers ***/
 /* Disables accelerated transformations, fixing the "white line" bug
  * in many browsers. */
 img.olTileImage {
@@ -477,4 +481,19 @@ img.olTileImage {
 	perspective: inherit;
 }
 
-.al-r { text-align: right !important; }
+/* Smaller layer switcher */
+.olControlLayerSwitcher { width: 200px !important; top: 35px !important; font-size: 10px !important; }
+
+/* Hide some of the google branding */
+.gmnoprint { display: none !important; }
+
+/* Allow space for the lower-right google brand */
+.olControlScaleLine { bottom: 49px !important; left: 4px !important; }
+.olControlMousePosition {
+	width: 105px; bottom: 30px !important; left: 4px;
+	background-color: white;
+	background-color: rgba(255,255,255,0.5);
+}
+
+/* Attribution in the lower right */
+.olControlAttribution { bottom: 0px !important; right: 0px !important; }

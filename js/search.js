@@ -45,6 +45,99 @@ function restore()
 $(function(){
 	var wkt_parser = new OpenLayers.Format.WKT();
 
+	map = new OpenLayers.Map({
+		maxExtent: new OpenLayers.Bounds(
+			-20037508,-20037508,20037508,20037508
+		),
+		numZoomLevels: 18,
+		maxResolution: 156543.0339,
+		units: 'm',
+		projection: new OpenLayers.Projection('EPSG:3857'),
+		center: [-16446500, 9562680],
+		zoom: 3,
+		transitionEffect: null,
+		zoomMethod: null,
+		layers: [
+			new OpenLayers.Layer.Google(
+				'Google Terrain',
+				{ type: google.maps.MapTypeId.TERRAIN, numZoomLevels: 15 }
+			),
+			new OpenLayers.Layer.Google(
+				'Google Satellite',
+				{ type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22 }
+			),
+			new OpenLayers.Layer.XYZ('GINA Satellite',
+				'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/${x}/${y}/${z}', {
+					isBaseLayer: true, sphericalMercator: true,
+					wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.XYZ('GINA Topographic',
+				'http://tiles.gina.alaska.edu/tilesrv/drg/tile/${x}/${y}/${z}', {
+					isBaseLayer: true, sphericalMercator: true,
+					wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.XYZ('GINA Shaded Relief',
+				'http://tiles.gina.alaska.edu/tilesrv/shaded_relief_ned/tile/${x}/${y}/${z}', {
+					isBaseLayer: true, sphericalMercator: true,
+					wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.OSM("Street Map"),
+			new OpenLayers.Layer.XYZ('Street Map',
+				'http://tiles.gina.alaska.edu/tilesrv/osm-google-ol_google/tile/${x}/${y}/${z}', {
+					isBaseLayer: false, visibility: false,
+					sphericalMercator: true, wrapDateLine: true, opacity: 0.5,
+					attribution: '(c) <a href="http://www.openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
+				}
+			),
+			new OpenLayers.Layer.XYZ('Hydrography',
+				'http://tiles.gina.alaska.edu/tilesrv/hydro_google/tile/${x}/${y}/${z}', {
+					isBaseLayer: false, sphericalMercator: true,
+					visibility: false, wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.XYZ('Township and Range',
+				'http://tiles.gina.alaska.edu/tilesrv/pls_google/tile/${x}/${y}/${z}', {
+					isBaseLayer: false, sphericalMercator: true,
+					visibility: false, wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.XYZ('Land Ownership (Generalized)',
+				'http://tiles.gina.alaska.edu/tilesrv/glo_google/tile/${x}/${y}/${z}', {
+					isBaseLayer: false, visibility: false, opacity: 0.5,
+					sphericalMercator: true, wrapDateLine: true,
+					attribution: '<img src="http://wms.proto.gina.alaska.edu/wms/glo?LAYER=glo72011_D1&styles=&service=WMS&request=GetLegendGraphic&VERSION=1.1.1&FORMAT=image/png">'
+				}
+			),
+			new OpenLayers.Layer.XYZ('Quadrangles',
+				'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/${x}/${y}/${z}', {
+					isBaseLayer: false, visibility: false,
+					sphericalMercator: true, wrapDateLine: true
+				}
+			),
+			new OpenLayers.Layer.Vector('Result Layer', {
+				renderers: ['Canvas', 'VML'],
+				rendererOptions: { zIndexing: true },
+				isBaseLayer: false
+			})
+		],
+		controls: [
+			new OpenLayers.Control.PanZoom(),
+			new OpenLayers.Control.LayerSwitcher({
+				'ascending' : true, 'title': 'Click to toggle layers'
+			}),
+			new OpenLayers.Control.MousePosition({
+				numDigits: 3, emptyString: 'Unknown',
+				displayProjection: new OpenLayers.Projection('EPSG:4326')
+			}),
+			new OpenLayers.Control.ScaleLine({ geodetic: true }),
+			new OpenLayers.Control.Navigation(),
+			new OpenLayers.Control.Attribution({separator: ''}),
+		]
+	});
+
 	search = new Search({
 		url: 'search.json',
 
@@ -324,41 +417,13 @@ $(function(){
 	$('#q').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
+
+	if(restore()){ search.execute(false); }
+	search.setuponhashchange();
 });
 
 
 $(window).load(function(){
-	map = new OpenLayers.Map('map', {
-		maxExtent: new OpenLayers.Bounds(
-			-20037508,-20037508,20037508,20037508
-		),
-		numZoomLevels: 18,
-		maxResolution: 156543.0339,
-		units: 'm',
-		projection: new OpenLayers.Projection('EPSG:3857'),
-		center: [-16446500, 9562680],
-		zoom: 3,
-		transitionEffect: null,
-		zoomMethod: null,
-		layers: [
-			new OpenLayers.Layer.XYZ('GINA Satellite',
-				'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/${x}/${y}/${z}', {
-					isBaseLayer: true, sphericalMercator: true,
-					transitionEffect: 'resize', wrapDateLine: true
-				}
-			),
-			new OpenLayers.Layer.Vector('Result Layer')
-		],
-		controls: [
-			new OpenLayers.Control.PanZoom(),
-			new OpenLayers.Control.LayerSwitcher({
-				'ascending' : true, 'title': 'Click to toggle layers'
-			}),
-			new OpenLayers.Control.ScaleLine({ geodetic: true }),
-			new OpenLayers.Control.Navigation()
-		]
-	});
-
-	if(restore()){ search.execute(false); }
-	search.setuponhashchange();
+	map.render('map');
+	map.updateSize();
 });
