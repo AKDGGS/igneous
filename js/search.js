@@ -125,6 +125,7 @@ $(function(){
 		],
 		controls: [
 			new OpenLayers.Control.PanZoom(),
+			new OpenLayers.Control.Attribution({separator: ''}),
 			new OpenLayers.Control.LayerSwitcher({
 				'ascending' : true, 'title': 'Click to toggle layers'
 			}),
@@ -134,7 +135,6 @@ $(function(){
 			}),
 			new OpenLayers.Control.ScaleLine({ geodetic: true }),
 			new OpenLayers.Control.Navigation(),
-			new OpenLayers.Control.Attribution({separator: ''}),
 		]
 	});
 

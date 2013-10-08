@@ -77,9 +77,14 @@ public class ProspectServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Prospect.getWKT", id
 			);
 
+			List<Object> diameters = sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getCoreDiameters", id
+			);
+
 			HashMap map = new HashMap();
 			map.put("summary", summary);
 			map.put("prospect", prospect);
+			map.put("diameters", diameters);
 			map.put("wkts", wkts);
 
 			response.setContentType("application/json");

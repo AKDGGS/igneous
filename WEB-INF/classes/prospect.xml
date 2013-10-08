@@ -58,6 +58,32 @@
 		)
 	</select>
 
+
+	<select id="getCoreDiameters" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="CoreDiameterMap">
+		SELECT DISTINCT
+			cd.core_diameter_id, cd.core_diameter, cd.name,
+			un.unit_id, un.name AS unit_name, un.abbr
+		FROM borehole AS bh
+		JOIN inventory_borehole AS ib ON ib.borehole_id = bh.borehole_id
+		JOIN inventory AS iv ON iv.inventory_id = ib.inventory_id
+		JOIN core_diameter AS cd ON cd.core_diameter_id = iv.core_diameter_id
+		LEFT OUTER JOIN unit AS un ON un.unit_id = cd.unit_id
+		WHERE bh.prospect_id = #{id}
+	</select>
+
+	<resultMap id="CoreDiameterMap" type="CoreDiameter">
+		<id property="id" column="core_diameter_id" />
+		<result property="name" column="name" />
+		<result property="diameter" column="core_diameter" />
+
+		<association property="unit" javaType="Unit">
+			<id property="id" column="unit_id" />
+			<result property="name" column="unit_name" />
+			<result property="abbr" column="abbr" />
+		</association>
+	</resultMap>
+
+
 	<select id="getWKT" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
 		SELECT bh.borehole_id, bh.name, (
 			SELECT ST_AsText(p.geom)
