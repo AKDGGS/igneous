@@ -178,7 +178,7 @@ public class SearchServlet extends HttpServlet
 				case 11:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_box DESC, box " +
+						"sort_box_null DESC, sort_box " +
 						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;

@@ -86,7 +86,7 @@
 						<th>Core</th>
 						<th>Box</th>
 						<th>Set</th>
-						<th>Top /<br>Bottom</th>
+						<th class="al-r">Top /<br>Bottom</th>
 						<th>Diameter</th>
 						<th>Keywords</th>
 						<th>Collection</th>

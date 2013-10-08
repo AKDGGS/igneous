@@ -221,6 +221,7 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
+					td.className = 'al-r';
 					if(obj['intervalTop'] !== null){
 						td.appendChild(document.createTextNode(obj['intervalTop']));
 						if(obj['intervalUnit'] !== null){
