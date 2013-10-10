@@ -69,6 +69,7 @@
 		JOIN core_diameter AS cd ON cd.core_diameter_id = iv.core_diameter_id
 		LEFT OUTER JOIN unit AS un ON un.unit_id = cd.unit_id
 		WHERE bh.prospect_id = #{id}
+		ORDER BY cd.core_diameter
 	</select>
 
 	<resultMap id="CoreDiameterMap" type="CoreDiameter">

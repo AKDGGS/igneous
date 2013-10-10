@@ -35,11 +35,14 @@ public class ProspectServlet extends HttpServlet
 		include("prospect.boreholes");
 		include("prospect");
 		include("summary");
+		include("diameters");
 		include("wkts");
 
 		exclude("prospect.boreholes.prospect");
 		exclude("prospect.boreholes.class");
 		exclude("prospect.class");
+		exclude("diameters.class");
+		exclude("diameters.unit.class");
 		exclude("class");	
 	}};
 

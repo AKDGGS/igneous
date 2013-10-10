@@ -97,6 +97,28 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
+			var diameters = json['diameters'];
+			if(diameters !== null && diameters.length > 0){
+				dt = document.createElement('dt');
+				dt.appendChild(document.createTextNode('Core Diameters:'));
+				dl.appendChild(dt);
+
+				dd = document.createElement('dd');
+				for(var i in diameters){
+					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
+
+					if(diameters[i]['name'] !== null){
+						dd.appendChild(document.createTextNode(diameters[i]['name']));
+					} else {
+						dd.appendChild(document.createTextNode(diameters[i]['diameter']));
+						if(diameters[i]['unit'] !== null){
+							dd.appendChild(document.createTextNode(diameters[i]['unit']['abbr']));
+						}
+					}
+				}
+				dl.appendChild(dd);
+			}
+
 			var summary = json['summary'];
 			if(summary !== null && summary.length > 0){
 				var keywords = document.getElementById('keywords');
