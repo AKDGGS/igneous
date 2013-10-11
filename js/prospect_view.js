@@ -193,7 +193,7 @@ $(function(){
 				$('#keyword_controls').show();
 			}
 		}
-	});
+	}); // End detail
 
 
 	search = new Search({
@@ -331,78 +331,16 @@ $(function(){
 				$('#inventory_container').show();
 			}
 		} // End onparse
-	});
+	}); // End search
+
+
+	map = initMap();
 });
 
 
 $(window).load(function(){
-	var result_layer = new OpenLayers.Layer.Vector('Result Layer');
-	map = new OpenLayers.Map({
-		div: 'map',
-		maxExtent: new OpenLayers.Bounds(
-			-20037508,-20037508,20037508,20037508
-		),
-		numZoomLevels: 18,
-		maxResolution: 156543.0339,
-		units: 'm',
-		projection: new OpenLayers.Projection('EPSG:3857'),
-		center: new OpenLayers.LonLat(-16446500, 9562680),
-		zoom: 3,
-		transitionEffect: null,
-		zoomMethod: null,
-		layers: [
-			new OpenLayers.Layer.XYZ('GINA Satellite',
-				'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/${x}/${y}/${z}', {
-					isBaseLayer: true, sphericalMercator: true, wrapDateLine: true
-				}
-			),
-			result_layer
-		],
-		controls: [
-			new OpenLayers.Control.PanZoom(),
-			new OpenLayers.Control.LayerSwitcher({
-				'ascending' : true, 'title': 'Click to toggle layers'
-			}),
-			new OpenLayers.Control.ScaleLine({ geodetic: true }),
-			new OpenLayers.Control.Navigation({
-				defaultClick: function(e){
-					var features = getFeaturesAtXY(e.xy, result_layer, 20);
-
-					if(features.length > 0){
-						for(var i in map.popups){
-							map.removePopup(map.popups[i]);
-						}
-
-						var popup = new OpenLayers.Popup.FramedCloud(
-							'Detail', map.getLonLatFromPixel(e.xy),
-							new OpenLayers.Size(250, 145),
-							null, null, true, function(){ map.removePopup(this); }
-						);
-						popup.autoSize = false;
-						popup.panMapIfOutOfView  = true;
-
-						var button_prev = document.createElement('button');
-						button_prev.className = 'btn btn-info btn-small';
-						var span = document.createElement('span');
-						span.className = 'glyphicon glyphicon-arrow-left';
-						button_prev.appendChild(span);
-						button_prev.appendChild(document.createTextNode(' Previous'));
-						popup.contentDiv.appendChild(button_prev);
-
-						var button_next = document.createElement('button');
-						button_next.className = 'btn btn-info btn-small'; 
-						button_next.appendChild(document.createTextNode('Next '));
-						var span = document.createElement('span');
-						span.className = 'glyphicon glyphicon-arrow-right';
-						button_next.appendChild(span);
-						popup.contentDiv.appendChild(button_next);
-
-						map.addPopup(popup, true);
-					}
-				}
-			})
-		],
-	});
+	map.render('map');
+	map.updateSize();
 
 	detail.fetch(id);
 });

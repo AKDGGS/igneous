@@ -10,7 +10,10 @@
 			#keyword_controls { display: none; margin: 0px; }
 			#keyword_controls > div { margin-bottom: 4px; }
 			.half-left { width: 50%; float: left; }
-			#map { width: 50%; height: 400px; background-color: black; margin: 0px 0px 0px auto !important; }
+			.half-left > div { margin: 4px 8px; }
+			.half-left > dl { margin: 4px 8px; }
+			.half-right { width: 50%; margin: 0px 0px 0px auto; }
+			#map { width: 100%; height: 400px; background-color: black; margin: 0px; }
 			dd a { white-space: nowrap; }
 		</style>
 	</head>
@@ -45,7 +48,9 @@
 				</div>
 			</div>
 
-			<div id="map"></div>
+			<div class="half-right">
+				<div id="map"></div>
+			</div>
 		</div>
 
 
@@ -117,6 +122,7 @@
 
 		<script>var id = ${id};</script>
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.13.1/OpenLayers.js"></script>
 		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 		<script src="${pageContext.request.contextPath}/js/prospect_view${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
