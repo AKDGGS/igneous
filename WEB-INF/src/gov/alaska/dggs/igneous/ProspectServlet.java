@@ -36,6 +36,7 @@ public class ProspectServlet extends HttpServlet
 		include("prospect");
 		include("summary");
 		include("diameters");
+		include("quadrangles");
 		include("wkts");
 
 		exclude("prospect.boreholes.prospect");
@@ -43,6 +44,7 @@ public class ProspectServlet extends HttpServlet
 		exclude("prospect.class");
 		exclude("diameters.class");
 		exclude("diameters.unit.class");
+		exclude("quadrangles.class");
 		exclude("class");	
 	}};
 
@@ -84,10 +86,15 @@ public class ProspectServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Prospect.getCoreDiameters", id
 			);
 
+			List<Object> quadrangles = sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getQuadrangles", id
+			);
+
 			HashMap map = new HashMap();
 			map.put("summary", summary);
 			map.put("prospect", prospect);
 			map.put("diameters", diameters);
+			map.put("quadrangles", quadrangles);
 			map.put("wkts", wkts);
 
 			response.setContentType("application/json");

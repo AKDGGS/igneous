@@ -119,6 +119,21 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
+			var quadrangles = json['quadrangles'];
+			if(quadrangles !== null && quadrangles.length > 0){
+				dt = document.createElement('dt');
+				dt.appendChild(document.createTextNode('Quadrangles:'));
+				dl.appendChild(dt);
+
+				dd = document.createElement('dd');
+				for(var i in quadrangles){
+					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
+
+					dd.appendChild(document.createTextNode(quadrangles[i]['name']));
+				}
+				dl.appendChild(dd);
+			}
+
 			var summary = json['summary'];
 			if(summary !== null && summary.length > 0){
 				var keywords = document.getElementById('keywords');

@@ -15,6 +15,7 @@
 		<typeAlias alias="CoreDiameter" type="gov.alaska.dggs.igneous.model.CoreDiameter" />
 		<typeAlias alias="Well" type="gov.alaska.dggs.igneous.model.Well" />
 		<typeAlias alias="Outcrop" type="gov.alaska.dggs.igneous.model.Outcrop" />
+		<typeAlias alias="Quadrangle" type="gov.alaska.dggs.igneous.model.Quadrangle" />
 	</typeAliases>
 
   <environments default="development">
