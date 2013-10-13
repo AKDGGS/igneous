@@ -10,13 +10,13 @@ public class Prospect implements Serializable
 	private static final long serialVersionUID = 1L;
 
 
-	private long id;
+	private int id;
 	private String name, alt_names;
 	private String ardf;
 	private List<Borehole> boreholes;
 
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getAltNames(){ return alt_names; }
 	public String getARDF(){ return ardf; }

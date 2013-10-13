@@ -84,7 +84,7 @@
 		LEFT OUTER JOIN outcrop AS o
 			ON o.outcrop_id = io.outcrop_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="array" open="(" separator="," close=")">${item}</foreach>
-		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id::int)
+		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id)
 	</select>
 
 	<resultMap id="InventoryMap" type="Inventory">

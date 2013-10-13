@@ -10,7 +10,7 @@ public class Borehole implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	private int id;
 	private String name, alt_names;
 	private Prospect prospect;
 	private boolean is_onshore;
@@ -21,7 +21,7 @@ public class Borehole implements Serializable
 	private Unit elevation_unit;
 	private List<Inventory> inventory;
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getAltNames(){ return alt_names; }
 	public boolean isOnshore(){ return is_onshore; }

@@ -7,10 +7,10 @@ public class Place implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	private int id;
 	private String name, type;
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getType(){ return type; }
 }

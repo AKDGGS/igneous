@@ -7,11 +7,11 @@ public class Quadrangle implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	private int id;
 	private String name, alt_name, abbr, alt_abbr;
 	private long scale;
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getAltName(){ return alt_name; }
 	public String getAbbr(){ return abbr; }

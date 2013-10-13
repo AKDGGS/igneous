@@ -9,10 +9,10 @@ public class Outcrop implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	private int id;
 	private String name, outcrop_number;
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getOutcropNumber(){ return outcrop_number; }
 }

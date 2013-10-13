@@ -10,7 +10,7 @@ public class Well implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	private int id;
 	private String name, alt_names;
 	private String well_number, api_number;
 	private boolean is_onshore;
@@ -24,7 +24,7 @@ public class Well implements Serializable
 	private String permit_status, completion_status;
 
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getAltNames(){ return alt_names; }
 	public String getAPINumber(){ return api_number; }

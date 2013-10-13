@@ -9,7 +9,7 @@ public class Inventory implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private long id;
+	private int id;
 	private String samplenumber, barcode;
 	private String box, set, core, state;
 	private String wkt;
@@ -27,7 +27,7 @@ public class Inventory implements Serializable
 	private List<Well> wells;
 	private List<Outcrop> outcrops;
 
-	public long getID(){ return id; }
+	public int getID(){ return id; }
 	public String getBarcode(){ return barcode; }
 	public String getSampleNumber(){ return samplenumber; }
 	public String getContainerPath(){ return container_path; }
