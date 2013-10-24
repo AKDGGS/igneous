@@ -134,6 +134,21 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
+			var miningdistricts = json['miningdistricts'];
+			if(miningdistricts !== null && miningdistricts.length > 0){
+				dt = document.createElement('dt');
+				dt.appendChild(document.createTextNode('Mining Districts:'));
+				dl.appendChild(dt);
+
+				dd = document.createElement('dd');
+				for(var i in miningdistricts){
+					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
+
+					dd.appendChild(document.createTextNode(miningdistricts[i]['name']));
+				}
+				dl.appendChild(dd);
+			}
+
 			var summary = json['summary'];
 			if(summary !== null && summary.length > 0){
 				var keywords = document.getElementById('keywords');
