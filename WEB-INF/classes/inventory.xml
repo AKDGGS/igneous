@@ -17,8 +17,10 @@
 
 
 	<select id="getSearchResults" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
-		SELECT iv.inventory_id, iv.sample_number, iv.barcode,
-			iv.box_number, iv.set_number, iv.core_number, iv.state_number,
+		SELECT iv.inventory_id, iv.sample_number,
+			iv.barcode, iv.alt_barcode,
+			iv.box_number, iv.set_number,
+			iv.core_number, iv.state_number,
 			iv.interval_top, iv.interval_bottom,
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
@@ -91,6 +93,7 @@
 		<id property="id" column="inventory_id" />
 		<result property="samplenumber" column="sample_number" />
 		<result property="barcode" column="barcode" />
+		<result property="alt_barcode" column="alt_barcode" />
 		<result property="container_path" column="container_path" />
 		<result property="box" column="box_number" />
 		<result property="set" column="set_number" />

@@ -10,7 +10,7 @@ public class Inventory implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	private int id;
-	private String samplenumber, barcode;
+	private String samplenumber, barcode, alt_barcode;
 	private String box, set, core, state;
 	private String wkt;
 	private int interval_top, interval_bottom;
@@ -29,6 +29,7 @@ public class Inventory implements Serializable
 
 	public int getID(){ return id; }
 	public String getBarcode(){ return barcode; }
+	public String getAltBarcode(){ return alt_barcode; }
 	public String getSampleNumber(){ return samplenumber; }
 	public String getContainerPath(){ return container_path; }
 	public String getBox(){ return box; }

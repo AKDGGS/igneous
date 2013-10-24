@@ -288,14 +288,15 @@ $(function(){
 
 					td = document.createElement('td');
 					td.className = 'barcode';
-					if(obj['barcode'] !== null){
+					if(obj['barcode'] !== null || obj['altBarcode'] !== null){
+						var barcode = obj['barcode'] !== null ? obj['barcode'] : obj['altBarcode'];
 						var img = document.createElement('img');
 						img.height = 20;
-						img.src = 'barcode?c=' + obj['barcode'];
+						img.src = 'barcode?c=' + barcode;
 						td.appendChild(img);
 
 						var div = document.createElement('div');
-						div.appendChild(document.createTextNode(obj['barcode']));
+						div.appendChild(document.createTextNode(barcode));
 						td.appendChild(div);
 					}
 					tr.appendChild(td);
