@@ -56,8 +56,8 @@
 			) AS container_path,
 			(
 				SELECT ST_AsText(geom)
-				FROM inventory_geom AS ig
-				WHERE ig.inventory_id = iv.inventory_id
+				FROM inventory_point AS ip
+				WHERE ip.inventory_id = iv.inventory_id
 				LIMIT 1
 			) AS wkt
 		FROM inventory AS iv
