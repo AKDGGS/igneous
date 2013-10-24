@@ -272,7 +272,7 @@ $(function(){
 					for(var j in obj['keywords']){
 						var keyword = obj['keywords'][j];
 						td.appendChild(document.createTextNode(
-							(j > 0 ? ', ' : '') +
+							(j > 0 ? ' > ' : '') +
 							keyword['name']
 						));
 					}
