@@ -58,7 +58,7 @@
 			) AS container_path,
 			(
 				SELECT ST_AsText(geom)
-				FROM inventory_point AS ip
+				FROM inventory_geom_precision AS ip
 				WHERE ip.inventory_id = iv.inventory_id
 				LIMIT 1
 			) AS wkt
