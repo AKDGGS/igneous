@@ -348,6 +348,7 @@ a:hover, a:focus { color:#2a6496;text-decoration:underline; }
 
 .spacer { font-size: 125%; padding: 0px 4px; }
 
+.text-small { font-size: 90%; }
 .text-smaller { font-size: 75%; }
 .text-smallest { font-size: 50%; }
 

@@ -1,4 +1,4 @@
-var search, map;
+var search, map, popup;
 
 
 function reset()
@@ -46,6 +46,18 @@ $(function(){
 	var wkt_parser = new OpenLayers.Format.WKT();
 
 	map = initMap();
+
+	popup = new Popup({ map: map,
+		onupdate: function(content, feature){
+			var attr = feature.attributes;
+			console.log(attr['ID']);
+
+			content.appendChild(document.createTextNode(
+				attr['ID']
+			));
+		}
+	});
+	popup.attach();
 
 	search = new Search({
 		url: 'search.json',
@@ -98,7 +110,10 @@ $(function(){
 					var obj = json['list'][i];
 
 					if(obj['WKT'] !== null){
-						features.push( wkt_parser.read(obj['WKT']));
+						features.push(new OpenLayers.Feature.Vector(
+							OpenLayers.Geometry.fromWKT(obj['WKT']),
+							obj
+						));
 					}
 
 					var tr = document.createElement('tr');

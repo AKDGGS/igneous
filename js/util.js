@@ -344,6 +344,8 @@ Detail.prototype = {
 				);
 			} else {
 				var json = JSON.parse(request.responseText);
+
+				Popup.close();
 				this.onparse(json);
 			}
 		}
@@ -385,46 +387,174 @@ var AlertTool = {
 };
 
 
+var Popup = function(o){
+	this.layer = null;
+	this.map = null;
+	this.popup = null;
+	this.features = [];
+	this.record = 0;
 
-function getFeaturesAtXY(xy, layer, tolerance)
-{
-	// Generate two pairs of longitude and latitudes, one straight
-	// from the click location, the other that adds in the tolerance
-	var ll = map.getLonLatFromPixel(xy);
-	var lx = map.getLonLatFromPixel(xy.add(tolerance, tolerance));
+	for(var i in o){ this[i] = o[i]; }
 
-	// Figure out the actual tolerance by comparing the two
-	// sets of lon/lats.
-	var lon = Math.round(Math.abs(lx.lon - ll.lon));
-	var lat = Math.round(Math.abs(lx.lat - ll.lat));
+	if(this.map !== null && this.layer === null){
+		var layers = this.map.getLayersByClass('OpenLayers.Layer.Vector');
+		if(layers.length > 0){ this.layer = layers[0]; }
+	}
+};
 
-	// Generate a square around the click location using the
-	// tolerance as it's bounds. This is where we look for
-	// intersecting features
-	var point = new OpenLayers.Geometry.Point(ll.lon, ll.lat);
-	var poly = OpenLayers.Geometry.Polygon.createRegularPolygon(
-		point, (lat/2), 4, 90
-	);
+Popup.prototype = {
+	onupdate: function(content, feature){ },
 
-	// Search for matching features. This search uses two schemes,
-	// the first, which runs first, creates a bounding box for
-	// all of the geometries inside each feature and compares it
-	// to our point within a certain tolerance. This scheme is fast.
-	// The second is a precise comparison of each geoemtry
-	// inside each feature. This is slow.
-	// If both line up, add to the feature list
-	var features = [];
-	for(var i in layer.features){
-		if(layer.features[i].renderIntent !== 'aoi' &&
-			 layer.features[i].geometry.atPoint(ll, lon, lat) &&
-			 layer.features[i].geometry.intersects(poly)){
+	attach: function()
+	{
+		var controls = this.map.getControlsByClass('OpenLayers.Control.Navigation');
+		if(controls.length > 0){
+			var self = this;
+			controls[0].handlers.click.callbacks.click = function(evt){
+				self.open(evt.xy);
+			};
+		}
+	},
 
-			features.push(layer.features[i]);
+	getFeaturesAtXY: function(xy, tolerance)
+	{
+		// Generate two pairs of longitude and latitudes, one straight
+		// from the click location, the other that adds in the tolerance
+		var ll = this.map.getLonLatFromPixel(xy);
+		var lx = this.map.getLonLatFromPixel(xy.add(tolerance, tolerance));
+
+		// Figure out the actual tolerance by comparing the two
+		// sets of lon/lats.
+		var lon = Math.round(Math.abs(lx.lon - ll.lon));
+		var lat = Math.round(Math.abs(lx.lat - ll.lat));
+
+		// Generate a square around the click location using the
+		// tolerance as it's bounds. This is where we look for
+		// intersecting features
+		var point = new OpenLayers.Geometry.Point(ll.lon, ll.lat);
+		var poly = OpenLayers.Geometry.Polygon.createRegularPolygon(
+			point, (lat/2), 4, 90
+		);
+
+		// Search for matching features. This search uses two schemes,
+		// the first, which runs first, creates a bounding box for
+		// all of the geometries inside each feature and compares it
+		// to our point within a certain tolerance. This scheme is fast.
+		// The second is a precise comparison of each geoemtry
+		// inside each feature. This is slow.
+		// If both line up, add to the feature list
+		var features = [];
+		for(var i in this.layer.features){
+			if(this.layer.features[i].renderIntent !== 'aoi' &&
+				 this.layer.features[i].geometry.atPoint(ll, lon, lat) &&
+				 this.layer.features[i].geometry.intersects(poly)){
+
+				features.push(this.layer.features[i]);
+			}
+		}
+
+		return features;
+	},
+
+	open: function(xy)
+	{
+		if(this.layer !== null){
+			this.features = this.getFeaturesAtXY(xy, 100);
+
+			if(this.features.length > 0){
+				var self = this;
+
+				this.record = 0;
+				this.close();
+
+				this.popup = new OpenLayers.Popup.FramedCloud(
+					'Detail', this.map.getLonLatFromPixel(xy),
+					new OpenLayers.Size(270, 145),
+					null, null, true, null
+				);
+
+				this.popup.autoSize = false;
+				this.popup.panMapIfOutOfView  = true;
+
+				this.button_prev = document.createElement('button');
+				var span = document.createElement('span');
+				span.className = 'glyphicon glyphicon-arrow-left';
+				this.button_prev.appendChild(span);
+				this.button_prev.appendChild(document.createTextNode(' Previous'));
+				this.button_prev.onclick = function(){
+					if(self.record > 0){
+						self.record--; self.update();
+					}
+				};
+				this.popup.contentDiv.appendChild(this.button_prev);
+
+				span = document.createElement('span');
+				span.className = 'spacer';
+				span.appendChild(document.createTextNode('|'));
+				this.popup.contentDiv.appendChild(span);
+
+				this.el_status = document.createElement('span');
+				this.el_status.className = 'text-small';
+				this.popup.contentDiv.appendChild(this.el_status);
+
+				span = document.createElement('span');
+				span.className = 'spacer';
+				span.appendChild(document.createTextNode('|'));
+				this.popup.contentDiv.appendChild(span);
+
+				this.button_next = document.createElement('button');
+				this.button_next.appendChild(document.createTextNode('Next '));
+				var span = document.createElement('span');
+				span.className = 'glyphicon glyphicon-arrow-right';
+				this.button_next.appendChild(span);
+				this.button_next.onclick = function(){
+					if(self.record < (self.features.length - 1)){
+						self.record++; self.update();
+					}
+				};
+				this.popup.contentDiv.appendChild(this.button_next);
+
+				this.el_content = document.createElement('div');
+				this.el_content.className = 'container text-smaller';
+				this.popup.contentDiv.appendChild(this.el_content);
+
+				this.update();
+				this.map.addPopup(this.popup, true);
+			}
+		}
+	},
+
+	update: function()
+	{
+		this.button_prev.className = 'btn btn-primary btn-small';
+		if(this.record === 0){ this.button_prev.className += ' disabled'; }
+
+		this.button_next.className = 'btn btn-primary btn-small';
+		if(this.record === (this.features.length - 1)){
+			this.button_next.className += ' disabled';
+		}
+
+		if(this.el_status.hasChildNodes()){
+			this.el_status.removeChild(this.el_status.firstChild);
+		}
+		this.el_status.appendChild(document.createTextNode(
+			'Record ' + (this.record + 1) + ' of ' + this.features.length
+		));
+
+		while(this.el_content.hasChildNodes()){
+			this.el_content.removeChild(this.el_content.firstChild);
+		}
+
+		this.onupdate(this.el_content, this.features[this.record]);
+	},
+
+	close: function()
+	{
+		for(var i in this.map.popups){
+			this.map.removePopup(this.map.popups[i]);
 		}
 	}
-
-	return features;
-}
+};
 
 
 function initMap()
@@ -518,45 +648,7 @@ function initMap()
 				displayProjection: new OpenLayers.Projection('EPSG:4326')
 			}),
 			new OpenLayers.Control.ScaleLine({ geodetic: true }),
-			new OpenLayers.Control.Navigation({
-				defaultClick: function(e){
-					var layer = e.object.getLayersByName('Result Layer')[0];
-					var features = getFeaturesAtXY(e.xy, layer, 20);
-
-					if(features.length > 0){
-						for(var i in e.object.popups){
-							e.object.removePopup(map.popups[i]);
-						}
-
-						var popup = new OpenLayers.Popup.FramedCloud(
-							'Detail', e.object.getLonLatFromPixel(e.xy),
-							new OpenLayers.Size(250, 145),
-							null, null, true,
-							function(){ e.object.removePopup(this); }
-						);
-						popup.autoSize = false;
-						popup.panMapIfOutOfView  = true;
-
-						var button_prev = document.createElement('button');
-						button_prev.className = 'btn btn-info btn-small';
-						var span = document.createElement('span');
-						span.className = 'glyphicon glyphicon-arrow-left';
-						button_prev.appendChild(span);
-						button_prev.appendChild(document.createTextNode(' Previous'));
-						popup.contentDiv.appendChild(button_prev);
-
-						var button_next = document.createElement('button');
-						button_next.className = 'btn btn-info btn-small'; 
-						button_next.appendChild(document.createTextNode('Next '));
-						var span = document.createElement('span');
-						span.className = 'glyphicon glyphicon-arrow-right';
-						button_next.appendChild(span);
-						popup.contentDiv.appendChild(button_next);
-
-						map.addPopup(popup, true);
-					}
-				}
-			})
+			new OpenLayers.Control.Navigation()
 		]
 	});
 }
