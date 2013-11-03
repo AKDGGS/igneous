@@ -11,8 +11,11 @@ function reset()
 
 function clearmap()
 {
+	popup.close();
+
 	var layer = map.getLayersByName('Result Layer')[0];
 	layer.destroyFeatures();
+
 	return layer;
 }
 

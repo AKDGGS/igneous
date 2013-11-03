@@ -344,8 +344,6 @@ Detail.prototype = {
 				);
 			} else {
 				var json = JSON.parse(request.responseText);
-
-				Popup.close();
 				this.onparse(json);
 			}
 		}

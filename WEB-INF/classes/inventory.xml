@@ -91,7 +91,7 @@
 
 	<resultMap id="InventoryMap" type="Inventory">
 		<id property="id" column="inventory_id" />
-		<result property="samplenumber" column="sample_number" />
+		<result property="sample_number" column="sample_number" />
 		<result property="barcode" column="barcode" />
 		<result property="alt_barcode" column="alt_barcode" />
 		<result property="container_path" column="container_path" />
