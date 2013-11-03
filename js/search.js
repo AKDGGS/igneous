@@ -50,11 +50,135 @@ $(function(){
 	popup = new Popup({ map: map,
 		onupdate: function(content, feature){
 			var attr = feature.attributes;
-			console.log(attr['ID']);
 
-			content.appendChild(document.createTextNode(
-				attr['ID']
-			));
+			var a = document.createElement('a');
+			a.href = 'detail/' + attr['ID'];
+			a.appendChild(document.createTextNode(attr['ID']));
+			content.appendChild(a);
+
+			content.appendChild(document.createTextNode(' - '));
+
+			content.appendChild(document.createTextNode(attr['containerPath']));
+
+			if(attr['intervalTop'] !== null || attr['intervalBottom'] !== null){
+				var div = document.createElement('div');
+				if(attr['intervalTop'] !== null){
+					div.appendChild(document.createTextNode(attr['intervalTop']));
+					if(attr['intervalUnit'] !== null){
+						div.appendChild(document.createTextNode(
+							' ' + attr['intervalUnit']['abbr']
+						));
+					}
+				}
+
+				if(attr['intervalBottom'] !== null){
+					div.appendChild(document.createTextNode(' - '));
+				}
+
+				if(attr['intervalBottom'] !== null){
+					div.appendChild(document.createTextNode(
+						attr['intervalBottom']
+					));
+					if(attr['intervalUnit'] !== null){
+						div.appendChild(document.createTextNode(
+							' ' + attr['intervalUnit']['abbr']
+						));
+					}
+				}
+				content.appendChild(div);
+			}
+
+			// Begin related
+			// Boreholes
+			for(var i in attr['boreholes']){
+				var borehole = attr['boreholes'][i];
+
+				var div = document.createElement('div');
+				if(borehole['prospect'] !== null){
+					div.appendChild(document.createTextNode(
+						'Prospect: '
+					));
+					var prospect = borehole['prospect'];
+
+					a = document.createElement('a');
+					a.href = 'prospect/' + prospect['ID'];
+					a.appendChild(document.createTextNode(
+						prospect['name']
+					));
+					if(prospect['altNames'] !== null){
+						a.appendChild(document.createTextNode(
+							' (' + prospect['altNames'] + ')'
+						));
+					}
+					div.appendChild(a);
+
+					div.appendChild(document.createElement('br'));
+				}
+
+				div.appendChild(document.createTextNode('Borehole: '));
+				a = document.createElement('a');
+				a.href = 'borehole/' + borehole['ID'];
+				a.appendChild(document.createTextNode(borehole['name']));
+				div.appendChild(a);
+
+				content.appendChild(div);
+			}
+
+			// Wells
+			for(var i in attr['wells']){
+				var well = attr['wells'][i];
+
+				var div = document.createElement('div');
+				div.appendChild(document.createTextNode('Well: '));
+				a = document.createElement('a');
+				a.href = 'well/' + well['ID'];
+				a.appendChild(document.createTextNode(well['name']));
+				if(well['wellNumber'] !== null){
+					a.appendChild(document.createTextNode(
+						' - ' + well['wellNumber']
+					));
+				}
+				div.appendChild(a);
+
+				if(well['APINumber'] !== null){
+					var div2 = document.createElement('div');
+					div2.appendChild(document.createTextNode('API: '));
+					div2.appendChild(document.createTextNode(well['APINumber']));
+					div.appendChild(div2);
+				}
+
+				content.appendChild(div);
+			}
+
+			// Outcrops
+			for(var i in attr['outcrops']){
+				var outcrop = attr['outcrops'][i];
+
+				var div = document.createElement('div');
+				div.appendChild(document.createTextNode('Outcrop: '));
+				a = document.createElement('a');
+				a.href = 'outcrop/' + outcrop['ID'];
+				a.appendChild(document.createTextNode(outcrop['name']));
+				if(outcrop['outcropNumber'] !== null){
+					a.appendChild(document.createTextNode(
+						' - ' + outcrop['outcropNumber']
+					));
+				}
+				div.appendChild(a);
+
+				content.appendChild(div);
+			}
+			// End Related
+
+
+			var div = document.createElement('div');
+			for(var i in attr['keywords']){
+				var keyword = attr['keywords'][i];
+				div.appendChild(document.createTextNode(
+					(i > 0 ? ', ' : '') + keyword['name']
+				));
+			}
+			content.appendChild(div);
 		}
 	});
 	popup.attach();
