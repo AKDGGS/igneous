@@ -162,4 +162,11 @@
 			<result property="outcrop_number" column="outcrop_number" />
 		</collection>
 	</resultMap>
+
+
+	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT DISTINCT inventory_id FROM inventory_geom_precision
+		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+		LIMIT ${limit}
+	</select>
 </mapper>

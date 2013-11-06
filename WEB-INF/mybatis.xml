@@ -19,18 +19,19 @@
 		<typeAlias alias="MiningDistrict" type="gov.alaska.dggs.igneous.model.MiningDistrict" />
 	</typeAliases>
 
-  <environments default="development">
-    <environment id="development">
-      <transactionManager type="JDBC" />
-      <dataSource type="JNDI">
-        <property name="data_source" value="java:comp/env/jdbc/igneous"/>
-      </dataSource>
-    </environment>
-  </environments>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="JNDI">
+				<property name="data_source" value="java:comp/env/jdbc/igneous"/>
+			</dataSource>
+		</environment>
+	</environments>
 
 	<mappers>
 		<mapper resource="inventory.xml" />
 		<mapper resource="borehole.xml" />
 		<mapper resource="prospect.xml" />
+		<mapper resource="well.xml" />
 	</mappers>
 </configuration>

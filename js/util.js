@@ -169,8 +169,7 @@ Search.prototype = {
 
 	execute: function(updatehash)
 	{
-		updatehash = typeof updatehash !== 'undefined' ?
-			updatehash : this.updatehash;
+		if(typeof(updatehash) === 'undefined'){ updatehash = this.updatehash; }
 
 		var self = this;
 		var params = {};
@@ -630,9 +629,28 @@ function initMap()
 				}
 			),
 			new OpenLayers.Layer.Vector('Result Layer', {
-				renderers: ['Canvas', 'VML'],
-				rendererOptions: { zIndexing: true },
-				isBaseLayer: false
+				isBaseLayer: false,
+				styleMap: new OpenLayers.StyleMap({
+					'default': new OpenLayers.Style({
+						fillColor: "#2E70FF",
+						fillOpacity: 0.08,
+						strokeColor: "#2E70FF",
+						strokeWidth: 2,
+						strokeOpacity: 0.8,
+						pointRadius: 6,
+						cursor: 'pointer',
+						graphicZIndex: 100
+					}),
+					'aoi': new OpenLayers.Style({
+						fillColor: "#FF0000",
+						fillOpacity: 0,
+						strokeColor: "#FF0000",
+						strokeWidth: 2,
+						strokeOpacity: 1,
+						cursor: 'auto',
+						graphicZIndex: 5000
+					})
+				})
 			})
 		],
 		controls: [

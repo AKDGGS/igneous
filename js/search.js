@@ -14,8 +14,14 @@ function clearmap()
 	popup.close();
 
 	var layer = map.getLayersByName('Result Layer')[0];
-	layer.destroyFeatures();
-
+	var queue = [];
+	for(var i in layer.features){
+		if(layer.features[i].id !== 'AOI_Vector'){
+			queue.push(layer.features[i]);
+		}
+	}
+	layer.destroyFeatures(queue);
+	layer.refresh();
 	return layer;
 }
 
@@ -35,6 +41,17 @@ function restore()
 
 			if(val.length > 0){
 				switch(key){
+					case 'wkt':
+						var layer = map.getLayersByName('Result Layer')[0];
+
+						var feature = new OpenLayers.Feature.Vector(
+							OpenLayers.Geometry.fromWKT(val)
+						);
+						feature.id = 'AOI_Vector';
+						feature.renderIntent = 'aoi';
+						layer.addFeatures([feature]);
+					break;
+
 					default: $('#'+key).val(val);
 				}
 			}
@@ -46,9 +63,43 @@ function restore()
 
 
 $(function(){
-	var wkt_parser = new OpenLayers.Format.WKT();
-
 	map = initMap();
+
+	var result_layer = map.getLayersByName('Result Layer')[0];
+
+  var control_panel = new OpenLayers.Control.Panel();
+	control_panel.addControls([
+		new OpenLayers.Control.DrawFeature(
+			result_layer, OpenLayers.Handler.RegularPolygon, {
+				id: 'draw_control',
+				title: 'Area of Interest Search: Click and drag the mouse to define your area of interest.',
+				type: OpenLayers.Control.TYPE_TOGGLE,
+				handlerOptions: { irregular: true },
+				eventListeners: {
+					activate: function(e){
+						// Turn off select control if active
+						for(var i in e.object.map.popups){
+							e.object.map.removePopup(e.object.map.popups[i]);
+						}
+
+						var el = e.object.layer.getFeatureById('AOI_Vector');
+						if(el !== null){ e.object.layer.destroyFeatures(el); }
+					},
+					featureadded: function(e){
+						e.object.deactivate();
+
+						e.feature.id = 'AOI_Vector';
+						e.feature.renderIntent = 'aoi';
+						e.feature.layer.drawFeature(e.feature);
+
+						search.execute(true);
+          }
+        }
+      }
+    )
+	]);
+
+	map.addControl(control_panel);
 
 	popup = new Popup({ map: map,
 		onupdate: function(content, feature){
@@ -201,9 +252,20 @@ $(function(){
 		},
 
 		onparam: function(o){
-			var q = document.getElementById('q').value;
+			var searchok = false;
 
-			if(q.length === 0){
+			var q = document.getElementById('q').value;
+			if(q.length !== 0){ o['q'] = q; searchok = false; }
+
+			var layer = map.getLayersByName('Result Layer')[0];
+			var aoi = layer.getFeatureById('AOI_Vector');
+			if(aoi !== null){
+				var wkt = new OpenLayers.Format.WKT();
+				o['wkt'] = wkt.write(aoi).replace(/\.\d+/g, '');
+				searchok = true;
+			}
+
+			if(!searchok){
 				clearmap();
 				document.getElementById('inventory_container').style.display = 'none';
 
@@ -211,7 +273,6 @@ $(function(){
 				return false;
 			}
 			
-			o['q'] = q;
 			return true;
 		},
 

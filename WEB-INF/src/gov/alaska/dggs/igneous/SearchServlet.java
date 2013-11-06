@@ -14,6 +14,7 @@ import java.util.zip.GZIPOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import flexjson.JSONSerializer;
 
@@ -65,6 +66,7 @@ public class SearchServlet extends HttpServlet
 
 		int max_matches = Integer.parseInt(context.getInitParameter("sphinx_max_matches"));
 		int sphinx_port = Integer.parseInt(context.getInitParameter("sphinx_port"));
+		int sphinx_max_filter_values = Integer.parseInt(context.getInitParameter("sphinx_max_filter_values"));
 		String sphinx_host = (String)context.getInitParameter("sphinx_host");
 
 		// Aggressively disable cache
@@ -206,49 +208,76 @@ public class SearchServlet extends HttpServlet
 				}
 			}
 
-			String borehole = request.getParameter("borehole_id");
-			if(borehole != null){
-				long borehole_id = Long.parseLong(borehole);
-				sphinx.SetFilter("borehole_id", borehole_id, false);
-			}
-
 			String prospect = request.getParameter("prospect_id");
 			if(prospect != null){
 				long prospect_id = Long.parseLong(prospect);
 				sphinx.SetFilter("prospect_id", prospect_id, false);
 			}
 
-			StringBuilder query = new StringBuilder();
-			if(request.getParameter("q") != null){
-				query.append(request.getParameter("q").trim());
-			}
-
-			sphinx.SetSelect("id");
-
-			SphinxResult sr = sphinx.Query(query.toString(), "inventory");
-			if(sr == null){ throw new Exception(sphinx.GetLastError()); }
-
-			long[] ids = new long[sr.matches.length];
-			for(int i = 0; i < sr.matches.length; i++){
-				ids[i] = sr.matches[i].docId;
-			}
-
 			HashMap json = new HashMap();
-			json.put("size", sr.total);
-			json.put("found", sr.totalFound);
 
-			if(ids.length > 0){
-				SqlSession sess = IgneousFactory.openSession();
-				try {
+			SqlSession sess = IgneousFactory.openSession();
+			try {
+				String wkt = request.getParameter("wkt");
+				if(wkt != null){
+					HashMap params = new HashMap();
+					params.put("wkt", wkt);
+					params.put("limit", sphinx_max_filter_values + 1);
+
+					List<Integer> ids = sess.selectList(
+						"gov.alaska.dggs.igneous.Inventory.getIDByWKT", params
+					);
+
+					if(ids.size() > sphinx_max_filter_values){
+						throw new Exception(
+							"Spatial search area too large: Too many results. " +
+							"Please try again using a smaller search area."
+						);
+					}
+
+					int inventory_ids[] = new int[ids.size()];
+					Iterator<Integer> itr = ids.iterator();
+					for(int i = 0; i < inventory_ids.length; i++){
+						inventory_ids[i] = itr.next().intValue();
+					}
+
+					sphinx.SetFilter("id", inventory_ids, false);
+				}
+
+				String borehole = request.getParameter("borehole_id");
+				if(borehole != null){
+					long borehole_id = Long.parseLong(borehole);
+					sphinx.SetFilter("borehole_id", borehole_id, false);
+				}
+
+				StringBuilder query = new StringBuilder();
+				if(request.getParameter("q") != null){
+					query.append(request.getParameter("q").trim());
+				}
+
+				sphinx.SetSelect("id");
+
+				SphinxResult sr = sphinx.Query(query.toString(), "inventory");
+				if(sr == null){ throw new Exception(sphinx.GetLastError()); }
+
+				long[] ids = new long[sr.matches.length];
+				for(int i = 0; i < sr.matches.length; i++){
+					ids[i] = sr.matches[i].docId;
+				}
+
+				json.put("size", sr.total);
+				json.put("found", sr.totalFound);
+
+				if(ids.length > 0){
 					List<Inventory> items = sess.selectList(
 						"gov.alaska.dggs.igneous.Inventory.getSearchResults", ids
 					);
 					json.put("list", items);
-				} finally {
-					sess.close();	
+				} else {
+					json.put("list", new ArrayList(0));
 				}
-			} else {
-				json.put("list", new ArrayList(0));
+			} finally {
+				sess.close();
 			}
 
 			response.setContentType("application/json");

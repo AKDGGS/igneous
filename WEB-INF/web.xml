@@ -37,6 +37,15 @@
 		<param-value>1000</param-value>
 	</context-param>
 
+	<context-param>
+		<description>
+			Sphinx max_filter_values - should match the value 
+			in sphinx.conf
+		</description>
+		<param-name>sphinx_max_filter_values</param-name>
+		<param-value>204800</param-value>
+	</context-param>
+
 	<servlet>
 		<servlet-name>SearchPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchPageServlet</servlet-class>
