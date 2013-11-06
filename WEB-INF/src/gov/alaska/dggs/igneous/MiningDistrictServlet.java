@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
 
 import java.util.zip.GZIPOutputStream;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.MiningDistrict;
+import gov.alaska.dggs.ETagUtil;
 
 
 public class MiningDistrictServlet extends HttpServlet
@@ -60,25 +62,40 @@ public class MiningDistrictServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.MiningDistrict.getList"
 			);
 
-			response.setContentType("application/json");
-
+			ByteArrayOutputStream baos = null;
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
-			try { 
+			try {
+				baos = new ByteArrayOutputStream(102400);
+
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
 				if(encoding != null && encoding.contains("gzip")){
 					response.setHeader("Content-Encoding", "gzip");
-					gos = new GZIPOutputStream(response.getOutputStream(), 8196);
+					gos = new GZIPOutputStream(baos, 8196);
 					out = new OutputStreamWriter(gos, "utf-8");
 				} else {
-					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+					out = new OutputStreamWriter(baos, "utf-8");
 				}
-
+			
 				serializer.serialize(districts, out);
+				byte output[] = baos.toByteArray();
+
+				String tag = request.getHeader("If-None-Match");
+				String etag = ETagUtil.tag(output);
+
+				if(etag.equals(tag)){
+					response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+				} else {
+					response.setContentType("application/json");
+					response.setContentLength(baos.size());
+					response.setHeader("ETag", etag);
+					response.getOutputStream().write(output);
+				}
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }
+				if(baos != null){ baos.close(); }
 			}
 		} catch(Exception ex){
 			response.setStatus(500);

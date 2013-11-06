@@ -6,7 +6,7 @@
 <mapper namespace="gov.alaska.dggs.igneous.MiningDistrict">
 	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="MiningDistrictMap">
 		SELECT mining_district_id, name,
-			region, ST_AsText(geom) AS wkt
+			region, ST_AsText(ST_Simplify(geom, 5000)) AS wkt
 		FROM mining_district
 	</select>
 
