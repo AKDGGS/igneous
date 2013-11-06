@@ -33,5 +33,6 @@
 		<mapper resource="borehole.xml" />
 		<mapper resource="prospect.xml" />
 		<mapper resource="well.xml" />
+		<mapper resource="mining_district.xml" />
 	</mappers>
 </configuration>

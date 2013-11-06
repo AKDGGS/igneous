@@ -499,27 +499,34 @@ img.olTileImage {
 /* Default control panel position */
 .olControlPanel { position: absolute; top: 5px; right: 30px; }
 
-
 /* Attribution in the lower right */
 .olControlAttribution { bottom: 0px !important; right: 0px !important; }
 
-/* DrawFeature control */
-.olControlDrawFeatureItemInactive, .olControlDrawFeatureItemActive {
+.olControlDrawFeatureItemInactive, .olControlDrawFeatureItemActive,
+.olControlSpatialItemActive, .olControlSpatialItemInactive {
 	width: 24px; height: 24px;
 	float: right; margin: 0px 4px;
 	border-radius: 3px;
 	cursor: pointer;
 }
+
 .olControlDrawFeatureItemInactive, .olControlDrawFeatureItemActive {
 	background: url('../img/shape_square_red.png') no-repeat center center;
 }
-.olControlDrawFeatureItemActive {
+.olControlSpatialItemInactive, .olControlSpatialItemActive {
+	background: url('../img/find.png') no-repeat center center;
+}
+
+.olControlDrawFeatureItemActive, .olControlSpatialItemActive {
 	border: 1px solid red;
 	background-color: yellow;
 	background-color: rgba(255, 255, 0, 0.75);
 }
-.olControlDrawFeatureItemInactive {
+
+.olControlDrawFeatureItemInactive, .olControlSpatialItemInactive {
 	border: 1px solid white;
 	background-color: white;
 	background-color: rgba(255, 255, 255, 0.75);
 }
+
+

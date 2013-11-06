@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.MiningDistrict">
+	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="MiningDistrictMap">
+		SELECT mining_district_id, name,
+			region, ST_AsText(geom) AS wkt
+		FROM mining_district
+	</select>
+
+	<resultMap id="MiningDistrictMap" type="MiningDistrict">
+		<id property="id" column="mining_district_id" />
+
+		<result property="name" column="name" />
+		<result property="region" column="region" />
+		<result property="wkt" column="wkt" />
+	</resultMap>
+</mapper>

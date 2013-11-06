@@ -6,8 +6,12 @@
 		<style>
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
+			.tbl_container { padding: 0px; margin: 0px; width: 100%; border-collapse: collapse; }
+			.tbl_container td, .tbl_container tr { padding: 0px; margin: 0px; }
+
 			#inventory_container { display: none; }
 			#map { width: 100%; height: 450px; }
+			#spatial { width: 250px; display: none; padding: 4px 8px; vertical-align: top; }
 		</style>
 	</head>
 	<body>
@@ -25,7 +29,14 @@
 		</div>
 
 		<div class="container">
-			<div id="map"></div>
+			<table class="tbl_container">
+				<tr>
+					<td>
+						<div id="map"></div>
+					</td>
+					<td id="spatial">Content goes here.</td>
+				</tr>
+			</table>
 		</div>
 
 		<div id="inventory_container" class="container">

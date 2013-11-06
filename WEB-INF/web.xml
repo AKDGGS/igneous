@@ -116,6 +116,16 @@
 		<url-pattern>/barcode</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>MiningDistrictServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.MiningDistrictServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>MiningDistrictServlet</servlet-name>
+		<url-pattern>/mining_districts.json</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

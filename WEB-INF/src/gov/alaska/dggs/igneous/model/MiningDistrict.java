@@ -9,8 +9,10 @@ public class MiningDistrict implements Serializable
 
 	private int id;
 	private String name, region;
+	private String wkt;
 
 	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getRegion(){ return region; }
+	public String getWKT(){ return wkt; }
 }

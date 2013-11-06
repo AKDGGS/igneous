@@ -69,6 +69,20 @@ $(function(){
 
   var control_panel = new OpenLayers.Control.Panel();
 	control_panel.addControls([
+		new OpenLayers.Control({
+			type: OpenLayers.Control.TYPE_TOGGLE,
+			autoActivate: false,
+			displayClass: 'olControlSpatial',
+			title: 'Display Spatial Search Options',
+			eventListeners: {
+				activate: function(){
+					document.getElementById('spatial').style.display = 'table-cell';
+				},
+				deactivate: function(){
+					document.getElementById('spatial').style.display = 'none';
+				}
+			}
+		}),
 		new OpenLayers.Control.DrawFeature(
 			result_layer, OpenLayers.Handler.RegularPolygon, {
 				id: 'draw_control',
@@ -224,7 +238,6 @@ $(function(){
 			}
 			// End Related
 
-
 			var div = document.createElement('div');
 			for(var i in attr['keywords']){
 				var keyword = attr['keywords'][i];
@@ -255,7 +268,7 @@ $(function(){
 			var searchok = false;
 
 			var q = document.getElementById('q').value;
-			if(q.length !== 0){ o['q'] = q; searchok = false; }
+			if(q.length !== 0){ o['q'] = q; searchok = true; }
 
 			var layer = map.getLayersByName('Result Layer')[0];
 			var aoi = layer.getFeatureById('AOI_Vector');
