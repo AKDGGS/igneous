@@ -123,7 +123,7 @@
 
 	<servlet-mapping>
 		<servlet-name>MiningDistrictServlet</servlet-name>
-		<url-pattern>/mining_districts.json</url-pattern>
+		<url-pattern>/mining_district.json</url-pattern>
 	</servlet-mapping>
 
 	<listener>
