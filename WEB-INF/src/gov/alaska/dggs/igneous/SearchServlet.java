@@ -233,15 +233,17 @@ public class SearchServlet extends HttpServlet
 							"Spatial search area too large: Too many results. " +
 							"Please try again using a smaller search area."
 						);
-					}
+					} else if(ids == null || ids.size() == 0){
+						sphinx.SetFilter("id", 0, false);
+					} else {
+						int inventory_ids[] = new int[ids.size()];
+						Iterator<Integer> itr = ids.iterator();
+						for(int i = 0; i < inventory_ids.length; i++){
+							inventory_ids[i] = itr.next().intValue();
+						}
 
-					int inventory_ids[] = new int[ids.size()];
-					Iterator<Integer> itr = ids.iterator();
-					for(int i = 0; i < inventory_ids.length; i++){
-						inventory_ids[i] = itr.next().intValue();
+						sphinx.SetFilter("id", inventory_ids, false);
 					}
-
-					sphinx.SetFilter("id", inventory_ids, false);
 				}
 
 				String borehole = request.getParameter("borehole_id");

@@ -456,7 +456,7 @@ Popup.prototype = {
 	open: function(xy)
 	{
 		if(this.layer !== null){
-			this.features = this.getFeaturesAtXY(xy, 100);
+			this.features = this.getFeaturesAtXY(xy, 20);
 
 			if(this.features.length > 0){
 				var self = this;
