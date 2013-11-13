@@ -34,5 +34,6 @@
 		<mapper resource="prospect.xml" />
 		<mapper resource="well.xml" />
 		<mapper resource="mining_district.xml" />
+		<mapper resource="outcrop.xml" />
 	</mappers>
 </configuration>

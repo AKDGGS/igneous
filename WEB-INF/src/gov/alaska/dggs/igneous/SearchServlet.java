@@ -66,7 +66,6 @@ public class SearchServlet extends HttpServlet
 
 		int max_matches = Integer.parseInt(context.getInitParameter("sphinx_max_matches"));
 		int sphinx_port = Integer.parseInt(context.getInitParameter("sphinx_port"));
-		int sphinx_max_filter_values = Integer.parseInt(context.getInitParameter("sphinx_max_filter_values"));
 		String sphinx_host = (String)context.getInitParameter("sphinx_host");
 
 		// Aggressively disable cache
@@ -76,7 +75,8 @@ public class SearchServlet extends HttpServlet
 
 		SphinxClient sphinx = new SphinxClient(sphinx_host, sphinx_port);
 		try {
-			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED);
+			sphinx.SetConnectTimeout(10000); // Ten second timeout
+			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED2);
 
 			int start = 0;
 			String s_start = request.getParameter("start");
@@ -218,31 +218,38 @@ public class SearchServlet extends HttpServlet
 
 			SqlSession sess = IgneousFactory.openSession();
 			try {
+				StringBuilder select = new StringBuilder("id");
+
 				String wkt = request.getParameter("wkt");
 				if(wkt != null){
-					HashMap params = new HashMap();
-					params.put("wkt", wkt);
-					params.put("limit", sphinx_max_filter_values + 1);
-
-					List<Integer> ids = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getIDByWKT", params
+					List<HashMap<String, Integer>> ids = sess.selectList(
+						"gov.alaska.dggs.igneous.Inventory.getMultiIDByWKT", wkt
 					);
 
-					if(ids.size() > sphinx_max_filter_values){
-						throw new Exception(
-							"Spatial search area too large: Too many results. " +
-							"Please try again using a smaller search area."
-						);
-					} else if(ids == null || ids.size() == 0){
-						sphinx.SetFilter("id", 0, false);
-					} else {
-						int inventory_ids[] = new int[ids.size()];
-						Iterator<Integer> itr = ids.iterator();
-						for(int i = 0; i < inventory_ids.length; i++){
-							inventory_ids[i] = itr.next().intValue();
-						}
+					if(ids != null && ids.size() > 0){
+						int last = 0;
+						Iterator<HashMap<String, Integer>> itr = ids.iterator();
+						for(int i = 0; itr.hasNext(); i++){
+							HashMap<String, Integer> row = itr.next();
+								
+							int type = row.get("type");
+							if(type != last){
+								last = type;
+								select.append(i == 0 ? "," : ")|");
 
-						sphinx.SetFilter("id", inventory_ids, false);
+								switch(type){
+									case 1: select.append("IN(borehole_id"); break;
+									case 2: select.append("IN(well_id"); break;
+									case 3: select.append("IN(outcrop_id"); break;
+								}
+							}
+							select.append(",");
+							select.append(String.valueOf(row.get("id")));
+						}
+						select.append(") AS spatial_criteria");
+						sphinx.SetFilter("spatial_criteria", 1, false);
+					} else {
+						sphinx.SetFilter("id", 0, false);
 					}
 				}
 
@@ -257,7 +264,7 @@ public class SearchServlet extends HttpServlet
 					query.append(request.getParameter("q").trim());
 				}
 
-				sphinx.SetSelect("id");
+				sphinx.SetSelect(select.toString());
 
 				SphinxResult sr = sphinx.Query(query.toString(), "inventory");
 				if(sr == null){ throw new Exception(sphinx.GetLastError()); }

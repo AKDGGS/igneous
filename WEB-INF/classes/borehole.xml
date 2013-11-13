@@ -106,4 +106,9 @@
 			GROUP BY keywords, ids
 		)
 	</select>
+
+	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT DISTINCT borehole_id FROM borehole_geom
+		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+	</select>
 </mapper>
