@@ -22,7 +22,7 @@
 	<context-param>
 		<description>Sphinx host/IP</description>
 		<param-name>sphinx_host</param-name>
-		<param-value>localhost</param-value>
+		<param-value>127.0.0.1</param-value>
 	</context-param>
 
 	<context-param>
@@ -35,15 +35,6 @@
 		<description>Sphinx max matches</description>
 		<param-name>sphinx_max_matches</param-name>
 		<param-value>1000</param-value>
-	</context-param>
-
-	<context-param>
-		<description>
-			Sphinx max_filter_values - should match the value 
-			in sphinx.conf
-		</description>
-		<param-name>sphinx_max_filter_values</param-name>
-		<param-value>204800</param-value>
 	</context-param>
 
 	<servlet>

@@ -66,7 +66,6 @@ public class SearchServlet extends HttpServlet
 
 		int max_matches = Integer.parseInt(context.getInitParameter("sphinx_max_matches"));
 		int sphinx_port = Integer.parseInt(context.getInitParameter("sphinx_port"));
-		int sphinx_max_filter_values = Integer.parseInt(context.getInitParameter("sphinx_max_filter_values"));
 		String sphinx_host = (String)context.getInitParameter("sphinx_host");
 
 		// Aggressively disable cache
@@ -76,7 +75,7 @@ public class SearchServlet extends HttpServlet
 
 		SphinxClient sphinx = new SphinxClient(sphinx_host, sphinx_port);
 		try {
-			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED);
+			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED2);
 
 			int start = 0;
 			String s_start = request.getParameter("start");
@@ -218,31 +217,66 @@ public class SearchServlet extends HttpServlet
 
 			SqlSession sess = IgneousFactory.openSession();
 			try {
+				StringBuilder select = new StringBuilder("id");
+
 				String wkt = request.getParameter("wkt");
 				if(wkt != null){
-					HashMap params = new HashMap();
-					params.put("wkt", wkt);
-					params.put("limit", sphinx_max_filter_values + 1);
+					int count = 0;
 
 					List<Integer> ids = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getIDByWKT", params
+						"gov.alaska.dggs.igneous.Well.getIDByWKT", wkt
 					);
+					if(ids != null && ids.size() > 0){
+						if(count == 0){ select.append(",("); }
+						else { select.append("|"); }
 
-					if(ids.size() > sphinx_max_filter_values){
-						throw new Exception(
-							"Spatial search area too large: Too many results. " +
-							"Please try again using a smaller search area."
-						);
-					} else if(ids == null || ids.size() == 0){
+						Iterator<Integer> itr = ids.iterator();
+						for(int i = 0; itr.hasNext(); i++){
+							select.append(i == 0 ? "IN(well_id," : ",");
+							select.append(String.valueOf(itr.next()));
+						}
+						select.append(")");
+						count++;
+					}
+
+					ids = sess.selectList(
+						"gov.alaska.dggs.igneous.Borehole.getIDByWKT", wkt
+					);
+					if(ids != null && ids.size() > 0){
+						if(count == 0){ select.append(",("); }
+						else { select.append("|"); }
+
+						Iterator<Integer> itr = ids.iterator();
+						for(int i = 0; itr.hasNext(); i++){
+							select.append(i == 0 ? "IN(borehole_id," : ",");
+							select.append(String.valueOf(itr.next()));
+						}
+						select.append(")");
+						count++;
+					}
+
+					ids = sess.selectList(
+						"gov.alaska.dggs.igneous.Outcrop.getIDByWKT", wkt
+					);
+					if(ids != null && ids.size() > 0){
+						if(count == 0){ select.append(",("); }
+						else { select.append("|"); }
+
+						Iterator<Integer> itr = ids.iterator();
+						for(int i = 0; itr.hasNext(); i++){
+							select.append(i == 0 ? "IN(outcrop_id," : ",");
+							select.append(String.valueOf(itr.next()));
+						}
+						select.append(")");
+						count++;
+					}
+
+
+					if(count == 0){
 						sphinx.SetFilter("id", 0, false);
 					} else {
-						int inventory_ids[] = new int[ids.size()];
-						Iterator<Integer> itr = ids.iterator();
-						for(int i = 0; i < inventory_ids.length; i++){
-							inventory_ids[i] = itr.next().intValue();
-						}
-
-						sphinx.SetFilter("id", inventory_ids, false);
+						select.append(") AS spatial_criteria");
+						sphinx.SetFilter("spatial_criteria", 1, false);
 					}
 				}
 
@@ -257,7 +291,7 @@ public class SearchServlet extends HttpServlet
 					query.append(request.getParameter("q").trim());
 				}
 
-				sphinx.SetSelect("id");
+				sphinx.SetSelect(select.toString());
 
 				SphinxResult sr = sphinx.Query(query.toString(), "inventory");
 				if(sr == null){ throw new Exception(sphinx.GetLastError()); }
