@@ -221,62 +221,34 @@ public class SearchServlet extends HttpServlet
 
 				String wkt = request.getParameter("wkt");
 				if(wkt != null){
-					int count = 0;
-
-					List<Integer> ids = sess.selectList(
-						"gov.alaska.dggs.igneous.Well.getIDByWKT", wkt
+					List<HashMap<String, Integer>> ids = sess.selectList(
+						"gov.alaska.dggs.igneous.Inventory.getMultiIDByWKT", wkt
 					);
+
 					if(ids != null && ids.size() > 0){
-						if(count == 0){ select.append(",("); }
-						else { select.append("|"); }
-
-						Iterator<Integer> itr = ids.iterator();
+						int last = 0;
+						Iterator<HashMap<String, Integer>> itr = ids.iterator();
 						for(int i = 0; itr.hasNext(); i++){
-							select.append(i == 0 ? "IN(well_id," : ",");
-							select.append(String.valueOf(itr.next()));
+							HashMap<String, Integer> row = itr.next();
+								
+							int type = row.get("type");
+							if(type != last){
+								last = type;
+								select.append(i == 0 ? "," : ")|");
+
+								switch(type){
+									case 1: select.append("IN(borehole_id"); break;
+									case 2: select.append("IN(well_id"); break;
+									case 3: select.append("IN(outcrop_id"); break;
+								}
+							}
+							select.append(",");
+							select.append(String.valueOf(row.get("id")));
 						}
-						select.append(")");
-						count++;
-					}
-
-					ids = sess.selectList(
-						"gov.alaska.dggs.igneous.Borehole.getIDByWKT", wkt
-					);
-					if(ids != null && ids.size() > 0){
-						if(count == 0){ select.append(",("); }
-						else { select.append("|"); }
-
-						Iterator<Integer> itr = ids.iterator();
-						for(int i = 0; itr.hasNext(); i++){
-							select.append(i == 0 ? "IN(borehole_id," : ",");
-							select.append(String.valueOf(itr.next()));
-						}
-						select.append(")");
-						count++;
-					}
-
-					ids = sess.selectList(
-						"gov.alaska.dggs.igneous.Outcrop.getIDByWKT", wkt
-					);
-					if(ids != null && ids.size() > 0){
-						if(count == 0){ select.append(",("); }
-						else { select.append("|"); }
-
-						Iterator<Integer> itr = ids.iterator();
-						for(int i = 0; itr.hasNext(); i++){
-							select.append(i == 0 ? "IN(outcrop_id," : ",");
-							select.append(String.valueOf(itr.next()));
-						}
-						select.append(")");
-						count++;
-					}
-
-
-					if(count == 0){
-						sphinx.SetFilter("id", 0, false);
-					} else {
 						select.append(") AS spatial_criteria");
 						sphinx.SetFilter("spatial_criteria", 1, false);
+					} else {
+						sphinx.SetFilter("id", 0, false);
 					}
 				}
 
