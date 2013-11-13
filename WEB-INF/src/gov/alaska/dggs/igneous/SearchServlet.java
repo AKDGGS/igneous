@@ -75,6 +75,7 @@ public class SearchServlet extends HttpServlet
 
 		SphinxClient sphinx = new SphinxClient(sphinx_host, sphinx_port);
 		try {
+			sphinx.SetConnectTimeout(10000); // Ten second timeout
 			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED2);
 
 			int start = 0;
