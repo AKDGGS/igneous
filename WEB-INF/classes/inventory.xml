@@ -172,22 +172,22 @@
 
 
 	<select id="getMultiIDByWKT" resultSetType="FORWARD_ONLY" resultType="HashMap">
-		SELECT DISTINCT type, id
+		SELECT type, id
 		FROM (
-			SELECT 1 AS type, borehole_id AS id, geom
+			SELECT DISTINCT 1 AS type, borehole_id AS id, geom
 			FROM borehole_geom
 
 			UNION ALL
 
-			SELECT 2 AS type, well_id AS id, geom
+			SELECT DISTINCT 2 AS type, well_id AS id, geom
 			FROM well_geom
 
 			UNION ALL
 
-			SELECT 3 AS type, outcrop_id AS id, geom
+			SELECT DISTINCT 3 AS type, outcrop_id AS id, geom
 			FROM outcrop_geom
 		) AS q
 		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
-		ORDER BY type
+		ORDER BY type, id
 	</select>
 </mapper>
