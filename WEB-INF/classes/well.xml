@@ -4,8 +4,57 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Well">
-	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT well_id FROM well_geom
-		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+	<!-- Query used exclusively by the Oil and Gas Report -->
+	<select id="getOilGas" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		SELECT w.well_id, w.name AS well_name, w.well_number, w.api_number, (
+			SELECT
+				TRUNC(ST_Y(ll)::numeric, 4) || ', ' || TRUNC(ST_X(ll)::numeric, 4)
+			FROM (
+				SELECT ST_Transform(wg.geom, 4326) AS ll
+				FROM well_geom_point AS wg
+				WHERE wg.well_id = w.well_id
+				LIMIT 1
+			) AS q1
+		) AS lonlat, q.name, q.top, q.bottom, q.total
+		FROM well AS w 
+		LEFT OUTER JOIN (
+			SELECT iw.well_id, k.name, MIN(interval_top) AS top,
+			MAX(interval_bottom) AS bottom, COUNT(i.inventory_id) AS total
+			FROM inventory_well AS iw
+			JOIN inventory AS i ON i.inventory_id = iw.inventory_id
+			JOIN inventory_keyword AS ik ON ik.inventory_id = iw.inventory_id
+			JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+			WHERE k.keyword_group_id = (
+				SELECT keyword_group_id
+				FROM keyword_group
+				WHERE LOWER(name) = LOWER('sample source')
+			) OR keyword_group_id = (
+				SELECT keyword_group_id
+				FROM keyword_group
+				WHERE LOWER(name) = LOWER('sample material')
+			) OR (
+				k.name = 'residues'
+				AND keyword_group_id = (
+					SELECT keyword_group_id
+					FROM keyword_group
+					WHERE LOWER(name) = LOWER('sample type')
+				)
+			)
+			GROUP BY iw.well_id, k.name
+
+			UNION ALL
+
+			SELECT well_id, 'data reports' AS name, null AS top,
+				null AS bottom, COUNT(publication_id) AS total
+			FROM (
+				SELECT DISTINCT iw.well_id, ip.publication_id
+				FROM inventory_well AS iw
+				JOIN inventory_publication AS ip ON ip.inventory_id = iw.inventory_id
+				JOIN publication AS p ON p.publication_id = ip.publication_id
+				WHERE publication_series = 'Geologic Materials Center Data Report Publications'
+			) AS q
+			GROUP BY well_id
+		) AS q ON q.well_id = w.well_id
+		ORDER BY well_name, well_number, q.name
 	</select>
 </mapper>

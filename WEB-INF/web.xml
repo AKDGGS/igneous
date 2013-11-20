@@ -117,6 +117,16 @@
 		<url-pattern>/mining_district.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>OilGasServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.OilGasServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>OilGasServlet</servlet-name>
+		<url-pattern>/oilgas.html</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

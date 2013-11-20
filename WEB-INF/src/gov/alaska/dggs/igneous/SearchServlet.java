@@ -314,7 +314,6 @@ public class SearchServlet extends HttpServlet
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
 			ex.printStackTrace();
-
 		} finally {
 			sphinx.Close();
 		}
