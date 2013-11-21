@@ -303,7 +303,7 @@ public class SearchServlet extends HttpServlet
 				} else {
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
-
+				
 				serializer.serialize(json, out);
 			} finally {
 				if(out != null){ out.close(); }

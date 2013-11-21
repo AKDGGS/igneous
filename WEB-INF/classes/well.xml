@@ -17,7 +17,7 @@
 			) AS q1
 		) AS lonlat, q.name, q.top, q.bottom, q.total
 		FROM well AS w 
-		LEFT OUTER JOIN (
+		JOIN (
 			SELECT iw.well_id, k.name, MIN(interval_top) AS top,
 			MAX(interval_bottom) AS bottom, COUNT(i.inventory_id) AS total
 			FROM inventory_well AS iw

@@ -34,7 +34,7 @@
 	<context-param>
 		<description>Sphinx max matches</description>
 		<param-name>sphinx_max_matches</param-name>
-		<param-value>1000</param-value>
+		<param-value>7500</param-value>
 	</context-param>
 
 	<servlet>
