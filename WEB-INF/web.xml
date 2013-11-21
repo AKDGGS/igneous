@@ -127,6 +127,11 @@
 		<url-pattern>/oilgas.html</url-pattern>
 	</servlet-mapping>
 
+	<servlet-mapping>
+		<servlet-name>OilGasServlet</servlet-name>
+		<url-pattern>/oilgas.pdf</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

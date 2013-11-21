@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.OutputStream;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +17,16 @@ import java.util.HashMap;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.ibatis.session.SqlSession;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.resource.FSEntityResolver;
+import org.xml.sax.InputSource;
+import java.io.StringReader;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 
 
 public class OilGasServlet extends HttpServlet
@@ -44,7 +54,7 @@ public class OilGasServlet extends HttpServlet
 			html.append("			td, th { vertical-align: top; padding: 4px 8px; font-size: 14px; }\n");
 			html.append("			tbody th { font-weight: normal; border-top: 1px solid black; padding-top: 8px; }\n");
 			html.append("			td.r { text-align: right; }\n");
-			html.append("		</style>");
+			html.append("		</style>\n");
 			html.append("	</head>\n");
 			html.append("	<body>\n");
 			html.append("		<h1>Oil Gas Wells Inventory Summary</h1>\n");
@@ -74,14 +84,20 @@ public class OilGasServlet extends HttpServlet
 						html.append("				<tr>\n");
 
 						html.append("					<th>");
-						html.append(well.get("well_name"));
+						html.append(StringEscapeUtils.escapeHtml4(
+							String.valueOf(well.get("well_name"))
+						));
 						if(well.get("well_number") != null){
 							html.append(" #");
-							html.append(well.get("well_number"));
+							html.append(StringEscapeUtils.escapeHtml4(
+								String.valueOf(well.get("well_number"))
+							));
 						}
 						if(well.get("api_number") != null){
 							html.append("<br/>");
-							html.append(well.get("api_number"));
+							html.append(StringEscapeUtils.escapeHtml4(
+								String.valueOf(well.get("api_number"))
+							));
 						}
 						html.append("</th>\n");
 
@@ -92,7 +108,9 @@ public class OilGasServlet extends HttpServlet
 
 						html.append("					<th>");
 						if(well.get("lonlat") != null){
-							html.append(well.get("lonlat"));
+							html.append(StringEscapeUtils.escapeHtml4(
+								String.valueOf(well.get("lonlat"))
+							));
 						} else {
 							html.append("&nbsp;");
 						}
@@ -104,11 +122,17 @@ public class OilGasServlet extends HttpServlet
 					if(well.get("name") != null){
 						html.append("				<tr>\n");
 						html.append("					<td>&nbsp;</td>\n");
-						html.append("					<td>" + well.get("name") + "</td>\n");
+						html.append("					<td>");
+						html.append(StringEscapeUtils.escapeHtml4(
+							String.valueOf(well.get("name"))
+						));
+						html.append("</td>\n");
 
 						html.append("					<td>");
 						if(well.get("top") != null){
-							html.append(well.get("top"));
+							html.append(StringEscapeUtils.escapeHtml4(
+								String.valueOf(well.get("top"))
+							));
 						} else {
 							html.append("&nbsp;");
 						}
@@ -116,14 +140,18 @@ public class OilGasServlet extends HttpServlet
 
 						html.append("					<td>");
 						if(well.get("bottom") != null){
-							html.append(well.get("bottom"));
+							html.append(StringEscapeUtils.escapeHtml4(
+								String.valueOf(well.get("bottom"))
+							));
 						} else {
 							html.append("&nbsp;");
 						}
 						html.append("</td>\n");
 
 						html.append("					<td class=\"r\">");
-						html.append(well.get("total"));
+						html.append(StringEscapeUtils.escapeHtml4(
+							String.valueOf(well.get("total"))
+						));
 						html.append("</td>\n");
 
 						html.append("					<td>&nbsp;</td>\n");
@@ -139,28 +167,42 @@ public class OilGasServlet extends HttpServlet
 			html.append("	</body>\n");
 			html.append("</html>\n");
 
-			OutputStreamWriter out = null;
-			GZIPOutputStream gos = null;
+			OutputStream out = null;
 			try { 
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
 				if(encoding != null && encoding.contains("gzip")){
 					response.setHeader("Content-Encoding", "gzip");
-					gos = new GZIPOutputStream(response.getOutputStream(), 8196);
-					out = new OutputStreamWriter(gos, "utf-8");
+					out = (OutputStream)new GZIPOutputStream(response.getOutputStream(), 8196);
 				} else {
-					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+					out = response.getOutputStream();
 				}
 
-				response.setContentType("text/html");
-				out.write(html.toString());
+				String path = request.getServletPath();
+				if(path.endsWith("pdf")){
+					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					factory.setNamespaceAware(true);
+					factory.setValidating(false);
+					DocumentBuilder builder = factory.newDocumentBuilder();
+					builder.setEntityResolver(FSEntityResolver.instance());
+
+					Document doc = builder.parse(
+						new InputSource(new StringReader(html.toString()))
+					);
+
+					ITextRenderer renderer = new ITextRenderer();
+					renderer.setDocument(doc, null);
+					renderer.layout();
+
+					response.setContentType("application/pdf");
+					renderer.createPDF(out);
+				} else {
+					response.setContentType("text/html");
+					out.write(html.toString().getBytes("UTF-8"));
+				}
 			} finally {
 				if(out != null){ out.close(); }
-				if(gos != null){ gos.close(); }
 			}
-
-			/*
-			*/
 		} catch(Exception ex){
 			if(!response.isCommitted()){
 				response.reset();
