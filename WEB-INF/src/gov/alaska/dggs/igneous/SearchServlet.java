@@ -259,6 +259,12 @@ public class SearchServlet extends HttpServlet
 					sphinx.SetFilter("borehole_id", borehole_id, false);
 				}
 
+				String mining_district = request.getParameter("mining_district_id");
+				if(mining_district != null){
+					long mining_district_id = Long.parseLong(mining_district);
+					sphinx.SetFilter("mining_district_id", mining_district_id, false);
+				}
+
 				StringBuilder query = new StringBuilder();
 				if(request.getParameter("q") != null){
 					query.append(request.getParameter("q").trim());

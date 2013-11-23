@@ -278,6 +278,12 @@ $(function(){
 				searchok = true;
 			}
 
+			var md = $('#mining_district_id').val();
+			if(md.length > 0){
+				o['mining_district_id'] = md;
+				searchok = true;
+			}
+
 			if(!searchok){
 				clearmap();
 				document.getElementById('inventory_container').style.display = 'none';
@@ -544,8 +550,32 @@ $(function(){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
-	if(restore()){ search.execute(false); }
-	search.setuponhashchange();
+	var mining_district_loaded = $.Deferred();
+	$('#mining_district_id').change(function(){ search.execute(); });
+	$.ajax({
+		url: 'mining_district.json', dataType: 'json',
+		error: function(xhr){
+			mining_district_loaded.resolve();
+			// Silently ignore failure
+		},
+		success: function(json){
+			var md_el = document.getElementById('mining_district_id');
+			for(var i in json){
+				var option = document.createElement('option');
+				option.value = json[i]['ID'];
+				option.appendChild(document.createTextNode(json[i]['name']));
+				md_el.appendChild(option);
+			}
+			mining_district_loaded.resolve();
+		}
+	});
+
+	// Wait for outside resources to finish loading, then restore
+	// the search state
+	$.when( mining_district_loaded ).done(function(){
+		if(restore()){ search.execute(false); }
+		search.setuponhashchange();
+	});
 });
 
 
