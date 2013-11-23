@@ -76,32 +76,29 @@ public class ProspectServlet extends HttpServlet
 			);
 			if(prospect == null){ throw new Exception("Prospect not found."); }
 
-			List<Object> summary = sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getInventorySummary", id
-			);
-
-			List<Object> wkts = sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getWKT", id
-			);
-
-			List<Object> diameters = sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getCoreDiameters", id
-			);
-
-			List<Object> quadrangles = sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getQuadrangles", id
-			);
-
 			HashMap map = new HashMap();
-			map.put("summary", summary);
 			map.put("prospect", prospect);
-			map.put("diameters", diameters);
-			map.put("quadrangles", quadrangles);
+
+			map.put("summary", sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getInventorySummary", id
+			));
+
+			map.put("diameters", sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getCoreDiameters", id
+			));
+
+			map.put("quadrangles", sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getQuadrangles", id
+			));
+			
 			map.put("miningdistricts", sess.selectList(
 				"gov.alaska.dggs.igneous.Prospect.getMiningDistricts", id
 			));
-			map.put("wkts", wkts);
 
+			map.put("wkts", sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getWKT", id
+			));
+			
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;
