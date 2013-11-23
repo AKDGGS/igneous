@@ -12,6 +12,8 @@ $(function(){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
+	map = initMap();
+
 	detail = new Detail({
 		url: '../prospect.json',
 
@@ -127,9 +129,13 @@ $(function(){
 
 				dd = document.createElement('dd');
 				for(var i in quadrangles){
+					var quad = quadrangles[i];
 					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
 
-					dd.appendChild(document.createTextNode(quadrangles[i]['name']));
+					var a = document.createElement('a');
+					a.href = '../search#quadrangle_id=' + quad['ID'];
+					a.appendChild(document.createTextNode(quad['name']));
+					dd.appendChild(a);
 				}
 				dl.appendChild(dd);
 			}
@@ -142,9 +148,13 @@ $(function(){
 
 				dd = document.createElement('dd');
 				for(var i in miningdistricts){
+					var md = miningdistricts[i];
 					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
 
-					dd.appendChild(document.createTextNode(miningdistricts[i]['name']));
+					var a = document.createElement('a');
+					a.href = '../search#mining_district_id=' + md['ID'];
+					a.appendChild(document.createTextNode(md['name']));
+					dd.appendChild(a);
 				}
 				dl.appendChild(dd);
 			}
@@ -225,6 +235,19 @@ $(function(){
 		}
 	}); // End detail
 
+	popup = new Popup({
+		map: map,
+		onupdate: function(content, feature){
+			var attr = feature.attributes;
+
+			content.appendChild(document.createTextNode('Borehole: '));
+			var a = document.createElement('a');
+			a.href = '../borehole/' + attr['borehole_id'];
+			a.appendChild(document.createTextNode(attr['name']));
+			content.appendChild(a);
+		}
+	});
+	popup.attach();
 
 	search = new Search({
 		url: '../search.json',
@@ -363,9 +386,6 @@ $(function(){
 			}
 		} // End onparse
 	}); // End search
-
-
-	map = initMap();
 });
 
 
