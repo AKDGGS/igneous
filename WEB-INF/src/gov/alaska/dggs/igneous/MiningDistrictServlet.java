@@ -79,6 +79,8 @@ public class MiningDistrictServlet extends HttpServlet
 				}
 			
 				serializer.serialize(districts, out);
+				out.flush(); if(gos != null){ gos.finish(); }
+
 				byte output[] = baos.toByteArray();
 
 				String tag = request.getHeader("If-None-Match");
