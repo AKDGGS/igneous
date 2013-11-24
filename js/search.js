@@ -52,6 +52,9 @@ function restore()
 						layer.addFeatures([feature]);
 					break;
 
+					case 'mining_district_id':
+						map.getControlsBy('id', 'spatial_control')[0].activate();
+
 					default: $('#'+key).val(val);
 				}
 			}
@@ -72,6 +75,7 @@ $(function(){
 		new OpenLayers.Control({
 			type: OpenLayers.Control.TYPE_TOGGLE,
 			autoActivate: false,
+			id: 'spatial_control',
 			displayClass: 'olControlSpatial',
 			title: 'Display Spatial Search Options',
 			eventListeners: {
