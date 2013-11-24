@@ -295,7 +295,10 @@ $(function(){
 				AlertTool.warning('Empty Search', 'Search cannot be empty.');
 				return false;
 			}
-			
+
+			$('#search').addClass('disabled')
+				.contents().last().replaceWith(' Searching ...');
+
 			return true;
 		},
 
@@ -540,6 +543,8 @@ $(function(){
 
 				document.getElementById('inventory_container').style.display = 'block';
 			}
+
+			$('#search').removeClass('disabled').contents().last().replaceWith(' Search');
 		} // End onparse
 	});
 
