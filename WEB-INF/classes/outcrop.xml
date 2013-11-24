@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Outcrop">
+	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT DISTINCT outcrop_id FROM outcrop_geom
+		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+	</select>
+</mapper>
