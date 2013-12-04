@@ -47,7 +47,7 @@ public class ProspectServlet extends HttpServlet
 		exclude("diameters.unit.class");
 		exclude("quadrangles.class");
 		exclude("miningdistricts.class");
-		exclude("class");	
+		exclude("class");
 	}};
 
 
@@ -88,11 +88,11 @@ public class ProspectServlet extends HttpServlet
 			));
 
 			map.put("quadrangles", sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getQuadrangles", id
+				"gov.alaska.dggs.igneous.Quadrangle.getByProspectID", id
 			));
 			
 			map.put("miningdistricts", sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getMiningDistricts", id
+				"gov.alaska.dggs.igneous.MiningDistrict.getByProspectID", id
 			));
 
 			map.put("wkts", sess.selectList(

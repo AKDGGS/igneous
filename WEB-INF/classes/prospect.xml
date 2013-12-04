@@ -91,40 +91,4 @@
 		JOIN borehole_geom AS bg ON bh.borehole_id = bg.borehole_id
 		WHERE bh.prospect_id = #{id}
 	</select>
-
-
-	<select id="getQuadrangles" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
-		SELECT DISTINCT
-			qr.quadrangle_id, qr.name, qr.alt_name,
-			qr.abbr, qr.alt_abbr, qr.scale
-		FROM borehole AS bh
-		JOIN borehole_geom AS bg ON bg.borehole_id = bh.borehole_id
-		JOIN quadrangle AS qr ON ST_Intersects(qr.geom, bg.geom)
-		WHERE bh.prospect_id = #{id} AND qr.scale = 250000
-	</select>
-
-	<resultMap id="QuadrangleMap" type="Quadrangle">
-		<id property="id" column="quadrangle_id" />
-		<result property="name" column="name" />
-		<result property="alt_name" column="alt_name" />
-		<result property="abbr" column="abbr" />
-		<result property="alt_abbr" column="alt_abbr" />
-		<result property="scale" column="scale" />
-	</resultMap>
-
-
-	<select id="getMiningDistricts" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="MiningDistrictMap">
-		SELECT DISTINCT 
-			md.mining_district_id, md.name, md.region
-		FROM borehole AS bh
-		JOIN borehole_geom AS bg ON bg.borehole_id = bh.borehole_id
-		JOIN mining_district AS md ON ST_Intersects(md.geom, bg.geom)
-		WHERE bh.prospect_id = #{id}
-	</select>
-
-	<resultMap id="MiningDistrictMap" type="MiningDistrict">
-		<id property="id" column="mining_district_id" />
-		<result property="name" column="name" />
-		<result property="region" column="region" />
-	</resultMap>
 </mapper>

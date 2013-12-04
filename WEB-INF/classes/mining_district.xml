@@ -10,9 +10,18 @@
 		FROM mining_district
 	</select>
 
+	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="MiningDistrictMap">
+		SELECT DISTINCT 
+			md.mining_district_id, md.name, md.region
+		FROM borehole AS bh
+		JOIN borehole_geom AS bg ON bg.borehole_id = bh.borehole_id
+		JOIN mining_district AS md ON ST_Intersects(md.geom, bg.geom)
+		WHERE bh.prospect_id = #{id}
+	</select>
+
+
 	<resultMap id="MiningDistrictMap" type="MiningDistrict">
 		<id property="id" column="mining_district_id" />
-
 		<result property="name" column="name" />
 		<result property="region" column="region" />
 		<result property="wkt" column="wkt" />
