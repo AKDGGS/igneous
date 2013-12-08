@@ -16,7 +16,7 @@ function clearmap()
 	var layer = map.getLayersByName('Result Layer')[0];
 	var queue = [];
 	for(var i in layer.features){
-		if(layer.features[i].id !== 'AOI_Vector'){
+		if(layer.features[i].renderIntent !== 'aoi'){
 			queue.push(layer.features[i]);
 		}
 	}
@@ -42,18 +42,30 @@ function restore()
 			if(val.length > 0){
 				switch(key){
 					case 'wkt':
-						var layer = map.getLayersByName('Result Layer')[0];
-
 						var feature = new OpenLayers.Feature.Vector(
 							OpenLayers.Geometry.fromWKT(val)
 						);
 						feature.id = 'AOI_Vector';
 						feature.renderIntent = 'aoi';
+						var layer = map.getLayersByName('Result Layer')[0];
 						layer.addFeatures([feature]);
 					break;
 
 					case 'mining_district_id':
 						map.getControlsBy('id', 'spatial_control')[0].activate();
+						$('#mining_district_id').val(val);
+
+						var opt = $('#mining_district_id').find(':selected').get(0);
+						if('wkt' in opt){
+							var feature = new OpenLayers.Feature.Vector(
+								OpenLayers.Geometry.fromWKT(opt['wkt'])
+							);
+							feature.id = 'AOI_Preview';
+							feature.renderIntent = 'aoi';
+							var layer = map.getLayersByName('Result Layer')[0];
+							layer.addFeatures([feature]);
+						}
+					break;
 
 					default: $('#'+key).val(val);
 				}
@@ -560,7 +572,24 @@ $(function(){
 	});
 
 	var mining_district_loaded = $.Deferred();
-	$('#mining_district_id').change(function(){ search.execute(); });
+	$('#mining_district_id').change(function(){
+		var layer = map.getLayersByName('Result Layer')[0];
+		var feature = layer.getFeatureById('AOI_Preview');
+		if(feature !== null){ layer.destroyFeatures(feature); }
+
+		var el = $(this).find(':selected').get(0);
+		if('wkt' in el){
+			var feature = new OpenLayers.Feature.Vector(
+				OpenLayers.Geometry.fromWKT(el['wkt'])
+			);
+			feature.id = 'AOI_Preview';
+			feature.renderIntent = 'aoi';
+			layer.addFeatures([feature]);
+		}
+
+		search.execute();
+	});
+
 	$.ajax({
 		url: 'mining_district.json', dataType: 'json',
 		error: function(xhr){
@@ -572,6 +601,7 @@ $(function(){
 			for(var i in json){
 				var option = document.createElement('option');
 				option.value = json[i]['ID'];
+				option.wkt = json[i]['WKT'];
 				option.appendChild(document.createTextNode(json[i]['name']));
 				md_el.appendChild(option);
 			}

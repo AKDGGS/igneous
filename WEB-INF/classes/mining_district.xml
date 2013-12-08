@@ -8,6 +8,7 @@
 		SELECT mining_district_id, name,
 			region, ST_AsText(ST_Simplify(geom, 5000)) AS wkt
 		FROM mining_district
+		ORDER BY LOWER(name)
 	</select>
 
 	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="MiningDistrictMap">
