@@ -52,7 +52,8 @@ function restore()
 					break;
 
 					case 'mining_district_id':
-						map.getControlsBy('id', 'spatial_control')[0].activate();
+						$('#advanced').addClass('active');
+						$('#advanced_cell').show();
 						$('#mining_district_id').val(val);
 
 						var opt = $('#mining_district_id').find(':selected').get(0);
@@ -84,21 +85,6 @@ $(function(){
 
   var control_panel = new OpenLayers.Control.Panel();
 	control_panel.addControls([
-		new OpenLayers.Control({
-			type: OpenLayers.Control.TYPE_TOGGLE,
-			autoActivate: false,
-			id: 'spatial_control',
-			displayClass: 'olControlSpatial',
-			title: 'Display Spatial Search Options',
-			eventListeners: {
-				activate: function(){
-					document.getElementById('spatial').style.display = 'table-cell';
-				},
-				deactivate: function(){
-					document.getElementById('spatial').style.display = 'none';
-				}
-			}
-		}),
 		new OpenLayers.Control.DrawFeature(
 			result_layer, OpenLayers.Handler.RegularPolygon, {
 				id: 'draw_control',
@@ -560,8 +546,24 @@ $(function(){
 		} // End onparse
 	});
 
+	$('#advanced').click(function(){
+		var shown = $(this).hasClass('active');
+		if(shown){
+			$('#advanced_cell').hide();
+			$(this).removeClass('active');
+		} else {
+			$('#advanced_cell').show();
+			$(this).addClass('active');
+		}
+
+		$(this).blur();
+		return false;
+	});
+
 	$('#search').click(function(){
 		search.execute();
+		
+		$(this).blur();
 		return false;
 	});
 

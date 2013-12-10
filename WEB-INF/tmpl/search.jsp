@@ -11,9 +11,10 @@
 
 			#inventory_container { display: none; }
 			#map { width: 100%; height: 450px; }
-			#spatial { width: 250px; display: none; padding: 4px 8px; vertical-align: top; }
+			#advanced_cell { width: 250px; display: none; padding: 4px 8px; vertical-align: top; }
 
 			label { font-size: 14px; }
+			.navbar { white-space: nowrap; }
 		</style>
 	</head>
 	<body>
@@ -27,6 +28,9 @@
 				<button class="btn btn-primary" id="search">
 					<span class="glyphicon glyphicon-search"></span> Search
 				</button>
+				<button class="btn btn-info" id="advanced">
+					<span class="glyphicon glyphicon-list"></span> Advanced
+				</button>
 			</div>
 		</div>
 
@@ -36,7 +40,7 @@
 					<td>
 						<div id="map"></div>
 					</td>
-					<td id="spatial">
+					<td id="advanced_cell">
 						<label for="mining_district_id">Mining District</label>
 						<select name="mining_district_id" id="mining_district_id">
 							<option value="">None</option>
