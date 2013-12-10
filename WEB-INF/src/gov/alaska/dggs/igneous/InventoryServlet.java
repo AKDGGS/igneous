@@ -41,6 +41,9 @@ public class InventoryServlet extends HttpServlet
 	{
 		ServletContext context = getServletContext();
 
+		Integer id = null;
+		try { id = Integer.valueOf(request.getParameter("id")); }
+		catch(Exception ex){ }
 		String barcode = request.getParameter("barcode");
 
 		// Aggressively disable cache
@@ -50,9 +53,16 @@ public class InventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List<Inventory> inventory = sess.selectList(
-				"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
-			);
+			List<Inventory> inventory = null;
+			if(id != null){
+				inventory = sess.selectList(
+					"gov.alaska.dggs.igneous.Inventory.getByID", id
+				);
+			} else if(barcode != null){
+				inventory = sess.selectList(
+					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
+				);
+			}
 			if(inventory == null){ throw new Exception("Inventory not found."); }
 
 			response.setContentType("application/json");
