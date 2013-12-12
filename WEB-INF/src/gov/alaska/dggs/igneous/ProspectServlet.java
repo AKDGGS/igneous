@@ -40,7 +40,9 @@ public class ProspectServlet extends HttpServlet
 		include("miningdistricts");
 		include("wkts");
 
+		// Extremely important: Ignores circular reference
 		exclude("prospect.boreholes.prospect");
+
 		exclude("prospect.boreholes.class");
 		exclude("prospect.class");
 		exclude("diameters.class");
