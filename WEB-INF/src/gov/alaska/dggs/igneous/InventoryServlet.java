@@ -55,15 +55,21 @@ public class InventoryServlet extends HttpServlet
 		try {
 			List<Inventory> inventory = null;
 			if(id != null){
-				inventory = sess.selectList(
+				inventory = sess.selectOne(
 					"gov.alaska.dggs.igneous.Inventory.getByID", id
 				);
+				if(inventory == null){ throw new Exception("Inventory not found."); }
 			} else if(barcode != null){
 				inventory = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
 				);
+
+				if(inventory.size() == 0 && !barcode.startsWith("GMC")){
+					inventory = sess.selectList(
+						"gov.alaska.dggs.igneous.Inventory.getByBarcode", ("GMC-"+barcode)
+					);
+				}
 			}
-			if(inventory == null){ throw new Exception("Inventory not found."); }
 
 			response.setContentType("application/json");
 
