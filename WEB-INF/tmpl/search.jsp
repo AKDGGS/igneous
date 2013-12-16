@@ -15,6 +15,7 @@
 
 			label { font-size: 14px; }
 			.navbar { white-space: nowrap; }
+			th { white-space: nowrap; font-size: 85%; }
 		</style>
 	</head>
 	<body>
@@ -106,11 +107,9 @@
 						<th>ID</th>
 						<th>Related</th>
 						<th>Sample</th>
-						<th>Core</th>
-						<th>Box</th>
-						<th>Set</th>
+						<th>Box /<br/>Set</th>
+						<th>Core No /</br>Diameter</th>
 						<th class="al-r">Top /<br>Bottom</th>
-						<th>Diameter</th>
 						<th>Keywords</th>
 						<th>Collection</th>
 						<th>Barcode</th>

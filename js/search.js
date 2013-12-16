@@ -435,49 +435,8 @@ $(function(){
 					if(obj['core'] !== null){
 						td.appendChild(document.createTextNode(obj['core']));
 					}
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					if(obj['box'] !== null){
-						td.appendChild(document.createTextNode(obj['box']));
-					}
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					if(obj['set'] !== null){
-						td.appendChild(document.createTextNode(obj['set']));
-					}
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					td.className = 'al-r';
-					if(obj['intervalTop'] !== null){
-						td.appendChild(document.createTextNode(obj['intervalTop']));
-						if(obj['intervalUnit'] !== null){
-							td.appendChild(document.createTextNode(
-								' ' + obj['intervalUnit']['abbr']
-							));
-						}
-					}
-
-					if(obj['intervalBottom'] !== null){
-						td.appendChild(document.createElement('br'));
-					}
-
-					if(obj['intervalBottom'] !== null){
-						td.appendChild(document.createTextNode(
-							obj['intervalBottom']
-						));
-						if(obj['intervalUnit'] !== null){
-							td.appendChild(document.createTextNode(
-								' ' + obj['intervalUnit']['abbr']
-							));
-						}
-					}
-					tr.appendChild(td);
-
-					td = document.createElement('td');
 					if(obj['coreDiameter'] !== null){
+						td.appendChild(document.createElement('br'));	
 						if(obj['coreDiameter']['name'] !== null){
 							td.appendChild(document.createTextNode(
 								obj['coreDiameter']['name']
@@ -496,10 +455,44 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
+					if(obj['box'] !== null){
+						td.appendChild(document.createTextNode(obj['box']));
+					}
+					if(obj['set'] !== null){
+						td.appendChild(document.createElement('br'));	
+						td.appendChild(document.createTextNode(obj['set']));
+					}
+					tr.appendChild(td);
+
+					td = document.createElement('td');
+					td.className = 'al-r';
+					if(obj['intervalTop'] !== null){
+						td.appendChild(document.createTextNode(obj['intervalTop']));
+						if(obj['intervalUnit'] !== null){
+							td.appendChild(document.createTextNode(
+								' ' + obj['intervalUnit']['abbr']
+							));
+						}
+					}
+
+					if(obj['intervalBottom'] !== null){
+						td.appendChild(document.createElement('br'));
+						td.appendChild(document.createTextNode(
+							obj['intervalBottom']
+						));
+						if(obj['intervalUnit'] !== null){
+							td.appendChild(document.createTextNode(
+								' ' + obj['intervalUnit']['abbr']
+							));
+						}
+					}
+					tr.appendChild(td);
+
+					td = document.createElement('td');
 					for(var j in obj['keywords']){
 						var keyword = obj['keywords'][j];
 						td.appendChild(document.createTextNode(
-							(j > 0 ? ' > ' : '') +
+							(j > 0 ? ', ' : '') +
 							keyword['name']
 						));
 					}
