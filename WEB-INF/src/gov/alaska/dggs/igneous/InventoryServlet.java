@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
+import java.util.HashMap;
 
 import flexjson.JSONSerializer;
 
@@ -54,19 +55,30 @@ public class InventoryServlet extends HttpServlet
 		SqlSession sess = IgneousFactory.openSession();
 		try {
 			List<Inventory> inventory = null;
+
 			if(id != null){
 				inventory = sess.selectOne(
 					"gov.alaska.dggs.igneous.Inventory.getByID", id
 				);
 				if(inventory == null){ throw new Exception("Inventory not found."); }
 			} else if(barcode != null){
+				HashMap<String, String> query = new HashMap<String, String>();
+				query.put("barcode", barcode);
+
 				inventory = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
 				);
 
 				if(inventory.size() == 0 && !barcode.startsWith("GMC")){
 					inventory = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getByBarcode", ("GMC-"+barcode)
+						"gov.alaska.dggs.igneous.Inventory.getByBarcode",
+						("GMC-" + barcode)
+					);
+				}
+
+				if(inventory.size() == 0){
+					inventory = sess.selectList(
+						"gov.alaska.dggs.igneous.Inventory.getByAltBarcode", query
 					);
 				}
 			}

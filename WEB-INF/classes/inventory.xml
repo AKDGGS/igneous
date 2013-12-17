@@ -3,7 +3,7 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="gov.alaska.dggs.igneous.Inventory">
-	<select id="getByBarcode" resultSetType="FORWARD_ONLY" parameterType="String" resultMap="InventoryMap">
+	<sql id="getBy">
 		SELECT iv.inventory_id, iv.sample_number,
 			iv.barcode, iv.alt_barcode,
 			iv.box_number, iv.set_number,
@@ -22,30 +22,23 @@
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
 			ON iun.unit_id = iv.interval_unit_id
+	</sql>
+
+	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+		<include refid="getBy" />
 		WHERE iv.barcode = #{barcode}
 	</select>
 
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="InventoryMap">
-		SELECT iv.inventory_id, iv.sample_number,
-			iv.barcode, iv.alt_barcode,
-			iv.box_number, iv.set_number,
-			iv.core_number, iv.state_number,
-			iv.interval_top, iv.interval_bottom,
-			iun.unit_id AS interval_unit_id,
-			iun.name AS interval_unit_name,
-			iun.abbr AS interval_unit_abbr,
-			cl.collection_id, cl.name AS collection_name,
-			cl.description AS collection_description,
-			loc.location AS container_path
-		FROM inventory AS iv
-		LEFT OUTER JOIN inventory_location AS loc
-			ON loc.inventory_id = iv.inventory_id
-		LEFT OUTER JOIN collection AS cl
-			ON cl.collection_id = iv.collection_id
-		LEFT OUTER JOIN unit AS iun
-			ON iun.unit_id = iv.interval_unit_id
+	<select id="getByAltBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+		<include refid="getBy" />
+		WHERE iv.alt_barcode = #{barcode}
+	</select>
+
+	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+		<include refid="getBy" />
 		WHERE iv.inventory_id = #{id}
 	</select>
+
 
 	<resultMap id="InventoryMap" type="Inventory">
 		<id property="id" column="inventory_id" />
