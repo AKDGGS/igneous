@@ -16,8 +16,6 @@
 			cl.description AS collection_description,
 			cp.path AS container_path
 		FROM inventory AS iv
-		LEFT OUTER JOIN inventory_location AS loc
-			ON loc.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
