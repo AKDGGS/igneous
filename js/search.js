@@ -262,6 +262,7 @@ $(function(){
 		onerror: function(t, d){
 			clearmap();
 			document.getElementById('inventory_container').style.display = 'none';
+			$('#search').removeClass('disabled').contents().last().replaceWith(' Search');
 
 			AlertTool.error(t, d);
 		},
