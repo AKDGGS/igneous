@@ -162,12 +162,9 @@ $(function(){
 			var summary = json['summary'];
 			if(summary !== null && summary.length > 0){
 				var keywords = document.getElementById('keywords');
-				var keyword_groups = document.getElementById('keyword_groups');
 
 				var ul = document.createElement('ul');
 				ul.className = 'nav nav-pills';
-
-				var total = 0;
 
 				for(var i in summary){
 					var set = summary[i];
@@ -179,35 +176,26 @@ $(function(){
 					var a = document.createElement('a');
 					a.href = '#';
 					a.onclick = function(){
-						var keyword_ids = set['ids'].split(',');
+						var keyword_id = set['keyword_id'];
 						var prospect_id = prospect['ID'];
 
 						return function(){
 							$('#keyword_controls').find('li').removeClass('active');
 							$(this).parent('li').addClass('active');
 
-							search['keyword_id'] = keyword_ids;
+							search['keyword_id'] = keyword_id;
 							search.execute();
 							return false;
 						};
 					}();
-					a.appendChild(document.createTextNode(set['keywords']));
+					a.appendChild(document.createTextNode(set['keyword']));
 					a.appendChild(span);
 
 					var li = document.createElement('li');
 					li.appendChild(a);
 
-					if(set['type'] === 1){
-						keywords.appendChild(li);
-					} else {
-						total += set['count'];
-						keyword_groups.appendChild(li);
-					}
+					keywords.appendChild(li);
 				}
-
-				var span = document.createElement('span');
-				span.className = 'badge';
-				span.appendChild(document.createTextNode(total));
 
 				var a = document.createElement('a');
 				a.href = '#';
@@ -224,12 +212,11 @@ $(function(){
 					};
 				}();
 				a.appendChild(document.createTextNode('All'));
-				a.appendChild(span);
 
 				var li = document.createElement('li');
 				li.appendChild(a);
 
-				keyword_groups.appendChild(li);
+				keywords.appendChild(li);
 				$('#keyword_controls').show();
 			}
 		}

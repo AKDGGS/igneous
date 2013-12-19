@@ -37,11 +37,6 @@
 
 				<div id="keyword_controls">
 					<div>
-						<span class="label label-info">Keyword Groups</span>
-						<ul class="nav nav-pills" id="keyword_groups"></ul>
-					</div>
-
-					<div>
 						<span class="label label-info">Keywords</span>
 						<ul class="nav nav-pills" id="keywords"></ul>
 					</div>

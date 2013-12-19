@@ -23,39 +23,15 @@
 
 
 	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
-		(
-			SELECT 1 AS type, keyword_id::varchar AS ids,
-				name AS keywords, COUNT(*) AS count
-			FROM (
-				SELECT k.keyword_id, k.name
-				FROM borehole AS b
-				JOIN inventory_borehole AS ib ON ib.borehole_id = b.borehole_id
-				JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
-				JOIN keyword AS k ON k.keyword_id = ik.keyword_id
-				WHERE b.prospect_id = #{id}
-				ORDER BY ib.inventory_id, LOWER(k.name)
-			) AS q1
-			GROUP BY keyword_id, name
-			ORDER BY keywords
-
-		) UNION ALL (
-
-			SELECT 2 AS type, ids, keywords,
-				COUNT(*) AS count
-			FROM (
-				SELECT
-					STRING_AGG(k.keyword_id::varchar, ',' ORDER BY LOWER(k.name)) AS ids,
-					STRING_AGG(k.name, '; ' ORDER BY LOWER(k.name)) AS keywords,
-					ib.inventory_id
-				FROM borehole AS b
-				JOIN inventory_borehole AS ib ON ib.borehole_id = b.borehole_id
-				JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
-				JOIN keyword AS k ON k.keyword_id = ik.keyword_id
-				WHERE b.prospect_id = #{id}
-				GROUP BY ib.inventory_id
-			) AS q2
-			GROUP BY keywords, ids
-		)
+		SELECT k.keyword_id, k.name AS keyword,
+			COUNT(*) AS count
+		FROM borehole AS b
+		JOIN inventory_borehole AS ib ON ib.borehole_id = b.borehole_id
+		JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
+		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+		WHERE b.prospect_id = 4
+		GROUP BY k.keyword_id, k.name
+		ORDER BY k.name
 	</select>
 
 
