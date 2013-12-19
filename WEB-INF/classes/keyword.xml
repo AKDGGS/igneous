@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Keyword">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="KeywordMap">
+		SELECT k.keyword_id, k.name, k.alias,
+			k.description,
+			kg.keyword_group_id,
+			kg.name AS keyword_group_name
+		FROM keyword AS k
+		JOIN keyword_group AS kg
+			ON kg.keyword_group_id = k.keyword_group_id
+	</select>
+
+	<resultMap id="KeywordMap" type="Keyword">
+		<id property="id" column="keyword_id" />
+		<result property="name" column="name" />
+		<result property="alias" column="alias" />
+		<result property="description" column="description" />
+
+		<association property="group" javaType="KeywordGroup">
+			<id property="id" column="keyword_group_id" />
+			<result property="name" column="keyword_group_name" />
+		</association>
+	</resultMap>
+</mapper>

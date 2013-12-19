@@ -36,5 +36,6 @@
 		<mapper resource="mining_district.xml" />
 		<mapper resource="outcrop.xml" />
 		<mapper resource="quadrangle.xml" />
+		<mapper resource="keyword.xml" />
 	</mappers>
 </configuration>
