@@ -125,8 +125,8 @@
 			cp.path AS container_path,
 
 			(
-				SELECT ST_AsText(geom)
-				FROM inventory_geom_precision AS ip
+				SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857))
+				FROM inventory_geog_precision AS ip
 				WHERE ip.inventory_id = iv.inventory_id
 				LIMIT 1
 			) AS wkt
@@ -235,8 +235,8 @@
 
 
 	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT inventory_id FROM inventory_geom_precision
-		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+		SELECT DISTINCT inventory_id FROM inventory_geog_precision
+		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
 		LIMIT ${limit}
 	</select>
 
@@ -244,20 +244,20 @@
 	<select id="getMultiIDByWKT" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		SELECT type, id
 		FROM (
-			SELECT DISTINCT 1 AS type, borehole_id AS id, geom
-			FROM borehole_geom
+			SELECT DISTINCT 1 AS type, borehole_id AS id, geog
+			FROM borehole_geog
 
 			UNION ALL
 
-			SELECT DISTINCT 2 AS type, well_id AS id, geom
-			FROM well_geom
+			SELECT DISTINCT 2 AS type, well_id AS id, geog
+			FROM well_geog
 
 			UNION ALL
 
-			SELECT DISTINCT 3 AS type, outcrop_id AS id, geom
-			FROM outcrop_geom
+			SELECT DISTINCT 3 AS type, outcrop_id AS id, geog
+			FROM outcrop_geog
 		) AS q
-		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
 		ORDER BY type, id
 	</select>
 </mapper>

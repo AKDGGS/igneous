@@ -15,7 +15,6 @@ public class Inventory implements Serializable
 	private String wkt;
 	private int interval_top, interval_bottom;
 	private Unit interval_unit;
-	private InventoryBranch branch;
 	private Collection collection;
 
 	private CoreDiameter core_diameter;
@@ -44,7 +43,6 @@ public class Inventory implements Serializable
 
 	public CoreDiameter getCoreDiameter(){ return core_diameter; }
 
-	public InventoryBranch getBranch(){ return branch; }
 	public Collection getCollection(){ return collection; }
 
 	public List<Keyword> getKeywords(){ return keywords; }

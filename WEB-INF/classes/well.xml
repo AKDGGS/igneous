@@ -10,8 +10,8 @@
 			SELECT
 				TRUNC(ST_Y(ll)::numeric, 4) || ', ' || TRUNC(ST_X(ll)::numeric, 4)
 			FROM (
-				SELECT ST_Transform(wg.geom, 4326) AS ll
-				FROM well_geom_point AS wg
+				SELECT wg.geog AS ll
+				FROM well_geog_point AS wg
 				WHERE wg.well_id = w.well_id
 				LIMIT 1
 			) AS q1

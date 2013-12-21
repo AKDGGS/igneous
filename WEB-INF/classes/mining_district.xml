@@ -6,7 +6,7 @@
 <mapper namespace="gov.alaska.dggs.igneous.MiningDistrict">
 	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="MiningDistrictMap">
 		SELECT mining_district_id, name,
-			region, ST_AsText(ST_Simplify(geom, 5000)) AS wkt
+			ST_AsText(ST_Simplify(ST_Transform(geog::GEOMETRY, 3857), 5000)) AS wkt
 		FROM mining_district
 		ORDER BY LOWER(name)
 	</select>
@@ -15,8 +15,8 @@
 		SELECT DISTINCT 
 			md.mining_district_id, md.name, md.region
 		FROM borehole AS bh
-		JOIN borehole_geom AS bg ON bg.borehole_id = bh.borehole_id
-		JOIN mining_district AS md ON ST_Intersects(md.geom, bg.geom)
+		JOIN borehole_geog AS bg ON bg.borehole_id = bh.borehole_id
+		JOIN mining_district AS md ON ST_Intersects(md.geog, bg.geog)
 		WHERE bh.prospect_id = #{id}
 	</select>
 

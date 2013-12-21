@@ -5,7 +5,7 @@
 
 <mapper namespace="gov.alaska.dggs.igneous.Outcrop">
 	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT outcrop_id FROM outcrop_geom
-		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+		SELECT DISTINCT outcrop_id FROM outcrop_geog
+		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
 	</select>
 </mapper>

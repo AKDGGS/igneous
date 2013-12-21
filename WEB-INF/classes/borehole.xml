@@ -108,7 +108,7 @@
 	</select>
 
 	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT borehole_id FROM borehole_geom
-		WHERE ST_Intersects(geom, ST_GeomFromText(#{wkt}, 3857))
+		SELECT DISTINCT borehole_id FROM borehole_geog
+		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
 	</select>
 </mapper>
