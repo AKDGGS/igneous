@@ -62,7 +62,8 @@
 
 
 	<select id="getWKT" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
-		SELECT bh.borehole_id, bh.name, ST_AsText(ST_Transform(bg.geog::GEOMETRY, 3857))) AS wkt
+		SELECT bh.borehole_id, bh.name,
+			ST_AsText(ST_Transform(bg.geog::GEOMETRY, 3857)) AS wkt
 		FROM borehole AS bh
 		JOIN borehole_geog AS bg ON bh.borehole_id = bg.borehole_id
 		WHERE bh.prospect_id = #{id}
