@@ -29,7 +29,18 @@
 		JOIN inventory_borehole AS ib ON ib.borehole_id = b.borehole_id
 		JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
 		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
-		WHERE b.prospect_id = 4
+		WHERE b.prospect_id = #{prospect_id}
+			AND k.keyword_id IN (
+				SELECT keyword_id
+				FROM keyword
+				WHERE name = 'residues'
+					OR keyword_group_id IN (
+						SELECT keyword_group_id
+						FROM keyword_group
+						WHERE name = 'source' OR
+							name = 'material'
+					)
+			)
 		GROUP BY k.keyword_id, k.name
 		ORDER BY k.name
 	</select>
