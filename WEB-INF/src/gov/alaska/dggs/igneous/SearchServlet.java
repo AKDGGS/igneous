@@ -220,6 +220,23 @@ public class SearchServlet extends HttpServlet
 			try {
 				StringBuilder select = new StringBuilder("id");
 
+				String[] mining_districts = request.getParameterValues("mining_district_id");
+				if(mining_districts != null){
+					int count = 0;
+					for(String mining_district : mining_districts){
+						try {
+							long mining_district_id = Long.parseLong(mining_district);
+							select.append(count == 0 ? ",IN(mining_district_id," : ",");
+							select.append(String.valueOf(mining_district_id));
+							count++;
+						} catch(Exception ex){
+							// Explicitly ignore faulty IDs
+						}
+					}
+					if(count > 0){ select.append(") AS md_criteria"); }
+					sphinx.SetFilter("md_criteria", 1, false);
+				}
+
 				String wkt = request.getParameter("wkt");
 				if(wkt != null){
 					List<HashMap<String, Integer>> ids = sess.selectList(
@@ -257,12 +274,6 @@ public class SearchServlet extends HttpServlet
 				if(borehole != null){
 					long borehole_id = Long.parseLong(borehole);
 					sphinx.SetFilter("borehole_id", borehole_id, false);
-				}
-
-				String mining_district = request.getParameter("mining_district_id");
-				if(mining_district != null){
-					long mining_district_id = Long.parseLong(mining_district);
-					sphinx.SetFilter("mining_district_id", mining_district_id, false);
 				}
 
 				StringBuilder query = new StringBuilder();

@@ -649,6 +649,15 @@ function initMap()
 						strokeOpacity: 1,
 						cursor: 'auto',
 						graphicZIndex: 5000
+					}),
+					'preview': new OpenLayers.Style({
+						fillColor: "#FF0000",
+						fillOpacity: 0,
+						strokeColor: "#FF0000",
+						strokeWidth: 2,
+						strokeOpacity: 1,
+						cursor: 'auto',
+						graphicZIndex: 5000
 					})
 				})
 			})
@@ -667,4 +676,19 @@ function initMap()
 			new OpenLayers.Control.Navigation()
 		]
 	});
+}
+
+
+function destroyFeaturesByIntent(layer, intent)
+{
+	var queue = [];
+	for(var i in layer.features){
+		if(layer.features[i].renderIntent === intent){
+			queue.push(layer.features[i]);
+		}
+	}
+
+	if(queue.length > 0){
+		layer.destroyFeatures(queue);
+	}
 }

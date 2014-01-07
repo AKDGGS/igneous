@@ -16,7 +16,7 @@ function clearmap()
 	var layer = map.getLayersByName('Result Layer')[0];
 	var queue = [];
 	for(var i in layer.features){
-		if(layer.features[i].renderIntent !== 'aoi'){
+		if(layer.features[i].renderIntent === 'default'){
 			queue.push(layer.features[i]);
 		}
 	}
@@ -54,15 +54,15 @@ function restore()
 					case 'mining_district_id':
 						$('#advanced').addClass('active');
 						$('#advanced_cell').show();
-						$('#mining_district_id').val(val);
 
-						var opt = $('#mining_district_id').find(':selected').get(0);
+						var opt = $('#mining_district_id').find(
+							'option[value="' + val +'"]'
+						).attr('selected', 'selected').get(0);
 						if('wkt' in opt){
 							var feature = new OpenLayers.Feature.Vector(
 								OpenLayers.Geometry.fromWKT(opt['wkt'])
 							);
-							feature.id = 'AOI_Preview';
-							feature.renderIntent = 'aoi';
+							feature.renderIntent = 'preview';
 							var layer = map.getLayersByName('Result Layer')[0];
 							layer.addFeatures([feature]);
 						}
@@ -281,11 +281,10 @@ $(function(){
 				searchok = true;
 			}
 
-			var md = $('#mining_district_id').val();
-			if(md.length > 0){
-				o['mining_district_id'] = md;
+			$('#mining_district_id').find(':selected').each(function(i,v){
+				Search.prototype.addProperty(o, 'mining_district_id', $(v).val());
 				searchok = true;
-			}
+			});
 
 			if(!searchok){
 				clearmap();
@@ -570,19 +569,17 @@ $(function(){
 	var mining_district_loaded = $.Deferred();
 	$('#mining_district_id').change(function(){
 		var layer = map.getLayersByName('Result Layer')[0];
-		var feature = layer.getFeatureById('AOI_Preview');
-		if(feature !== null){ layer.destroyFeatures(feature); }
+		destroyFeaturesByIntent(layer, 'preview');
 
-		var el = $(this).find(':selected').get(0);
-		if('wkt' in el){
-			var feature = new OpenLayers.Feature.Vector(
-				OpenLayers.Geometry.fromWKT(el['wkt'])
-			);
-			feature.id = 'AOI_Preview';
-			feature.renderIntent = 'aoi';
-			layer.addFeatures([feature]);
-		}
-
+		$(this).find(':selected').each(function(i, v){
+			if('wkt' in v){
+				var feature = new OpenLayers.Feature.Vector(
+					OpenLayers.Geometry.fromWKT(v['wkt'])
+				);
+				feature.renderIntent = 'preview';
+				layer.addFeatures([feature]);
+			}
+		});
 		search.execute();
 	});
 

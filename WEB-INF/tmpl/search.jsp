@@ -43,7 +43,7 @@
 					</td>
 					<td id="advanced_cell">
 						<label for="mining_district_id">Mining District</label>
-						<select name="mining_district_id" id="mining_district_id">
+						<select size="3" multiple="multiple" name="mining_district_id" id="mining_district_id">
 							<option value="">None</option>
 						</select>
 					</td>
