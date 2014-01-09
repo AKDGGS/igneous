@@ -73,6 +73,7 @@ function restore()
 			}
 		}
 
+		map.updateSize();
 		return true;
 	}
 }
