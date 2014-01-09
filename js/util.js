@@ -443,6 +443,7 @@ Popup.prototype = {
 		var features = [];
 		for(var i in this.layer.features){
 			if(this.layer.features[i].renderIntent !== 'aoi' &&
+			   this.layer.features[i].renderIntent !== 'preview' &&
 				 this.layer.features[i].geometry.atPoint(ll, lon, lat) &&
 				 this.layer.features[i].geometry.intersects(poly)){
 

@@ -33,13 +33,23 @@ public class BoreholeServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
 		include("borehole");
+		include("borehole.prospect");
 		include("summary");
+		include("quadrangles");
+		include("miningdistricts");
+		include("wkts");
 
-		exclude("class");
 		exclude("borehole.class");
 		exclude("borehole.prospect.class");
 		exclude("borehole.elevationUnit.class");
 		exclude("borehole.measuredDepthUnit.class");
+		exclude("borehole.inventory");
+		exclude("quadrangles.class");
+		exclude("miningdistricts.class");
+		exclude("class");
+
+		// Extremely important: Ignores circular reference
+		exclude("borehole.prospect.boreholes");
 	}};
 
 
@@ -68,14 +78,25 @@ public class BoreholeServlet extends HttpServlet
 			);
 			if(borehole == null){ throw new Exception("Borehole not found."); }
 
-			List<Object> summary = sess.selectList(
-				"gov.alaska.dggs.igneous.Borehole.getInventorySummary", id
-			);
-
 			HashMap map = new HashMap();
-			map.put("summary", summary);
 			map.put("borehole", borehole);
 
+			map.put("summary", sess.selectList(
+				"gov.alaska.dggs.igneous.Borehole.getInventorySummary", id
+			));
+
+			map.put("quadrangles", sess.selectList(
+				"gov.alaska.dggs.igneous.Quadrangle.getByBoreholeID", id
+			));
+			
+			map.put("miningdistricts", sess.selectList(
+				"gov.alaska.dggs.igneous.MiningDistrict.getByBoreholeID", id
+			));
+
+			map.put("wkts", sess.selectList(
+				"gov.alaska.dggs.igneous.Borehole.getWKT", id
+			));
+			
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;

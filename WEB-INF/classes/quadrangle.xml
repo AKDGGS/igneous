@@ -11,7 +11,19 @@
 		FROM borehole AS bh
 		JOIN borehole_geog AS bg ON bg.borehole_id = bh.borehole_id
 		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, bg.geog)
-		WHERE bh.prospect_id = #{id} AND qr.scale = 250000
+		WHERE bh.prospect_id = #{prospect_id}
+			AND qr.scale = 250000
+	</select>
+
+
+	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
+		SELECT DISTINCT
+			qr.quadrangle_id, qr.name, qr.alt_name,
+			qr.abbr, qr.alt_abbr, qr.scale
+		FROM borehole_geog AS bg
+		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, bg.geog)
+		WHERE bg.borehole_id = #{borehole_id}
+			AND qr.scale = 250000
 	</select>
 
 
