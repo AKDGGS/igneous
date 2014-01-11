@@ -4,6 +4,47 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Well">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
+		SELECT w.well_id, w.name, w.alt_names, 
+			w.well_number, w.api_number,
+			w.is_onshore, w.is_federal,
+			w.spud_date, w.completion_date,
+			w.measured_depth, w.vertical_depth,
+			w.elevation, w.elevation_kb,
+			w.permit_status, w.completion_status,
+			u.unit_id, u.name AS unit_name, u.abbr AS unit_abbr,
+			u.description AS unit_description
+		FROM well AS w
+		LEFT OUTER JOIN unit AS u
+			ON u.unit_id = w.unit_id
+		WHERE w.well_id = #{id}
+	</select>
+
+	<resultMap id="WellMap" type="Well">
+		<id property="id" column="well_id" />
+
+		<result property="name" column="name" />
+		<result property="well_number" column="well_number" />
+		<result property="alt_names" column="alt_names" />
+		<result property="api_number" column="api_number" />
+		<result property="is_onshore" column="is_onshore" />
+		<result property="is_federal" column="is_federal" />
+		<result property="spud_date" column="spud_date" />
+		<result property="completion_date" column="completion_date" />
+		<result property="measured_depth" column="measured_depth" />
+		<result property="vertical_depth" column="vertical_depth" />
+		<result property="permit_status" column="permit_status" />
+		<result property="completion_status" column="completion_status" />
+
+		<association property="unit" javaType="Unit">
+			<id property="id" column="unit_id" />
+			<result property="abbr" column="unit_abbr" />
+			<result property="name" column="unit_name" />
+			<result property="description" column="unit_description" />
+		</association>
+	</resultMap>
+
+
 	<!-- Query used exclusively by the Oil and Gas Report -->
 	<select id="getOilGas" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		SELECT w.well_id, w.name AS well_name, w.well_number, w.api_number, (
@@ -56,5 +97,38 @@
 			GROUP BY well_id
 		) AS q ON q.well_id = w.well_id
 		ORDER BY well_name, well_number, q.name
+	</select>
+
+
+	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+		SELECT k.keyword_id, k.name AS keyword,
+			COUNT(*) AS count
+		FROM inventory_well AS iw
+		JOIN inventory_keyword AS ik
+			ON ik.inventory_id = iw.inventory_id
+		JOIN keyword AS k
+			ON k.keyword_id = ik.keyword_id
+		WHERE iw.well_id = #{well_id}
+			AND k.keyword_id IN (
+				SELECT keyword_id
+				FROM keyword
+				WHERE name = 'residues'
+					OR keyword_group_id IN (
+						SELECT keyword_group_id
+						FROM keyword_group
+						WHERE name = 'source' OR
+							name = 'material'
+					)
+			)
+		GROUP BY k.keyword_id, k.name
+		ORDER BY k.name
+	</select>
+
+
+	<select id="getWKT" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
+		FROM well_geog
+		WHERE well_id = #{well_id}
+		LIMIT 1
 	</select>
 </mapper>

@@ -27,6 +27,17 @@
 	</select>
 
 
+	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
+		SELECT DISTINCT
+			qr.quadrangle_id, qr.name, qr.alt_name,
+			qr.abbr, qr.alt_abbr, qr.scale
+		FROM well_geog AS wg
+		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, wg.geog)
+		WHERE wg.well_id = #{well_id}
+			AND qr.scale = 250000
+	</select>
+
+
 	<resultMap id="QuadrangleMap" type="Quadrangle">
 		<id property="id" column="quadrangle_id" />
 		<result property="name" column="name" />

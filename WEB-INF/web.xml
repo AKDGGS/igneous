@@ -68,6 +68,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>WellViewPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.WellViewPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WellViewPageServlet</servlet-name>
+		<url-pattern>/well/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>SearchServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
 	</servlet>
@@ -95,6 +105,16 @@
 	<servlet-mapping>
 		<servlet-name>ProspectServlet</servlet-name>
 		<url-pattern>/prospect.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>WellServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.WellServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WellServlet</servlet-name>
+		<url-pattern>/well.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

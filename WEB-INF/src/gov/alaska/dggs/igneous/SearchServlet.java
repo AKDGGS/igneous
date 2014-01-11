@@ -36,6 +36,7 @@ public class SearchServlet extends HttpServlet
 		include("list.keywords");
 		include("list.boreholes");
 		include("list.wells");
+		include("list.outcrops");
 
 		exclude("list.class");	
 		exclude("list.keywords.class");
@@ -215,6 +216,18 @@ public class SearchServlet extends HttpServlet
 				sphinx.SetFilter("prospect_id", prospect_id, false);
 			}
 
+			String borehole = request.getParameter("borehole_id");
+			if(borehole != null){
+				long borehole_id = Long.parseLong(borehole);
+				sphinx.SetFilter("borehole_id", borehole_id, false);
+			}
+
+			String well = request.getParameter("well_id");
+			if(well != null){
+				long well_id = Long.parseLong(well);
+				sphinx.SetFilter("well_id", well_id, false);
+			}
+
 			HashMap json = new HashMap();
 
 			SqlSession sess = IgneousFactory.openSession();
@@ -289,12 +302,6 @@ public class SearchServlet extends HttpServlet
 					} else {
 						sphinx.SetFilter("id", 0, false);
 					}
-				}
-
-				String borehole = request.getParameter("borehole_id");
-				if(borehole != null){
-					long borehole_id = Long.parseLong(borehole);
-					sphinx.SetFilter("borehole_id", borehole_id, false);
 				}
 
 				StringBuilder query = new StringBuilder();
