@@ -42,6 +42,7 @@ public class SearchServlet extends HttpServlet
 		exclude("list.keywords.class");
 		exclude("list.keywords.code");
 		exclude("list.keywords.description");
+		exclude("list.keywords.group");
 		exclude("list.branch.description");
 		exclude("list.branch.class");
 		exclude("list.collection.description");
@@ -54,6 +55,8 @@ public class SearchServlet extends HttpServlet
 		exclude("list.intervalUnit.description");
 		exclude("list.coreDiameter.class");
 		exclude("list.coreDiameter.unit.class");
+
+		transform(new ExcludeTransformer(), void.class);
 	}};
 
 

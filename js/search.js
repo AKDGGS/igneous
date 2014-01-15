@@ -322,7 +322,7 @@ $(function(){
 				for(var i in json['list']){
 					var obj = json['list'][i];
 
-					if(obj['WKT'] !== null){
+					if('WKT' in obj){
 						features.push(new OpenLayers.Feature.Vector(
 							OpenLayers.Geometry.fromWKT(obj['WKT']),
 							obj
@@ -346,7 +346,7 @@ $(function(){
 						var borehole = obj['boreholes'][j];
 
 						var div = document.createElement('div');
-						if(borehole['prospect'] !== null){
+						if('prospect' in borehole){
 							div.appendChild(document.createTextNode(
 								'Prospect: '
 							));
@@ -357,7 +357,7 @@ $(function(){
 							a.appendChild(document.createTextNode(
 								prospect['name']
 							));
-							if(prospect['altNames'] !== null){
+							if('altNames' in prospect){
 								a.appendChild(document.createTextNode(
 									' (' + prospect['altNames'] + ')'
 								));
@@ -385,14 +385,14 @@ $(function(){
 						a = document.createElement('a');
 						a.href = 'well/' + well['ID'];
 						a.appendChild(document.createTextNode(well['name']));
-						if(well['wellNumber'] !== null){
+						if('wellNumber' in well){
 							a.appendChild(document.createTextNode(
 								' - ' + well['wellNumber']
 							));
 						}
 						div.appendChild(a);
 
-						if(well['APINumber'] !== null){
+						if('APINumber' in well){
 							var div2 = document.createElement('div');
 							div2.appendChild(document.createTextNode('API: '));
 							div2.appendChild(document.createTextNode(well['APINumber']));
@@ -425,7 +425,7 @@ $(function(){
 					// End Related
 
 					td = document.createElement('td');
-					if(obj['sampleNumber'] !== null){
+					if('sampleNumber' in obj){
 						td.appendChild(document.createTextNode(
 							obj['sampleNumber']
 						));
@@ -433,22 +433,22 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if(obj['box'] !== null){
+					if('box' in obj){
 						td.appendChild(document.createTextNode(obj['box']));
 					}
-					if(obj['set'] !== null){
+					if('set' in obj){
 						td.appendChild(document.createElement('br'));	
 						td.appendChild(document.createTextNode(obj['set']));
 					}
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if(obj['core'] !== null){
+					if('core' in obj){
 						td.appendChild(document.createTextNode(obj['core']));
 					}
-					if(obj['coreDiameter'] !== null){
+					if('coreDiameter' in obj){
 						td.appendChild(document.createElement('br'));	
-						if(obj['coreDiameter']['name'] !== null){
+						if('name' in obj['coreDiameter']){
 							td.appendChild(document.createTextNode(
 								obj['coreDiameter']['name']
 							));
@@ -456,7 +456,7 @@ $(function(){
 							td.appendChild(document.createTextNode(
 								obj['coreDiameter']['diameter']
 							));
-							if(obj['coreDiameter']['unit'] !== null){
+							if('unit' in obj['coreDiameter']){
 								td.appendChild(document.createTextNode(
 									 ' ' +obj['coreDiameter']['unit']['abbr']
 								));
@@ -467,21 +467,21 @@ $(function(){
 
 					td = document.createElement('td');
 					td.className = 'al-r';
-					if(obj['intervalTop'] !== null){
+					if('intervalTop' in obj){
 						td.appendChild(document.createTextNode(obj['intervalTop']));
-						if(obj['intervalUnit'] !== null){
+						if('intervalUnit' in obj){
 							td.appendChild(document.createTextNode(
 								' ' + obj['intervalUnit']['abbr']
 							));
 						}
 					}
 
-					if(obj['intervalBottom'] !== null){
+					if('intervalBottom' in obj){
 						td.appendChild(document.createElement('br'));
 						td.appendChild(document.createTextNode(
 							obj['intervalBottom']
 						));
-						if(obj['intervalUnit'] !== null){
+						if('intervalUnit' in obj){
 							td.appendChild(document.createTextNode(
 								' ' + obj['intervalUnit']['abbr']
 							));
@@ -500,7 +500,7 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if(obj['collection'] !== null){
+					if('collection' in obj){
 						td.appendChild(document.createTextNode(
 							obj['collection']['name']
 						));
@@ -509,8 +509,11 @@ $(function(){
 
 					td = document.createElement('td');
 					td.className = 'barcode';
-					if(obj['barcode'] !== null || obj['altBarcode'] !== null){
-						var barcode = obj['barcode'] !== null ? obj['barcode'] : obj['altBarcode'];
+
+					var barcode = null;
+					if('barcode' in obj){ barcode = obj['barcode']; }
+					else if('altBarcode' in obj){ barcode = obj['altBarcode'] }
+					if(barcode !== null){
 						var img = document.createElement('img');
 						img.height = 20;
 						img.src = 'barcode?c=' + barcode;
@@ -523,9 +526,11 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					td.appendChild(document.createTextNode(
-						obj['containerPath']
-					));
+					if('containerPath' in obj){
+						td.appendChild(document.createTextNode(
+							obj['containerPath']
+						));
+					}
 					tr.appendChild(td);
 
 					body.appendChild(tr);
