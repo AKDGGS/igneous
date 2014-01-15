@@ -4,7 +4,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Well">
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
+	<sql id="getBy">
 		SELECT w.well_id, w.name, w.alt_names, 
 			w.well_number, w.api_number,
 			w.is_onshore, w.is_federal,
@@ -14,6 +14,11 @@
 			w.permit_status, w.completion_status,
 			u.unit_id, u.name AS unit_name, u.abbr AS unit_abbr,
 			u.description AS unit_description
+	</sql>
+
+
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
+		<include refid="getBy" />
 		FROM well AS w
 		LEFT OUTER JOIN unit AS u
 			ON u.unit_id = w.unit_id
@@ -22,15 +27,7 @@
 
 
 	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
-		SELECT w.well_id, w.name, w.alt_names, 
-			w.well_number, w.api_number,
-			w.is_onshore, w.is_federal,
-			w.spud_date, w.completion_date,
-			w.measured_depth, w.vertical_depth,
-			w.elevation, w.elevation_kb,
-			w.permit_status, w.completion_status,
-			u.unit_id, u.name AS unit_name, u.abbr AS unit_abbr,
-			u.description AS unit_description
+		<include refid="getBy" />
 		FROM inventory_well AS iw
 		JOIN well AS w
 			ON w.well_id = iw.well_id

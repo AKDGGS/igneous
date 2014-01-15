@@ -17,6 +17,7 @@
 			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name
 	</sql>
 
+
 	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
 		<include refid="getBy" />
 		FROM borehole AS bh
@@ -26,6 +27,7 @@
 			ON evu.unit_id = elevation_unit_id
 		WHERE bh.borehole_id = #{borehole_id}
 	</select>
+
 
 	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
 		<include refid="getBy" />
@@ -37,6 +39,7 @@
 		WHERE bh.prospect_id = #{prospect_id}
 		ORDER BY LOWER(bh.name)
 	</select>
+
 
 	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
 		<include refid="getBy" />
