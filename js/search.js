@@ -127,30 +127,31 @@ $(function(){
 			a.appendChild(document.createTextNode(attr['ID']));
 			content.appendChild(a);
 
-			content.appendChild(document.createTextNode(' - '));
+			if('containerPath' in attr){
+				content.appendChild(document.createTextNode(' - '));
+				content.appendChild(document.createTextNode(attr['containerPath']));
+			}
 
-			content.appendChild(document.createTextNode(attr['containerPath']));
-
-			if(attr['intervalTop'] !== null || attr['intervalBottom'] !== null){
+			if('intervalTop' in attr || 'intervalBottom' in attr){
 				var div = document.createElement('div');
-				if(attr['intervalTop'] !== null){
+				if('intervalTop' in attr){
 					div.appendChild(document.createTextNode(attr['intervalTop']));
-					if(attr['intervalUnit'] !== null){
+					if('intervalUnit' in attr){
 						div.appendChild(document.createTextNode(
 							' ' + attr['intervalUnit']['abbr']
 						));
 					}
 				}
 
-				if(attr['intervalBottom'] !== null){
+				if('intervalBottom' in attr){
 					div.appendChild(document.createTextNode(' - '));
 				}
 
-				if(attr['intervalBottom'] !== null){
+				if('intervalBottom' in attr){
 					div.appendChild(document.createTextNode(
 						attr['intervalBottom']
 					));
-					if(attr['intervalUnit'] !== null){
+					if('intervalUnit' in attr){
 						div.appendChild(document.createTextNode(
 							' ' + attr['intervalUnit']['abbr']
 						));
@@ -165,7 +166,7 @@ $(function(){
 				var borehole = attr['boreholes'][i];
 
 				var div = document.createElement('div');
-				if(borehole['prospect'] !== null){
+				if('prospect' in borehole){
 					div.appendChild(document.createTextNode(
 						'Prospect: '
 					));
@@ -176,7 +177,7 @@ $(function(){
 					a.appendChild(document.createTextNode(
 						prospect['name']
 					));
-					if(prospect['altNames'] !== null){
+					if('altNames' in prospect){
 						a.appendChild(document.createTextNode(
 							' (' + prospect['altNames'] + ')'
 						));
@@ -204,14 +205,14 @@ $(function(){
 				a = document.createElement('a');
 				a.href = 'well/' + well['ID'];
 				a.appendChild(document.createTextNode(well['name']));
-				if(well['wellNumber'] !== null){
+				if('wellNumber' in well){
 					a.appendChild(document.createTextNode(
 						' - ' + well['wellNumber']
 					));
 				}
 				div.appendChild(a);
 
-				if(well['APINumber'] !== null){
+				if('APINumber' in well){
 					var div2 = document.createElement('div');
 					div2.appendChild(document.createTextNode('API: '));
 					div2.appendChild(document.createTextNode(well['APINumber']));
@@ -230,7 +231,7 @@ $(function(){
 				a = document.createElement('a');
 				a.href = 'outcrop/' + outcrop['ID'];
 				a.appendChild(document.createTextNode(outcrop['name']));
-				if(outcrop['outcropNumber'] !== null){
+				if('outcropNumber' in outcrop){
 					a.appendChild(document.createTextNode(
 						' - ' + outcrop['outcropNumber']
 					));
@@ -411,7 +412,7 @@ $(function(){
 						a = document.createElement('a');
 						a.href = 'outcrop/' + outcrop['ID'];
 						a.appendChild(document.createTextNode(outcrop['name']));
-						if(outcrop['outcropNumber'] !== null){
+						if('outcropNumber' in outcrop){
 							a.appendChild(document.createTextNode(
 								' - ' + outcrop['outcropNumber']
 							));
