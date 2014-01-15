@@ -29,6 +29,7 @@ public class InventoryServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
 		include("wells");
+		include("boreholes");
 		include("keywords");
 
 		exclude("class");
@@ -38,6 +39,9 @@ public class InventoryServlet extends HttpServlet
 		exclude("keywords.group.class");
 		exclude("wells.class");
 		exclude("wells.unit.class");
+		exclude("boreholes.class");
+		exclude("boreholes.measuredDepthUnit.class");
+		exclude("boreholes.prospect.class");
 		exclude("WKT");
 
 		transform(new DateTransformer("M/d/yyyy"), Date.class);

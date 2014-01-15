@@ -75,6 +75,7 @@
 
 		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
 		<collection property="wells" column="inventory_id" ofType="Well" select="gov.alaska.dggs.igneous.Well.getByInventoryID" />
+		<collection property="boreholes" column="inventory_id" ofType="Borehole" select="gov.alaska.dggs.igneous.Borehole.getByInventoryID" />
 	</resultMap>
 
 

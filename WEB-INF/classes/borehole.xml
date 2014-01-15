@@ -4,7 +4,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Borehole">
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
+	<sql id="getBy">
 		SELECT bh.borehole_id, bh.prospect_id,
 			bh.name AS borehole_name,
 			bh.alt_names AS alt_borehole_names,
@@ -15,6 +15,10 @@
 
 			bh.elevation, evu.unit_id AS evu_unit_id,
 			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name
+	</sql>
+
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
+		<include refid="getBy" />
 		FROM borehole AS bh
 		LEFT OUTER JOIN unit AS mdu
 			ON mdu.unit_id = measured_depth_unit_id
@@ -24,24 +28,28 @@
 	</select>
 
 	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
-		SELECT bh.borehole_id,
-			bh.name AS borehole_name,
-			bh.alt_names AS alt_borehole_names,
-			bh.is_onshore, bh.completion_date,
-			
-			bh.measured_depth, mdu.unit_id AS mdu_unit_id,
-			mdu.abbr AS mdu_unit_abbr, mdu.name AS mdu_unit_name,
-
-			bh.elevation, evu.unit_id AS evu_unit_id,
-			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name
+		<include refid="getBy" />
 		FROM borehole AS bh
 		LEFT OUTER JOIN unit AS mdu
 			ON mdu.unit_id = measured_depth_unit_id
 		LEFT OUTER JOIN unit AS evu
 			ON evu.unit_id = elevation_unit_id
-		WHERE prospect_id = #{id}
+		WHERE bh.prospect_id = #{prospect_id}
 		ORDER BY LOWER(bh.name)
 	</select>
+
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
+		<include refid="getBy" />
+		FROM inventory_borehole AS ib
+		JOIN borehole AS bh
+			ON bh.borehole_id = ib.borehole_id
+		LEFT OUTER JOIN unit AS mdu
+			ON mdu.unit_id = measured_depth_unit_id
+		LEFT OUTER JOIN unit AS evu
+			ON evu.unit_id = elevation_unit_id
+		WHERE ib.inventory_id = #{inventory_id}
+	</select>
+
 
 	<resultMap id="BoreholeMap" type="Borehole">
 		<id property="id" column="borehole_id" />
