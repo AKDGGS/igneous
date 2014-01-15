@@ -20,23 +20,26 @@
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
 			ON iun.unit_id = iv.interval_unit_id
-		LEFT OUTER JOIN container_path AS cp ON cp.container_id = (
-			SELECT ic.container_id
-			FROM inventory_container AS ic
-			WHERE ic.inventory_id = iv.inventory_id
-			ORDER BY ic.log_date DESC
-			LIMIT 1
-		)
+		LEFT OUTER JOIN container_path AS cp
+			ON cp.container_id = (
+				SELECT ic.container_id
+				FROM inventory_container AS ic
+				WHERE ic.inventory_id = iv.inventory_id
+				ORDER BY ic.log_date DESC
+				LIMIT 1
+			)
 	</sql>
 
 	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		<include refid="getBy" />
 		WHERE iv.barcode = #{barcode}
+		LIMIT 100
 	</select>
 
 	<select id="getByAltBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		<include refid="getBy" />
 		WHERE iv.alt_barcode = #{barcode}
+		LIMIT 100
 	</select>
 
 	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
@@ -70,20 +73,8 @@
 			<result property="description" column="collection_description" />
 		</association>
 
-		<collection property="keywords" column="inventory_id" ofType="Keyword" select="getKeywords" />
-	</resultMap>
-
-
-	<select id="getKeywords" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="KeywordMap">
-		SELECT k.keyword_id, k.name
-		FROM inventory_keyword AS ik
-		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
-		WHERE ik.inventory_id = #{id}
-	</select>
-
-	<resultMap id="KeywordMap" type="Keyword">
-		<id property="id" column="keyword_id" />
-		<result property="name" column="keyword_name" />
+		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
+		<collection property="wells" column="inventory_id" ofType="Well" select="gov.alaska.dggs.igneous.Well.getByInventoryID" />
 	</resultMap>
 
 
@@ -203,7 +194,7 @@
 			<result property="description" column="collection_description" />
 		</association>
 
-		<collection property="keywords" column="inventory_id" ofType="Keyword" select="getKeywords" />
+		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
 
 		<collection property="boreholes" ofType="Borehole">
 			<id property="id" column="borehole_id" />

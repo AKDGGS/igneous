@@ -14,8 +14,10 @@ import java.io.PrintWriter;
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Date;
 
 import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -26,10 +28,20 @@ import gov.alaska.dggs.igneous.model.Inventory;
 public class InventoryServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
+		include("wells");
+		include("keywords");
+
 		exclude("class");
 		exclude("intervalUnit.class");
 		exclude("collection.class");
+		exclude("keywords.class");
+		exclude("keywords.group.class");
+		exclude("wells.class");
+		exclude("wells.unit.class");
 		exclude("WKT");
+
+		transform(new DateTransformer("M/d/yyyy"), Date.class);
+		transform(new ExcludeTransformer(), void.class);
 	}};
 
 
@@ -57,7 +69,7 @@ public class InventoryServlet extends HttpServlet
 			List<Inventory> inventory = null;
 
 			if(id != null){
-				inventory = sess.selectOne(
+				inventory = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByID", id
 				);
 				if(inventory == null){ throw new Exception("Inventory not found."); }

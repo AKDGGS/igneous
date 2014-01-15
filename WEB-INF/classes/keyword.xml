@@ -30,6 +30,19 @@
 	</select>
 
 
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="KeywordMap">
+		SELECT k.keyword_id, k.name, k.alias,
+			k.description,
+			kg.keyword_group_id,
+			kg.name AS keyword_group_name
+		FROM inventory_keyword AS ik
+		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+		JOIN keyword_group AS kg
+			ON kg.keyword_group_id = k.keyword_group_id
+		WHERE ik.inventory_id = #{id}
+	</select>
+
+
 	<resultMap id="KeywordMap" type="Keyword">
 		<id property="id" column="keyword_id" />
 		<result property="name" column="name" />
