@@ -299,24 +299,24 @@ $(function(){
 
 					// Top / Bottom
 					td = document.createElement('td');
-					if(obj['intervalTop'] !== null){
+					if('intervalTop' in obj){
 						td.appendChild(document.createTextNode(obj['intervalTop']));
-						if(obj['intervalUnit'] !== null){
+						if('intervalUnit' in obj){
 							td.appendChild(document.createTextNode(
 								' ' + obj['intervalUnit']['abbr']
 							));
 						}
 					}
 
-					if(obj['intervalBottom'] !== null){
+					if('intervalBottom' in obj){
 						td.appendChild(document.createElement('br'));
 					}
 
-					if(obj['intervalBottom'] !== null){
+					if('intervalBottom' in obj){
 						td.appendChild(document.createTextNode(
 							obj['intervalBottom']
 						));
-						if(obj['intervalUnit'] !== null){
+						if('intervalUnit' in obj){
 							td.appendChild(document.createTextNode(
 								' ' + obj['intervalUnit']['abbr']
 							));
@@ -336,7 +336,7 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if(obj['collection'] !== null){
+					if('collection' in obj){
 						td.appendChild(document.createTextNode(
 							obj['collection']['name']
 						));
@@ -346,8 +346,11 @@ $(function(){
 					// Barcode
 					td = document.createElement('td');
 					td.className = 'barcode';
-					if(obj['barcode'] !== null || obj['altBarcode'] !== null){
-						var barcode = obj['barcode'] !== null ? obj['barcode'] : obj['altBarcode'];
+
+					var barcode = null;
+					if('barcode' in obj){ barcode = obj['barcode']; }
+					else if('altBarcode' in obj){ barcode = obj['altBarcode'] }
+					if(barcode !== null){
 						var img = document.createElement('img');
 						img.height = 20;
 						img.src = '../barcode?c=' + barcode;
