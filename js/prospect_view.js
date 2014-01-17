@@ -311,9 +311,6 @@ $(function(){
 
 					if('intervalBottom' in obj){
 						td.appendChild(document.createElement('br'));
-					}
-
-					if('intervalBottom' in obj){
 						td.appendChild(document.createTextNode(
 							obj['intervalBottom']
 						));
@@ -365,9 +362,11 @@ $(function(){
 
 					// Location
 					td = document.createElement('td');
-					td.appendChild(document.createTextNode(
-						obj['containerPath']
-					));
+					if('containerPath' in obj){
+						td.appendChild(document.createTextNode(
+							obj['containerPath']
+						));
+					}
 					tr.appendChild(td);
 
 					body.appendChild(tr);

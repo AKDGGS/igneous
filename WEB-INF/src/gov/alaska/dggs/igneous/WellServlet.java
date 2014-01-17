@@ -43,6 +43,8 @@ public class WellServlet extends HttpServlet
 		exclude("quadrangles.class");
 		exclude("miningdistricts.class");
 		exclude("class");
+
+		transform(new ExcludeTransformer(), void.class);
 	}};
 
 
