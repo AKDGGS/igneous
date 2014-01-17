@@ -25,7 +25,7 @@ $(function(){
 		onparse: function(json){
 			var borehole = json['borehole'];
 
-			if(json['wkts'] != null){
+			if('wkts' in json){
 				var wkt_parser = new OpenLayers.Format.WKT();
 				var features = [];
 				for(var i in json['wkts']){
@@ -55,7 +55,7 @@ $(function(){
 			dd.appendChild(document.createTextNode(borehole['name']));
 			dl.appendChild(dd);
 
-			if(borehole['altNames'] !== null){
+			if('altNames' in borehole){
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Alt. Borehole Names:'));
 				dl.appendChild(dt);
@@ -67,8 +67,22 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var quadrangles = json['quadrangles'];
-			if(quadrangles !== null && quadrangles.length > 0){
+			if('prospect' in borehole){
+				var prospect = borehole['prospect'];
+				dt = document.createElement('dt');
+				dt.appendChild(document.createTextNode('Prospect:'));
+				dl.appendChild(dt);
+
+				dd = document.createElement('dd');
+				var a = document.createElement('a');
+				a.href = '../prospect/' + prospect['ID'];
+				a.appendChild(document.createTextNode(prospect['name']));
+				dd.appendChild(a);
+				dl.appendChild(dd);
+			}
+
+			if('quadrangles' in json && json['quadrangles'].length > 0){
+				var quadrangles = json['quadrangles'];
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Quadrangles:'));
 				dl.appendChild(dt);
@@ -86,8 +100,8 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var miningdistricts = json['miningdistricts'];
-			if(miningdistricts !== null && miningdistricts.length > 0){
+			if('miningdistricts' in json && json['miningdistricts'].length > 0){
+				var miningdistricts = json['miningdistricts'];
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Mining Districts:'));
 				dl.appendChild(dt);
@@ -105,8 +119,8 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var summary = json['summary'];
-			if(summary !== null && summary.length > 0){
+			if('summary' in json && json['summary'].length > 0){
+				var summary = json['summary'];
 				var keywords = document.getElementById('keywords');
 
 				var ul = document.createElement('ul');
@@ -168,20 +182,6 @@ $(function(){
 		}
 	}); // End detail
 
-	popup = new Popup({
-		map: map,
-		onupdate: function(content, feature){
-			var attr = feature.attributes;
-
-			content.appendChild(document.createTextNode('Borehole: '));
-			var a = document.createElement('a');
-			a.href = '../borehole/' + attr['borehole_id'];
-			a.appendChild(document.createTextNode(attr['name']));
-			content.appendChild(a);
-		}
-	});
-	popup.attach();
-
 	search = new Search({
 		url: '../search.json',
 
@@ -221,48 +221,30 @@ $(function(){
 					td.appendChild(a);
 					tr.appendChild(td);
 
-					// Boreholes
-					td = document.createElement('td');
-					for(var j in obj['boreholes']){
-						var borehole = obj['boreholes'][j];
-
-						var div = document.createElement('div');
-						a = document.createElement('a');
-						a.href = 'borehole/' + borehole['ID'];
-						a.appendChild(document.createTextNode(borehole['name']));
-						div.appendChild(a);
-
-						td.appendChild(div);
-					}
-					tr.appendChild(td);
-
 					// Box
 					td = document.createElement('td');
-					if(obj['box'] !== null){
+					if('box' in obj){
 						td.appendChild(document.createTextNode(obj['box']));
 					}
 					tr.appendChild(td);
 
 					// Top / Bottom
 					td = document.createElement('td');
-					if(obj['intervalTop'] !== null){
+					if('intervalTop' in obj){
 						td.appendChild(document.createTextNode(obj['intervalTop']));
-						if(obj['intervalUnit'] !== null){
+						if('intervalUnit' in obj){
 							td.appendChild(document.createTextNode(
 								' ' + obj['intervalUnit']['abbr']
 							));
 						}
 					}
 
-					if(obj['intervalBottom'] !== null){
+					if('intervalBottom' in obj){
 						td.appendChild(document.createElement('br'));
-					}
-
-					if(obj['intervalBottom'] !== null){
 						td.appendChild(document.createTextNode(
 							obj['intervalBottom']
 						));
-						if(obj['intervalUnit'] !== null){
+						if('intervalUnit' in obj){
 							td.appendChild(document.createTextNode(
 								' ' + obj['intervalUnit']['abbr']
 							));
@@ -282,7 +264,7 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if(obj['collection'] !== null){
+					if('collection' in obj){
 						td.appendChild(document.createTextNode(
 							obj['collection']['name']
 						));
@@ -292,8 +274,10 @@ $(function(){
 					// Barcode
 					td = document.createElement('td');
 					td.className = 'barcode';
-					if(obj['barcode'] !== null || obj['altBarcode'] !== null){
-						var barcode = obj['barcode'] !== null ? obj['barcode'] : obj['altBarcode'];
+					var barcode = null;
+					if('barcode' in obj){ barcode = obj['barcode']; }
+					else if('altBarcode' in obj){ barcode = obj['altBarcode'] }
+					if(barcode !== null){
 						var img = document.createElement('img');
 						img.height = 20;
 						img.src = '../barcode?c=' + barcode;
@@ -307,9 +291,11 @@ $(function(){
 
 					// Location
 					td = document.createElement('td');
-					td.appendChild(document.createTextNode(
-						obj['containerPath']
-					));
+					if('containerPath' in obj){
+						td.appendChild(document.createTextNode(
+							obj['containerPath']
+						));
+					}
 					tr.appendChild(td);
 
 					body.appendChild(tr);

@@ -50,6 +50,8 @@ public class BoreholeServlet extends HttpServlet
 
 		// Extremely important: Ignores circular reference
 		exclude("borehole.prospect.boreholes");
+
+		transform(new ExcludeTransformer(), void.class);
 	}};
 
 

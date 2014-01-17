@@ -103,7 +103,6 @@
 					</tr>
 					<tr>
 						<th>ID</th>
-						<th>Borehole</th>
 						<th>Box</th>
 						<th>Top / Bottom</th>
 						<th>Keywords</th>

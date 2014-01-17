@@ -229,7 +229,8 @@ $(function(){
 
 			content.appendChild(document.createTextNode('Borehole: '));
 			var a = document.createElement('a');
-			a.href = '../borehole/' + attr['borehole_id'];
+			console.log(attr);
+			a.href = '../borehole/' + attr['id'];
 			a.appendChild(document.createTextNode(attr['name']));
 			content.appendChild(a);
 		}
