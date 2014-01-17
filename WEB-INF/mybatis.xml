@@ -37,5 +37,6 @@
 		<mapper resource="outcrop.xml" />
 		<mapper resource="quadrangle.xml" />
 		<mapper resource="keyword.xml" />
+		<mapper resource="corediameter.xml" />
 	</mappers>
 </configuration>

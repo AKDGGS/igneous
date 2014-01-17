@@ -88,7 +88,7 @@ public class ProspectServlet extends HttpServlet
 			));
 
 			map.put("diameters", sess.selectList(
-				"gov.alaska.dggs.igneous.Prospect.getCoreDiameters", id
+				"gov.alaska.dggs.igneous.CoreDiameter.getByProspectID", id
 			));
 
 			map.put("quadrangles", sess.selectList(

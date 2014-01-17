@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Date;
 import java.util.Map;
+import java.math.BigDecimal;
 
 
 public class Borehole implements Serializable
@@ -15,9 +16,9 @@ public class Borehole implements Serializable
 	private Prospect prospect;
 	private boolean is_onshore;
 	private Date completion;
-	private long measured_depth;
+	private BigDecimal measured_depth;
 	private Unit measured_depth_unit;
-	private long elevation;
+	private BigDecimal elevation;
 	private Unit elevation_unit;
 	private List<Inventory> inventory;
 
@@ -27,9 +28,9 @@ public class Borehole implements Serializable
 	public boolean isOnshore(){ return is_onshore; }
 	public Prospect getProspect(){ return prospect; }
 	public Date getCompletion(){ return completion; }
-	public long getMeasuredDepth(){ return measured_depth; }
+	public BigDecimal getMeasuredDepth(){ return measured_depth; }
 	public Unit getMeasuredDepthUnit(){ return measured_depth_unit; }
-	public long getElevation(){ return elevation; }
+	public BigDecimal getElevation(){ return elevation; }
 	public Unit getElevationUnit(){ return elevation_unit; }
 	public List<Inventory> getInventory(){ return inventory; }
 }

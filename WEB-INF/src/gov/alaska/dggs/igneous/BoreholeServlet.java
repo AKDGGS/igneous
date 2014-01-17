@@ -35,6 +35,7 @@ public class BoreholeServlet extends HttpServlet
 		include("borehole");
 		include("borehole.prospect");
 		include("summary");
+		include("diameters");
 		include("quadrangles");
 		include("miningdistricts");
 		include("wkts");
@@ -46,6 +47,7 @@ public class BoreholeServlet extends HttpServlet
 		exclude("borehole.inventory");
 		exclude("quadrangles.class");
 		exclude("miningdistricts.class");
+		exclude("diameters.class");
 		exclude("class");
 
 		// Extremely important: Ignores circular reference
@@ -87,10 +89,14 @@ public class BoreholeServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Borehole.getInventorySummary", id
 			));
 
+			map.put("diameters", sess.selectList(
+				"gov.alaska.dggs.igneous.CoreDiameter.getByBoreholeID", id
+			));
+	
 			map.put("quadrangles", sess.selectList(
 				"gov.alaska.dggs.igneous.Quadrangle.getByBoreholeID", id
 			));
-			
+	
 			map.put("miningdistricts", sess.selectList(
 				"gov.alaska.dggs.igneous.MiningDistrict.getByBoreholeID", id
 			));

@@ -81,6 +81,28 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
+			if('diameters' in json && json['diameters'].length > 0){
+				var diameters = json['diameters'];
+				dt = document.createElement('dt');
+				dt.appendChild(document.createTextNode('Core Diameters:'));
+				dl.appendChild(dt);
+
+				dd = document.createElement('dd');
+				for(var i in diameters){
+					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
+
+					if('name' in diameters[i]){
+						dd.appendChild(document.createTextNode(diameters[i]['name']));
+					} else {
+						dd.appendChild(document.createTextNode(diameters[i]['diameter']));
+						if('unit' in diameters[i]){
+							dd.appendChild(document.createTextNode(diameters[i]['unit']['abbr']));
+						}
+					}
+				}
+				dl.appendChild(dd);
+			}
+
 			if('quadrangles' in json && json['quadrangles'].length > 0){
 				var quadrangles = json['quadrangles'];
 				dt = document.createElement('dt');
