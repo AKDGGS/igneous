@@ -467,7 +467,7 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					td.className = 'al-r';
+					td.className = 'al-r nowrap';
 					if('intervalTop' in obj){
 						td.appendChild(document.createTextNode(obj['intervalTop']));
 						if('intervalUnit' in obj){

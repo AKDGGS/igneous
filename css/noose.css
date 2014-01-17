@@ -465,7 +465,7 @@ a:hover, a:focus { color:#2a6496;text-decoration:underline; }
 .datagrid-warning > thead > tr:last-child > th { border-top: 1px solid #fbeed5; }
 
 .al-r { text-align: right !important; }
-
+.nowrap { white-space: nowrap; }
 
 /*** Open Layers ***/
 /* Disables accelerated transformations, fixing the "white line" bug
@@ -528,5 +528,3 @@ img.olTileImage {
 	background-color: white;
 	background-color: rgba(255, 255, 255, 0.75);
 }
-
-
