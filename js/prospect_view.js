@@ -25,7 +25,7 @@ $(function(){
 		onparse: function(json){
 			var prospect = json['prospect'];
 
-			if(json['wkts'] != null){
+			if('wkts' in json){
 				var wkt_parser = new OpenLayers.Format.WKT();
 				var features = [];
 				for(var i in json['wkts']){
@@ -55,7 +55,7 @@ $(function(){
 			dd.appendChild(document.createTextNode(prospect['name']));
 			dl.appendChild(dd);
 
-			if(prospect['altNames'] !== null){
+			if('altNames' in prospect){
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Alt. Prospect Names:'));
 				dl.appendChild(dt);
@@ -67,7 +67,7 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			if(prospect['ARDF'] !== null){
+			if('ARDF' in prospect){
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('ARDF:'));
 				dl.appendChild(dt);
@@ -80,7 +80,7 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			if(prospect['boreholes'] !== null){
+			if('boreholes' in prospect){
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Boreholes:'));
 				dl.appendChild(dt);
@@ -99,8 +99,8 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var diameters = json['diameters'];
-			if(diameters !== null && diameters.length > 0){
+			if('diameters' in json && json['diameters'].length > 0){
+				var diameters = json['diameters'];
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Core Diameters:'));
 				dl.appendChild(dt);
@@ -109,11 +109,11 @@ $(function(){
 				for(var i in diameters){
 					if(i > 0){ dd.appendChild(document.createTextNode(', ')); }
 
-					if(diameters[i]['name'] !== null){
+					if('name' in diameters[i]){
 						dd.appendChild(document.createTextNode(diameters[i]['name']));
 					} else {
 						dd.appendChild(document.createTextNode(diameters[i]['diameter']));
-						if(diameters[i]['unit'] !== null){
+						if('unit' in diameters[i]){
 							dd.appendChild(document.createTextNode(diameters[i]['unit']['abbr']));
 						}
 					}
@@ -121,8 +121,8 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var quadrangles = json['quadrangles'];
-			if(quadrangles !== null && quadrangles.length > 0){
+			if('quadrangles' in json && json['quadrangles'].length > 0){
+				var quadrangles = json['quadrangles'];
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Quadrangles:'));
 				dl.appendChild(dt);
@@ -140,8 +140,8 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var miningdistricts = json['miningdistricts'];
-			if(miningdistricts !== null && miningdistricts.length > 0){
+			if('miningdistricts' in json && json['miningdistricts'].length > 0){
+				var miningdistricts = json['miningdistricts'];
 				dt = document.createElement('dt');
 				dt.appendChild(document.createTextNode('Mining Districts:'));
 				dl.appendChild(dt);
@@ -159,8 +159,8 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			var summary = json['summary'];
-			if(summary !== null && summary.length > 0){
+			if('summary' in json && json['summary'].length > 0){
+				var summary = json['summary'];
 				var keywords = document.getElementById('keywords');
 
 				var ul = document.createElement('ul');
