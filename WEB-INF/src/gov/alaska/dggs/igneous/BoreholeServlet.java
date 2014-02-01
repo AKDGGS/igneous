@@ -27,6 +27,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Borehole;
+import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 
 
 public class BoreholeServlet extends HttpServlet

@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.transformer;
 
 import flexjson.transformer.AbstractTransformer;
 

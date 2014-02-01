@@ -15,6 +15,7 @@ import java.util.zip.GZIPOutputStream;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Date;
+import java.util.Arrays;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
@@ -23,6 +24,8 @@ import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
+import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
+import gov.alaska.dggs.igneous.transformer.IterableTransformer;
 
 
 public class InventoryServlet extends HttpServlet
@@ -30,6 +33,7 @@ public class InventoryServlet extends HttpServlet
 	private static final JSONSerializer serializer = new JSONSerializer(){{
 		include("wells");
 		include("boreholes");
+		include("outcrops");
 		include("keywords");
 
 		exclude("class");
@@ -42,10 +46,12 @@ public class InventoryServlet extends HttpServlet
 		exclude("boreholes.class");
 		exclude("boreholes.measuredDepthUnit.class");
 		exclude("boreholes.prospect.class");
+		exclude("outcrops.class");
 		exclude("WKT");
 
 		transform(new DateTransformer("M/d/yyyy"), Date.class);
 		transform(new ExcludeTransformer(), void.class);
+		transform(new IterableTransformer(), Iterable.class);
 	}};
 
 

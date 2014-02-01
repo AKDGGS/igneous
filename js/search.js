@@ -231,9 +231,9 @@ $(function(){
 				a = document.createElement('a');
 				a.href = 'outcrop/' + outcrop['ID'];
 				a.appendChild(document.createTextNode(outcrop['name']));
-				if('outcropNumber' in outcrop){
+				if('number' in outcrop){
 					a.appendChild(document.createTextNode(
-						' - ' + outcrop['outcropNumber']
+						' - ' + outcrop['number']
 					));
 				}
 				div.appendChild(a);
@@ -412,9 +412,9 @@ $(function(){
 						a = document.createElement('a');
 						a.href = 'outcrop/' + outcrop['ID'];
 						a.appendChild(document.createTextNode(outcrop['name']));
-						if('outcropNumber' in outcrop){
+						if('number' in outcrop){
 							a.appendChild(document.createTextNode(
-								' - ' + outcrop['outcropNumber']
+								' - ' + outcrop['number']
 							));
 						}
 						div.appendChild(a);

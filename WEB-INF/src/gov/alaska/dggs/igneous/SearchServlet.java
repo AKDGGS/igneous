@@ -27,6 +27,7 @@ import org.apache.ibatis.session.SqlSession;
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.Keyword;
+import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 
 
 public class SearchServlet extends HttpServlet

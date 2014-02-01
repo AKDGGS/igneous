@@ -76,6 +76,7 @@
 		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
 		<collection property="wells" column="inventory_id" ofType="Well" select="gov.alaska.dggs.igneous.Well.getByInventoryID" />
 		<collection property="boreholes" column="inventory_id" ofType="Borehole" select="gov.alaska.dggs.igneous.Borehole.getByInventoryID" />
+		<collection property="outcrops" column="inventory_id" ofType="Outcrop" select="gov.alaska.dggs.igneous.Outcrop.getByInventoryID" />
 	</resultMap>
 
 
@@ -221,7 +222,7 @@
 		<collection property="outcrops" ofType="Outcrop">
 			<id property="id" column="outcrop_id" />
 			<result property="name" column="outcrop_name" />
-			<result property="outcrop_number" column="outcrop_number" />
+			<result property="number" column="outcrop_number" />
 		</collection>
 	</resultMap>
 
