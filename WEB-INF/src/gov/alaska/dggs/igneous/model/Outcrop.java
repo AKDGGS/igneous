@@ -11,12 +11,12 @@ public class Outcrop implements Serializable
 
 	private int id;
 	private String name, number;
-	private int year;
+	private Integer year;
 	private boolean is_onshore;
 
 	public int getID(){ return id; }
 	public String getName(){ return name; }
 	public String getNumber(){ return number; }
-	public int getYear(){ return year; }
+	public Integer getYear(){ return year; }
 	public boolean isOnshore(){ return is_onshore; }
 }

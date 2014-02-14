@@ -14,7 +14,7 @@ public class Inventory implements Serializable
 	private String description;
 	private String box, set, core, state;
 	private String wkt;
-	private int interval_top, interval_bottom;
+	private Integer interval_top, interval_bottom;
 	private Unit interval_unit;
 	private Collection collection;
 
@@ -40,8 +40,8 @@ public class Inventory implements Serializable
 	public String getDescription(){ return description; }
 	public String getWKT(){ return wkt; }
 
-	public int getIntervalTop(){ return interval_top; }
-	public int getIntervalBottom(){ return interval_bottom; }
+	public Integer getIntervalTop(){ return interval_top; }
+	public Integer getIntervalBottom(){ return interval_bottom; }
 	public Unit getIntervalUnit(){ return interval_unit; }
 
 	public CoreDiameter getCoreDiameter(){ return core_diameter; }
