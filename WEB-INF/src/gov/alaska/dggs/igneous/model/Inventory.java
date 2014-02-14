@@ -11,6 +11,7 @@ public class Inventory implements Serializable
 
 	private int id;
 	private String sample_number, barcode, alt_barcode;
+	private String description;
 	private String box, set, core, state;
 	private String wkt;
 	private int interval_top, interval_bottom;
@@ -25,6 +26,7 @@ public class Inventory implements Serializable
 	private List<Borehole> boreholes;
 	private List<Well> wells;
 	private List<Outcrop> outcrops;
+	private List<File> files;
 
 	public int getID(){ return id; }
 	public String getBarcode(){ return barcode; }
@@ -35,6 +37,7 @@ public class Inventory implements Serializable
 	public String getState(){ return state; }
 	public String getCore(){ return core; }
 	public String getSet(){ return set; }
+	public String getDescription(){ return description; }
 	public String getWKT(){ return wkt; }
 
 	public int getIntervalTop(){ return interval_top; }
@@ -49,4 +52,5 @@ public class Inventory implements Serializable
 	public List<Borehole> getBoreholes(){ return boreholes; }
 	public List<Well> getWells(){ return wells; }
 	public List<Outcrop> getOutcrops(){ return outcrops; }
+	public List<File> getFiles(){ return files; }
 }

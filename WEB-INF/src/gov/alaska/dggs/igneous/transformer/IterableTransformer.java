@@ -16,7 +16,7 @@ public class IterableTransformer extends AbstractTransformer
 	public void transform(Object object)
 	{
 		Iterable iterable = (Iterable) object;
-		if(iterable.iterator().hasNext()){
+		if(iterable.iterator().hasNext() || getContext().getPath().length() == 0){
 			TypeContext typeContext = getContext().peekTypeContext();
 			if(typeContext != null){
 				if(!typeContext.isFirst()) getContext().writeComma();

@@ -34,8 +34,6 @@ public class FileDownloadServlet extends HttpServlet
 		try { id = Integer.parseInt(request.getPathInfo().substring(1)); }
 		catch(Exception ex){ }
 
-		System.out.println("ID: " + id);
-
 		SqlSession sess = IgneousFactory.openSession();
 		Connection conn = sess.getConnection();
 		PreparedStatement ps = null;

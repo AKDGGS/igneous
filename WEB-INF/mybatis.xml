@@ -17,6 +17,8 @@
 		<typeAlias alias="Outcrop" type="gov.alaska.dggs.igneous.model.Outcrop" />
 		<typeAlias alias="Quadrangle" type="gov.alaska.dggs.igneous.model.Quadrangle" />
 		<typeAlias alias="MiningDistrict" type="gov.alaska.dggs.igneous.model.MiningDistrict" />
+		<typeAlias alias="File" type="gov.alaska.dggs.igneous.model.File" />
+		<typeAlias alias="FileType" type="gov.alaska.dggs.igneous.model.FileType" />
 	</typeAliases>
 
 	<environments default="development">
@@ -38,5 +40,6 @@
 		<mapper resource="quadrangle.xml" />
 		<mapper resource="keyword.xml" />
 		<mapper resource="corediameter.xml" />
+		<mapper resource="file.xml" />
 	</mappers>
 </configuration>

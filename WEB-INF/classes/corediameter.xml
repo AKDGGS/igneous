@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.CoreDiameter">
+	<sql id="getBy">
+		SELECT cd.core_diameter_id,
+			cd.core_diameter, cd.name,
+			un.unit_id,
+			un.name AS unit_name, un.abbr
+	</sql>
+
+
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="CoreDiameterMap">
+		<include refid="getBy" />
+		FROM core_diameter AS cd
+		LEFT OUTER JOIN unit AS un
+			ON un.unit_id = cd.unit_id
+		WHERE cd.core_diameter_id = #{core_diameter_id}
+	</select>
+
+
+	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="CoreDiameterMap">
+		<include refid="getBy" />
+		FROM borehole AS bh
+		JOIN inventory_borehole AS ib ON ib.borehole_id = bh.borehole_id
+		JOIN inventory AS iv ON iv.inventory_id = ib.inventory_id
+		JOIN core_diameter AS cd ON cd.core_diameter_id = iv.core_diameter_id
+		LEFT OUTER JOIN unit AS un ON un.unit_id = cd.unit_id
+		WHERE bh.prospect_id = #{prospect_id}
+		ORDER BY cd.core_diameter
+	</select>
+
+
+	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="CoreDiameterMap">
+		<include refid="getBy" />
+		FROM inventory_borehole AS ib
+		JOIN inventory AS iv ON iv.inventory_id = ib.inventory_id
+		JOIN core_diameter AS cd ON cd.core_diameter_id = iv.core_diameter_id
+		LEFT OUTER JOIN unit AS un ON un.unit_id = cd.unit_id
+		WHERE ib.borehole_id = #{borehole_id}
+		ORDER BY cd.core_diameter
+	</select>
+
+
+	<resultMap id="CoreDiameterMap" type="CoreDiameter">
+		<id property="id" column="core_diameter_id" />
+		<result property="name" column="name" />
+		<result property="diameter" column="core_diameter" />
+
+		<association property="unit" javaType="Unit">
+			<id property="id" column="unit_id" />
+			<result property="name" column="unit_name" />
+			<result property="abbr" column="abbr" />
+		</association>
+	</resultMap>
+</mapper>

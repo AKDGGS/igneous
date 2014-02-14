@@ -8,6 +8,7 @@
 			iv.barcode, iv.alt_barcode,
 			iv.box_number, iv.set_number,
 			iv.core_number, iv.state_number,
+			iv.description,
 			iv.interval_top, iv.interval_bottom,
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
@@ -57,6 +58,7 @@
 		<result property="set" column="set_number" />
 		<result property="core" column="core_number" />
 		<result property="state" column="state_number" />
+		<result property="description" column="description" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
 		<result property="container_path" column="container_path" />
@@ -77,6 +79,7 @@
 		<collection property="wells" column="inventory_id" ofType="Well" select="gov.alaska.dggs.igneous.Well.getByInventoryID" />
 		<collection property="boreholes" column="inventory_id" ofType="Borehole" select="gov.alaska.dggs.igneous.Borehole.getByInventoryID" />
 		<collection property="outcrops" column="inventory_id" ofType="Outcrop" select="gov.alaska.dggs.igneous.Outcrop.getByInventoryID" />
+		<collection property="files" column="inventory_id" ofType="File" select="gov.alaska.dggs.igneous.File.getByInventoryID" />
 	</resultMap>
 
 

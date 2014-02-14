@@ -35,6 +35,7 @@ public class InventoryServlet extends HttpServlet
 		include("boreholes");
 		include("outcrops");
 		include("keywords");
+		include("files");
 
 		exclude("class");
 		exclude("intervalUnit.class");
@@ -47,6 +48,8 @@ public class InventoryServlet extends HttpServlet
 		exclude("boreholes.measuredDepthUnit.class");
 		exclude("boreholes.prospect.class");
 		exclude("outcrops.class");
+		exclude("files.class");
+		exclude("files.type.class");
 		exclude("WKT");
 
 		transform(new DateTransformer("M/d/yyyy"), Date.class);
@@ -82,7 +85,6 @@ public class InventoryServlet extends HttpServlet
 				inventory = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByID", id
 				);
-				if(inventory == null){ throw new Exception("Inventory not found."); }
 			} else if(barcode != null){
 				HashMap<String, String> query = new HashMap<String, String>();
 				query.put("barcode", barcode);
@@ -105,8 +107,6 @@ public class InventoryServlet extends HttpServlet
 				}
 			}
 
-			response.setContentType("application/json");
-
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
 			try { 
@@ -120,6 +120,7 @@ public class InventoryServlet extends HttpServlet
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
 
+				response.setContentType("application/json");
 				serializer.serialize(inventory, out);
 			} finally {
 				if(out != null){ out.close(); }
