@@ -433,21 +433,6 @@ $(function(){
 							}
 						}
 
-						if('project' in obj){
-							var div = document.createElement('div');
-							var project = obj['project'];
-							div.appendChild(document.createTextNode(
-								'Project: ' + project['name']
-							));
-
-							if('year' in project){
-								div.appendChild(document.createTextNode(
-									', ' + project['year']
-								));
-							}
-							td.appendChild(div);
-						}
-
 						for(var j in shotlines){
 							var shotline = shotlines[j];
 
@@ -466,6 +451,22 @@ $(function(){
 
 							td.appendChild(div);
 						}
+
+						if('project' in obj){
+							var div = document.createElement('div');
+							var project = obj['project'];
+							div.appendChild(document.createTextNode(
+								'Project: ' + project['name']
+							));
+
+							if('year' in project){
+								div.appendChild(document.createTextNode(
+									', ' + project['year']
+								));
+							}
+							td.appendChild(div);
+						}
+
 					}
 
 					tr.appendChild(td);
