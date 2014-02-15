@@ -240,6 +240,7 @@ $(function(){
 
 				content.appendChild(div);
 			}
+
 			// End Related
 
 			var div = document.createElement('div');
@@ -420,6 +421,51 @@ $(function(){
 						div.appendChild(a);
 
 						td.appendChild(div);
+					}
+
+					// Shotlines/Shotpoints
+					if('shotpoints' in obj){
+						var shotlines = {};
+						for(var j in obj['shotpoints']){
+							var shotpoint = obj['shotpoints'][j];
+							if('shotline' in shotpoint){
+								shotlines[shotpoint['shotline']['ID']] = shotpoint['shotline'];
+							}
+						}
+
+						if('project' in obj){
+							var div = document.createElement('div');
+							var project = obj['project'];
+							div.appendChild(document.createTextNode(
+								'Project: ' + project['name']
+							));
+
+							if('year' in project){
+								div.appendChild(document.createTextNode(
+									', ' + project['year']
+								));
+							}
+							td.appendChild(div);
+						}
+
+						for(var j in shotlines){
+							var shotline = shotlines[j];
+
+							var div = document.createElement('div');
+							div.appendChild(document.createTextNode('Shotline: '));
+							a = document.createElement('a');
+							a.href = 'shotline/' + shotline['ID'];
+							a.appendChild(document.createTextNode(shotline['name']));
+							div.appendChild(a);
+
+							if('year' in shotline){
+								div.appendChild(document.createTextNode(
+									', ' + shotline['year']
+								));
+							}
+
+							td.appendChild(div);
+						}
 					}
 
 					tr.appendChild(td);

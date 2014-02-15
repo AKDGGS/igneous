@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Date;
 
 import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
 
 import org.sphx.api.SphinxClient;
 import org.sphx.api.SphinxResult;
@@ -28,36 +30,43 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.Keyword;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
+import gov.alaska.dggs.igneous.transformer.IterableTransformer;
 
 
 public class SearchServlet extends HttpServlet
 {
 	private static final JSONSerializer serializer = new JSONSerializer(){{
 		include("list");
+		include("list.collection");
+		include("list.project");
+		include("list.coreDiameter");
+		include("list.unit");
 		include("list.keywords");
 		include("list.boreholes");
 		include("list.wells");
 		include("list.outcrops");
+		include("list.shotpoints");
 
 		exclude("list.class");	
 		exclude("list.keywords.class");
 		exclude("list.keywords.code");
 		exclude("list.keywords.description");
 		exclude("list.keywords.group");
-		exclude("list.branch.description");
-		exclude("list.branch.class");
-		exclude("list.collection.description");
 		exclude("list.collection.class");
+		exclude("list.project.class");
 		exclude("list.boreholes.class");
 		exclude("list.boreholes.prospect.class");
 		exclude("list.wells.class");	
 		exclude("list.outcrops.class");	
+		exclude("list.shotpoints.class");	
+		exclude("list.shotpoints.shotline.class");	
 		exclude("list.intervalUnit.class");
-		exclude("list.intervalUnit.description");
 		exclude("list.coreDiameter.class");
 		exclude("list.coreDiameter.unit.class");
 
+		transform(new DateTransformer("M/d/yyyy"), Date.class);
 		transform(new ExcludeTransformer(), void.class);
+		transform(new IterableTransformer(), Iterable.class);
 	}};
 
 

@@ -17,8 +17,8 @@ public class Inventory implements Serializable
 	private Integer interval_top, interval_bottom;
 	private Unit interval_unit;
 	private Collection collection;
-
 	private CoreDiameter core_diameter;
+	private Project project;
 
 	private String container_path;
 
@@ -26,6 +26,7 @@ public class Inventory implements Serializable
 	private List<Borehole> boreholes;
 	private List<Well> wells;
 	private List<Outcrop> outcrops;
+	private List<Shotpoint> shotpoints;
 	private List<File> files;
 
 	public int getID(){ return id; }
@@ -45,12 +46,13 @@ public class Inventory implements Serializable
 	public Unit getIntervalUnit(){ return interval_unit; }
 
 	public CoreDiameter getCoreDiameter(){ return core_diameter; }
-
 	public Collection getCollection(){ return collection; }
+	public Project getProject(){ return project; }
 
 	public List<Keyword> getKeywords(){ return keywords; }
 	public List<Borehole> getBoreholes(){ return boreholes; }
 	public List<Well> getWells(){ return wells; }
 	public List<Outcrop> getOutcrops(){ return outcrops; }
+	public List<Shotpoint> getShotpoints(){ return shotpoints; }
 	public List<File> getFiles(){ return files; }
 }

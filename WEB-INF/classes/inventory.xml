@@ -92,8 +92,13 @@
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
 			iun.abbr AS interval_unit_abbr,
+
 			cl.collection_id, cl.name AS collection_name,
-			cl.description AS collection_description,
+
+			pr.project_id, pr.name AS project_name,
+			pr.start_date AS project_start_date,
+			pr.end_date AS project_end_date,
+
 			cd.core_diameter_id, cd.name AS core_diameter_name,
 			cd.core_diameter AS core_diameter_diameter,
 			cdun.unit_id AS core_diameter_unit_id,
@@ -117,6 +122,12 @@
 			o.outcrop_id,
 			o.name AS outcrop_name,
 			o.outcrop_number,
+
+			sp.shot_point_id,
+			sp.name AS shot_point_name,
+			sl.name AS shot_line_name,
+			sl.alt_names AS alt_shot_line_names,
+			sl.year AS shot_line_year,
 			
 			(
 				SELECT co.path_cache
@@ -139,6 +150,8 @@
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
 			ON iun.unit_id = iv.interval_unit_id
+		LEFT OUTER JOIN project AS pr
+			ON pr.project_id = iv.project_id
 		LEFT OUTER JOIN inventory_borehole AS ibh
 			ON ibh.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN borehole AS bh
@@ -157,6 +170,12 @@
 			ON io.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN outcrop AS o
 			ON o.outcrop_id = io.outcrop_id
+		LEFT OUTER JOIN inventory_shot_point AS isp
+			ON isp.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN shot_point AS sp
+			ON sp.shot_point_id = isp.shot_point_id
+		LEFT OUTER JOIN shot_line AS sl
+			ON sl.shot_line_id = sp.shot_line_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="array" open="(" separator="," close=")">${item}</foreach>
 		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id)
 	</select>
@@ -197,7 +216,13 @@
 		<association property="collection" javaType="iCollection">
 			<id property="id" column="collection_id" />
 			<result property="name" column="collection_name" />
-			<result property="description" column="collection_description" />
+		</association>
+
+		<association property="project" javaType="Project">
+			<id property="id" column="project_id" />
+			<result property="name" column="project_name" />
+			<result property="start_date" column="project_start_date" />
+			<result property="end_date" column="project_end_date" />
 		</association>
 
 		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
@@ -227,6 +252,18 @@
 			<id property="id" column="outcrop_id" />
 			<result property="name" column="outcrop_name" />
 			<result property="number" column="outcrop_number" />
+		</collection>
+
+		<collection property="shotpoints" ofType="Shotpoint">
+			<id property="id" column="shot_point_id" />
+			<result property="name" column="shot_point_name" />
+
+			<association property="shotline" javaType="Shotline">
+				<id property="id" column="shot_line_id" />
+				<result property="name" column="shot_line_name" />
+				<result property="alt_names" column="alt_shot_line_names" />
+				<result property="year" column="shot_line_year" />
+			</association>
 		</collection>
 	</resultMap>
 
