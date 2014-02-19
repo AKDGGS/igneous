@@ -225,9 +225,12 @@ Search.prototype = {
 				if(!('start' in params)){ params['start'] = 0; }
 				if(!('max' in params)){ params['max'] = 25; }
 
+				var length = 0;
+				if('list' in json){ length = json['list'].length; }
+
 				this.buildPageControl(
 					params['start'], params['max'], json['found'],
-					json['size'], json['list'].length
+					json['size'], length
 				);
 				this.onparse(json);
 			}

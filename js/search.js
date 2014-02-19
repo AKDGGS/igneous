@@ -304,7 +304,7 @@ $(function(){
 		},
 
 		onparse: function(json){
-			if(json['list'].length == 0){
+			if(!('list' in json)){
 				clearmap();
 				document.getElementById('inventory_container').style.display = 'none';
 
