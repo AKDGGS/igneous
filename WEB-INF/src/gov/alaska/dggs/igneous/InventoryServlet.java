@@ -36,6 +36,7 @@ public class InventoryServlet extends HttpServlet
 		include("outcrops");
 		include("keywords");
 		include("files");
+		include("publications");
 
 		exclude("class");
 		exclude("intervalUnit.class");
@@ -50,6 +51,7 @@ public class InventoryServlet extends HttpServlet
 		exclude("outcrops.class");
 		exclude("files.class");
 		exclude("files.type.class");
+		exclude("publications.class");
 		exclude("WKT");
 
 		transform(new DateTransformer("M/d/yyyy"), Date.class);

@@ -28,6 +28,7 @@ public class Inventory implements Serializable
 	private List<Outcrop> outcrops;
 	private List<Shotpoint> shotpoints;
 	private List<File> files;
+	private List<Publication> publications;
 
 	public int getID(){ return id; }
 	public String getBarcode(){ return barcode; }
@@ -55,4 +56,5 @@ public class Inventory implements Serializable
 	public List<Outcrop> getOutcrops(){ return outcrops; }
 	public List<Shotpoint> getShotpoints(){ return shotpoints; }
 	public List<File> getFiles(){ return files; }
+	public List<Publication> getPublications(){ return publications; }
 }

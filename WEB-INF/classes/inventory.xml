@@ -74,6 +74,7 @@
 		<collection property="boreholes" column="inventory_id" ofType="Borehole" select="gov.alaska.dggs.igneous.Borehole.getByInventoryID" />
 		<collection property="outcrops" column="inventory_id" ofType="Outcrop" select="gov.alaska.dggs.igneous.Outcrop.getByInventoryID" />
 		<collection property="files" column="inventory_id" ofType="File" select="gov.alaska.dggs.igneous.File.getByInventoryID" />
+		<collection property="publications" column="inventory_id" ofType="Publication" select="gov.alaska.dggs.igneous.Publication.getByInventoryID" />
 	</resultMap>
 
 

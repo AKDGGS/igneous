@@ -22,6 +22,7 @@
 		<typeAlias alias="Shotpoint" type="gov.alaska.dggs.igneous.model.Shotpoint" />
 		<typeAlias alias="Shotline" type="gov.alaska.dggs.igneous.model.Shotline" />
 		<typeAlias alias="Project" type="gov.alaska.dggs.igneous.model.Project" />
+		<typeAlias alias="Publication" type="gov.alaska.dggs.igneous.model.Publication" />
 	</typeAliases>
 
 	<environments default="development">
@@ -44,5 +45,6 @@
 		<mapper resource="keyword.xml" />
 		<mapper resource="corediameter.xml" />
 		<mapper resource="file.xml" />
+		<mapper resource="publication.xml" />
 	</mappers>
 </configuration>
