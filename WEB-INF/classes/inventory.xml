@@ -22,13 +22,7 @@
 		LEFT OUTER JOIN unit AS iun
 			ON iun.unit_id = iv.interval_unit_id
 		LEFT OUTER JOIN container AS co
-			ON co.container_id = (
-				SELECT ic.container_id
-				FROM inventory_container AS ic
-				WHERE ic.inventory_id = iv.inventory_id
-				ORDER BY ic.log_date DESC
-				LIMIT 1
-			)
+			ON co.container_id = iv.container_id
 	</sql>
 
 	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
@@ -128,17 +122,7 @@
 			sl.name AS shot_line_name,
 			sl.alt_names AS alt_shot_line_names,
 			sl.year AS shot_line_year,
-			
-			(
-				SELECT co.path_cache
-				FROM inventory_container AS ic
-				JOIN container AS co
-					ON ic.container_id = co.container_id
-				WHERE ic.inventory_id = iv.inventory_id
-				ORDER BY ic.log_date DESC
-				LIMIT 1
-			) AS container_path,
-
+			co.path_cache AS container_path,
 			(
 				SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857))
 				FROM inventory_geog_precision AS ip
@@ -176,6 +160,8 @@
 			ON sp.shot_point_id = isp.shot_point_id
 		LEFT OUTER JOIN shot_line AS sl
 			ON sl.shot_line_id = sp.shot_line_id
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="array" open="(" separator="," close=")">${item}</foreach>
 		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id)
 	</select>
