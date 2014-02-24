@@ -119,7 +119,7 @@
 			o.outcrop_number,
 
 			sp.shotpoint_id,
-			sp.name AS shotpoint_name,
+			sp.shotpoint_number,
 			sl.name AS shotline_name,
 			sl.alt_names AS alt_shotline_names,
 			sl.year AS shotline_year,
@@ -243,7 +243,7 @@
 
 		<collection property="shotpoints" ofType="Shotpoint">
 			<id property="id" column="shotpoint_id" />
-			<result property="name" column="shotpoint_name" />
+			<result property="number" column="shotpoint_number" />
 
 			<association property="shotline" javaType="Shotline">
 				<id property="id" column="shotline_id" />
