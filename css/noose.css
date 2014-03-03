@@ -528,3 +528,7 @@ img.olTileImage {
 	background-color: white;
 	background-color: rgba(255, 255, 255, 0.75);
 }
+
+.olPopup { font-family: 'Georgia, serif'; }
+.olPopup .text-small { font-size: 14px; }
+.olPopup .text-smaller { font-size: 12px; }

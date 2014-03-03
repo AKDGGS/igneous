@@ -516,7 +516,7 @@ Popup.prototype = {
 				this.popup.contentDiv.appendChild(this.button_next);
 
 				this.el_content = document.createElement('div');
-				this.el_content.className = 'container text-smaller';
+				this.el_content.className = 'container text-small';
 				this.popup.contentDiv.appendChild(this.el_content);
 
 				this.update();
