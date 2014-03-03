@@ -36,6 +36,7 @@ public class InventoryServlet extends HttpServlet
 		include("outcrops");
 		include("keywords");
 		include("files");
+		include("shotpoints");
 		include("publications");
 
 		exclude("class");
@@ -49,6 +50,8 @@ public class InventoryServlet extends HttpServlet
 		exclude("boreholes.measuredDepthUnit.class");
 		exclude("boreholes.prospect.class");
 		exclude("outcrops.class");
+		exclude("shotpoints.class");
+		exclude("shotpoints.shotline.class");
 		exclude("files.class");
 		exclude("files.type.class");
 		exclude("publications.class");
