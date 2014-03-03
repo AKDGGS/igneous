@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Publication">
+	<sql id="getBy">
+		SELECT p.publication_id, p.title, p.description, p.year,
+			p.publication_type, p.publication_number, p.publication_series,
+			p.can_publish
+	</sql>
+
+
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="PublicationMap">
+		<include refid="getBy" />
+		FROM publication AS p
+		WHERE p.publication_id = #{publication_id}
+	</select>
+
+
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="PublicationMap">
+		<include refid="getBy" />
+		FROM inventory_publication AS ip
+		JOIN publication AS p
+			ON p.publication_id = ip.publication_id
+		WHERE ip.inventory_id = #{inventory_id}
+	</select>
+
+
+	<resultMap id="PublicationMap" type="Publication">
+		<id property="id" column="publication_id" />
+		<result property="title" column="title" />
+		<result property="description" column="description" />
+		<result property="year" column="year" />
+		<result property="type" column="publication_type" />
+		<result property="number" column="publication_number" />
+		<result property="series" column="publication_series" />
+		<result property="can_publish" column="can_publish" />
+	</resultMap>
+</mapper>

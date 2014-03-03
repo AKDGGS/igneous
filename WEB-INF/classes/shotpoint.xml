@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Shotpoint">
+	<sql id="getBy">
+		SELECT sp.shotpoint_id, sp.shotpoint_number,
+			sl.shotline_id, sl.name AS shotline_name, 
+			sl.alt_names AS alt_shotline_names,
+			sl.year AS shotline_year,
+			sl.remark AS shotline_remark
+	</sql>
+
+
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="ShotpointMap">
+		<include refid="getBy" />
+		FROM shotpoint AS sp
+		LEFT OUTER JOIN shotline AS sl
+			ON sl.shotline_id = sp.shotline_id
+		WHERE sp.shotpoint_id = #{shotpoint_id}
+	</select>
+
+
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="ShotpointMap">
+		<include refid="getBy" />
+		FROM inventory_shotpoint AS isp
+		JOIN shotpoint AS sp
+			ON sp.shotpoint_id = isp.shotpoint_id
+		LEFT OUTER JOIN shotline AS sl
+			ON sl.shotline_id = sp.shotline_id
+		WHERE isp.inventory_id = #{inventory_id}
+	</select>
+
+
+	<resultMap id="ShotpointMap" type="Shotpoint">
+		<id property="id" column="shotpoint_id" />
+		<result property="number" column="shotpoint_number" />
+
+		<association property="shotline" javaType="Shotline">
+			<id property="id" column="shotline_id" />
+			<result property="name" column="shotline_name" />
+			<result property="alt_names" column="alt_shotline_names" />
+			<result property="year" column="shotline_year" />
+			<result property="remark" column="shotline_remark" />
+		</association>
+	</resultMap>
+</mapper>
