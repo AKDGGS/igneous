@@ -1,8 +1,8 @@
 package gov.alaska.dggs.igneous.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 
 public class Inventory implements Serializable
@@ -22,11 +22,16 @@ public class Inventory implements Serializable
 
 	private String container_path;
 
+	// Aggregate fields that have no database counter-part
+	private BigDecimal shotpoint_min;
+	private BigDecimal shotpoint_max;
+
 	private List<Keyword> keywords;
 	private List<Borehole> boreholes;
 	private List<Well> wells;
 	private List<Outcrop> outcrops;
 	private List<Shotpoint> shotpoints;
+	private List<Shotline> shotlines;
 	private List<File> files;
 	private List<Publication> publications;
 
@@ -41,6 +46,9 @@ public class Inventory implements Serializable
 	public String getSet(){ return set; }
 	public String getDescription(){ return description; }
 	public String getWKT(){ return wkt; }
+	public BigDecimal getShotpointMin(){ return shotpoint_min; }
+	public BigDecimal getShotpointMax(){ return shotpoint_max; }
+
 
 	public Integer getIntervalTop(){ return interval_top; }
 	public Integer getIntervalBottom(){ return interval_bottom; }
@@ -55,6 +63,7 @@ public class Inventory implements Serializable
 	public List<Well> getWells(){ return wells; }
 	public List<Outcrop> getOutcrops(){ return outcrops; }
 	public List<Shotpoint> getShotpoints(){ return shotpoints; }
+	public List<Shotline> getShotlines(){ return shotlines; }
 	public List<File> getFiles(){ return files; }
 	public List<Publication> getPublications(){ return publications; }
 }

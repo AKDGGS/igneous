@@ -424,17 +424,9 @@ $(function(){
 					}
 
 					// Shotlines/Shotpoints
-					if('shotpoints' in obj){
-						var shotlines = {};
-						for(var j in obj['shotpoints']){
-							var shotpoint = obj['shotpoints'][j];
-							if('shotline' in shotpoint){
-								shotlines[shotpoint['shotline']['ID']] = shotpoint['shotline'];
-							}
-						}
-
-						for(var j in shotlines){
-							var shotline = shotlines[j];
+					if('shotlines' in obj){
+						for(var j in obj['shotlines']){
+							var shotline = obj['shotlines'][j];
 
 							var div = document.createElement('div');
 							div.appendChild(document.createTextNode('Shotline: '));
@@ -448,8 +440,16 @@ $(function(){
 									', ' + shotline['year']
 								));
 							}
-
 							td.appendChild(div);
+
+							if('shotpointMax' in obj){
+								var div = document.createElement('div');
+								div.appendChild(document.createTextNode(
+									'Shotpoints: ' + obj['shotpointMin'] +
+									' - ' + obj['shotpointMax']
+								));
+								td.appendChild(div);
+							}
 						}
 
 						if('project' in obj){
@@ -466,7 +466,6 @@ $(function(){
 							}
 							td.appendChild(div);
 						}
-
 					}
 
 					tr.appendChild(td);

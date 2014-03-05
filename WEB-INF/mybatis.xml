@@ -46,6 +46,6 @@
 		<mapper resource="corediameter.xml" />
 		<mapper resource="file.xml" />
 		<mapper resource="publication.xml" />
-		<mapper resource="shotpoint.xml" />
+		<!-- <mapper resource="shotpoint.xml" /> -->
 	</mappers>
 </configuration>

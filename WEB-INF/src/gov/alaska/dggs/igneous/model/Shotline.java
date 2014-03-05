@@ -12,6 +12,7 @@ public class Shotline implements Serializable
 	private String name, alt_names;
 	private Integer year;
 	private String remark;
+
 	private List<Shotpoint> shotpoints;
 
 
@@ -22,5 +23,4 @@ public class Shotline implements Serializable
 	public String getRemark(){ return remark; }
 
 	public List<Shotpoint> getShotpoints(){ return shotpoints; }
-	public void setShotpoints(List<Shotpoint> shotpoints){ this.shotpoints = shotpoints; }
 }

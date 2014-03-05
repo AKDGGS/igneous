@@ -101,6 +101,8 @@
 			cdun.name AS core_diameter_unit_name,
 			cdun.abbr AS core_diameter_unit_abbr,
 
+			co.path_cache AS container_path,
+
 			bh.borehole_id,
 			bh.name AS borehole_name,
 			bh.alt_names AS alt_borehole_names,
@@ -119,12 +121,12 @@
 			o.name AS outcrop_name,
 			o.outcrop_number,
 
-			sp.shotpoint_id,
-			sp.shotpoint_number,
 			sl.name AS shotline_name,
 			sl.alt_names AS alt_shotline_names,
 			sl.year AS shotline_year,
-			co.path_cache AS container_path,
+			ismm.shotpoint_min,
+			ismm.shotpoint_max,
+
 			(
 				SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857))
 				FROM inventory_geog_precision AS ip
@@ -138,6 +140,8 @@
 			ON iun.unit_id = iv.interval_unit_id
 		LEFT OUTER JOIN project AS pr
 			ON pr.project_id = iv.project_id
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
 		LEFT OUTER JOIN inventory_borehole AS ibh
 			ON ibh.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN borehole AS bh
@@ -156,14 +160,12 @@
 			ON io.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN outcrop AS o
 			ON o.outcrop_id = io.outcrop_id
-		LEFT OUTER JOIN inventory_shotpoint AS isp
-			ON isp.inventory_id = iv.inventory_id
-		LEFT OUTER JOIN shotpoint AS sp
-			ON sp.shotpoint_id = isp.shotpoint_id
+		LEFT OUTER JOIN inventory_shotline AS isl
+			ON isl.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN inventory_shotpoint_minmax AS ismm
+			ON ismm.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN shotline AS sl
-			ON sl.shotline_id = sp.shotline_id
-		LEFT OUTER JOIN container AS co
-			ON co.container_id = iv.container_id
+			ON sl.shotline_id = isl.shotline_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="array" open="(" separator="," close=")">${item}</foreach>
 		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id)
 	</select>
@@ -181,6 +183,8 @@
 		<result property="state" column="state_number" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
+		<result property="shotpoint_min" column="shotpoint_min" />
+		<result property="shotpoint_max" column="shotpoint_max" />
 		<result property="wkt" column="wkt" />
 
 		<association property="interval_unit" javaType="Unit">
@@ -213,8 +217,6 @@
 			<result property="end_date" column="project_end_date" />
 		</association>
 
-		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
-
 		<collection property="boreholes" ofType="Borehole">
 			<id property="id" column="borehole_id" />
 			<result property="name" column="borehole_name" />
@@ -242,17 +244,14 @@
 			<result property="number" column="outcrop_number" />
 		</collection>
 
-		<collection property="shotpoints" ofType="Shotpoint">
-			<id property="id" column="shotpoint_id" />
-			<result property="number" column="shotpoint_number" />
-
-			<association property="shotline" javaType="Shotline">
-				<id property="id" column="shotline_id" />
-				<result property="name" column="shotline_name" />
-				<result property="alt_names" column="alt_shotline_names" />
-				<result property="year" column="shotline_year" />
-			</association>
+		<collection property="shotlines" ofType="Shotline">
+			<id property="id" column="shotline_id" />
+			<result property="name" column="shotline_name" />
+			<result property="alt_names" column="alt_shotline_names" />
+			<result property="year" column="shotline_year" />
 		</collection>
+
+		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
 	</resultMap>
 
 

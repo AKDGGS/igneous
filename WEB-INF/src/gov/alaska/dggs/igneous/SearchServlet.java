@@ -45,7 +45,8 @@ public class SearchServlet extends HttpServlet
 		include("list.boreholes");
 		include("list.wells");
 		include("list.outcrops");
-		include("list.shotpoints");
+		include("list.shotlines");
+		include("list.shotlines.shotpoints");
 
 		exclude("list.class");	
 		exclude("list.keywords.class");
@@ -58,8 +59,8 @@ public class SearchServlet extends HttpServlet
 		exclude("list.boreholes.prospect.class");
 		exclude("list.wells.class");	
 		exclude("list.outcrops.class");	
-		exclude("list.shotpoints.class");	
-		exclude("list.shotpoints.shotline.class");	
+		exclude("list.shotlines.class");	
+		exclude("list.shotlines.shotpoints.class");	
 		exclude("list.intervalUnit.class");
 		exclude("list.coreDiameter.class");
 		exclude("list.coreDiameter.unit.class");
