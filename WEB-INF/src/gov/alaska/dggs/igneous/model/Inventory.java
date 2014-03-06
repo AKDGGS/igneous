@@ -2,7 +2,6 @@ package gov.alaska.dggs.igneous.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.math.BigDecimal;
 
 
 public class Inventory implements Serializable
@@ -22,9 +21,6 @@ public class Inventory implements Serializable
 
 	private String container_path;
 
-	// Aggregate fields that have no database counter-part
-	private BigDecimal shotpoint_min;
-	private BigDecimal shotpoint_max;
 
 	private List<Keyword> keywords;
 	private List<Borehole> boreholes;
@@ -46,9 +42,6 @@ public class Inventory implements Serializable
 	public String getSet(){ return set; }
 	public String getDescription(){ return description; }
 	public String getWKT(){ return wkt; }
-	public BigDecimal getShotpointMin(){ return shotpoint_min; }
-	public BigDecimal getShotpointMax(){ return shotpoint_max; }
-
 
 	public Integer getIntervalTop(){ return interval_top; }
 	public Integer getIntervalBottom(){ return interval_bottom; }

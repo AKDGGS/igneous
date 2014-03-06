@@ -442,11 +442,11 @@ $(function(){
 							}
 							td.appendChild(div);
 
-							if('shotpointMax' in obj){
+							if('shotlineMax' in shotline){
 								var div = document.createElement('div');
 								div.appendChild(document.createTextNode(
-									'Shotpoints: ' + obj['shotpointMin'] +
-									' - ' + obj['shotpointMax']
+									'Shotpoints: ' + shotline['shotlineMin'] +
+									' - ' + shotline['shotlineMax']
 								));
 								td.appendChild(div);
 							}

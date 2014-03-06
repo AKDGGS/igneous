@@ -124,8 +124,8 @@
 			sl.name AS shotline_name,
 			sl.alt_names AS alt_shotline_names,
 			sl.year AS shotline_year,
-			ismm.shotpoint_min,
-			ismm.shotpoint_max,
+			ismm.shotline_min,
+			ismm.shotline_max,
 
 			(
 				SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857))
@@ -162,10 +162,11 @@
 			ON o.outcrop_id = io.outcrop_id
 		LEFT OUTER JOIN inventory_shotline AS isl
 			ON isl.inventory_id = iv.inventory_id
-		LEFT OUTER JOIN inventory_shotpoint_minmax AS ismm
-			ON ismm.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN shotline AS sl
 			ON sl.shotline_id = isl.shotline_id
+		LEFT OUTER JOIN inventory_shotline_minmax AS ismm
+			ON ismm.inventory_id = iv.inventory_id
+			AND ismm.shotline_id = isl.shotline_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="array" open="(" separator="," close=")">${item}</foreach>
 		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id)
 	</select>
@@ -183,8 +184,6 @@
 		<result property="state" column="state_number" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
-		<result property="shotpoint_min" column="shotpoint_min" />
-		<result property="shotpoint_max" column="shotpoint_max" />
 		<result property="wkt" column="wkt" />
 
 		<association property="interval_unit" javaType="Unit">
@@ -249,6 +248,8 @@
 			<result property="name" column="shotline_name" />
 			<result property="alt_names" column="alt_shotline_names" />
 			<result property="year" column="shotline_year" />
+			<result property="shotline_min" column="shotline_min" />
+			<result property="shotline_max" column="shotline_max" />
 		</collection>
 
 		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
