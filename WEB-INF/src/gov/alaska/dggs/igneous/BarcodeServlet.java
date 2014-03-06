@@ -25,10 +25,12 @@ public class BarcodeServlet extends HttpServlet
 		String code = request.getParameter("c");
 		try {
 			if(code == null){ throw new Exception("Empty barcode."); }
-			
+
+			code = code.toUpperCase();
+
 			MultiFormatWriter writer = new MultiFormatWriter();
 			BitMatrix matrix = writer.encode(code, BarcodeFormat.CODE_39, 1, 20);
-			
+
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
 			MatrixToImageWriter.writeToStream(matrix, "png", baos);
 

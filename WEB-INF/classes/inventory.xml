@@ -121,6 +121,7 @@
 			o.name AS outcrop_name,
 			o.outcrop_number,
 
+			sl.shotline_id,
 			sl.name AS shotline_name,
 			sl.alt_names AS alt_shotline_names,
 			sl.year AS shotline_year,
