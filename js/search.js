@@ -334,6 +334,7 @@ $(function(){
 					var tr = document.createElement('tr');
 
 					var td = document.createElement('td');
+					td.className = 'noprint';
 					var a = document.createElement('a');
 					a.href = 'detail/' + obj['ID'];
 					a.appendChild(document.createTextNode(obj['ID']));

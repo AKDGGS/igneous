@@ -21,7 +21,8 @@
 				* { font-family: 'Georgia, serif'; font-size: 14px; }
 				html, body, table, .container { margin: 0px; }
 				.nowrap { white-space: nowrap; }
-				.noprint, .navbar, .barcode { display: none; }
+				.noprint, .navbar, .barcode img { display: none; }
+				.barcode div { font-size: 14px; font-weight: normal; margin: 0px; }
 				table { border-collapse: collapse; page-break-inside: auto; }
 				tr { page-break-inside: avoid; page-break-after: auto; }
 				tr:nth-child(odd) { background-color: #eee; }
@@ -118,7 +119,7 @@
 						</td>
 					</tr>
 					<tr>
-						<th>ID</th>
+						<th class="noprint">ID</th>
 						<th>Related</th>
 						<th>Sample</th>
 						<th>Box /<br/>Set</th>
@@ -126,7 +127,7 @@
 						<th class="al-r">Top /<br>Bottom</th>
 						<th>Keywords</th>
 						<th>Collection</th>
-						<th class="noprint">Barcode</th>
+						<th>Barcode</th>
 						<th>Location</th>
 					</tr>
 				</thead>
