@@ -16,6 +16,20 @@
 			label { font-size: 14px; }
 			.navbar { white-space: nowrap; }
 			th { white-space: nowrap; font-size: 85%; }
+
+			@media print {
+				* { font-family: 'Georgia, serif'; font-size: 14px; }
+				html, body, table, .container { margin: 0px; }
+				.nowrap { white-space: nowrap; }
+				.noprint, .navbar, .barcode { display: none; }
+				table { border-collapse: collapse; page-break-inside: auto; }
+				tr { page-break-inside: avoid; page-break-after: auto; }
+				tr:nth-child(odd) { background-color: #eee; }
+				th { vertical-align: bottom; text-align: left; }
+				td { vertical-align: top; }
+				td, th { padding: 0px 4px; }
+				a { color: black; text-decoration: none; }
+			}
 		</style>
 	</head>
 	<body>
@@ -35,7 +49,7 @@
 			</div>
 		</div>
 
-		<div class="container">
+		<div class="container noprint">
 			<table class="tbl_container">
 				<tr>
 					<td>
@@ -54,7 +68,7 @@
 		<div id="inventory_container" class="container">
 			<table class="datagrid datagrid-info"> 
 				<thead>
-					<tr>
+					<tr class="noprint">
 						<td colspan="13" style="text-align: right">
 							<input type="hidden" name="start" id="start" value="0" />
 							<label for="max">Showing</label>
@@ -112,7 +126,7 @@
 						<th class="al-r">Top /<br>Bottom</th>
 						<th>Keywords</th>
 						<th>Collection</th>
-						<th>Barcode</th>
+						<th class="noprint">Barcode</th>
 						<th>Location</th>
 					</tr>
 				</thead>
