@@ -5,10 +5,12 @@
 
 <mapper namespace="gov.alaska.dggs.igneous.Quality">
 	<select id="getMissingBranch" resultSetType="FORWARD_ONLY" resultType="HashMap">
-		SELECT inventory_id AS id,
-			COALESCE(barcode, alt_barcode) AS desc
-		FROM inventory
-		WHERE inventory_id NOT IN (
+		SELECT iv.inventory_id AS id,
+			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
+		FROM inventory AS iv
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
+		WHERE iv.inventory_id NOT IN (
 			SELECT inventory_id
 			FROM inventory_keyword AS ik
 			JOIN keyword AS k
@@ -23,10 +25,12 @@
 
 
 	<select id="getMissingType" resultSetType="FORWARD_ONLY" resultType="HashMap">
-		SELECT inventory_id AS id,
-			COALESCE(barcode, alt_barcode) AS desc
-		FROM inventory
-		WHERE inventory_id NOT IN (
+		SELECT iv.inventory_id AS id,
+			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
+		FROM inventory AS iv
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
+		WHERE iv.inventory_id NOT IN (
 			SELECT inventory_id
 			FROM inventory_keyword AS ik
 			JOIN keyword AS k
@@ -60,7 +64,7 @@
 
 	<select id="getMissingMetadata" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		SELECT iv.inventory_id AS id, 
-			COALESCE(iv.barcode, iv.alt_barcode) AS desc
+			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.inventory_id
@@ -88,8 +92,10 @@
 
 	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		SELECT iv.inventory_id AS id,
-			COALESCE(iv.barcode, iv.alt_barcode) AS desc
+			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
 		FROM inventory AS iv
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
 		WHERE iv.container_id IS NULL
 	</select>
 </mapper>
