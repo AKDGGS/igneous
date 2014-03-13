@@ -92,10 +92,21 @@
 
 	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		SELECT iv.inventory_id AS id,
-			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
+			COALESCE(iv.barcode, iv.alt_barcode, '') AS desc
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.container_id
 		WHERE iv.container_id IS NULL
+	</select>
+
+
+	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
+		FROM inventory WHERE POSITION('-' IN barcode) &lt;&gt; 0
+
+		INTERSECT
+
+		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
+		FROM inventory WHERE POSITION('-' IN barcode) = 0
 	</select>
 </mapper>

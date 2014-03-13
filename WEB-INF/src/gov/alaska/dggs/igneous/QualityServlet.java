@@ -32,6 +32,7 @@ public class QualityServlet extends HttpServlet
 		critical = new HashMap<String,String>();
 		critical.put("getMissingMetadata", "Inventory without well, borehole, outcrop or shotpoint");
 		critical.put("getSeparatedBarcodes", "Barcodes that span multiple containers (excludes MSLIDEs)");
+		critical.put("getBarcodeOverlap", "Barcodes overlaps with others when hypen is removed");
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException

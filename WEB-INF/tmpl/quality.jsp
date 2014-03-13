@@ -10,9 +10,9 @@
 		<title>Alaska Geologic Materials Center</title>
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
-			.ok { background-color: green; }
+			.ok { background-color: green; color: white; }
 			.warn { background-color: yellow; }
-			.crit { background-color: red; }
+			.crit { background-color: red; color: white; }
 			.nowrap { white-space: nowrap; }
 			.result table { display: none; }
 			.result td { vertical-align: top; }
