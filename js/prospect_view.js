@@ -293,7 +293,7 @@ $(function(){
 
 					// Box
 					td = document.createElement('td');
-					if(obj['box'] !== null){
+					if('box' in obj){
 						td.appendChild(document.createTextNode(obj['box']));
 					}
 					tr.appendChild(td);
