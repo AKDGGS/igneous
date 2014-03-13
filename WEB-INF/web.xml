@@ -172,6 +172,16 @@
 		<url-pattern>/oilgas.pdf</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>QualityServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.QualityServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>QualityServlet</servlet-name>
+		<url-pattern>/quality.html</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>
