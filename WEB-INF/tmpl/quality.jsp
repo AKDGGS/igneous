@@ -8,6 +8,7 @@
 			.warning { background-color: yellow; }
 			.critical { background-color: red; color: white; }
 			.nowrap, #dest { white-space: nowrap; }
+			#detail img { margin: 30px; }
 			table { width: 100%; }
 			td { vertical-align: top; }
 			th { text-align: left; }
@@ -69,7 +70,7 @@
 											.text('PASSED');
 									} else {
 										var link = $('<a href="#">'+count+'</a>').click(function(e){
-											$('#detail').empty().append('Loading .. ');
+											$('#detail').empty().append('<img src="${pageContext.request.contextPath}/img/big_loading.gif" />');
 
 											$.ajax({
 												url: 'quality.json',
