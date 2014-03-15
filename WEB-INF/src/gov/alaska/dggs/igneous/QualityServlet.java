@@ -80,8 +80,6 @@ public class QualityServlet extends HttpServlet
 				report = report.substring(0, report.length() - 5);
 			}
 
-			System.out.println("reports: " + reports.containsKey(report));
-
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;

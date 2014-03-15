@@ -32,21 +32,23 @@ import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 
 public class WellServlet extends HttpServlet
 {
-	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("well");
-		include("summary");
-		include("quadrangles");
-		include("miningdistricts");
-		include("wkts");
+	private static JSONSerializer serializer;
+	static {
+		serializer = new JSONSerializer();
+		serializer.include("well");
+		serializer.include("summary");
+		serializer.include("quadrangles");
+		serializer.include("miningdistricts");
+		serializer.include("wkts");
 
-		exclude("well.class");
-		exclude("well.unit.class");
-		exclude("quadrangles.class");
-		exclude("miningdistricts.class");
-		exclude("class");
+		serializer.exclude("well.class");
+		serializer.exclude("well.unit.class");
+		serializer.exclude("quadrangles.class");
+		serializer.exclude("miningdistricts.class");
+		serializer.exclude("class");
 
-		transform(new ExcludeTransformer(), void.class);
-	}};
+		serializer.transform(new ExcludeTransformer(), void.class);
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }

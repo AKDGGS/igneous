@@ -30,37 +30,39 @@ import gov.alaska.dggs.igneous.transformer.IterableTransformer;
 
 public class InventoryServlet extends HttpServlet
 {
-	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("wells");
-		include("boreholes");
-		include("outcrops");
-		include("keywords");
-		include("files");
-		include("shotpoints");
-		include("publications");
+	private static JSONSerializer serializer;
+	static {
+		serializer = new JSONSerializer();
+		serializer.include("wells");
+		serializer.include("boreholes");
+		serializer.include("outcrops");
+		serializer.include("keywords");
+		serializer.include("files");
+		serializer.include("shotpoints");
+		serializer.include("publications");
 
-		exclude("class");
-		exclude("intervalUnit.class");
-		exclude("collection.class");
-		exclude("keywords.class");
-		exclude("keywords.group.class");
-		exclude("wells.class");
-		exclude("wells.unit.class");
-		exclude("boreholes.class");
-		exclude("boreholes.measuredDepthUnit.class");
-		exclude("boreholes.prospect.class");
-		exclude("outcrops.class");
-		exclude("shotpoints.class");
-		exclude("shotpoints.shotline.class");
-		exclude("files.class");
-		exclude("files.type.class");
-		exclude("publications.class");
-		exclude("WKT");
+		serializer.exclude("class");
+		serializer.exclude("intervalUnit.class");
+		serializer.exclude("collection.class");
+		serializer.exclude("keywords.class");
+		serializer.exclude("keywords.group.class");
+		serializer.exclude("wells.class");
+		serializer.exclude("wells.unit.class");
+		serializer.exclude("boreholes.class");
+		serializer.exclude("boreholes.measuredDepthUnit.class");
+		serializer.exclude("boreholes.prospect.class");
+		serializer.exclude("outcrops.class");
+		serializer.exclude("shotpoints.class");
+		serializer.exclude("shotpoints.shotline.class");
+		serializer.exclude("files.class");
+		serializer.exclude("files.type.class");
+		serializer.exclude("publications.class");
+		serializer.exclude("WKT");
 
-		transform(new DateTransformer("M/d/yyyy"), Date.class);
-		transform(new ExcludeTransformer(), void.class);
-		transform(new IterableTransformer(), Iterable.class);
-	}};
+		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
+		serializer.transform(new ExcludeTransformer(), void.class);
+		serializer.transform(new IterableTransformer(), Iterable.class);
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }

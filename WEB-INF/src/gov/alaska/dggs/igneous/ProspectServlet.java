@@ -32,28 +32,30 @@ import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 
 public class ProspectServlet extends HttpServlet
 {
-	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("prospect.boreholes");
-		include("prospect");
-		include("summary");
-		include("diameters");
-		include("quadrangles");
-		include("miningdistricts");
-		include("wkts");
+	private static JSONSerializer serializer;
+	static {
+		serializer = new JSONSerializer();
+		serializer.include("prospect.boreholes");
+		serializer.include("prospect");
+		serializer.include("summary");
+		serializer.include("diameters");
+		serializer.include("quadrangles");
+		serializer.include("miningdistricts");
+		serializer.include("wkts");
 
 		// Extremely important: Ignores circular reference
-		exclude("prospect.boreholes.prospect");
+		serializer.exclude("prospect.boreholes.prospect");
 
-		exclude("prospect.boreholes.class");
-		exclude("prospect.class");
-		exclude("diameters.class");
-		exclude("diameters.unit.class");
-		exclude("quadrangles.class");
-		exclude("miningdistricts.class");
-		exclude("class");
+		serializer.exclude("prospect.boreholes.class");
+		serializer.exclude("prospect.class");
+		serializer.exclude("diameters.class");
+		serializer.exclude("diameters.unit.class");
+		serializer.exclude("quadrangles.class");
+		serializer.exclude("miningdistricts.class");
+		serializer.exclude("class");
 
-		transform(new ExcludeTransformer(), void.class);
-	}};
+		serializer.transform(new ExcludeTransformer(), void.class);
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }

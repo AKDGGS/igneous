@@ -35,40 +35,42 @@ import gov.alaska.dggs.igneous.transformer.IterableTransformer;
 
 public class SearchServlet extends HttpServlet
 {
-	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("list");
-		include("list.collection");
-		include("list.project");
-		include("list.coreDiameter");
-		include("list.unit");
-		include("list.keywords");
-		include("list.boreholes");
-		include("list.wells");
-		include("list.outcrops");
-		include("list.shotlines");
-		include("list.shotlines.shotpoints");
+	private static JSONSerializer serializer;
+	static { 
+		serializer = new JSONSerializer();
+		serializer.include("list");
+		serializer.include("list.collection");
+		serializer.include("list.project");
+		serializer.include("list.coreDiameter");
+		serializer.include("list.unit");
+		serializer.include("list.keywords");
+		serializer.include("list.boreholes");
+		serializer.include("list.wells");
+		serializer.include("list.outcrops");
+		serializer.include("list.shotlines");
+		serializer.include("list.shotlines.shotpoints");
 
-		exclude("list.class");	
-		exclude("list.keywords.class");
-		exclude("list.keywords.code");
-		exclude("list.keywords.description");
-		exclude("list.keywords.group");
-		exclude("list.collection.class");
-		exclude("list.project.class");
-		exclude("list.boreholes.class");
-		exclude("list.boreholes.prospect.class");
-		exclude("list.wells.class");	
-		exclude("list.outcrops.class");	
-		exclude("list.shotlines.class");	
-		exclude("list.shotlines.shotpoints.class");	
-		exclude("list.intervalUnit.class");
-		exclude("list.coreDiameter.class");
-		exclude("list.coreDiameter.unit.class");
+		serializer.exclude("list.class");	
+		serializer.exclude("list.keywords.class");
+		serializer.exclude("list.keywords.code");
+		serializer.exclude("list.keywords.description");
+		serializer.exclude("list.keywords.group");
+		serializer.exclude("list.collection.class");
+		serializer.exclude("list.project.class");
+		serializer.exclude("list.boreholes.class");
+		serializer.exclude("list.boreholes.prospect.class");
+		serializer.exclude("list.wells.class");	
+		serializer.exclude("list.outcrops.class");	
+		serializer.exclude("list.shotlines.class");	
+		serializer.exclude("list.shotlines.shotpoints.class");	
+		serializer.exclude("list.intervalUnit.class");
+		serializer.exclude("list.coreDiameter.class");
+		serializer.exclude("list.coreDiameter.unit.class");
 
-		transform(new DateTransformer("M/d/yyyy"), Date.class);
-		transform(new ExcludeTransformer(), void.class);
-		transform(new IterableTransformer(), Iterable.class);
-	}};
+		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
+		serializer.transform(new ExcludeTransformer(), void.class);
+		serializer.transform(new IterableTransformer(), Iterable.class);
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }

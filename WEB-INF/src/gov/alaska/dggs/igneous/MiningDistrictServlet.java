@@ -33,9 +33,11 @@ import gov.alaska.dggs.ETagUtil;
 
 public class MiningDistrictServlet extends HttpServlet
 {
-	private static final JSONSerializer serializer = new JSONSerializer(){{
-		exclude("class");
-	}};
+	private static JSONSerializer serializer;
+	static { 
+		serializer = new JSONSerializer();
+		serializer.exclude("class");
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }

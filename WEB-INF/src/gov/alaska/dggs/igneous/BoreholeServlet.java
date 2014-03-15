@@ -32,30 +32,33 @@ import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 
 public class BoreholeServlet extends HttpServlet
 {
-	private static final JSONSerializer serializer = new JSONSerializer(){{
-		include("borehole");
-		include("borehole.prospect");
-		include("summary");
-		include("diameters");
-		include("quadrangles");
-		include("miningdistricts");
-		include("wkts");
+	private static JSONSerializer serializer;
+	static {
+		serializer = new JSONSerializer();
 
-		exclude("borehole.class");
-		exclude("borehole.prospect.class");
-		exclude("borehole.elevationUnit.class");
-		exclude("borehole.measuredDepthUnit.class");
-		exclude("borehole.inventory");
-		exclude("quadrangles.class");
-		exclude("miningdistricts.class");
-		exclude("diameters.class");
-		exclude("class");
+		serializer.include("borehole");
+		serializer.include("borehole.prospect");
+		serializer.include("summary");
+		serializer.include("diameters");
+		serializer.include("quadrangles");
+		serializer.include("miningdistricts");
+		serializer.include("wkts");
+
+		serializer.exclude("borehole.class");
+		serializer.exclude("borehole.prospect.class");
+		serializer.exclude("borehole.elevationUnit.class");
+		serializer.exclude("borehole.measuredDepthUnit.class");
+		serializer.exclude("borehole.inventory");
+		serializer.exclude("quadrangles.class");
+		serializer.exclude("miningdistricts.class");
+		serializer.exclude("diameters.class");
+		serializer.exclude("class");
 
 		// Extremely important: Ignores circular reference
-		exclude("borehole.prospect.boreholes");
+		serializer.exclude("borehole.prospect.boreholes");
 
-		transform(new ExcludeTransformer(), void.class);
-	}};
+		serializer.transform(new ExcludeTransformer(), void.class);
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
