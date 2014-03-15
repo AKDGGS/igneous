@@ -4,7 +4,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Quality">
-	<select id="getMissingBranch" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<sql id="MissingBranch">
 		SELECT iv.inventory_id AS id,
 			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
 		FROM inventory AS iv
@@ -21,10 +21,17 @@
 				WHERE name = 'branch'
 			)
 		)
+	</sql>
+	<select id="getMissingBranch" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="MissingBranch" />
+	</select>
+	<select id="getMissingBranchCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="MissingBranch" />) AS q
 	</select>
 
 
-	<select id="getMissingType" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<sql id="MissingType">
 		SELECT iv.inventory_id AS id,
 			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
 		FROM inventory AS iv
@@ -41,10 +48,17 @@
 				WHERE name = 'type'
 			)
 		)
+	</sql>
+	<select id="getMissingType" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="MissingType" />
+	</select>
+	<select id="getMissingTypeCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="MissingType" />) AS q
 	</select>
 
 
-	<select id="getSeparatedBarcodes" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<sql id="SeparatedBarcodes">
 		SELECT barcode AS id,
 			STRING_AGG(path_cache, ', ') AS desc
 		FROM (
@@ -58,11 +72,18 @@
 				AND POSITION('MSLIDE' IN co.path_cache) = 0
 		) AS q1
 		GROUP BY barcode
-		HAVING COUNT(DISTINCT container_id) > 1
+		HAVING COUNT(DISTINCT container_id) &gt; 1
+	</sql>
+	<select id="getSeparatedBarcodes" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="SeparatedBarcodes" />
+	</select>
+	<select id="getSeparatedBarcodesCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="SeparatedBarcodes" />) AS q
 	</select>
 
 
-	<select id="getMissingMetadata" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<sql id="MissingMetadata">
 		SELECT iv.inventory_id AS id, 
 			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
 		FROM inventory AS iv
@@ -72,35 +93,54 @@
 			SELECT inventory_id
 			FROM inventory_well
 			
-			UNION
+			UNION ALL
 			
 			SELECT inventory_id
 			FROM inventory_borehole
 			
-			UNION
+			UNION ALL
 			
 			SELECT inventory_id
 			FROM inventory_outcrop
 			
-			UNION
+			UNION ALL
 			
 			SELECT inventory_id
 			FROM inventory_shotpoint
+
+			UNION ALL
+
+			SELECT inventory_id
+			FROM inventory_publication
 		)
+	</sql>
+	<select id="getMissingMetadata" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="MissingMetadata" />
+	</select>
+	<select id="getMissingMetadataCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="MissingMetadata" />) AS q
 	</select>
 
 
-	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<sql id="MissingContainer">
 		SELECT iv.inventory_id AS id,
 			COALESCE(iv.barcode, iv.alt_barcode, '') AS desc
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.container_id
 		WHERE iv.container_id IS NULL
+	</sql>
+	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="MissingContainer" />
+	</select>
+	<select id="getMissingContainerCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="MissingContainer" />) AS q
 	</select>
 
 
-	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<sql id="BarcodeOverlap">
 		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
 		FROM inventory WHERE POSITION('-' IN barcode) &lt;&gt; 0
 
@@ -108,5 +148,13 @@
 
 		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
 		FROM inventory WHERE POSITION('-' IN barcode) = 0
+	</sql>
+	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="BarcodeOverlap" />
 	</select>
+	<select id="getBarcodeOverlapCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="BarcodeOverlap" />) AS q
+	</select>
+
 </mapper>
