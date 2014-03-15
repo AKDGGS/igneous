@@ -3,12 +3,14 @@ package gov.alaska.dggs.igneous;
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 import java.util.ArrayList;
 
@@ -23,23 +25,43 @@ import flexjson.JSONSerializer;
 
 public class QualityServlet extends HttpServlet
 {
-	private static final HashMap<String,String> warning;
-	static {
-		warning = new HashMap<String,String>();
-		warning.put("getMissingContainer", "Inventory without a container");
-		warning.put("getMissingType", "Inventory missing a keyword for \"type\"");
-		warning.put("getMissingBranch", "Inventory missing a keyword for \"branch\"");
-	}
-
-	private static final HashMap<String,String> critical;
-	static { 
-		critical = new HashMap<String,String>();
-		critical.put("getMissingMetadata", "Inventory without well, borehole, outcrop, shotpoint or publication");
-		critical.put("getSeparatedBarcodes", "Barcodes that span multiple containers (excludes MSLIDEs)");
-		critical.put("getBarcodeOverlap", "Barcodes overlaps with others when hypen is removed");
-	}
-
 	private static final JSONSerializer serializer = new JSONSerializer();
+
+	private static Map<String, Map<String, String>> reports = null;
+	static {
+		reports = new HashMap<String, Map<String, String>>();
+
+		addReport(reports, "critical", "getMissingMetadata",
+			"Inventory without well, borehole, outcrop, shotpoint or publication"
+		);
+		addReport(reports, "critical", "getSeparatedBarcodes",
+			"Barcodes that span multiple containers (excludes MSLIDEs)"
+		);
+		addReport(reports, "critical", "getBarcodeOverlap",
+			"Barcodes overlaps with others when hypen is removed"
+		);
+		addReport(reports, "warning", "getMissingContainer",
+			"Inventory without a container"
+		);
+		addReport(reports, "warning", "getMissingType",
+			"Inventory missing a keyword for \"type\""
+		);
+		addReport(reports, "warning", "getMissingBranch",
+			"Inventory missing a keyword for \"branch\""
+		);
+	}
+
+
+	private static void addReport(Map<String, Map<String, String>> map,
+	                              String type, String key, String desc)
+	{
+		Map<String, String> value = new HashMap<String, String>();
+		value.put("type", type);
+		value.put("desc", desc);
+
+		map.put(key, value);
+	}
+
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
@@ -52,62 +74,19 @@ public class QualityServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			HashMap<String, Object> map = new HashMap<String,Object>();
-			for(String key : warning.keySet()){
-				Integer i = (Integer)sess.selectOne(
-					"gov.alaska.dggs.igneous.Quality." + key + "Count"
-				);
-				map.put(key,i);
+			String method = request.getParameter("r");
+			String report = method;
+			if(report != null && report.endsWith("Count")){
+				report = report.substring(0, report.length() - 5);
 			}
-			request.setAttribute("warnings", map);
 
-			map = new HashMap<String,Object>();
-			for(String key : critical.keySet()){
-				Integer i = (Integer)sess.selectOne(
-					"gov.alaska.dggs.igneous.Quality." + key + "Count"
-				);
-				map.put(key, i);
-			}
-			request.setAttribute("criticals", map);
-
-			map = new HashMap<String,Object>();
-			map.putAll(warning);
-			map.putAll(critical);
-			request.setAttribute("descriptions", map);
-
-			request.getRequestDispatcher(
-				"/WEB-INF/tmpl/quality.jsp"
-			).forward(request, response);
-		} finally {
-			sess.close();	
-		}
-	}
-
-
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		ServletContext ctx = getServletContext();
-
-		// Aggressively disable cache
-		response.setHeader("Cache-Control","no-cache");
-		response.setHeader("Pragma","no-cache");
-		response.setDateHeader("Expires", 0);
-
-		SqlSession sess = IgneousFactory.openSession();
-		try {
-			List<HashMap> map = null;
-
-			String detail = request.getParameter("detail");
-			if(detail != null && (critical.containsKey(detail) || warning.containsKey(detail))){
-				map = sess.selectList("gov.alaska.dggs.igneous.Quality." + detail);
-			}
-			if(map == null){ map = new ArrayList<HashMap>(); }
+			System.out.println("reports: " + reports.containsKey(report));
 
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
-			try { 
+			try {
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
 				if(encoding != null && encoding.contains("gzip")){
@@ -118,7 +97,14 @@ public class QualityServlet extends HttpServlet
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
 
-				serializer.serialize(map, out);
+				if(report == null || !reports.containsKey(report)){
+					serializer.serialize(reports, out);
+				} else {
+					serializer.serialize(
+						sess.selectList("gov.alaska.dggs.igneous.Quality." + method),
+						out
+					);
+				}
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }
@@ -126,7 +112,5 @@ public class QualityServlet extends HttpServlet
 		} finally {
 			sess.close();	
 		}
-	
 	}
-
 }

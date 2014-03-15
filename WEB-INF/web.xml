@@ -179,6 +179,16 @@
 
 	<servlet-mapping>
 		<servlet-name>QualityServlet</servlet-name>
+		<url-pattern>/quality.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>QualityPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.QualityPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>QualityPageServlet</servlet-name>
 		<url-pattern>/quality.html</url-pattern>
 	</servlet-mapping>
 
