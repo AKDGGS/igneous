@@ -42,6 +42,14 @@
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){
+				$('#search').click(function(){
+					window.location.href = '${pageContext.request.contextPath}/search#q=' + $('#q').val();
+				});
+
+				$('#q').keypress(function(e){
+					if(e.keyCode === 13){ $('#search').click(); }
+				});
+
 				$.ajax({
 					url: 'quality.json',
 					dataType: 'json',
