@@ -157,4 +157,131 @@
 		FROM (<include refid="BarcodeOverlap" />) AS q
 	</select>
 
+
+	<sql id="WellNumberEmpty">
+		SELECT well_id AS id, name AS desc
+		FROM well
+		WHERE well_number IS NULL
+			OR LENGTH(TRIM(BOTH FROM well_number)) = 0
+	</sql>
+	<select id="getWellNumberEmpty" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="WellNumberEmpty" />
+	</select>
+	<select id="getWellNumberEmptyCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="WellNumberEmpty" />) AS q
+	</select>
+
+
+	<sql id="APIBadLength">
+		SELECT well_id AS id, name AS desc
+		FROM well
+		WHERE api_number IS NOT NULL
+			AND LENGTH(api_number) &lt;&gt; 14
+	</sql>
+	<select id="getAPIBadLength" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="APIBadLength" />
+	</select>
+	<select id="getAPIBadLengthCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="APIBadLength" />) AS q
+	</select>
+
+
+	<sql id="BottomOverTop">
+		SELECT inventory_id AS id, COALESCE(barcode, alt_barcode) AS desc
+		FROM inventory
+		WHERE interval_top IS NOT NULL
+			AND interval_bottom IS NOT NULL
+			AND interval_bottom &lt; interval_top
+	</sql>
+	<select id="getBottomOverTop" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="BottomOverTop" />
+	</select>
+	<select id="getBottomOverTopCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="BottomOverTop" />) AS q
+	</select>
+
+
+	<sql id="WellNoSpatial">
+		SELECT well_id AS id, name AS desc
+		FROM well
+		WHERE well_id NOT IN (
+			SELECT well_id FROM well_geog
+		)
+	</sql>
+	<select id="getWellNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="WellNoSpatial" />
+	</select>
+	<select id="getWellNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="WellNoSpatial" />) AS q
+	</select>
+
+
+	<sql id="BoreholeNoSpatial">
+		SELECT borehole_id AS id, name AS desc
+		FROM borehole
+		WHERE borehole_id NOT IN (
+			SELECT borehole_id FROM borehole_geog
+		)
+	</sql>
+	<select id="getBoreholeNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="BoreholeNoSpatial" />
+	</select>
+	<select id="getBoreholeNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="BoreholeNoSpatial" />) AS q
+	</select>
+
+
+	<sql id="OutcropNoSpatial">
+		SELECT outcrop_id AS id, name AS desc
+		FROM outcrop
+		WHERE outcrop_id NOT IN (
+			SELECT outcrop_id FROM outcrop_geog
+		)
+	</sql>
+	<select id="getOutcropNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="OutcropNoSpatial" />
+	</select>
+	<select id="getOutcropNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OutcropNoSpatial" />) AS q
+	</select>
+
+
+	<sql id="ShotpointNoSpatial">
+		SELECT shotpoint_id AS id, shotpoint_number AS desc
+		FROM shotpoint
+		WHERE shotpoint_id NOT IN (
+			SELECT shotpoint_id FROM shotpoint_geog
+		)
+	</sql>
+	<select id="getShotpointNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="ShotpointNoSpatial" />
+	</select>
+	<select id="getShotpointNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="ShotpointNoSpatial" />) AS q
+	</select>
+
+
+	<sql id="OutcropInventoryNoSampleNumber">
+		SELECT inventory_id, COALESCE(barcode, alt_barcode)
+		FROM inventory
+		WHERE inventory_id IN (
+			SELECT inventory_id FROM inventory_outcrop
+		) AND (
+			sample_number IS NULL OR LENGTH(TRIM(BOTH FROM sample_number)) = 0
+		)
+	</sql>
+	<select id="getOutcropInventoryNoSampleNumber" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="OutcropInventoryNoSampleNumber" />
+	</select>
+	<select id="getOutcropInventoryNoSampleNumberCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OutcropInventoryNoSampleNumber" />) AS q
+	</select>
 </mapper>

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -29,7 +30,7 @@ public class QualityServlet extends HttpServlet
 
 	private static Map<String, Map<String, String>> reports = null;
 	static {
-		reports = new HashMap<String, Map<String, String>>();
+		reports = new LinkedHashMap<String, Map<String, String>>();
 
 		addReport(reports, "critical", "getMissingMetadata",
 			"Inventory without well, borehole, outcrop, shotpoint or publication"
@@ -40,6 +41,12 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "critical", "getBarcodeOverlap",
 			"Barcodes overlaps with others when hypen is removed"
 		);
+		addReport(reports, "critical", "getWellNumberEmpty",
+			"Wells with an empty well number"
+		);
+		addReport(reports, "critical", "getAPIBadLength",
+			"Wells with an API number that is not exactly 14 characters"
+		);
 		addReport(reports, "warning", "getMissingContainer",
 			"Inventory without a container"
 		);
@@ -48,6 +55,24 @@ public class QualityServlet extends HttpServlet
 		);
 		addReport(reports, "warning", "getMissingBranch",
 			"Inventory missing a keyword for \"branch\""
+		);
+		addReport(reports, "warning", "getBottomOverTop",
+			"Inventory interval bottom less than interval top"
+		);
+		addReport(reports, "warning", "getWellNoSpatial",
+			"Well does not have one kind of spatial data"
+		);
+		addReport(reports, "warning", "getBoreholeNoSpatial",
+			"Borehole does not have one kind of spatial data"
+		);
+		addReport(reports, "warning", "getOutcropNoSpatial",
+			"Outcrop does not have one kind of spatial data"
+		);
+		addReport(reports, "warning", "getShotpointNoSpatial",
+			"Shotpoint does not have one kind of spatial data"
+		);
+		addReport(reports, "warning", "getOutcropInventoryNoSampleNumber",
+			"Outcrop Inventory with an empty sample number"
 		);
 	}
 
