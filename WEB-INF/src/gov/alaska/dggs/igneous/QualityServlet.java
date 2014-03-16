@@ -47,6 +47,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "critical", "getAPIBadLength",
 			"Wells with an API number that is not exactly 14 characters"
 		);
+		addReport(reports, "critical", "getMissingBarcode",
+			"Inventory has no barcode or alternate barcode"
+		);
 		addReport(reports, "warning", "getMissingContainer",
 			"Inventory without a container"
 		);

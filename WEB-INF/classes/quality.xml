@@ -284,4 +284,20 @@
 		SELECT COUNT(*)
 		FROM (<include refid="OutcropInventoryNoSampleNumber" />) AS q
 	</select>
+
+
+	<sql id="MissingBarcode">
+		SELECT iv.inventory_id AS id, co.path_cache AS desc
+		FROM inventory AS iv
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
+		WHERE LENGTH(TRIM(BOTH FROM COALESCE(iv.barcode, iv.alt_barcode, ''))) = 0
+	</sql>
+	<select id="getMissingBarcode" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="MissingBarcode" />
+	</select>
+	<select id="getMissingBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="MissingBarcode" />) AS q
+	</select>
 </mapper>
