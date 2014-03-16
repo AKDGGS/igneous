@@ -269,7 +269,7 @@
 
 
 	<sql id="OutcropInventoryNoSampleNumber">
-		SELECT inventory_id, COALESCE(barcode, alt_barcode)
+		SELECT inventory_id AS id, COALESCE(barcode, alt_barcode) AS desc
 		FROM inventory
 		WHERE inventory_id IN (
 			SELECT inventory_id FROM inventory_outcrop
