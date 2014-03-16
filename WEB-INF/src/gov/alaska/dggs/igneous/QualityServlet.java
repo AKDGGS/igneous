@@ -77,6 +77,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getOutcropInventoryNoSampleNumber",
 			"Outcrop Inventory with an empty sample number"
 		);
+		addReport(reports, "warning", "getInventoryDeeperThanWell",
+			"Well Inventory bottom greater than well bottom"
+		);
 	}
 
 

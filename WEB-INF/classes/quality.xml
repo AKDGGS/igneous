@@ -142,12 +142,14 @@
 
 	<sql id="BarcodeOverlap">
 		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
-		FROM inventory WHERE POSITION('-' IN barcode) &lt;&gt; 0
+		FROM inventory
+		WHERE POSITION('-' IN barcode) &lt;&gt; 0
 
 		INTERSECT
 
 		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
-		FROM inventory WHERE POSITION('-' IN barcode) = 0
+		FROM inventory
+		WHERE POSITION('-' IN barcode) = 0
 	</sql>
 	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		<include refid="BarcodeOverlap" />
@@ -269,13 +271,12 @@
 
 
 	<sql id="OutcropInventoryNoSampleNumber">
-		SELECT inventory_id AS id, COALESCE(barcode, alt_barcode) AS desc
-		FROM inventory
-		WHERE inventory_id IN (
-			SELECT inventory_id FROM inventory_outcrop
-		) AND (
-			sample_number IS NULL OR LENGTH(TRIM(BOTH FROM sample_number)) = 0
-		)
+		SELECT io.inventory_id AS id,
+			COALESCE(iv.barcode, iv.alt_barcode) AS desc
+		FROM inventory_outcrop AS io
+		JOIN inventory AS iv ON iv.inventory_id = io.inventory_id
+		WHERE iv.sample_number IS NULL
+			OR LENGTH(TRIM(BOTH FROM iv.sample_number)) = 0
 	</sql>
 	<select id="getOutcropInventoryNoSampleNumber" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		<include refid="OutcropInventoryNoSampleNumber" />
@@ -299,5 +300,25 @@
 	<select id="getMissingBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
 		SELECT COUNT(*)
 		FROM (<include refid="MissingBarcode" />) AS q
+	</select>
+
+
+	<sql id="InventoryDeeperThanWell">
+		SELECT iw.inventory_id AS id,
+			iv.interval_bottom || ' &gt; ' ||
+			GREATEST(we.measured_depth, we.vertical_depth) AS desc
+		FROM inventory_well AS iw
+		JOIN inventory AS iv ON iv.inventory_id = iw.inventory_id
+		JOIN well AS we ON we.well_id = iw.well_id
+		WHERE iv.interval_bottom IS NOT NULL
+			AND COALESCE(we.measured_depth, we.vertical_depth) IS NOT NULL
+			AND GREATEST(we.measured_depth, we.vertical_depth) &lt; iv.interval_bottom 
+	</sql>
+	<select id="getInventoryDeeperThanWell" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="InventoryDeeperThanWell" />
+	</select>
+	<select id="getInventoryDeeperThanWellCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="InventoryDeeperThanWell" />) AS q
 	</select>
 </mapper>
