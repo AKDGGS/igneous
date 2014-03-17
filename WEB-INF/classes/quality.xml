@@ -123,6 +123,51 @@
 	</select>
 
 
+	<sql id="MissingMetadataNoBLM">
+		SELECT iv.inventory_id AS id, 
+			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
+		FROM inventory AS iv
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.inventory_id
+		WHERE iv.inventory_id NOT IN (
+			SELECT inventory_id
+			FROM inventory_well
+			
+			UNION ALL
+			
+			SELECT inventory_id
+			FROM inventory_borehole
+			
+			UNION ALL
+			
+			SELECT inventory_id
+			FROM inventory_outcrop
+			
+			UNION ALL
+			
+			SELECT inventory_id
+			FROM inventory_shotpoint
+
+			UNION ALL
+
+			SELECT inventory_id
+			FROM inventory_publication
+		) AND iv.collection_id &lt;&gt; (
+			SELECT collection_id
+			FROM collection
+			WHERE name = 'BLM'
+			LIMIT 1
+		)
+	</sql>
+	<select id="getMissingMetadataNoBLM" resultSetType="FORWARD_ONLY" resultType="HashMap">
+		<include refid="MissingMetadataNoBLM" />
+	</select>
+	<select id="getMissingMetadataNoBLMCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="MissingMetadataNoBLM" />) AS q
+	</select>
+
+
 	<sql id="MissingContainer">
 		SELECT iv.inventory_id AS id,
 			COALESCE(iv.barcode, iv.alt_barcode, '') AS desc

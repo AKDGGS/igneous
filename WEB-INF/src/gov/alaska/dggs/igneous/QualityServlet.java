@@ -35,6 +35,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "critical", "getMissingMetadata",
 			"Inventory without well, borehole, outcrop, shotpoint or publication"
 		);
+		addReport(reports, "critical", "getMissingMetadataNoBLM",
+			"Inventory without well, borehole, outcrop, shotpoint or publication (excluding BLM)"
+		);
 		addReport(reports, "critical", "getSeparatedBarcodes",
 			"Barcodes that span multiple containers (excludes MSLIDEs)"
 		);
