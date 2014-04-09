@@ -358,6 +358,9 @@
 		WHERE iv.interval_bottom IS NOT NULL
 			AND COALESCE(we.measured_depth, we.vertical_depth) IS NOT NULL
 			AND GREATEST(we.measured_depth, we.vertical_depth) &lt; iv.interval_bottom 
+		ORDER BY (
+				iv.interval_bottom - GREATEST(we.measured_depth, we.vertical_depth)
+			) DESC
 	</sql>
 	<select id="getInventoryDeeperThanWell" resultSetType="FORWARD_ONLY" resultType="HashMap">
 		<include refid="InventoryDeeperThanWell" />
