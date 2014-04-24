@@ -48,5 +48,6 @@
 		<mapper resource="publication.xml" />
 		<mapper resource="shotpoint.xml" />
 		<mapper resource="quality.xml" />
+		<mapper resource="audit.xml" />
 	</mappers>
 </configuration>

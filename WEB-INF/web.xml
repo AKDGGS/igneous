@@ -192,6 +192,16 @@
 		<url-pattern>/quality.html</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>AuditServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.AuditServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AuditServlet</servlet-name>
+		<url-pattern>/audit.json</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>
