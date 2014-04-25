@@ -10,7 +10,11 @@ public class AuditGroup implements Serializable
 
 	private int id;
 	private Date create_date;
+	private String remark;
 
 	public int getID(){ return id; }
 	public Date getCreateDate(){ return create_date; }
+
+	public void setRemark(String remark){ this.remark = remark; }
+	public String getRemark(){ return remark; }
 }

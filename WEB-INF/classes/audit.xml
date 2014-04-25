@@ -5,7 +5,7 @@
 
 <mapper namespace="gov.alaska.dggs.igneous.Audit">
 	<insert id="insertGroup" useGeneratedKeys="true" keyColumn="audit_group_id" keyProperty="id">
-		INSERT INTO audit_group DEFAULT VALUES
+		INSERT INTO audit_group (remark) VALUES (#{remark})
 	</insert>
 
 	<insert id="insert" useGeneratedKeys="true" keyColumn="audit_id" keyProperty="id">

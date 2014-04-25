@@ -37,6 +37,12 @@ public class AuditServlet extends HttpServlet
 		String codes[] = t.split(";");
 		if(codes.length < 1){ throw new ServletException("Barcode list cannot be empty."); }
 
+		String n = request.getParameter("n");
+		if(n != null){
+			n = n.trim();
+			if(n.length() == 0){ n = null; }
+		}
+
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
 		response.setHeader("Pragma","no-cache");
@@ -45,6 +51,8 @@ public class AuditServlet extends HttpServlet
 		SqlSession sess = IgneousFactory.openSession();
 		try {
 			AuditGroup group = new AuditGroup();
+			group.setRemark(n);
+
 			sess.insert("gov.alaska.dggs.igneous.Audit.insertGroup", group);
 			if(group.getID() == 0){ throw new Exception("Audit group insert failed"); }
 
