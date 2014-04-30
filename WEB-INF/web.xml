@@ -212,6 +212,16 @@
 		<url-pattern>/quadrangle.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>KeywordServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.KeywordServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>KeywordServlet</servlet-name>
+		<url-pattern>/keyword.json</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

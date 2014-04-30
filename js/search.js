@@ -68,6 +68,15 @@ function restore()
 						}
 					break;
 
+					case 'keyword_id':
+						$('#advanced').addClass('active');
+						$('#advanced_cell').show();
+
+						var opt = $('#keyword_id').find(
+							'option[value="' + val +'"]'
+						).attr('selected', 'selected').get(0);
+					break;
+
 					default: $('#'+key).val(val);
 				}
 			}
@@ -272,7 +281,7 @@ $(function(){
 
 		onparam: function(o){
 			var searchok = false;
-
+			
 			var q = document.getElementById('q').value;
 			if(q.length !== 0){ o['q'] = q; searchok = true; }
 
@@ -284,8 +293,15 @@ $(function(){
 				searchok = true;
 			}
 
+			// Add advanced search's mining district to parameters
 			$('#mining_district_id').find(':selected').each(function(i,v){
 				Search.prototype.addProperty(o, 'mining_district_id', $(v).val());
+				searchok = true;
+			});
+
+			// Add advanced search's keywords to parameters
+			$('#keyword_id').find(':selected').each(function(i,v){
+				Search.prototype.addProperty(o, 'keyword_id', $(v).val());
 				searchok = true;
 			});
 
@@ -620,7 +636,6 @@ $(function(){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
-	var mining_district_loaded = $.Deferred();
 	$('#mining_district_id').change(function(){
 		var layer = map.getLayersByName('Result Layer')[0];
 		destroyFeaturesByIntent(layer, 'preview');
@@ -637,11 +652,12 @@ $(function(){
 		search.execute();
 	});
 
+	var mining_district_loaded = $.Deferred();
 	$.ajax({
 		url: 'mining_district.json', dataType: 'json',
 		error: function(xhr){
-			mining_district_loaded.resolve();
 			// Silently ignore failure
+			mining_district_loaded.resolve();
 		},
 		success: function(json){
 			var md_el = document.getElementById('mining_district_id');
@@ -656,9 +672,32 @@ $(function(){
 		}
 	});
 
+	$('#keyword_id').change(function(){ search.execute(); });
+
+	var keyword_loaded = $.Deferred();
+	$.ajax({
+		url: 'keyword.json', dataType: 'json',
+		error: function(xhr){
+			// Silently ignore failure
+			keyword_loaded.resolve();
+		},
+		success: function(json){
+			var kw_el = document.getElementById('keyword_id');
+			for(var i in json){
+				var option = document.createElement('option');
+				option.value = json[i]['ID'];
+				var name = json[i]['name'];
+				if('alias' in json[i]){ name += ' (' + json[i]['alias'] + ')'; console.log('alias'); }
+				option.appendChild(document.createTextNode(name));
+				kw_el.appendChild(option);
+			}
+			keyword_loaded.resolve();
+		}
+	});
+
 	// Wait for outside resources to finish loading, then restore
 	// the search state
-	$.when( mining_district_loaded ).done(function(){
+	$.when( mining_district_loaded, keyword_loaded ).done(function(){
 		if(restore()){ search.execute(false); }
 		search.setuponhashchange();
 	});

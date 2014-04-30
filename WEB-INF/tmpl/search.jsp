@@ -12,6 +12,8 @@
 			#inventory_container { display: none; }
 			#map { width: 100%; height: 450px; }
 			#advanced_cell { width: 250px; display: none; padding: 4px 8px; vertical-align: top; }
+			#advanced_cell label { display: block; padding: 0px; }
+			#advanced_cell select { padding: 0px; margin: 0px 0px 10px 0px; }
 
 			label { font-size: 14px; }
 			.navbar { white-space: nowrap; }
@@ -61,6 +63,9 @@
 						<select size="3" multiple="multiple" name="mining_district_id" id="mining_district_id">
 							<option value="">None</option>
 						</select>
+
+						<label for="keyword_id">Keyword</label>
+						<select size="3" multiple="multiple" name="keyword_id" id="keyword_id"></select>
 					</td>
 				</tr>
 			</table>
