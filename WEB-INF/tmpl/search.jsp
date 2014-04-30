@@ -60,10 +60,10 @@
 					</td>
 					<td id="advanced_cell">
 						<label for="mining_district_id">Mining District</label>
-						<select size="3" multiple="multiple" name="mining_district_id" id="mining_district_id"></select>
+						<select size="5" multiple="multiple" name="mining_district_id" id="mining_district_id"></select>
 
 						<label for="keyword_id">Keyword</label>
-						<select size="3" multiple="multiple" name="keyword_id" id="keyword_id"></select>
+						<select size="5" multiple="multiple" name="keyword_id" id="keyword_id"></select>
 					</td>
 				</tr>
 			</table>
