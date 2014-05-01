@@ -9,9 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 import java.util.zip.GZIPOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import flexjson.JSONSerializer;
 
@@ -19,11 +20,23 @@ import org.sphx.api.SphinxClient;
 import org.sphx.api.SphinxResult;
 import org.sphx.api.SphinxMatch;
 
+import org.apache.ibatis.session.SqlSession;
+
+import gov.alaska.dggs.igneous.IgneousFactory;
+import gov.alaska.dggs.igneous.model.Quadrangle;
+
 
 public class QuadrangleServlet extends HttpServlet
 {
 	private static JSONSerializer serializer;
-	static { serializer = new JSONSerializer(); }
+	static {
+		serializer = new JSONSerializer();
+		serializer.exclude("altName");
+		serializer.exclude("abbr");
+		serializer.exclude("altAbbr");
+		serializer.exclude("scale");
+		serializer.exclude("class");
+	}
 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
@@ -33,40 +46,14 @@ public class QuadrangleServlet extends HttpServlet
 	@SuppressWarnings("unchecked")
 	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		// Aggressively disable cache
-		response.setHeader("Cache-Control","no-cache");
-		response.setHeader("Pragma","no-cache");
-		response.setDateHeader("Expires", 0);
-
-		String query = request.getParameter("q");
-		if(query == null || query.length() < 1){
-			response.setContentType("application/json");
-			response.getOutputStream().print("[]");
-			return;
-		}
-
 		ServletContext context = getServletContext();
-		int max_matches = Integer.parseInt(context.getInitParameter("sphinx_max_matches"));
-		int sphinx_port = Integer.parseInt(context.getInitParameter("sphinx_port"));
-		String sphinx_host = (String)context.getInitParameter("sphinx_host");
-		
-		SphinxClient sphinx = new SphinxClient(sphinx_host, sphinx_port);
+
+		SqlSession sess = IgneousFactory.openSession();
 		try {
-			sphinx.SetConnectTimeout(5000);
-			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED2);
-			sphinx.SetSortMode(SphinxClient.SPH_SORT_EXTENDED, "scale DESC, name ASC");
-			sphinx.SetLimits(0, 5, max_matches);
-			sphinx.SetSelect("name");
-
-			ArrayList json = new ArrayList();
-
-			SphinxResult sr = sphinx.Query(query, "quadrangle");
-			if(sr == null){ throw new Exception(sphinx.GetLastError()); }
-
-			for(int i = 0; i < sr.matches.length; i++){
-				json.add(sr.matches[i].attrValues.get(0));
-			}
-
+			List<Quadrangle> quads = sess.selectList(
+				"gov.alaska.dggs.igneous.Quadrangle.getList"
+			);
+			
 			response.setContentType("application/json");
 
 			OutputStreamWriter out = null;
@@ -81,8 +68,8 @@ public class QuadrangleServlet extends HttpServlet
 				} else {
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
-				
-				serializer.serialize(json, out);
+
+				serializer.serialize(quads, out);
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }
@@ -93,8 +80,7 @@ public class QuadrangleServlet extends HttpServlet
 			response.getOutputStream().print(ex.getMessage());
 			ex.printStackTrace();
 		} finally {
-			sphinx.Close();
+			sess.close();	
 		}
 	}
-
 }

@@ -250,6 +250,7 @@ public class SearchServlet extends HttpServlet
 			try {
 				StringBuilder select = new StringBuilder("id");
 
+				// Filter by Mining District
 				String[] mining_districts = request.getParameterValues("mining_district_id");
 				if(mining_districts != null){
 					int count = 0;
@@ -284,6 +285,27 @@ public class SearchServlet extends HttpServlet
 						}
 
 						sphinx.SetFilter("keyword_id", keyword_id.intValue(), false);
+					}
+				}
+
+				// Filter by Quadrangle
+				String[] quadrangles = request.getParameterValues("quadrangle_id");
+				if(quadrangles != null){
+					int count = 0;
+					for(String quadrangle : quadrangles){
+						try {
+							long quadrangle_id = Long.parseLong(quadrangle);
+							select.append(count == 0 ? ",IN(quadrangle_id," : ",");
+							select.append(String.valueOf(quadrangle_id));
+							count++;
+						} catch(Exception ex){
+							// Explicitly ignore faulty IDs
+						}
+					}
+
+					if(count > 0){
+						select.append(") AS qr_criteria");
+						sphinx.SetFilter("qr_criteria", 1, false);
 					}
 				}
 

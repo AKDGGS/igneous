@@ -63,6 +63,25 @@ function restore()
 								OpenLayers.Geometry.fromWKT(opt['wkt'])
 							);
 							feature.renderIntent = 'preview';
+							feature.origin = 'mining_district';
+							var layer = map.getLayersByName('Result Layer')[0];
+							layer.addFeatures([feature]);
+						}
+					break;
+
+					case 'quadrangle_id':
+						$('#advanced').addClass('active');
+						$('#advanced_cell').show();
+
+						var opt = $('#quadrangle_id').find(
+							'option[value="' + val +'"]'
+						).attr('selected', 'selected').get(0);
+						if('wkt' in opt){
+							var feature = new OpenLayers.Feature.Vector(
+								OpenLayers.Geometry.fromWKT(opt['wkt'])
+							);
+							feature.renderIntent = 'preview';
+							feature.origin = 'quadrangle';
 							var layer = map.getLayersByName('Result Layer')[0];
 							layer.addFeatures([feature]);
 						}
@@ -305,7 +324,17 @@ $(function(){
 				searchok = true;
 			});
 
+			// Add advanced search's quadrangle to parameters
+			$('#quadrangle_id').find(':selected').each(function(i,v){
+				Search.prototype.addProperty(o, 'quadrangle_id', $(v).val());
+				searchok = true;
+			});
+
 			if(!searchok){
+				// In the event of a bad search, clear our the hash
+				this.ignorehashchange = true;
+				window.location.hash = '';
+
 				clearmap();
 				document.getElementById('inventory_container').style.display = 'none';
 
@@ -636,22 +665,6 @@ $(function(){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
-	$('#mining_district_id').change(function(){
-		var layer = map.getLayersByName('Result Layer')[0];
-		destroyFeaturesByIntent(layer, 'preview');
-
-		$(this).find(':selected').each(function(i, v){
-			if('wkt' in v){
-				var feature = new OpenLayers.Feature.Vector(
-					OpenLayers.Geometry.fromWKT(v['wkt'])
-				);
-				feature.renderIntent = 'preview';
-				layer.addFeatures([feature]);
-			}
-		});
-		search.execute();
-	});
-
 	var mining_district_loaded = $.Deferred();
 	$.ajax({
 		url: 'mining_district.json', dataType: 'json',
@@ -672,7 +685,22 @@ $(function(){
 		}
 	});
 
-	$('#keyword_id').change(function(){ search.execute(); });
+	$('#mining_district_id').change(function(){
+		var layer = map.getLayersByName('Result Layer')[0];
+		destroyFeaturesByOrigin(layer, 'mining_district');
+
+		$(this).find(':selected').each(function(i, v){
+			if('wkt' in v){
+				var feature = new OpenLayers.Feature.Vector(
+					OpenLayers.Geometry.fromWKT(v['wkt'])
+				);
+				feature.renderIntent = 'preview';
+				feature.origin = 'mining_district';
+				layer.addFeatures([feature]);
+			}
+		});
+		search.execute();
+	});
 
 	var keyword_loaded = $.Deferred();
 	$.ajax({
@@ -695,9 +723,48 @@ $(function(){
 		}
 	});
 
+	$('#keyword_id').change(function(){ search.execute(); });
+
+	var quadrangle_loaded = $.Deferred();
+	$.ajax({
+		url: 'quadrangle.json', dataType: 'json',
+		error: function(xhr){
+			// Silently ignore failure
+			quadrangle_loaded.resolve();
+		},
+		success: function(json){
+			var qd_el = document.getElementById('quadrangle_id');
+			for(var i in json){
+				var option = document.createElement('option');
+				option.value = json[i]['ID'];
+				option.wkt = json[i]['WKT'];
+				option.appendChild(document.createTextNode(json[i]['name']));
+				qd_el.appendChild(option);
+			}
+			quadrangle_loaded.resolve();
+		}
+	});
+
+	$('#quadrangle_id').change(function(){
+		var layer = map.getLayersByName('Result Layer')[0];
+		destroyFeaturesByOrigin(layer, 'quadrangle');
+
+		$(this).find(':selected').each(function(i, v){
+			if('wkt' in v){
+				var feature = new OpenLayers.Feature.Vector(
+					OpenLayers.Geometry.fromWKT(v['wkt'])
+				);
+				feature.renderIntent = 'preview';
+				feature.origin = 'quadrangle';
+				layer.addFeatures([feature]);
+			}
+		});
+		search.execute();
+	});
+
 	// Wait for outside resources to finish loading, then restore
 	// the search state
-	$.when( mining_district_loaded, keyword_loaded ).done(function(){
+	$.when( mining_district_loaded, keyword_loaded, quadrangle_loaded ).done(function(){
 		if(restore()){ search.execute(false); }
 		search.setuponhashchange();
 	});

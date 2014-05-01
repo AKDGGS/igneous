@@ -4,10 +4,23 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Quadrangle">
-	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
-		SELECT DISTINCT
-			qr.quadrangle_id, qr.name, qr.alt_name,
+	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="QuadrangleMap">
+		SELECT qr.quadrangle_id, qr.name,
+			ST_AsText(ST_Simplify(ST_Transform(geog::GEOMETRY, 3857), 5000)) AS wkt
+		FROM quadrangle AS qr
+		WHERE qr.scale = 250000
+		ORDER BY name
+	</select>
+
+
+	<sql id="getBy">
+		SELECT DISTINCT qr.quadrangle_id, qr.name, qr.alt_name,
 			qr.abbr, qr.alt_abbr, qr.scale
+	</sql>
+
+
+	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
+		<include refid="getBy" />
 		FROM borehole AS bh
 		JOIN borehole_geog AS bg ON bg.borehole_id = bh.borehole_id
 		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, bg.geog)
@@ -17,9 +30,7 @@
 
 
 	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
-		SELECT DISTINCT
-			qr.quadrangle_id, qr.name, qr.alt_name,
-			qr.abbr, qr.alt_abbr, qr.scale
+		<include refid="getBy" />
 		FROM borehole_geog AS bg
 		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, bg.geog)
 		WHERE bg.borehole_id = #{borehole_id}
@@ -28,9 +39,7 @@
 
 
 	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
-		SELECT DISTINCT
-			qr.quadrangle_id, qr.name, qr.alt_name,
-			qr.abbr, qr.alt_abbr, qr.scale
+		<include refid="getBy" />
 		FROM well_geog AS wg
 		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, wg.geog)
 		WHERE wg.well_id = #{well_id}

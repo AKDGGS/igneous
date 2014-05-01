@@ -64,6 +64,9 @@
 
 						<label for="keyword_id">Keyword</label>
 						<select size="5" multiple="multiple" name="keyword_id" id="keyword_id"></select>
+
+						<label for="quadrangle_id">Quadrangle</label>
+						<select size="5" multiple="multiple" name="quadrangle_id" id="quadrangle_id"></select>
 					</td>
 				</tr>
 			</table>

@@ -683,11 +683,11 @@ function initMap()
 }
 
 
-function destroyFeaturesByIntent(layer, intent)
+function destroyFeaturesByOrigin(layer, origin)
 {
 	var queue = [];
 	for(var i in layer.features){
-		if(layer.features[i].renderIntent === intent){
+		if(layer.features[i].origin === origin){
 			queue.push(layer.features[i]);
 		}
 	}

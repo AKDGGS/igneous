@@ -10,6 +10,7 @@ public class Quadrangle implements Serializable
 	private int id;
 	private String name, alt_name, abbr, alt_abbr;
 	private long scale;
+	private String wkt;
 
 	public int getID(){ return id; }
 	public String getName(){ return name; }
@@ -17,4 +18,6 @@ public class Quadrangle implements Serializable
 	public String getAbbr(){ return abbr; }
 	public String getAltAbbr(){ return alt_abbr; }
 	public long getScale(){ return scale; }
+
+	public String getWKT(){ return wkt; }
 }
