@@ -715,7 +715,7 @@ $(function(){
 				var option = document.createElement('option');
 				option.value = json[i]['ID'];
 				var name = json[i]['name'];
-				if('alias' in json[i]){ name += ' (' + json[i]['alias'] + ')'; console.log('alias'); }
+				if('alias' in json[i]){ name += ' (' + json[i]['alias'] + ')'; }
 				option.appendChild(document.createTextNode(name));
 				kw_el.appendChild(option);
 			}
