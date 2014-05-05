@@ -4,14 +4,14 @@
 		<title>Alaska Geologic Materials Center</title>
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
-			.ok { background-color: green; color: white; }
-			.warning { background-color: yellow; }
-			.critical { background-color: red; color: white; }
-			.nowrap, #dest { white-space: nowrap; }
-			#detail img { margin: 30px; }
-			table { width: 100%; }
-			td { vertical-align: top; }
-			th { text-align: left; }
+			.pass { background-color: #B2FFB2; }
+			.fail { background-color: #FF8080; }
+			#dest { margin: 10px 0px 0px 0px; }
+			#dest p { margin: 0px 0px 10px 0px; }
+			#dest span { margin: 0px 5px; padding: 0px 5px; }
+			#detail { margin: 0px 0px 15px 30px; border-collapse: collapse; }
+			#detail th { border-bottom: 1px solid black; }
+			#detail td, #detail th { padding: 0px 7px; }
 		</style>
 	</head>
 	<body>
@@ -30,10 +30,10 @@
 
 		<div class="container">
 			<label for="start">Start Date: </label>
-			<input type="text" id="start" name="start" size="10" tabindex="2" />
+			<input type="text" id="start" name="start" size="10" tabindex="2" value="1/1/10" />
 
 			<label for="end">End Date: </label>
-			<input type="text" id="end" name="end" size="10" tabindex="3" />
+			<input type="text" id="end" name="end" size="10" tabindex="3" value="1/1/20" />
 
 			<button class="btn btn-primary" id="query">
 				<span class="glyphicon glyphicon-book"></span> Query
@@ -53,7 +53,14 @@
 					if(e.keyCode === 13){ $('#search').click(); }
 				});
 
+				$('#start, #end').keypress(function(e){
+					if(e.keyCode === 13){ $('#query').click(); }
+				});
+
 				$('#query').click(function(){
+					$('#dest').empty();
+
+
 					$.ajax({
 						url: 'audit_report.json',
 						data: {'start': $('#start').val(), 'end': $('#end').val()},
@@ -62,119 +69,97 @@
 							$.each(json, function(i, e){
 								var result = $('<span></span>');
 								if(e['difference'] !== 0 || e['wrong_shelf'] !== 0 || e['no_match'] !== 0){
-									result.attr('class', 'critical');
-									result.text('FAILED');
-								} else {
-									result.attr('class', 'ok');
-									result.text('PASSED');
+									var err_text = '';
+									if(e['difference'] !== 0){
+										if(err_text.length > 0){ err_text += ' / '; }
+										err_text += 'COUNT MISMATCH';
+									}
 
+									if(e['wrong_shelf'] !== 0){
+										if(err_text.length > 0){ err_text += ' / '; }
+										err_text += 'INCONSISTENT LOCATION';
+									}
+
+									if(e['no_match'] !== 0){
+										if(err_text.length > 0){ err_text += ' / '; }
+										err_text += 'BARCODE NOT FOUND';
+									}
+									
+									result.text(err_text);
+									result.attr('class', 'fail');
+								} else {
+									result.attr('class', 'pass');
+									result.text('PASSED');
 								}
 
-								$('<div>')
-									.text(e['path'] + ' ' + e['remark'])
+								var div = $('<div></div>');
+
+								var link = $('<a href="#"></a>');
+								link.text(e['path']);
+								link.click(function(){
+									getdetail(e['audit_group_id'], e['container_id'], div);
+									return false;
+								});
+
+								div
+									.append(link)
+									.append(' [' + e['remark'] + ']')
 									.append(result)
 									.appendTo('#dest');
 							});
 						}
 					});
 				});
+			});
 
-				/*
 
+			function getdetail(audit_group_id, container_id, ele){
+				var ocid = $('#detail').data('container_id');
+				var oaid = $('#detail').data('audit_group_id');
+				
+				$('#detail').remove();
+				
+				if(audit_group_id === oaid && container_id === ocid){	return; }
 
 				$.ajax({
 					url: 'audit_report.json',
+					data: {'audit_group_id':audit_group_id, 'container_id':container_id},
 					dataType: 'json',
 					success: function(json){
-						$.each(json, function(i,e){
-							$('<div class="result">')
-								.attr('id', i)
-								.text(e['desc'] + ' : ')
-								.append('<span> Running .. </span>')
-								.appendTo('#dest');
-						});
+						var table = $('<table id="detail"></table>');
+						table.data('container_id', container_id);
+						table.data('audit_group_id', audit_group_id);
 
+						table.append('<tr><th>Scanned Barcode</th><th>Database Barcode</th><th>Location</th></tr>');
 						$.each(json, function(i, e){
-							var type = e['type'];
-							var method = i;
+							var row = $('<tr></tr>');
 
-							$.ajax({
-								url: 'quality.json',
-								data: {r: i+'Count'},
-								success: function(json){
-									var count = json[0];
-									
-									if(count == 0){
-										$('#'+method).find('span')
-											.attr('class', 'ok')
-											.text('PASSED');
-									} else {
-										var link = $('<a href="#">'+count+'</a>').click(function(e){
-											$('#detail').empty().append('<img src="${pageContext.request.contextPath}/img/big_loading.gif" />');
+							row.append(
+								$('<td></td>')
+									.text('s_barcode' in e ? e['s_barcode'] : '')
+									.attr('class', 's_barcode' in e ? 'pass' : 'fail')
+							);
 
-											$.ajax({
-												url: 'quality.json',
-												data: { r: method },
-												success: function(json){
-													show_detail(json);
-												}
-											});
+							row.append(
+								$('<td></td>')
+									.text('i_barcode' in e ? e['i_barcode'] : '')
+									.attr('class', 'i_barcode' in e ? 'pass' : 'fail')
+							);
 
-											e.preventDefault();	
-											return false;
-										});
+							if('container_id' in e){
+								row.append(
+									$('<td></td>').text(e['path'])
+									.attr('class', e['container_id'] === container_id ? 'pass' : 'fail')
+								);
+							} else {
+								row.append('<td></td>');
+							}
 
-										$('#'+method).find('span')
-											.attr('class', type.toLowerCase())
-											.text(type.toUpperCase())
-											.parent()
-												.append(' (')
-												.append(link)
-												.append(')');
-									}
-								}
-							});
+							row.appendTo(table);
 						});
+						table.appendTo(ele);
 					}
 				});
-				*/
-			});
-
-			function show_detail(json){
-				$('#detail').empty();
-
-				var table = document.createElement('table');
-				var thead = document.createElement('thead');
-				var tr = document.createElement('tr');
-				var th = document.createElement('th');
-				th.appendChild(document.createTextNode('ID'));
-				tr.appendChild(th);
-
-				th = document.createElement('th');
-				th.appendChild(document.createTextNode('Description'));
-				tr.appendChild(th);
-
-				thead.appendChild(tr);
-				table.appendChild(thead);
-
-				var tbody = document.createElement('tbody');
-				for(var i in json){
-					tr = document.createElement('tr');
-
-					var td = document.createElement('td');
-					td.className = 'nowrap';
-					td.appendChild(document.createTextNode(json[i]['id']));
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					td.appendChild(document.createTextNode(json[i]['desc']));
-					tr.appendChild(td);
-
-					tbody.appendChild(tr);
-				}
-				table.appendChild(tbody);
-
-				$('#detail').append(table);
 			}
 		</script>
 	</body>

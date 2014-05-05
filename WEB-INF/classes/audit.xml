@@ -107,6 +107,7 @@
 				ORDER BY a.audit_group_id, COUNT(i.container_id) DESC
 			) AS dq
 		) AS q1
+		ORDER BY path_cache
 	</select>
 
 
@@ -129,7 +130,7 @@
 				a.barcode AS s_barcode,
 				i.barcode AS i_barcode,
 				c.container_id,
-				c.path_cache
+				c.path_cache AS path
 			FROM audit AS a
 			LEFT OUTER JOIN inventory AS i ON (
 				a.barcode = i.barcode
@@ -144,7 +145,7 @@
 				a.barcode AS s_barcode,
 				i.barcode AS i_barcode,
 				c.container_id,
-				c.path_cache
+				c.path_cache AS path
 			FROM inventory AS i
 			LEFT OUTER JOIN audit AS a ON (
 				a.barcode = i.barcode
