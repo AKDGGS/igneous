@@ -4,12 +4,155 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Audit">
+
 	<insert id="insertGroup" useGeneratedKeys="true" keyColumn="audit_group_id" keyProperty="id">
 		INSERT INTO audit_group (remark) VALUES (#{remark})
 	</insert>
+
 
 	<insert id="insert" useGeneratedKeys="true" keyColumn="audit_id" keyProperty="id">
 		INSERT INTO audit (audit_group_id, barcode)
 		VALUES (#{group.id}, #{barcode})
 	</insert>
+
+	<!--
+		The whole barcode comparison wierdness in the functions below is a
+		product of the fact that some barcodes are entered incorrectly in the
+		database. If you scan such barcodes, they'll return "00001283", but
+		will be entered in the database (and printed on the label) as
+		"GMC-00001283"
+	-->
+
+	<!--
+		This function prints summary details on problems with an audit
+		for a range. It's only appropriate if we're assuming each
+		audit_group in the date range is a discrete container.
+
+		Forgive me for how bad this code is. I did try to make it as
+		straight-forward as possible. The root "from" clause is just
+		pulling a list of all audit_groups in the provided date range,
+		with whatever the majority of the linked database entries think
+		is the container. This container becomes the expected container
+		for all the subqueries. I really wish I could use a FULL JOIN,
+		but postgresql doesn't do FULL JOINs unless they're hashable
+		or mergeable (As of Postgresql 9.3), which means the goofy crap
+		with the barcodes prevents making this monster slightly more readable.
+	-->
+	<select id="getReportByDate" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
+		SELECT audit_group_id, remark, container_id, path_cache AS path, (
+				SELECT COUNT(*)
+				FROM audit AS a
+				LEFT OUTER JOIN inventory AS i ON (
+					a.barcode = i.barcode
+					OR a.barcode = i.alt_barcode
+					OR ('GMC-' || a.barcode) = i.barcode
+				) AND i.active = true
+				WHERE a.audit_group_id = q1.audit_group_id 
+					AND i.inventory_id IS NULL
+			) AS no_match, (
+				SELECT COUNT(*)
+				FROM audit AS a
+				LEFT OUTER JOIN inventory AS i ON (
+				a.barcode = i.barcode
+				OR a.barcode = i.alt_barcode
+				OR ('GMC-' || a.barcode) = i.barcode
+				) AND i.active = true
+				WHERE a.audit_group_id = q1.audit_group_id 
+				AND i.container_id &lt;&gt; q1.container_id
+				AND i.container_id IS NOT NULL
+			) AS wrong_shelf, ABS(
+				(
+					SELECT COUNT(*)
+					FROM (
+						SELECT DISTINCT i.barcode
+						FROM audit AS a
+						LEFT OUTER JOIN inventory AS i ON (
+							a.barcode = i.barcode
+							OR a.barcode = i.alt_barcode
+							OR ('GMC-' || a.barcode) = i.barcode
+						)
+						WHERE a.audit_group_id = q1.audit_group_id 
+							AND i.container_id = q1.container_id
+							AND i.container_id IS NOT NULL
+							AND i.active = true
+					) AS cq
+				) - (
+					SELECT COUNT(*) FROM (
+						SELECT DISTINCT barcode
+						FROM inventory AS i
+						WHERE i.container_id = q1.container_id
+							AND i.active = true
+					) AS cq
+				)
+			) AS difference
+		FROM (
+			SELECT DISTINCT ON (audit_group_id) *
+			FROM (
+				SELECT a.audit_group_id, ag.remark, i.container_id, c.path_cache
+				FROM audit AS a
+				JOIN audit_group AS ag
+					ON ag.audit_group_id = a.audit_group_id
+				LEFT OUTER JOIN inventory AS i ON (
+					a.barcode = i.barcode
+					OR a.barcode = i.alt_barcode
+					OR ('GMC-' || a.barcode) = i.barcode
+				)
+				LEFT OUTER JOIN container AS c
+					ON c.container_id = i.container_id
+				WHERE i.active = true
+					AND ag.create_date BETWEEN #{start}::date AND (
+						#{end}::date + interval '23 hours 59 minutes 59 seconds'
+					)
+				GROUP BY a.audit_group_id, ag.remark, i.container_id, c.path_cache
+				ORDER BY a.audit_group_id, COUNT(i.container_id) DESC
+			) AS dq
+		) AS q1
+	</select>
+
+
+	<!--
+		This function returns details on the results of a test from
+		getReportByDate. It should return a scanned barcode, the barcode
+		found in the database, and the container path. If these values
+		are null, they're not found. If the container_id doesn't match the
+		provided container_id, it was found in the wrong location.
+
+		A sort is done based on the container_id, against the container_id
+		specified using a DISTINCT so that if a box exists in multiple locations
+		it only shows us the location we specified. The distinct is performed
+		against the barcode (or the audit_id) in case there's multiple
+		entries in the database for that barcode.
+	-->
+	<select id="getReportDetail" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
+		(
+			SELECT DISTINCT ON(a.audit_id)
+				a.barcode AS s_barcode,
+				i.barcode AS i_barcode,
+				c.container_id,
+				c.path_cache
+			FROM audit AS a
+			LEFT OUTER JOIN inventory AS i ON (
+				a.barcode = i.barcode
+				OR a.barcode = i.alt_barcode
+				OR ('GMC-' || a.barcode) = i.barcode
+			)
+			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
+			WHERE a.audit_group_id = #{audit_group_id}
+			ORDER BY a.audit_id, i.container_id = #{container_id} DESC
+		) UNION ALL (
+			SELECT DISTINCT ON(i.barcode, i.alt_barcode)
+				a.barcode AS s_barcode,
+				i.barcode AS i_barcode,
+				c.container_id,
+				c.path_cache
+			FROM inventory AS i
+			LEFT OUTER JOIN audit AS a ON (
+				a.barcode = i.barcode
+				OR a.barcode = i.alt_barcode
+				OR ('GMC-' || a.barcode) = i.barcode
+			)
+			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
+			WHERE i.container_id = #{container_id}
+		)
+	</select>
 </mapper>

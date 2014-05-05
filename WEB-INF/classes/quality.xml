@@ -4,6 +4,24 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Quality">
+	<!-- 
+		This file contains all the queries used to render
+		reports for the quality assurance report. If the query
+		is succesful, it should return no results. Each returned
+		row represents a single error.
+
+		For display purposes, all the reports listed here must return
+		an "id" field, and a "desc" field. The contents of these fields
+		are optional, and merely used to aide the user in tracking down
+		the sources of problems. You may populate them with whatever you
+		want.
+
+		Each function here must have a corresponding count function, that
+		returns the count as a total number of errors returned.
+
+		The queries listed here must corrospond to the reported listed
+		in QualityServlet.java found in the source directory.
+	-->
 	<sql id="MissingBranch">
 		SELECT iv.inventory_id AS id,
 			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc

@@ -222,6 +222,26 @@
 		<url-pattern>/keyword.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>AuditReportServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.AuditReportServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AuditReportServlet</servlet-name>
+		<url-pattern>/audit_report.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AuditReportPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.AuditReportPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AuditReportPageServlet</servlet-name>
+		<url-pattern>/audit.html</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>

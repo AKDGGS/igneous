@@ -28,16 +28,15 @@ public class AuditServlet extends HttpServlet
 	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
-		String t = request.getParameter("t");
+		String t = request.getParameter("t"); // List of barcodes in "t"
 		if(t == null){ throw new ServletException("Barcode list cannot be empty."); }
 
 		t = t.trim();
 		if(t.length() < 1){ throw new ServletException("Barcode list cannot be empty."); }
 
 		String codes[] = t.split(";");
-		if(codes.length < 1){ throw new ServletException("Barcode list cannot be empty."); }
 
-		String n = request.getParameter("n");
+		String n = request.getParameter("n"); // Note in "n"
 		if(n != null){
 			n = n.trim();
 			if(n.length() == 0){ n = null; }

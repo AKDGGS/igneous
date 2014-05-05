@@ -32,6 +32,9 @@ public class QualityServlet extends HttpServlet
 	static {
 		reports = new LinkedHashMap<String, Map<String, String>>();
 
+		// The reports listed here must match the function names
+		// in quality.xml in the classes directory for this
+		// web application.
 		addReport(reports, "critical", "getMissingMetadata",
 			"Inventory without well, borehole, outcrop, shotpoint or publication"
 		);
