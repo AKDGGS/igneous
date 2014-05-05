@@ -52,28 +52,27 @@
 			) AS no_match, (
 				SELECT COUNT(*)
 				FROM audit AS a
-				LEFT OUTER JOIN inventory AS i ON (
-				a.barcode = i.barcode
-				OR a.barcode = i.alt_barcode
-				OR ('GMC-' || a.barcode) = i.barcode
-				) AND i.active = true
+				LEFT JOIN inventory AS i ON (
+					a.barcode = i.barcode
+					OR a.barcode = i.alt_barcode
+					OR ('GMC-' || a.barcode) = i.barcode
+				)
 				WHERE a.audit_group_id = q1.audit_group_id 
-				AND i.container_id &lt;&gt; q1.container_id
-				AND i.container_id IS NOT NULL
+					AND i.container_id &lt;&gt; q1.container_id
+					AND i.active = true
 			) AS wrong_shelf, ABS(
 				(
 					SELECT COUNT(*)
 					FROM (
 						SELECT DISTINCT i.barcode
 						FROM audit AS a
-						LEFT OUTER JOIN inventory AS i ON (
+						LEFT JOIN inventory AS i ON (
 							a.barcode = i.barcode
 							OR a.barcode = i.alt_barcode
 							OR ('GMC-' || a.barcode) = i.barcode
 						)
 						WHERE a.audit_group_id = q1.audit_group_id 
 							AND i.container_id = q1.container_id
-							AND i.container_id IS NOT NULL
 							AND i.active = true
 					) AS cq
 				) - (
@@ -96,11 +95,10 @@
 					a.barcode = i.barcode
 					OR a.barcode = i.alt_barcode
 					OR ('GMC-' || a.barcode) = i.barcode
-				)
+				) AND i.active = true
 				LEFT OUTER JOIN container AS c
 					ON c.container_id = i.container_id
-				WHERE i.active = true
-					AND ag.create_date BETWEEN #{start}::date AND (
+				WHERE ag.create_date BETWEEN #{start}::date AND (
 						#{end}::date + interval '23 hours 59 minutes 59 seconds'
 					)
 				GROUP BY a.audit_group_id, ag.remark, i.container_id, c.path_cache
