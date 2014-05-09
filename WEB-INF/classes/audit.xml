@@ -47,7 +47,7 @@
 					OR a.barcode = i.alt_barcode
 					OR ('GMC-' || a.barcode) = i.barcode
 				) AND i.active = true
-				WHERE a.audit_group_id = q1.audit_group_id 
+				WHERE a.audit_group_id = q.audit_group_id 
 					AND i.inventory_id IS NULL
 			) AS no_match, (
 				SELECT COUNT(*)
@@ -57,8 +57,8 @@
 					OR a.barcode = i.alt_barcode
 					OR ('GMC-' || a.barcode) = i.barcode
 				)
-				WHERE a.audit_group_id = q1.audit_group_id 
-					AND i.container_id &lt;&gt; q1.container_id
+				WHERE a.audit_group_id = q.audit_group_id 
+					AND i.container_id &lt;&gt; q.container_id
 					AND i.active = true
 			) AS wrong_shelf, ABS(
 				(
@@ -71,40 +71,44 @@
 							OR a.barcode = i.alt_barcode
 							OR ('GMC-' || a.barcode) = i.barcode
 						)
-						WHERE a.audit_group_id = q1.audit_group_id 
-							AND i.container_id = q1.container_id
+						WHERE a.audit_group_id = q.audit_group_id 
+							AND i.container_id = q.container_id
 							AND i.active = true
 					) AS cq
 				) - (
 					SELECT COUNT(*) FROM (
 						SELECT DISTINCT COALESCE(barcode, alt_barcode)
 						FROM inventory AS i
-						WHERE i.container_id = q1.container_id
+						WHERE i.container_id = q.container_id
 							AND i.active = true
 					) AS cq
 				)
 			) AS difference
 		FROM (
-			SELECT DISTINCT ON (audit_group_id) *
+			SELECT DISTINCT ON (audit_group_id)
+				q.audit_group_id, q.remark, q.container_id, c.path_cache
 			FROM (
-				SELECT a.audit_group_id, ag.remark, i.container_id, c.path_cache
-				FROM audit AS a
-				JOIN audit_group AS ag
-					ON ag.audit_group_id = a.audit_group_id
-				LEFT OUTER JOIN inventory AS i ON (
-					a.barcode = i.barcode
-					OR a.barcode = i.alt_barcode
-					OR ('GMC-' || a.barcode) = i.barcode
-				) AND i.active = true
-				LEFT OUTER JOIN container AS c
-					ON c.container_id = i.container_id
-				WHERE ag.create_date BETWEEN #{start}::date AND (
+				SELECT audit_group_id, remark, container_id, COUNT(container_id)
+				FROM (
+					SELECT DISTINCT a.audit_group_id, ag.remark, i.container_id,
+						COALESCE(i.barcode, i.alt_barcode) AS barcode
+					FROM audit AS a
+					JOIN audit_group AS ag
+						ON ag.audit_group_id = a.audit_group_id
+					LEFT OUTER JOIN inventory AS i ON (
+						a.barcode = i.barcode
+						OR a.barcode = i.alt_barcode
+						OR ('GMC-' || a.barcode) = i.barcode
+					) AND i.active = true
+					WHERE ag.create_date BETWEEN #{start}::date AND (
 						#{end}::date + interval '23 hours 59 minutes 59 seconds'
 					)
-				GROUP BY a.audit_group_id, ag.remark, i.container_id, c.path_cache
-				ORDER BY a.audit_group_id, COUNT(i.container_id) DESC
-			) AS dq
-		) AS q1
+				) AS q
+			GROUP BY audit_group_id, remark, container_id
+			ORDER BY audit_group_id, COUNT(container_id) DESC
+			) AS q
+			LEFT OUTER JOIN container AS c ON c.container_id = q.container_id
+		) AS q
 		ORDER BY path_cache
 	</select>
 
