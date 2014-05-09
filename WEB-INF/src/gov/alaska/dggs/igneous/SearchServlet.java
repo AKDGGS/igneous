@@ -268,23 +268,6 @@ public class SearchServlet extends HttpServlet
 					if(count > 0){
 						select.append(") AS md_criteria");
 						sphinx.SetFilter("md_criteria", 1, false);
-
-						Integer keyword_id = (Integer)context.getAttribute(
-							"mineral_keyword_id"
-						);
-
-						if(keyword_id == null){
-							Keyword keyword = (Keyword)sess.selectOne(
-								"gov.alaska.dggs.igneous.Keyword.getByName", "mineral"
-							);
-							if(keyword == null){
-								throw new Exception("Keyword \"mineral\" not found.");
-							}
-							keyword_id = Integer.valueOf(keyword.getID());
-							context.setAttribute("mineral_keyword_id", keyword_id);
-						}
-
-						sphinx.SetFilter("keyword_id", keyword_id.intValue(), false);
 					}
 				}
 
