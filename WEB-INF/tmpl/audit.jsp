@@ -95,17 +95,17 @@
 								var div = $('<div></div>');
 
 								var link = $('<a href="#"></a>');
-								link.text(e['path']);
+								if('path' in e){ link.text(e['path']); }
+								else { link.text('UNKNOWN LOCATION'); }
+
 								link.click(function(){
 									getdetail(e['audit_group_id'], e['container_id'], div);
 									return false;
 								});
 
-								div
-									.append(link)
-									.append(' [' + e['remark'] + ']')
-									.append(result)
-									.appendTo('#dest');
+								div.append(link);
+								if('remark' in e){ div.append(' [' + e['remark'] + ']'); }
+								div.append(result).appendTo('#dest');
 							});
 						}
 					});

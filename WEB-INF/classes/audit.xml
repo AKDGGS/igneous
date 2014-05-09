@@ -64,7 +64,7 @@
 				(
 					SELECT COUNT(*)
 					FROM (
-						SELECT DISTINCT i.barcode
+						SELECT DISTINCT COALESCE(i.barcode, i.alt_barcode)
 						FROM audit AS a
 						LEFT JOIN inventory AS i ON (
 							a.barcode = i.barcode
@@ -77,7 +77,7 @@
 					) AS cq
 				) - (
 					SELECT COUNT(*) FROM (
-						SELECT DISTINCT barcode
+						SELECT DISTINCT COALESCE(barcode, alt_barcode)
 						FROM inventory AS i
 						WHERE i.container_id = q1.container_id
 							AND i.active = true
@@ -126,7 +126,7 @@
 		(
 			SELECT DISTINCT ON(a.audit_id)
 				a.barcode AS s_barcode,
-				i.barcode AS i_barcode,
+				COALESCE(i.barcode, i.alt_barcode) AS i_barcode,
 				c.container_id,
 				c.path_cache AS path
 			FROM audit AS a
@@ -137,11 +137,14 @@
 			)
 			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
 			WHERE a.audit_group_id = #{audit_group_id}
-			ORDER BY a.audit_id, i.container_id = #{container_id} DESC
+			ORDER BY a.audit_id
+			<if test="container_id != null">
+				, i.container_id = #{container_id} DESC
+			</if>
 		) UNION ALL (
 			SELECT DISTINCT ON(i.barcode, i.alt_barcode)
 				a.barcode AS s_barcode,
-				i.barcode AS i_barcode,
+				COALESCE(i.barcode, i.alt_barcode) AS i_barcode,
 				c.container_id,
 				c.path_cache AS path
 			FROM inventory AS i
@@ -151,7 +154,9 @@
 				OR ('GMC-' || a.barcode) = i.barcode
 			)
 			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
+			<if test="container_id != null">
 			WHERE i.container_id = #{container_id}
+			</if>
 		)
 	</select>
 </mapper>

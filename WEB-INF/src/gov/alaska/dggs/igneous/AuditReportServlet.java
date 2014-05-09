@@ -60,7 +60,7 @@ public class AuditReportServlet extends HttpServlet
 		SqlSession sess = IgneousFactory.openSession();
 		try {
 			List<Map> result;
-			if(audit_group_id != 0 && container_id != 0){
+			if(audit_group_id != 0){
 				HashMap params = new HashMap();
 				params.put("container_id", container_id);
 				params.put("audit_group_id", audit_group_id);
