@@ -7,7 +7,7 @@
 			.pass { background-color: #B2FFB2; }
 			.fail { background-color: #FF8080; }
 			#dest { margin: 10px 0px 0px 0px; }
-			#dest p { margin: 0px 0px 10px 0px; }
+			#dest p { margin: 20px 0px 0px 0px; font-size: 18px; font-weight: bold; text-align: center; }
 			#dest span { margin: 0px 5px; padding: 0px 5px; }
 			#detail { margin: 0px 0px 15px 30px; border-collapse: collapse; }
 			#detail th { border-bottom: 1px solid black; }
@@ -66,7 +66,10 @@
 						data: {'start': $('#start').val(), 'end': $('#end').val()},
 						dataType: 'json',
 						success: function(json){
+							var total = 0, good = 0;
+
 							$.each(json, function(i, e){
+								total++;
 								var result = $('<span></span>');
 								if(e['difference'] !== 0 || e['wrong_shelf'] !== 0 || e['no_match'] !== 0){
 									var err_text = '';
@@ -90,6 +93,7 @@
 								} else {
 									result.attr('class', 'pass');
 									result.text('PASSED');
+									good++;
 								}
 
 								var div = $('<div></div>');
@@ -107,6 +111,13 @@
 								if('remark' in e){ div.append(' [' + e['remark'] + ']'); }
 								div.append(result).appendTo('#dest');
 							});
+
+							$('#dest').append(
+								$('<p></p>').text(
+									good + ' of ' + total + ' passed, ' +
+									(((total-good) / total) * 100).toFixed(2) + '% bad'
+								)
+							);
 						}
 					});
 				});
