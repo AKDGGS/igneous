@@ -53,11 +53,6 @@ public class MiningDistrictServlet extends HttpServlet
 		try { id = Integer.parseInt(request.getParameter("id")); }
 		catch(Exception ex){ }
 
-		// Aggressively disable cache
-		response.setHeader("Cache-Control","no-cache");
-		response.setHeader("Pragma","no-cache");
-		response.setDateHeader("Expires", 0);
-
 		SqlSession sess = IgneousFactory.openSession();
 		try {
 			List<MiningDistrict> districts = sess.selectList(
@@ -68,6 +63,7 @@ public class MiningDistrictServlet extends HttpServlet
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
 			try {
+				// Mining districts are slightly smaller than 100k uncompressed
 				baos = new ByteArrayOutputStream(102400);
 
 				// If GZIP is supported by the requesting browser, use it.

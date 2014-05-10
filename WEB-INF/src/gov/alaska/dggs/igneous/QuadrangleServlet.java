@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
 
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Quadrangle;
+import gov.alaska.dggs.ETagUtil;
 
 
 public class QuadrangleServlet extends HttpServlet
@@ -54,23 +56,41 @@ public class QuadrangleServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Quadrangle.getList"
 			);
 			
-			response.setContentType("application/json");
-
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
-			try { 
+			ByteArrayOutputStream baos = null;
+			try {
+				// Quadrangles are slightly less than 40k uncompressed
+				baos = new ByteArrayOutputStream(40960);
+
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
 				if(encoding != null && encoding.contains("gzip")){
 					response.setHeader("Content-Encoding", "gzip");
-					gos = new GZIPOutputStream(response.getOutputStream(), 8196);
+					gos = new GZIPOutputStream(baos, 8196);
 					out = new OutputStreamWriter(gos, "utf-8");
 				} else {
-					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+					out = new OutputStreamWriter(baos, "utf-8");
 				}
 
 				serializer.serialize(quads, out);
+				out.flush(); if(gos != null){ gos.finish(); }
+
+				byte[] output = baos.toByteArray();
+
+				String tag = request.getHeader("If-None-Match");
+				String etag = ETagUtil.tag(output);
+
+				if(etag.equals(tag)){
+					response.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+				} else {
+					response.setContentType("application/json");
+					response.setContentLength(baos.size());
+					response.setHeader("ETag", etag);
+					response.getOutputStream().write(output);
+				}
 			} finally {
+				if(baos != null){ baos.close(); }
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }
 			}
