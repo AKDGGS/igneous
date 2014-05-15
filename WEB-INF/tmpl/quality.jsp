@@ -130,11 +130,15 @@
 
 					var td = document.createElement('td');
 					td.className = 'nowrap';
-					td.appendChild(document.createTextNode(json[i]['id']));
+					if('desc' in json[i]){
+						td.appendChild(document.createTextNode(json[i]['id']));
+					}
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					td.appendChild(document.createTextNode(json[i]['desc']));
+					if('desc' in json[i]){
+						td.appendChild(document.createTextNode(json[i]['desc']));
+					}
 					tr.appendChild(td);
 
 					tbody.appendChild(tr);
