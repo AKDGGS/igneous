@@ -30,10 +30,10 @@
 
 		<div class="container">
 			<label for="start">Start Date: </label>
-			<input type="text" id="start" name="start" size="10" tabindex="2" value="1/1/10" />
+			<input type="text" id="start" name="start" size="20" tabindex="2" value="1/1/10 00:00:00" />
 
 			<label for="end">End Date: </label>
-			<input type="text" id="end" name="end" size="10" tabindex="3" value="1/1/20" />
+			<input type="text" id="end" name="end" size="20" tabindex="3" value="1/1/20 23:59:59" />
 
 			<button class="btn btn-primary" id="query">
 				<span class="glyphicon glyphicon-book"></span> Query
@@ -109,6 +109,7 @@
 
 								div.append(link);
 								if('remark' in e){ div.append(' [' + e['remark'] + ']'); }
+								div.append(' #' + e['audit_group_id']);
 								div.append(result).appendTo('#dest');
 							});
 

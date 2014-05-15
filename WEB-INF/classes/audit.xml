@@ -100,9 +100,8 @@
 						OR a.barcode = i.alt_barcode
 						OR ('GMC-' || a.barcode) = i.barcode
 					) AND i.active = true
-					WHERE ag.create_date BETWEEN #{start}::date AND (
-						#{end}::date + interval '23 hours 59 minutes 59 seconds'
-					)
+					WHERE ag.create_date BETWEEN
+						#{start}::timestamp AND #{end}::timestamp
 				) AS q
 			GROUP BY audit_group_id, remark, container_id
 			ORDER BY audit_group_id, COUNT(container_id) DESC
