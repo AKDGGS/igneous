@@ -115,6 +115,7 @@ public class SearchServlet extends HttpServlet
 			if(s_dir != null){ dir = Integer.parseInt(s_dir); }
 
 			switch(sort){
+				// Sort by collection
 				case 1:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -123,6 +124,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by core
 				case 2:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -131,6 +133,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by location/container
 				case 3:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -139,6 +142,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sorty by set
 				case 4:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -147,6 +151,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by top
 				case 5:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -155,6 +160,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by bottom
 				case 6:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -163,6 +169,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by well
 				case 7:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -171,6 +178,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by well_number
 				case 8:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -179,6 +187,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by barcode
 				case 9:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -187,6 +196,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by borehole
 				case 10:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -195,6 +205,7 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by box
 				case 11:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
@@ -203,10 +214,20 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by prospect
 				case 12:
 					sphinx.SetSortMode(
 						SphinxClient.SPH_SORT_EXTENDED,
 						"sort_prospect_null DESC, sort_prospect " +
+						(dir == 0 ? "ASC" : "DESC")
+					);
+				break;
+
+				// Sort by sample number
+				case 13:
+					sphinx.SetSortMode(
+						SphinxClient.SPH_SORT_EXTENDED,
+						"sort_sample DESC, sample " +
 						(dir == 0 ? "ASC" : "DESC")
 					);
 				break;

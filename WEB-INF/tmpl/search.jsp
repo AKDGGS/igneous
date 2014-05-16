@@ -106,6 +106,7 @@
 								<option value="2">Core Number</option>
 								<option value="3">Location</option>
 								<option value="12">Prospect</option>
+								<option value="13">Sample</option>
 								<option value="4">Set Number</option>
 								<option value="5">Top</option>
 								<option value="6">Bottom</option>
