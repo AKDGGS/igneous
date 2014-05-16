@@ -96,6 +96,11 @@ function restore()
 						).attr('selected', 'selected').get(0);
 					break;
 
+					case 'top':
+					case 'bottom':
+						$('#advanced').addClass('active');
+						$('#advanced_cell').show();
+
 					default: $('#'+key).val(val);
 				}
 			}
@@ -329,6 +334,15 @@ $(function(){
 				Search.prototype.addProperty(o, 'quadrangle_id', $(v).val());
 				searchok = true;
 			});
+
+			// Top and Bottom interval - must be paired
+			var itop = document.getElementById('top').value;
+			var ibot = document.getElementById('top').value;
+			if(itop.length !== 0 && ibot.length !== 0){
+				o['top'] = itop;
+				o['bottom'] = ibot;
+				searchok = true;
+			}
 
 			if(!searchok){
 				// In the event of a bad search, clear our the hash
@@ -661,7 +675,7 @@ $(function(){
 
 	$('#sort, #max, #dir').change(function(){ search.execute(); });
 
-	$('#q').keypress(function(e){
+	$('#q, #top, #bottom').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 

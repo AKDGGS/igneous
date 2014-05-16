@@ -14,8 +14,9 @@
 			#advanced_cell { width: 250px; display: none; padding: 4px 8px; vertical-align: top; }
 			#advanced_cell label { display: block; padding: 0px; }
 			#advanced_cell select { padding: 0px; margin: 0px 0px 10px 0px; }
+			#advanced_cell span { font-size: 14px; }
 
-			label { font-size: 14px; }
+			label { font-size: 14px; font-weight: bold; }
 			.navbar { white-space: nowrap; }
 			th { white-space: nowrap; font-size: 85%; }
 
@@ -67,6 +68,10 @@
 
 						<label for="quadrangle_id">Quadrangle</label>
 						<select size="5" multiple="multiple" name="quadrangle_id" id="quadrangle_id"></select>
+
+						<label for="top">Interval</label>
+						<span>Top</span> <input type="text" size="5" name="top" id="top" />
+						<span>Bottom</span> <input type="text" size="5" name="bottom" id="bottom" />
 					</td>
 				</tr>
 			</table>

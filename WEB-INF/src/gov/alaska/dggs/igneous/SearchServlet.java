@@ -214,6 +214,7 @@ public class SearchServlet extends HttpServlet
 				default: sphinx.SetSortMode(SphinxClient.SPH_SORT_RELEVANCE, null);
 			}
 
+			// Filter by keywords
 			String[] keywords = request.getParameterValues("keyword_id");
 			if(keywords != null){
 				for(String keyword : keywords){
@@ -226,18 +227,21 @@ public class SearchServlet extends HttpServlet
 				}
 			}
 
+			// Filter by prospect
 			String prospect = request.getParameter("prospect_id");
 			if(prospect != null){
 				long prospect_id = Long.parseLong(prospect);
 				sphinx.SetFilter("prospect_id", prospect_id, false);
 			}
 
+			// Filter by borehole
 			String borehole = request.getParameter("borehole_id");
 			if(borehole != null){
 				long borehole_id = Long.parseLong(borehole);
 				sphinx.SetFilter("borehole_id", borehole_id, false);
 			}
 
+			// Filter by well
 			String well = request.getParameter("well_id");
 			if(well != null){
 				long well_id = Long.parseLong(well);
@@ -249,6 +253,23 @@ public class SearchServlet extends HttpServlet
 			SqlSession sess = IgneousFactory.openSession();
 			try {
 				StringBuilder select = new StringBuilder("id");
+
+				// Filter by interval top
+				String top = request.getParameter("top");
+				String bottom = request.getParameter("bottom");
+				if(top != null && top.length() > 0 && bottom != null && bottom.length() > 0){
+					try {
+						long ltop = Long.valueOf(top);
+						long lbot = Long.valueOf(bottom);
+
+						select.append(",IF(MAX(MIN(top, bottom), MIN(");
+						select.append(ltop).append(",").append(lbot);
+						select.append(")) <= MIN(MAX(top, bottom), MAX(");
+						select.append(ltop).append(",").append(lbot);
+						select.append(")), 1, 0) AS it_criteria");
+						sphinx.SetFilter("it_criteria", 1, false);
+					} catch(Exception ex){ }
+				}
 
 				// Filter by Mining District
 				String[] mining_districts = request.getParameterValues("mining_district_id");
