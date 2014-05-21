@@ -335,14 +335,11 @@ $(function(){
 				searchok = true;
 			});
 
-			// Top and Bottom interval - must be paired
+			// Top and Bottom interval
 			var itop = document.getElementById('top').value;
-			var ibot = document.getElementById('top').value;
-			if(itop.length !== 0 && ibot.length !== 0){
-				o['top'] = itop;
-				o['bottom'] = ibot;
-				searchok = true;
-			}
+			if(itop.length !== 0){ o['top'] = itop; searchok = true; }
+			var ibot = document.getElementById('bottom').value;
+			if(ibot.length !== 0){ o['bottom'] = ibot; searchok = true; }
 
 			if(!searchok){
 				// In the event of a bad search, clear our the hash

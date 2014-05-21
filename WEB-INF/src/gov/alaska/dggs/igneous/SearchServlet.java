@@ -278,18 +278,24 @@ public class SearchServlet extends HttpServlet
 				// Filter by interval top
 				String top = request.getParameter("top");
 				String bottom = request.getParameter("bottom");
-				if(top != null && top.length() > 0 && bottom != null && bottom.length() > 0){
+				if(top != null || bottom != null){
+					// If one is null, populate the other
+					if(top == null){ top = bottom; }
+					else if(bottom == null){ bottom = top; }
+
 					try {
 						long ltop = Long.valueOf(top);
 						long lbot = Long.valueOf(bottom);
 
-						select.append(",IF(MAX(top, MIN(");
+						select.append(",IF(MAX(MIN(top, bottom), MIN(");
 						select.append(ltop).append(",").append(lbot);
-						select.append(")) <= MIN(bottom, MAX(");
+						select.append(")) <= MIN(MAX(top, bottom), MAX(");
 						select.append(ltop).append(",").append(lbot);
 						select.append(")), 1, 0) AS it_criteria");
 						sphinx.SetFilter("it_criteria", 1, false);
-					} catch(Exception ex){ }
+					} catch(Exception ex){
+						throw new Exception("Invalid Interval");
+					}
 				}
 
 				// Filter by Mining District
@@ -421,7 +427,7 @@ public class SearchServlet extends HttpServlet
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		} finally {
 			sphinx.Close();
 		}
