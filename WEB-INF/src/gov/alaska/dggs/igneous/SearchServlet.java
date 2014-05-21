@@ -283,9 +283,9 @@ public class SearchServlet extends HttpServlet
 						long ltop = Long.valueOf(top);
 						long lbot = Long.valueOf(bottom);
 
-						select.append(",IF(MAX(MIN(top, bottom), MIN(");
+						select.append(",IF(MAX(top, MIN(");
 						select.append(ltop).append(",").append(lbot);
-						select.append(")) <= MIN(MAX(top, bottom), MAX(");
+						select.append(")) <= MIN(bottom, MAX(");
 						select.append(ltop).append(",").append(lbot);
 						select.append(")), 1, 0) AS it_criteria");
 						sphinx.SetFilter("it_criteria", 1, false);
