@@ -11,7 +11,11 @@
 			#dest span { margin: 0px 5px; padding: 0px 5px; }
 			#detail { margin: 0px 0px 15px 30px; border-collapse: collapse; }
 			#detail th { border-bottom: 1px solid black; }
+			#detail th:not(:last-child) { border-right: 1px solid black; }
 			#detail td, #detail th { padding: 0px 7px; }
+			
+			#detail tr.summary td { font-weight: bold; border-top: 1px solid black; }
+			#detail tr.summary td:not(:last-child) { border-right: 1px solid black; }
 		</style>
 	</head>
 	<body>
@@ -39,6 +43,11 @@
 				<span class="glyphicon glyphicon-book"></span> Query
 			</button>
 
+			<br/>
+
+			<label for="hide_passed">Hide passed:</label>
+			<input type="checkbox" id="hide_passed" name="hide_passed" value="true" />
+
 			<div id="dest"></div>
 		</div>
 
@@ -58,8 +67,9 @@
 				});
 
 				$('#query').click(function(){
-					$('#dest').empty();
+					var hide_passed = $('#hide_passed').is(':checked');
 
+					$('#dest').empty();
 
 					$.ajax({
 						url: 'audit_report.json',
@@ -70,53 +80,52 @@
 
 							$.each(json, function(i, e){
 								total++;
-								var result = $('<span></span>');
-								if(e['difference'] !== 0 || e['wrong_shelf'] !== 0 || e['no_match'] !== 0){
-									var err_text = '';
-									if(e['difference'] !== 0){
-										if(err_text.length > 0){ err_text += ' / '; }
-										err_text += 'COUNT MISMATCH';
-									}
+								var passed = true;
+								var result_text = '';
 
-									if(e['wrong_shelf'] !== 0){
-										if(err_text.length > 0){ err_text += ' / '; }
-										err_text += 'INCONSISTENT LOCATION';
-									}
-
-									if(e['no_match'] !== 0){
-										if(err_text.length > 0){ err_text += ' / '; }
-										err_text += 'BARCODE NOT FOUND';
-									}
-									
-									result.text(err_text);
-									result.attr('class', 'fail');
-								} else {
-									result.attr('class', 'pass');
-									result.text('PASSED');
-									good++;
+								if(e['difference'] !== 0){
+									passed = false; result_text += 'COUNT MISMATCH';
 								}
 
-								var div = $('<div></div>');
+								if(e['wrong_shelf'] !== 0){
+									if(result_text.length > 0){ result_text += ' / '; }
+									passed = false; result_text += 'INCONSISTENT LOCATION';
+								}
 
-								var link = $('<a href="#"></a>');
-								if('path' in e){ link.text(e['path']); }
-								else { link.text('UNKNOWN LOCATION'); }
+								if(e['no_match'] !== 0){
+									if(result_text.length > 0){ result_text += ' / '; }
+									passed = false; result_text += 'BARCODE NOT FOUND';
+								}
 
-								link.click(function(){
-									getdetail(e['audit_group_id'], e['container_id'], div);
-									return false;
-								});
+								if(passed){ ++good; result_text = 'PASSED'; }
 
-								div.append(link);
-								if('remark' in e){ div.append(' [' + e['remark'] + ']'); }
-								div.append(' #' + e['audit_group_id']);
-								div.append(result).appendTo('#dest');
+								if(!passed || !hide_passed){
+									var result = $('<span></span>');
+									result.text(result_text);
+									result.attr('class', passed ? 'pass' : 'fail');
+
+									var div = $('<div></div>');
+
+									var link = $('<a href="#"></a>');
+									if('path' in e){ link.text(e['path']); }
+									else { link.text('UNKNOWN LOCATION'); }
+
+									link.click(function(){
+										getdetail(e['audit_group_id'], e['container_id'], div);
+										return false;
+									});
+
+									div.append(link);
+									if('remark' in e){ div.append(' [' + e['remark'] + ']'); }
+									div.append(' #' + e['audit_group_id']);
+									div.append(result).appendTo('#dest');
+								}
 							});
 
 							$('#dest').append(
 								$('<p></p>').text(
 									good + ' of ' + total + ' passed, ' +
-									(((total-good) / total) * 100).toFixed(2) + '% bad'
+									((good / total) * 100).toFixed(2) + '% good'
 								)
 							);
 						}
@@ -143,8 +152,12 @@
 						table.data('audit_group_id', audit_group_id);
 
 						table.append('<tr><th>Scanned Barcode</th><th>Database Barcode</th><th>Location</th></tr>');
+						var i_count = 0, s_count = 0;
 						$.each(json, function(i, e){
 							var row = $('<tr></tr>');
+
+							if('s_barcode' in e){ ++s_count; }
+							if('i_barcode' in e){ ++i_count; }
 
 							row.append(
 								$('<td></td>')
@@ -169,6 +182,13 @@
 
 							row.appendTo(table);
 						});
+
+						var row = $('<tr class="summary"></tr>');
+						row.append('<td>Scanned Total: ' + s_count + '</td>');
+						row.append('<td>Database Total: ' + i_count + '</td>');
+						row.append('<td></td>');
+						row.appendTo(table);
+
 						table.appendTo(ele);
 					}
 				});
