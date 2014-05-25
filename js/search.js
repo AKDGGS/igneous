@@ -195,85 +195,135 @@ $(function(){
 
 			// Begin related
 			// Boreholes
-			for(var i in attr['boreholes']){
-				var borehole = attr['boreholes'][i];
+			if('boreholes' in attr){
+				for(var i in attr['boreholes']){
+					var borehole = attr['boreholes'][i];
 
-				var div = document.createElement('div');
-				if('prospect' in borehole){
-					div.appendChild(document.createTextNode(
-						'Prospect: '
-					));
-					var prospect = borehole['prospect'];
+					var div = document.createElement('div');
+					if('prospect' in borehole){
+						div.appendChild(document.createTextNode(
+							'Prospect: '
+						));
+						var prospect = borehole['prospect'];
 
-					a = document.createElement('a');
-					a.href = 'prospect/' + prospect['ID'];
-					a.appendChild(document.createTextNode(
-						prospect['name']
-					));
-					if('altNames' in prospect){
+						a = document.createElement('a');
+						a.href = 'prospect/' + prospect['ID'];
 						a.appendChild(document.createTextNode(
-							' (' + prospect['altNames'] + ')'
+							prospect['name']
+						));
+						if('altNames' in prospect){
+							a.appendChild(document.createTextNode(
+								' (' + prospect['altNames'] + ')'
+							));
+						}
+						div.appendChild(a);
+
+						div.appendChild(document.createElement('br'));
+					}
+
+					div.appendChild(document.createTextNode('Borehole: '));
+					a = document.createElement('a');
+					a.href = 'borehole/' + borehole['ID'];
+					a.appendChild(document.createTextNode(borehole['name']));
+					div.appendChild(a);
+
+					content.appendChild(div);
+				}
+			}
+
+			// Wells
+			if('wells' in attr){
+				for(var i in attr['wells']){
+					var well = attr['wells'][i];
+
+					var div = document.createElement('div');
+					div.appendChild(document.createTextNode('Well: '));
+					a = document.createElement('a');
+					a.href = 'well/' + well['ID'];
+					a.appendChild(document.createTextNode(well['name']));
+					if('wellNumber' in well){
+						a.appendChild(document.createTextNode(
+							' - ' + well['wellNumber']
 						));
 					}
 					div.appendChild(a);
 
-					div.appendChild(document.createElement('br'));
+					if('APINumber' in well){
+						var div2 = document.createElement('div');
+						div2.appendChild(document.createTextNode('API: '));
+						div2.appendChild(document.createTextNode(well['APINumber']));
+						div.appendChild(div2);
+					}
+
+					content.appendChild(div);
 				}
-
-				div.appendChild(document.createTextNode('Borehole: '));
-				a = document.createElement('a');
-				a.href = 'borehole/' + borehole['ID'];
-				a.appendChild(document.createTextNode(borehole['name']));
-				div.appendChild(a);
-
-				content.appendChild(div);
-			}
-
-			// Wells
-			for(var i in attr['wells']){
-				var well = attr['wells'][i];
-
-				var div = document.createElement('div');
-				div.appendChild(document.createTextNode('Well: '));
-				a = document.createElement('a');
-				a.href = 'well/' + well['ID'];
-				a.appendChild(document.createTextNode(well['name']));
-				if('wellNumber' in well){
-					a.appendChild(document.createTextNode(
-						' - ' + well['wellNumber']
-					));
-				}
-				div.appendChild(a);
-
-				if('APINumber' in well){
-					var div2 = document.createElement('div');
-					div2.appendChild(document.createTextNode('API: '));
-					div2.appendChild(document.createTextNode(well['APINumber']));
-					div.appendChild(div2);
-				}
-
-				content.appendChild(div);
 			}
 
 			// Outcrops
-			for(var i in attr['outcrops']){
-				var outcrop = attr['outcrops'][i];
+			if('outcrops' in attr){
+				for(var i in attr['outcrops']){
+					var outcrop = attr['outcrops'][i];
 
-				var div = document.createElement('div');
-				div.appendChild(document.createTextNode('Outcrop: '));
-				a = document.createElement('a');
-				a.href = 'outcrop/' + outcrop['ID'];
-				a.appendChild(document.createTextNode(outcrop['name']));
-				if('number' in outcrop){
-					a.appendChild(document.createTextNode(
-						' - ' + outcrop['number']
-					));
+					var div = document.createElement('div');
+					div.appendChild(document.createTextNode('Outcrop: '));
+					a = document.createElement('a');
+					a.href = 'outcrop/' + outcrop['ID'];
+					a.appendChild(document.createTextNode(outcrop['name']));
+					if('number' in outcrop){
+						a.appendChild(document.createTextNode(
+							' - ' + outcrop['number']
+						));
+					}
+					div.appendChild(a);
+
+					content.appendChild(div);
 				}
-				div.appendChild(a);
-
-				content.appendChild(div);
 			}
 
+			// Shotlines/Shotpoints
+			if('shotlines' in attr){
+				for(var i in attr['shotlines']){
+					var shotline = attr['shotlines'][i];
+
+					var div = document.createElement('div');
+					div.appendChild(document.createTextNode('Shotline: '));
+					a = document.createElement('a');
+					a.href = 'shotline/' + shotline['ID'];
+					a.appendChild(document.createTextNode(shotline['name']));
+					div.appendChild(a);
+
+					if('year' in shotline){
+						div.appendChild(document.createTextNode(
+							', ' + shotline['year']
+						));
+					}
+					content.appendChild(div);
+
+					if('shotlineMax' in shotline){
+						var div = document.createElement('div');
+						div.appendChild(document.createTextNode(
+							'Shotpoints: ' + shotline['shotlineMin'] +
+							' - ' + shotline['shotlineMax']
+						));
+						content.appendChild(div);
+					}
+				}
+
+				if('project' in attr){
+					var project = attr['project'];
+					var div = document.createElement('div');
+					div.appendChild(document.createTextNode(
+						'Project: ' + project['name']
+					));
+
+					if('year' in project){
+						div.appendChild(document.createTextNode(
+							', ' + project['year']
+						));
+					}
+					content.appendChild(div);
+				}
+			}
 			// End Related
 
 			var div = document.createElement('div');
