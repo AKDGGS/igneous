@@ -361,6 +361,7 @@ public class SearchServlet extends HttpServlet
 									case 1: select.append("IN(borehole_id"); break;
 									case 2: select.append("IN(well_id"); break;
 									case 3: select.append("IN(outcrop_id"); break;
+									case 4: select.append("IN(shotpoint_id"); break;
 								}
 							}
 							select.append(",");
