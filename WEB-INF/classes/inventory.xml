@@ -127,13 +127,7 @@
 			sl.year AS shotline_year,
 			ismm.shotline_min,
 			ismm.shotline_max,
-
-			(
-				SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857))
-				FROM inventory_geog_precision AS ip
-				WHERE ip.inventory_id = iv.inventory_id
-				LIMIT 1
-			) AS wkt
+			ST_AsText(ST_Transform(ig.geog::GEOMETRY, 3857)) AS wkt
 		FROM inventory AS iv
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
@@ -168,6 +162,11 @@
 		LEFT OUTER JOIN inventory_shotline_minmax AS ismm
 			ON ismm.inventory_id = iv.inventory_id
 			AND ismm.shotline_id = isl.shotline_id
+		LEFT OUTER JOIN (
+			SELECT DISTINCT ON (inventory_id)
+				inventory_id, geog
+			FROM inventory_geog
+		) AS ig ON ig.inventory_id = iv.inventory_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="array" open="(" separator="," close=")">${item}</foreach>
 		ORDER BY idx(<foreach item="item" index="index" open="'{" separator="," collection="array" close="}'">${item}</foreach>::int[], iv.inventory_id)
 	</select>
@@ -258,9 +257,10 @@
 
 
 	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT inventory_id FROM inventory_geog_precision
-		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
-		LIMIT ${limit}
+		SELECT DISTINCT inventory_id FROM inventory_geog
+		WHERE ST_Intersects(
+			geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326)
+		) LIMIT ${limit}
 	</select>
 
 
