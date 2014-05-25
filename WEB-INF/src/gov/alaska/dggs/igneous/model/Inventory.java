@@ -20,6 +20,7 @@ public class Inventory implements Serializable
 	private Project project;
 
 	private String container_path;
+	private String bin;
 
 
 	private List<Keyword> keywords;
@@ -42,6 +43,7 @@ public class Inventory implements Serializable
 	public String getSet(){ return set; }
 	public String getDescription(){ return description; }
 	public String getWKT(){ return wkt; }
+	public String getBin(){ return bin; }
 
 	public Integer getIntervalTop(){ return interval_top; }
 	public Integer getIntervalBottom(){ return interval_bottom; }

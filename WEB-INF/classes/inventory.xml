@@ -15,14 +15,16 @@
 			iun.abbr AS interval_unit_abbr,
 			cl.collection_id, cl.name AS collection_name,
 			cl.description AS collection_description,
-			co.path_cache AS container_path
+			co.path_cache AS container_path, (
+				SELECT bin FROM inventory_bin WHERE inventory_id = iv.inventory_id
+			) AS bin
 		FROM inventory AS iv
-		LEFT OUTER JOIN collection AS cl
-			ON cl.collection_id = iv.collection_id
-		LEFT OUTER JOIN unit AS iun
-			ON iun.unit_id = iv.interval_unit_id
-		LEFT OUTER JOIN container AS co
-			ON co.container_id = iv.container_id
+		LEFT OUTER JOIN collection AS cl ON
+			cl.collection_id = iv.collection_id
+		LEFT OUTER JOIN unit AS iun ON
+			iun.unit_id = iv.interval_unit_id
+		LEFT OUTER JOIN container AS co ON
+			co.container_id = iv.container_id
 	</sql>
 
 	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
@@ -56,6 +58,7 @@
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
 		<result property="container_path" column="container_path" />
+		<result property="bin" column="bin" />
 
 		<association property="interval_unit" javaType="Unit">
 			<id property="id" column="interval_unit_id" />
