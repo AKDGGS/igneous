@@ -153,6 +153,7 @@
 
 						table.append('<tr><th>Scanned Barcode</th><th>Database Barcode</th><th>Location</th></tr>');
 						var i_count = 0, s_count = 0;
+
 						$.each(json, function(i, e){
 							var row = $('<tr></tr>');
 

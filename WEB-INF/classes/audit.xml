@@ -144,7 +144,7 @@
 			<if test="container_id != null">
 				, i.container_id = #{container_id} DESC
 			</if>
-		) UNION ALL (
+		) UNION (
 			SELECT DISTINCT ON(i.barcode, i.alt_barcode)
 				a.barcode AS s_barcode,
 				COALESCE(i.barcode, i.alt_barcode) AS i_barcode,
