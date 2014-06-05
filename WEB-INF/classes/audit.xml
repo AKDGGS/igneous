@@ -126,7 +126,7 @@
 		entries in the database for that barcode.
 	-->
 	<select id="getReportDetail" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
-		(
+		SELECT * FROM ((
 			SELECT DISTINCT ON(a.audit_id)
 				a.barcode AS s_barcode,
 				COALESCE(i.barcode, i.alt_barcode) AS i_barcode,
@@ -152,14 +152,16 @@
 				c.path_cache AS path
 			FROM inventory AS i
 			LEFT OUTER JOIN audit AS a ON (
-				a.barcode = i.barcode
-				OR a.barcode = i.alt_barcode
-				OR ('GMC-' || a.barcode) = i.barcode
+				(
+					a.barcode = i.barcode
+					OR a.barcode = i.alt_barcode
+					OR ('GMC-' || a.barcode) = i.barcode
+				) AND a.audit_group_id = #{audit_group_id}
 			)
 			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
 			<if test="container_id != null">
 			WHERE i.container_id = #{container_id}
 			</if>
-		)
+		)) AS q ORDER BY s_barcode, i_barcode
 	</select>
 </mapper>
