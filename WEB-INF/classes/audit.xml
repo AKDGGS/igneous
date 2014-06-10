@@ -83,7 +83,16 @@
 							AND i.active = true
 					) AS cq
 				)
-			) AS difference
+			) AS difference, (
+				SELECT COUNT(*) FROM (
+					SELECT a.audit_group_id, a.barcode, COUNT(*)
+					FROM audit AS a
+					WHERE audit_group_id = q.audit_group_id
+					GROUP BY a.audit_group_id, a.barcode
+					HAVING COUNT(*) > 1
+					ORDER BY audit_group_id, barcode
+				) AS sc
+			) AS duplicates
 		FROM (
 			SELECT DISTINCT ON (audit_group_id)
 				q.audit_group_id, q.remark, q.container_id, c.path_cache

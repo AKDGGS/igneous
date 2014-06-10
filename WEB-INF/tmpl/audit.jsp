@@ -97,6 +97,11 @@
 									passed = false; result_text += 'BARCODE NOT FOUND';
 								}
 
+								if(e['duplicates'] !== 0){
+									if(result_text.length > 0){ result_text += ' / '; }
+									passed = false; result_text += 'DUPLICATES';
+								}
+
 								if(passed){ ++good; result_text = 'PASSED'; }
 
 								if(!passed || !hide_passed){
