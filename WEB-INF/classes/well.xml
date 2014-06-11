@@ -126,17 +126,6 @@
 		JOIN keyword AS k
 			ON k.keyword_id = ik.keyword_id
 		WHERE iw.well_id = #{well_id}
-			AND k.keyword_id IN (
-				SELECT keyword_id
-				FROM keyword
-				WHERE name = 'residues'
-					OR keyword_group_id IN (
-						SELECT keyword_group_id
-						FROM keyword_group
-						WHERE name = 'source' OR
-							name = 'material'
-					)
-			)
 		GROUP BY k.keyword_id, k.name
 		ORDER BY k.name
 	</select>

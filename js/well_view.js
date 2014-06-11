@@ -102,19 +102,25 @@ $(function(){
 
 					var a = document.createElement('a');
 					a.href = '#';
+					a.setAttribute('data-keyword-id', set['keyword_id']);
 					a.onclick = function(){
-						var keyword_id = set['keyword_id'];
-						var well_id = well['ID'];
+						var li = $(this).parent('li');
 
-						return function(){
-							$('#keyword_controls').find('li').removeClass('active');
-							$(this).parent('li').addClass('active');
+						if(li.hasClass('active')){ li.removeClass('active'); }
+						else { li.addClass('active'); }
 
-							search['keyword_id'] = keyword_id;
+						var keyword_ids = $('#keyword_controls li.active a').map(function(){
+							return Number(this.getAttribute('data-keyword-id'));
+						}).get();
+
+						if(keyword_ids.length == 0){ delete search['keyword_id']; }
+						else {
+							search['keyword_id'] = keyword_ids;
 							search.execute();
-							return false;
-						};
-					}();
+						}
+
+						return false;
+					};
 					a.appendChild(document.createTextNode(set['keyword']));
 					a.appendChild(span);
 
@@ -123,27 +129,6 @@ $(function(){
 
 					keywords.appendChild(li);
 				}
-
-				var a = document.createElement('a');
-				a.href = '#';
-				a.onclick = function(){
-					var well_id = well['ID'];
-
-					return function(){
-						$('#keyword_controls').find('li').removeClass('active');
-						$(this).parent('li').addClass('active');
-
-						delete search['keyword_id'];
-						search.execute();
-						return false;
-					};
-				}();
-				a.appendChild(document.createTextNode('All'));
-
-				var li = document.createElement('li');
-				li.appendChild(a);
-
-				keywords.appendChild(li);
 				$('#keyword_controls').show();
 			}
 		}
@@ -166,7 +151,7 @@ $(function(){
 		},
 
 		onparse: function(json){
-			if(json['list'].length == 0){
+			if(!('list' in json) || json['list'].length == 0){
 				$('#inventory_container').hide();
 				AlertTool.warning('Inventory Results', 'No results have been found');
 			} else {
