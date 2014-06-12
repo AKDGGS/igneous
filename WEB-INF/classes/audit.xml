@@ -39,28 +39,10 @@
 		with the barcodes prevents making this monster slightly more readable.
 	-->
 	<select id="getReportByDate" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
-		SELECT audit_group_id, remark, container_id, path_cache AS path, (
-				SELECT COUNT(*)
-				FROM audit AS a
-				LEFT OUTER JOIN inventory AS i ON (
-					a.barcode = i.barcode
-					OR a.barcode = i.alt_barcode
-					OR ('GMC-' || a.barcode) = i.barcode
-				) AND i.active = true
-				WHERE a.audit_group_id = q.audit_group_id 
-					AND i.inventory_id IS NULL
-			) AS no_match, (
-				SELECT COUNT(*)
-				FROM audit AS a
-				LEFT JOIN inventory AS i ON (
-					a.barcode = i.barcode
-					OR a.barcode = i.alt_barcode
-					OR ('GMC-' || a.barcode) = i.barcode
-				)
-				WHERE a.audit_group_id = q.audit_group_id 
-					AND i.container_id &lt;&gt; q.container_id
-					AND i.active = true
-			) AS wrong_shelf, ABS(
+		SELECT qag.audit_group_id, qag.remark, qag.container_id,
+			qag.path_cache AS path, dp.duplicates, nm.no_match,
+			ws.wrong_shelf,
+			ABS(
 				(
 					SELECT COUNT(*)
 					FROM (
@@ -71,56 +53,97 @@
 							OR a.barcode = i.alt_barcode
 							OR ('GMC-' || a.barcode) = i.barcode
 						)
-						WHERE a.audit_group_id = q.audit_group_id 
-							AND i.container_id = q.container_id
+						WHERE a.audit_group_id = qag.audit_group_id 
+							AND i.container_id = qag.container_id
 							AND i.active = true
 					) AS cq
 				) - (
 					SELECT COUNT(*) FROM (
 						SELECT DISTINCT COALESCE(barcode, alt_barcode)
 						FROM inventory AS i
-						WHERE i.container_id = q.container_id
+						WHERE i.container_id = qag.container_id
 							AND i.active = true
 					) AS cq
 				)
-			) AS difference, (
-				SELECT COUNT(*) FROM (
-					SELECT a.audit_group_id, a.barcode, COUNT(*)
-					FROM audit AS a
-					WHERE audit_group_id = q.audit_group_id
-					GROUP BY a.audit_group_id, a.barcode
-					HAVING COUNT(*) > 1
-					ORDER BY audit_group_id, barcode
-				) AS sc
-			) AS duplicates
+			) AS difference
 		FROM (
+			<!--
+				Query all audit groups, find matching barcodes in inventory,
+				pair them up to find distinct containers. Count said 
+				containers and determine which is the highest, select
+				only one (the highest count) for each audit_group and
+				spit that out. Also, filter by date and path_cache
+				as necessary.
+			-->
 			SELECT DISTINCT ON (audit_group_id)
-				q.audit_group_id, q.remark, q.container_id, c.path_cache
+				q.audit_group_id, q.remark, c.container_id, c.path_cache,
+				COUNT(c.container_id) AS container_count
 			FROM (
-				SELECT audit_group_id, remark, container_id, COUNT(container_id)
-				FROM (
-					SELECT DISTINCT a.audit_group_id, ag.remark, i.container_id,
-						COALESCE(i.barcode, i.alt_barcode) AS barcode
-					FROM audit AS a
-					JOIN audit_group AS ag
-						ON ag.audit_group_id = a.audit_group_id
-					LEFT OUTER JOIN inventory AS i ON (
-						a.barcode = i.barcode
-						OR a.barcode = i.alt_barcode
-						OR ('GMC-' || a.barcode) = i.barcode
-					) AND i.active = true
-					WHERE ag.create_date BETWEEN
-						#{start}::timestamp AND #{end}::timestamp
-				) AS q
-				GROUP BY audit_group_id, remark, container_id
-				ORDER BY audit_group_id, COUNT(container_id) DESC
+				SELECT DISTINCT a.audit_group_id, ag.remark, i.container_id,
+					COALESCE(i.barcode, i.alt_barcode) AS barcode
+				FROM audit AS a
+				JOIN audit_group AS ag
+					ON ag.audit_group_id = a.audit_group_id
+				LEFT OUTER JOIN inventory AS i ON (
+					a.barcode = i.barcode
+					OR a.barcode = i.alt_barcode
+					OR ('GMC-' || a.barcode) = i.barcode
+				) AND i.active = true
+				WHERE ag.create_date BETWEEN
+					#{start}::timestamp AND #{end}::timestamp
 			) AS q
 			LEFT OUTER JOIN container AS c ON c.container_id = q.container_id
 			<if test="path != null">
 			WHERE c.path_cache ILIKE #{path}
 			</if>
-		) AS q
-		ORDER BY path_cache
+			GROUP BY q.audit_group_id, q.remark, c.container_id
+			ORDER BY q.audit_group_id, container_count DESC
+		) AS qag
+		LEFT OUTER JOIN (
+			<!-- Count duplicates for each audit group -->
+			SELECT q.audit_group_id, COUNT(*) AS duplicates
+			FROM (
+				SELECT a.audit_group_id, a.barcode, COUNT(*)
+				FROM audit AS a
+				GROUP BY a.audit_group_id, a.barcode
+				HAVING COUNT(*) > 1
+				ORDER BY audit_group_id, barcode
+			) AS q
+			GROUP BY audit_group_id
+		) AS dp ON dp.audit_group_id = qag.audit_group_id
+		LEFT OUTER JOIN (
+			<!--
+				Count the number of barcodes that couldn't be matched
+				for each group
+			-->
+			SELECT a.audit_group_id, COUNT(*) AS no_match
+			FROM audit AS a
+			LEFT OUTER JOIN inventory AS i ON (
+				a.barcode = i.barcode
+				OR a.barcode = i.alt_barcode
+				OR ('GMC-' || a.barcode) = i.barcode
+			) AND i.active = true
+			WHERE i.inventory_id IS NULL
+			GROUP BY a.audit_group_id
+		) AS nm ON nm.audit_group_id = qag.audit_group_id
+		LEFT OUTER JOIN (
+			<!-- Count the number of distinct container_ids in each group -->
+			SELECT audit_group_id,
+				COUNT(container_id) AS wrong_shelf
+			FROM (
+				SELECT a.audit_group_id, i.container_id, COUNT(*)
+				FROM audit AS a
+				JOIN inventory AS i ON (
+					a.barcode = i.barcode
+					OR a.barcode = i.alt_barcode
+					OR ('GMC-' || a.barcode) = i.barcode
+				) AND i.active = true
+				GROUP BY a.audit_group_id, i.container_id
+			) AS q
+			GROUP BY audit_group_id
+			HAVING COUNT(container_id) > 1
+		) AS ws ON ws.audit_group_id = qag.audit_group_id
+		ORDER BY qag.path_cache
 	</select>
 
 

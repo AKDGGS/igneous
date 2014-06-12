@@ -93,17 +93,17 @@
 									passed = false; result_text += 'COUNT MISMATCH';
 								}
 
-								if(e['wrong_shelf'] !== 0){
+								if('wrong_shelf' in e && e['wrong_shelf'] !== 0){
 									if(result_text.length > 0){ result_text += ' / '; }
 									passed = false; result_text += 'INCONSISTENT LOCATION';
 								}
 
-								if(e['no_match'] !== 0){
+								if('no_match' in e && e['no_match'] !== 0){
 									if(result_text.length > 0){ result_text += ' / '; }
 									passed = false; result_text += 'BARCODE NOT FOUND';
 								}
 
-								if(e['duplicates'] !== 0){
+								if('duplicates' in e && e['duplicates'] !== 0){
 									if(result_text.length > 0){ result_text += ' / '; }
 									passed = false; result_text += 'DUPLICATES';
 								}
