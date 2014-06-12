@@ -27,16 +27,6 @@
 		This function prints summary details on problems with an audit
 		for a range. It's only appropriate if we're assuming each
 		audit_group in the date range is a discrete container.
-
-		Forgive me for how bad this code is. I did try to make it as
-		straight-forward as possible. The root "from" clause is just
-		pulling a list of all audit_groups in the provided date range,
-		with whatever the majority of the linked database entries think
-		is the container. This container becomes the expected container
-		for all the subqueries. I really wish I could use a FULL JOIN,
-		but postgresql doesn't do FULL JOINs unless they're hashable
-		or mergeable (As of Postgresql 9.3), which means the goofy crap
-		with the barcodes prevents making this monster slightly more readable.
 	-->
 	<select id="getReportByDate" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
 		SELECT qag.audit_group_id, qag.remark, qag.container_id,
@@ -45,9 +35,11 @@
 			<!--
 				calculate the difference between the total number of barcodes
 				in this group, and the expected number of barcodes in the 
-				assumed container
+				assumed container - we fallback on the audit group count
+				if the container count is null, because if the container
+				count is null it means we couldn't find a container.
 			-->
-			ABS(COALESCE(agc.cnt,0) - COALESCE(cc.cnt,0)) AS difference
+			ABS(COALESCE(agc.cnt,0) - COALESCE(cc.cnt,agc.cnt)) AS difference
 		FROM (
 			<!--
 				Query all audit groups, find matching barcodes in inventory,
@@ -67,8 +59,7 @@
 				JOIN audit_group AS ag
 					ON ag.audit_group_id = a.audit_group_id
 				LEFT OUTER JOIN inventory AS i ON (
-					a.barcode = i.barcode
-					OR a.barcode = i.alt_barcode
+					a.barcode = COALESCE(i.barcode, i.alt_barcode)
 					OR ('GMC-' || a.barcode) = i.barcode
 				) AND i.active = true
 				WHERE ag.create_date BETWEEN
@@ -101,8 +92,7 @@
 			SELECT a.audit_group_id, COUNT(*) AS no_match
 			FROM audit AS a
 			LEFT OUTER JOIN inventory AS i ON (
-				a.barcode = i.barcode
-				OR a.barcode = i.alt_barcode
+				a.barcode = COALESCE(i.barcode, i.alt_barcode)
 				OR ('GMC-' || a.barcode) = i.barcode
 			) AND i.active = true
 			WHERE i.inventory_id IS NULL
@@ -116,8 +106,7 @@
 				SELECT a.audit_group_id, i.container_id, COUNT(*)
 				FROM audit AS a
 				JOIN inventory AS i ON (
-					a.barcode = i.barcode
-					OR a.barcode = i.alt_barcode
+					a.barcode = COALESCE(i.barcode, i.alt_barcode)
 					OR ('GMC-' || a.barcode) = i.barcode
 				) AND i.active = true
 				GROUP BY a.audit_group_id, i.container_id
@@ -126,9 +115,12 @@
 			HAVING COUNT(container_id) > 1
 		) AS ws ON ws.audit_group_id = qag.audit_group_id
 		LEFT OUTER JOIN (
-			<!-- Count the total number of barcodes in this each group -->
+			<!-- Count the total number of distinct barcodes in this each group -->
 			SELECT audit_group_id, COUNT(barcode) AS cnt
-			FROM audit
+			FROM (
+				SELECT DISTINCT audit_group_id, barcode
+				FROM audit
+			) AS q
 			GROUP BY audit_group_id
 		) agc ON agc.audit_group_id = qag.audit_group_id
 		LEFT OUTER JOIN (
