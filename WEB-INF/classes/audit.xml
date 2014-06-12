@@ -42,30 +42,12 @@
 		SELECT qag.audit_group_id, qag.remark, qag.container_id,
 			qag.path_cache AS path, dp.duplicates, nm.no_match,
 			ws.wrong_shelf,
-			ABS(
-				(
-					SELECT COUNT(*)
-					FROM (
-						SELECT DISTINCT COALESCE(i.barcode, i.alt_barcode)
-						FROM audit AS a
-						LEFT JOIN inventory AS i ON (
-							a.barcode = i.barcode
-							OR a.barcode = i.alt_barcode
-							OR ('GMC-' || a.barcode) = i.barcode
-						)
-						WHERE a.audit_group_id = qag.audit_group_id 
-							AND i.container_id = qag.container_id
-							AND i.active = true
-					) AS cq
-				) - (
-					SELECT COUNT(*) FROM (
-						SELECT DISTINCT COALESCE(barcode, alt_barcode)
-						FROM inventory AS i
-						WHERE i.container_id = qag.container_id
-							AND i.active = true
-					) AS cq
-				)
-			) AS difference
+			<!--
+				calculate the difference between the total number of barcodes
+				in this group, and the expected number of barcodes in the 
+				assumed container
+			-->
+			ABS(COALESCE(agc.cnt,0) - COALESCE(cc.cnt,0)) AS difference
 		FROM (
 			<!--
 				Query all audit groups, find matching barcodes in inventory,
@@ -143,6 +125,22 @@
 			GROUP BY audit_group_id
 			HAVING COUNT(container_id) > 1
 		) AS ws ON ws.audit_group_id = qag.audit_group_id
+		LEFT OUTER JOIN (
+			<!-- Count the total number of barcodes in this each group -->
+			SELECT audit_group_id, COUNT(barcode) AS cnt
+			FROM audit
+			GROUP BY audit_group_id
+		) agc ON agc.audit_group_id = qag.audit_group_id
+		LEFT OUTER JOIN (
+			<!-- Count the total number of distinct barcodes in each container -->
+			SELECT container_id, COUNT(barcode) AS cnt
+			FROM (
+				SELECT DISTINCT container_id,
+					COALESCE(barcode, alt_barcode) AS barcode
+				FROM inventory
+			) AS q
+			GROUP BY container_id
+		) AS cc ON cc.container_id = qag.container_id
 		ORDER BY qag.path_cache
 	</select>
 

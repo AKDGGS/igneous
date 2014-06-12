@@ -89,7 +89,7 @@
 								var passed = true;
 								var result_text = '';
 
-								if(e['difference'] !== 0){
+								if('difference' in e && e['difference'] !== 0){
 									passed = false; result_text += 'COUNT MISMATCH';
 								}
 
