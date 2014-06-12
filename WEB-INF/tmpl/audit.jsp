@@ -48,6 +48,9 @@
 			<label for="hide_passed">Hide passed:</label>
 			<input type="checkbox" id="hide_passed" name="hide_passed" value="true" />
 
+			<label for="path">Location Filter:</label>
+			<input type="text" id="path" name="path" size="35" value="" />
+
 			<div id="dest"></div>
 		</div>
 
@@ -73,7 +76,10 @@
 
 					$.ajax({
 						url: 'audit_report.json',
-						data: {'start': $('#start').val(), 'end': $('#end').val()},
+						data: {
+							'start': $('#start').val(), 'end': $('#end').val(),
+							'path': $('#path').val()
+						},
 						dataType: 'json',
 						success: function(json){
 							var total = 0, good = 0;

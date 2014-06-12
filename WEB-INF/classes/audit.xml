@@ -112,10 +112,13 @@
 					WHERE ag.create_date BETWEEN
 						#{start}::timestamp AND #{end}::timestamp
 				) AS q
-			GROUP BY audit_group_id, remark, container_id
-			ORDER BY audit_group_id, COUNT(container_id) DESC
+				GROUP BY audit_group_id, remark, container_id
+				ORDER BY audit_group_id, COUNT(container_id) DESC
 			) AS q
 			LEFT OUTER JOIN container AS c ON c.container_id = q.container_id
+			<if test="path != null">
+			WHERE c.path_cache ILIKE #{path}
+			</if>
 		) AS q
 		ORDER BY path_cache
 	</select>

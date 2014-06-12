@@ -57,6 +57,8 @@ public class AuditReportServlet extends HttpServlet
 			throw new ServletException("Invalid request.");
 		}
 
+		String path = request.getParameter("path");
+
 		SqlSession sess = IgneousFactory.openSession();
 		try {
 			List<Map> result;
@@ -64,7 +66,7 @@ public class AuditReportServlet extends HttpServlet
 				HashMap params = new HashMap();
 				params.put("container_id", container_id);
 				params.put("audit_group_id", audit_group_id);
-
+		
 				result = sess.selectList(
 					"gov.alaska.dggs.igneous.Audit.getReportDetail", params
 				);
@@ -72,6 +74,9 @@ public class AuditReportServlet extends HttpServlet
 				HashMap params = new HashMap();
 				params.put("start", start);
 				params.put("end", end);
+				if(path != null && path.length() > 0){
+					params.put("path", path);
+				}
 
 				result = sess.selectList(
 					"gov.alaska.dggs.igneous.Audit.getReportByDate", params
