@@ -60,4 +60,22 @@
 			<result property="name" column="keyword_group_name" />
 		</association>
 	</resultMap>
+
+
+	<select id="getGroupsByWellID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
+		SELECT ids, keywords, COUNT(*) AS count
+		FROM (
+			SELECT
+				STRING_AGG(k.keyword_id::varchar, ',' ORDER BY k.keyword_group_id, LOWER(k.name)) AS ids,
+				STRING_AGG(k.name, ' > ' ORDER BY k.keyword_group_id, LOWER(k.name)) AS keywords,
+				iw.inventory_id
+			FROM inventory_well AS iw
+			JOIN inventory_keyword AS ik ON ik.inventory_id = iw.inventory_id
+			JOIN keyword AS k ON k.keyword_id = ik.keyword_id
+			WHERE iw.well_id = #{id}
+			GROUP BY iw.inventory_id
+		) AS q2
+		GROUP BY keywords, ids
+		ORDER BY keywords
+	</select>
 </mapper>

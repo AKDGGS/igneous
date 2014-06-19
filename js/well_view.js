@@ -86,15 +86,15 @@ $(function(){
 				dl.appendChild(dd);
 			}
 
-			if('summary' in json && json['summary'].length > 0){
-				var summary = json['summary'];
-				var keywords = document.getElementById('keywords');
+			if('keywords' in json && json['keywords'].length > 0){
+				var keywords = json['keywords'];
+				var keywords_el = document.getElementById('keywords');
 
 				var ul = document.createElement('ul');
 				ul.className = 'nav nav-pills';
 
-				for(var i in summary){
-					var set = summary[i];
+				for(var i in keywords){
+					var set = keywords[i];
 
 					var span = document.createElement('span');
 					span.className = 'badge';
@@ -102,7 +102,7 @@ $(function(){
 
 					var a = document.createElement('a');
 					a.href = '#';
-					a.setAttribute('data-keyword-id', set['keyword_id']);
+					a.setAttribute('data-keyword-id', set['ids']);
 					a.onclick = function(){
 						var li = $(this).parent('li');
 
@@ -110,24 +110,27 @@ $(function(){
 						else { li.addClass('active'); }
 
 						var keyword_ids = $('#keyword_controls li.active a').map(function(){
-							return Number(this.getAttribute('data-keyword-id'));
+							return this.getAttribute('data-keyword-id').split(',');
 						}).get();
 
-						if(keyword_ids.length == 0){ delete search['keyword_id']; }
-						else {
+						if(keyword_ids.length == 0){
+							delete search['keyword_id'];
+							AlertTool.clear();
+							$('#inventory_container').hide();
+						} else {
 							search['keyword_id'] = keyword_ids;
 							search.execute();
 						}
 
 						return false;
 					};
-					a.appendChild(document.createTextNode(set['keyword']));
+					a.appendChild(document.createTextNode(set['keywords']));
 					a.appendChild(span);
 
 					var li = document.createElement('li');
 					li.appendChild(a);
 
-					keywords.appendChild(li);
+					keywords_el.appendChild(li);
 				}
 				$('#keyword_controls').show();
 			}

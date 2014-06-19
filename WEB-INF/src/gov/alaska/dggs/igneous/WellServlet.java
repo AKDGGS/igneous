@@ -36,7 +36,7 @@ public class WellServlet extends HttpServlet
 	static {
 		serializer = new JSONSerializer();
 		serializer.include("well");
-		serializer.include("summary");
+		serializer.include("keywords");
 		serializer.include("quadrangles");
 		serializer.include("miningdistricts");
 		serializer.include("wkts");
@@ -79,8 +79,8 @@ public class WellServlet extends HttpServlet
 			HashMap map = new HashMap();
 			map.put("well", well);
 
-			map.put("summary", sess.selectList(
-				"gov.alaska.dggs.igneous.Well.getInventorySummary", id
+			map.put("keywords", sess.selectList(
+				"gov.alaska.dggs.igneous.Keyword.getGroupsByWellID", id
 			));
 
 			map.put("quadrangles", sess.selectList(
