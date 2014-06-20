@@ -217,8 +217,7 @@ Search.prototype = {
 		if(request.readyState === 4){
 			if(request.status !== 200){
 				this.onerror(
-					'Fetch error',
-					request.statusText + ': ' + request.responseText
+					'Fetch error', 'Error: ' + request.responseText
 				);
 			} else {
 				var json = JSON.parse(request.responseText);

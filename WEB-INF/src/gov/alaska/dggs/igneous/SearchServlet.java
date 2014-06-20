@@ -427,7 +427,12 @@ public class SearchServlet extends HttpServlet
 		} catch(Exception ex){
 			response.setStatus(500);
 			response.setContentType("text/plain");
-			response.getOutputStream().print(ex.getMessage());
+			String msg = ex.getMessage();
+			if(msg != null && msg.indexOf("Read timed out") != -1){
+				response.getOutputStream().print("Spatial search returned too many results. Try again with a smaller area.");
+			} else {
+				response.getOutputStream().print(ex.getMessage());
+			}
 			//ex.printStackTrace();
 		} finally {
 			sphinx.Close();
