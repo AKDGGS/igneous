@@ -3,6 +3,10 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="gov.alaska.dggs.igneous.Inventory">
+	<select id="getTest" resultSetType="FORWARD_ONLY" parameterType="map" resultMap="InventoryMap">
+		SELECT inventory_id FROM inventory WHERE inventory_id = ? OR inventory_id = ?
+	</select>
+
 	<sql id="getBy">
 		SELECT iv.inventory_id, iv.sample_number,
 			iv.barcode, iv.alt_barcode,
@@ -291,4 +295,191 @@
 		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
 		ORDER BY type, id
 	</select>
+
+
+	<select id="getSearch2Results" resultSetType="FORWARD_ONLY" resultMap="Search2Map">
+		SELECT iv.inventory_id, iv.sample_number,
+			iv.barcode, iv.alt_barcode,
+			iv.box_number, iv.set_number,
+			iv.core_number, iv.state_number,
+			iv.interval_top, iv.interval_bottom,
+			iun.unit_id AS interval_unit_id,
+			iun.name AS interval_unit_name,
+			iun.abbr AS interval_unit_abbr,
+
+			cl.collection_id, cl.name AS collection_name,
+
+			pr.project_id, pr.name AS project_name,
+			pr.start_date AS project_start_date,
+			pr.end_date AS project_end_date,
+
+			cd.core_diameter_id, cd.name AS core_diameter_name,
+			cd.core_diameter AS core_diameter_diameter,
+			cdun.unit_id AS core_diameter_unit_id,
+			cdun.name AS core_diameter_unit_name,
+			cdun.abbr AS core_diameter_unit_abbr,
+
+			co.path_cache AS container_path,
+
+			bh.borehole_id,
+			bh.name AS borehole_name,
+			bh.alt_names AS alt_borehole_names,
+
+			ph.prospect_id,
+			ph.name AS prospect_name,
+			ph.alt_names AS alt_prospect_names,
+			ph.ardf_number,
+
+			w.well_id, 
+			w.name AS well_name,
+			w.alt_names AS alt_well_names,
+			w.well_number, w.api_number,
+
+			o.outcrop_id,
+			o.name AS outcrop_name,
+			o.outcrop_number,
+
+			sl.shotline_id,
+			sl.name AS shotline_name,
+			sl.alt_names AS alt_shotline_names,
+			sl.year AS shotline_year,
+			ismm.shotline_min,
+			ismm.shotline_max,
+
+			kw.keyword_id,
+			kw.name AS keyword_name,
+			kw.alias AS keyword_alias,
+
+			ST_AsText(ST_Transform(ig.geog::GEOMETRY, 3857)) AS wkt
+		FROM inventory AS iv
+		LEFT OUTER JOIN collection AS cl
+			ON cl.collection_id = iv.collection_id
+		LEFT OUTER JOIN unit AS iun
+			ON iun.unit_id = iv.interval_unit_id
+		LEFT OUTER JOIN project AS pr
+			ON pr.project_id = iv.project_id
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
+		LEFT OUTER JOIN inventory_borehole AS ibh
+			ON ibh.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN borehole AS bh
+			ON bh.borehole_id = ibh.borehole_id
+		LEFT OUTER JOIN prospect AS ph
+			ON ph.prospect_id = bh.prospect_id
+		LEFT OUTER JOIN core_diameter AS cd
+			ON cd.core_diameter_id = iv.core_diameter_id
+		LEFT OUTER JOIN unit AS cdun
+			ON cdun.unit_id = cd.unit_id
+		LEFT OUTER JOIN inventory_well AS iw
+			ON iw.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN well AS w
+			ON w.well_id = iw.well_id
+		LEFT OUTER JOIN inventory_outcrop AS io
+			ON io.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN outcrop AS o
+			ON o.outcrop_id = io.outcrop_id
+		LEFT OUTER JOIN inventory_shotline AS isl
+			ON isl.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN shotline AS sl
+			ON sl.shotline_id = isl.shotline_id
+		LEFT OUTER JOIN inventory_shotline_minmax AS ismm
+			ON ismm.inventory_id = iv.inventory_id
+			AND ismm.shotline_id = isl.shotline_id
+		LEFT OUTER JOIN inventory_keyword AS ikw
+			ON ikw.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN keyword AS kw
+			ON kw.keyword_id = ikw.keyword_id
+		LEFT OUTER JOIN inventory_search AS ig
+			ON ig.inventory_id = iv.inventory_id
+		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="list" open="(" separator="," close=")">${item}</foreach>
+		ORDER BY idx(<foreach item="item" index="index" open="ARRAY[" separator="," collection="list" close="]">${item}</foreach>, iv.inventory_id)
+	</select>
+
+
+	<resultMap id="Search2Map" type="Inventory">
+		<id property="id" column="inventory_id" />
+		<result property="sample_number" column="sample_number" />
+		<result property="barcode" column="barcode" />
+		<result property="alt_barcode" column="alt_barcode" />
+		<result property="container_path" column="container_path" />
+		<result property="box" column="box_number" />
+		<result property="set" column="set_number" />
+		<result property="core" column="core_number" />
+		<result property="state" column="state_number" />
+		<result property="interval_top" column="interval_top" />
+		<result property="interval_bottom" column="interval_bottom" />
+		<result property="wkt" column="wkt" />
+
+		<association property="interval_unit" javaType="Unit">
+			<id property="id" column="interval_unit_id" />
+			<result property="abbr" column="interval_unit_abbr" />
+			<result property="name" column="interval_unit_name" />
+		</association>
+
+		<association property="core_diameter" javaType="CoreDiameter">
+			<id property="id" column="core_diameter_id" />
+			<result property="name" column="core_diameter_name" />
+			<result property="diameter" column="core_diameter_diameter" />
+
+			<association property="unit" javaType="Unit">
+				<id property="id" column="core_diameter_unit_id" />
+				<result property="name" column="core_diameter_unit_name" />
+				<result property="abbr" column="core_diameter_unit_abbr" />
+			</association>
+		</association>
+
+		<association property="collection" javaType="iCollection">
+			<id property="id" column="collection_id" />
+			<result property="name" column="collection_name" />
+		</association>
+
+		<association property="project" javaType="Project">
+			<id property="id" column="project_id" />
+			<result property="name" column="project_name" />
+			<result property="start_date" column="project_start_date" />
+			<result property="end_date" column="project_end_date" />
+		</association>
+
+		<collection property="boreholes" ofType="Borehole">
+			<id property="id" column="borehole_id" />
+			<result property="name" column="borehole_name" />
+			<result property="alt_names" column="alt_borehole_names" />
+
+			<association property="prospect" javaType="Prospect">
+				<id property="id" column="prospect_id" />
+				<result property="name" column="prospect_name" />
+				<result property="alt_names" column="alt_prospect_names" />
+				<result property="ardf" column="ardf_number" />
+			</association>
+		</collection>
+
+		<collection property="wells" ofType="Well">
+			<id property="id" column="well_id" />
+			<result property="name" column="well_name" />
+			<result property="alt_names" column="alt_well_names" />
+			<result property="well_number" column="well_number" />
+			<result property="api_number" column="api_number" />
+		</collection>
+
+		<collection property="outcrops" ofType="Outcrop">
+			<id property="id" column="outcrop_id" />
+			<result property="name" column="outcrop_name" />
+			<result property="number" column="outcrop_number" />
+		</collection>
+
+		<collection property="shotlines" ofType="Shotline">
+			<id property="id" column="shotline_id" />
+			<result property="name" column="shotline_name" />
+			<result property="alt_names" column="alt_shotline_names" />
+			<result property="year" column="shotline_year" />
+			<result property="shotline_min" column="shotline_min" />
+			<result property="shotline_max" column="shotline_max" />
+		</collection>
+
+		<collection property="keywords" ofType="Keyword">
+			<id property="id" column="keyword_id" />
+			<result property="name" column="keyword_name" />
+			<result property="alias" column="keyword_alias" />
+		</collection>
+	</resultMap>
 </mapper>

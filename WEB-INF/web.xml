@@ -88,6 +88,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>Search2Servlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.Search2Servlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Search2Servlet</servlet-name>
+		<url-pattern>/search2.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>BoreholeServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.BoreholeServlet</servlet-class>
 	</servlet>
