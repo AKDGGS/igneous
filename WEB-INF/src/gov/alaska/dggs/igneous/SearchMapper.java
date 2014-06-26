@@ -10,7 +10,4 @@ import gov.alaska.dggs.igneous.model.Inventory;
 public interface SearchMapper {
 	@SelectProvider(type = gov.alaska.dggs.igneous.SearchProvider.class, method="search")
 	List<Integer> search(Map params);
-
-	@SelectProvider(type = gov.alaska.dggs.igneous.SearchProvider.class, method="search")
-	int searchTotal(Map params);
 }

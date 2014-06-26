@@ -720,6 +720,11 @@ $(function(){
 		return false;
 	});
 
+	$('#help').click(function(){
+		window.location.href = 'help';
+		return false;	
+	});
+
 	$('#sort, #max, #dir').change(function(){ search.execute(); });
 
 	$('#q, #top, #bottom').keypress(function(e){

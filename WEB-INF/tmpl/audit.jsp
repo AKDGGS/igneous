@@ -29,6 +29,9 @@
 				<button class="btn btn-primary" id="search">
 					<span class="glyphicon glyphicon-search"></span> Search
 				</button>
+				<button class="btn btn-info" id="help">
+					<span class="glyphicon glyphicon-question-sign"></span>
+				</button>
 			</div>
 		</div>
 
@@ -59,6 +62,10 @@
 			$(function(){
 				$('#search').click(function(){
 					window.location.href = '${pageContext.request.contextPath}/search#q=' + $('#q').val();
+				});
+
+				$('#help').click(function(){
+					window.location.href = '${pageContext.request.contextPath}/help';
 				});
 
 				$('#q').keypress(function(e){

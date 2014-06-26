@@ -47,6 +47,9 @@
 				<button class="btn btn-primary" id="search">
 					<span class="glyphicon glyphicon-search"></span> Search
 				</button>
+				<button class="btn btn-info" id="help">
+					<span class="glyphicon glyphicon-question-sign"></span>
+				</button>
 				<button class="btn btn-info" id="advanced">
 					<span class="glyphicon glyphicon-list"></span> Advanced
 				</button>

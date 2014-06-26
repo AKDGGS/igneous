@@ -252,6 +252,16 @@
 		<url-pattern>/audit.html</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>HelpPageServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.HelpPageServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>HelpPageServlet</servlet-name>
+		<url-pattern>/help</url-pattern>
+	</servlet-mapping>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>
