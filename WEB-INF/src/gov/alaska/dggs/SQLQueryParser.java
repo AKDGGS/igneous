@@ -10,6 +10,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.TermRangeQuery;
@@ -89,11 +90,26 @@ public class SQLQueryParser {
 
 	private void build(BooleanQuery query) throws Exception
 	{
-		for(BooleanClause c : query.clauses()){
-			if(where.length() > 0) where.append(c.isRequired() ? " AND " : " OR ");
-			Query q = c.getQuery();
+		BooleanClause[] clauses = query.getClauses();
+		for(int i = 0; i < clauses.length; i++){
+			Query q = clauses[i].getQuery();
+
+			switch(clauses[i].getOccur()){
+				case MUST:
+					if(i > 0) where.append(" AND ");
+				break;
+				
+				case MUST_NOT:
+					if(i > 0) where.append(" AND "); 
+					where.append("NOT ");
+				break;
+
+				case SHOULD:
+					if(i > 0) where.append(" OR ");
+				break;
+			}
+
 			if(q instanceof BooleanQuery) where.append("(");
-			if(c.getOccur() == BooleanClause.Occur.MUST_NOT) where.append("NOT ");
 			build(q);
 			if(q instanceof BooleanQuery) where.append(")");
 		}
@@ -110,10 +126,6 @@ public class SQLQueryParser {
 		if(type == null) throw new Exception("Invalid field: " + field);
 
 		String text = term.text();
-		if(!"date".equalsIgnoreCase(type) && "numeric".equalsIgnoreCase(type)){
-			text = text.replace(" ", "&");
-		}
-
 		addTerm(field, type, text);
 	}
 
@@ -203,7 +215,10 @@ public class SQLQueryParser {
 				+ "})) DESC"
 			);
 
-			params.put("param" + String.valueOf(params_count), text);
+			params.put(
+				"param" + String.valueOf(params_count),
+				text.replace(" ", "&")
+			);
 		}
 	}
 }
