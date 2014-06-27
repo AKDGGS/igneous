@@ -98,8 +98,10 @@ public class Search2Servlet extends HttpServlet
 		FIELDS.setProperty("everything", "simple");
 	}
 
-	private static final String SQL = 
+	private static final String SQL_QUERY = 
 		"SELECT inventory_id FROM inventory_search WHERE ";
+	private static final String SQL_COUNT = 
+		"SELECT COUNT(*) inventory_id FROM inventory_search WHERE ";
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
@@ -186,8 +188,8 @@ public class Search2Servlet extends HttpServlet
 			}
 
 			// Handle borehole_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
 			String[] boreholes = request.getParameterValues("borehole_id");
 			if(isIntegerArray(boreholes)){
 				if(query.length() > 0){ query.append(" AND "); }
@@ -202,8 +204,8 @@ public class Search2Servlet extends HttpServlet
 			}
 
 			// Handle well_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
 			String[] wells = request.getParameterValues("well_id");
 			if(isIntegerArray(wells)){
 				if(query.length() > 0){ query.append(" AND "); }
@@ -218,8 +220,8 @@ public class Search2Servlet extends HttpServlet
 			}
 
 			// Handle prospect_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
 			String[] prospects = request.getParameterValues("prospect_id");
 			if(isIntegerArray(prospects)){
 				if(query.length() > 0){ query.append(" AND "); }
@@ -234,8 +236,8 @@ public class Search2Servlet extends HttpServlet
 			}
 
 			// Handle shotpoint_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
 			String[] shotpoints = request.getParameterValues("shotpoint_id");
 			if(isIntegerArray(shotpoints)){
 				if(query.length() > 0){ query.append(" AND "); }
@@ -250,8 +252,8 @@ public class Search2Servlet extends HttpServlet
 			}
 
 			// Handle shotline_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
 			String[] shotlines = request.getParameterValues("shotline_id");
 			if(isIntegerArray(shotlines)){
 				if(query.length() > 0){ query.append(" AND "); }
@@ -266,24 +268,24 @@ public class Search2Servlet extends HttpServlet
 			}
 
 			// Handle quadrangle_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// IN() is faster in this context than ANY() becase of
+			// the larger number of rows
 			String[] quads = request.getParameterValues("quadrangle_id");
 			if(isIntegerArray(quads)){
 				if(query.length() > 0){ query.append(" AND "); }
-				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("inventory_id IN (");
 				query.append("SELECT inventory_id FROM inventory_quadrangle");
 				query.append(" WHERE quadrangle_id IN (");
 				for(int i = 0; i < quads.length; i++){
 					if(i > 0){ query.append(","); }
 					query.append(quads[i]);
 				}
-				query.append(")))::int[])");
+				query.append("))");
 			}
 
-			// Handle mining_district_ids -
-			// This query is needlessly complicated by the fact that
-			// ANY() is faster than IN() in the context of a subquery
+			// Handle mining_district_ids 
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
 			String[] mds = request.getParameterValues("mining_district_id");
 			if(isIntegerArray(mds)){
 				if(query.length() > 0){ query.append(" AND "); }
@@ -301,6 +303,8 @@ public class Search2Servlet extends HttpServlet
 
 			// Only proceed is there's some kind of filter on the results
 			if(query.length() > 0){
+				StringBuilder order = new StringBuilder();
+
 				int sort = 0;
 				String s_sort = request.getParameter("sort");
 				if(s_sort != null){ sort = Integer.parseInt(s_sort); }
@@ -312,135 +316,148 @@ public class Search2Servlet extends HttpServlet
 				switch(sort){
 					// Sort by collection
 					case 1:
-						query.append(
-							" ORDER BY collection_sort IS NULL, collection_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY collection_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by core
 					case 2:
-						query.append(
-							" ORDER BY core_sort IS NULL, core_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY core_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by location/container
 					case 3:
-						query.append(
-							" ORDER BY location_sort IS NULL, location_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY location_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sorty by set
 					case 4:
-						query.append(
-							" ORDER BY set_sort IS NULL, set_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY set_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by top
 					case 5:
-						query.append(
-							" ORDER BY top IS NULL, top " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY top " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by bottom
 					case 6:
-						query.append(
-							" ORDER BY bottom IS NULL, bottom " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY bottom IS NULL " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by well
 					case 7:
-						query.append(
-							" ORDER BY well_sort IS NULL, well_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY well_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by well_number
 					case 8:
-						query.append(
-							" ORDER BY well_number_sort IS NULL, well_number_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY well_number_sort " + 
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by barcode
 					case 9:
-						query.append(
-							" ORDER BY barcode_sort IS NULL, barcode_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY barcode_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by borehole
 					case 10:
-						query.append(
-							" ORDER BY borehole_sort IS NULL, borehole_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY borehole_sort " + 
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by box
 					case 11:
-						query.append(
-							" ORDER BY box_sort IS NULL, box_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY box_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by prospect
 					case 12:
-						query.append(
-							" ORDER BY prospect_sort IS NULL, prospect_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY prospect_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					// Sort by sample number
 					case 13:
-						query.append(
-							" ORDER BY sample_sort IS NULL, sample_sort " +
-							(dir == 0 ? "ASC" : "DESC")
+						order.append(
+							" ORDER BY sample_sort " + 
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
 						);
 					break;
 
 					default:
 						// If possible, use ranked sorting order
 						if(parser != null && parser.getOrderClause().length() > 0){
-							query.append(" ORDER BY " + parser.getOrderClause());
+							order.append(" ORDER BY " + parser.getOrderClause());
 						}
 				}
 
-				query.insert(0, "WITH r AS (" + SQL);
-				query.append(")( SELECT COUNT(*) FROM r )");
-				query.append(" UNION ALL ");
-				query.append("( SELECT inventory_id FROM r");
-	
 				int max = 25;
 				String s_max = request.getParameter("max");
 				if(s_max != null){ max = Integer.parseInt(s_max); }
-				query.append(" LIMIT ");
-				query.append(max);
+				order.append(" LIMIT ");
+				order.append(max);
 
 				int start = 0;
 				String s_start = request.getParameter("start");
 				if(s_start != null){ start = Integer.parseInt(s_start); }
-				query.append(" OFFSET ");
-				query.append(start);
+				order.append(" OFFSET ");
+				order.append(start);
 
-				query.append(")");
-
-				params.put("_query", query.toString());
+				params.put("_query",
+					"(" +
+						SQL_COUNT + query.toString() +
+					") UNION ALL (" +
+						SQL_QUERY + query.toString() + order.toString() +
+					")"
+				);
+				//System.out.println("q: " + params.get("_query"));
 				List<Integer> list = sess.selectList(
 					"gov.alaska.dggs.igneous.SearchMapper.search", params
 				);

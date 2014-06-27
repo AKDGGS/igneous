@@ -229,7 +229,8 @@ Search.prototype = {
 
 				this.buildPageControl(
 					params['start'], params['max'], json['found'],
-					json['size'], length
+					'size' in json ? json['size'] : json['found'],
+					length
 				);
 				this.onparse(json);
 			}
@@ -633,6 +634,7 @@ function initMap()
 			),
 			new OpenLayers.Layer.Vector('Result Layer', {
 				isBaseLayer: false,
+				rendererOptions: { zIndexing: true },
 				styleMap: new OpenLayers.StyleMap({
 					'default': new OpenLayers.Style({
 						fillColor: "#2E70FF",
@@ -651,7 +653,7 @@ function initMap()
 						strokeWidth: 2,
 						strokeOpacity: 1,
 						cursor: 'auto',
-						graphicZIndex: 5000
+						graphicZIndex: 9000
 					}),
 					'preview': new OpenLayers.Style({
 						fillColor: "#FF0000",
@@ -660,7 +662,7 @@ function initMap()
 						strokeWidth: 2,
 						strokeOpacity: 1,
 						cursor: 'auto',
-						graphicZIndex: 5000
+						graphicZIndex: 9000
 					})
 				})
 			})
