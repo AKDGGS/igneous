@@ -105,7 +105,7 @@ public class SQLQueryParser {
 		Term term = query.getTerm();
 		if(term == null) throw new Exception("Invalid term.");
 
-		String field = term.field();
+		String field = term.field().toLowerCase();
 		String type = fields.getProperty(field);
 		if(type == null) throw new Exception("Invalid field: " + field);
 
@@ -123,7 +123,7 @@ public class SQLQueryParser {
 		Term term = query.getPrefix();
 		if(term == null) throw new Exception("Invalid term");
 
-		String field = term.field();
+		String field = term.field().toLowerCase();
 		String type = fields.getProperty(field);
 		if(type == null) throw new Exception("Invalid field: " + field);
 		if("date".equalsIgnoreCase(type) || "numeric".equalsIgnoreCase(type)){
@@ -136,7 +136,7 @@ public class SQLQueryParser {
 
 	private void build(TermRangeQuery query) throws Exception
 	{
-		String field = query.getField();
+		String field = query.getField().toLowerCase();
 		String type = fields.getProperty(field);
 
 		if(type == null) throw new Exception("Invalid field: " + field);
