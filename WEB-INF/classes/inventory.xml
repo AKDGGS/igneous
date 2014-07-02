@@ -392,7 +392,7 @@
 		LEFT OUTER JOIN inventory_search AS ig
 			ON ig.inventory_id = iv.inventory_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="list" open="(" separator="," close=")">${item}</foreach>
-		ORDER BY idx(<foreach item="item" index="index" open="ARRAY[" separator="," collection="list" close="]">${item}</foreach>, iv.inventory_id)
+		ORDER BY idx(<foreach item="item" index="index" open="ARRAY[" separator="," collection="list" close="]">${item}</foreach>, iv.inventory_id), kw.keyword_group_id, LOWER(kw.name)
 	</select>
 
 
