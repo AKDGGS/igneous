@@ -10,19 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import java.math.BigDecimal;
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Date;
+import java.util.Properties;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
-
-import org.sphx.api.SphinxClient;
-import org.sphx.api.SphinxResult;
-import org.sphx.api.SphinxMatch;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -31,6 +28,7 @@ import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.Keyword;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.igneous.transformer.IterableTransformer;
+import gov.alaska.dggs.SQLQueryParser;
 
 
 public class SearchServlet extends HttpServlet
@@ -72,6 +70,38 @@ public class SearchServlet extends HttpServlet
 		serializer.transform(new IterableTransformer(), Iterable.class);
 	}
 
+	private static final Properties FIELDS;
+	static {
+		FIELDS = new Properties();
+		FIELDS.setProperty("top", "numeric");
+		FIELDS.setProperty("bottom", "numeric");
+
+		FIELDS.setProperty("sample", "simple");
+		FIELDS.setProperty("core", "simple");
+		FIELDS.setProperty("set", "simple");
+		FIELDS.setProperty("box", "simple");
+		FIELDS.setProperty("collection", "simple");
+		FIELDS.setProperty("project", "simple");
+		FIELDS.setProperty("barcode", "simple");
+		FIELDS.setProperty("location", "simple");
+		FIELDS.setProperty("well", "simple");
+		FIELDS.setProperty("wellnumber", "simple");
+		FIELDS.setProperty("api", "simple");
+		FIELDS.setProperty("borehole", "simple");
+		FIELDS.setProperty("prospect", "simple");
+		FIELDS.setProperty("ardf", "simple");
+		FIELDS.setProperty("outcrop", "simple");
+		FIELDS.setProperty("outcropnumber", "simple");
+		FIELDS.setProperty("shotline", "simple");
+		FIELDS.setProperty("keyword", "simple");
+
+		FIELDS.setProperty("everything", "simple");
+	}
+
+	private static final String SQL_QUERY = 
+		"SELECT inventory_id FROM inventory_search WHERE ";
+	private static final String SQL_COUNT = 
+		"SELECT COUNT(*) inventory_id FROM inventory_search WHERE ";
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
@@ -82,326 +112,364 @@ public class SearchServlet extends HttpServlet
 	{
 		ServletContext context = getServletContext();
 
-		int max_matches = Integer.parseInt(context.getInitParameter("sphinx_max_matches"));
-		int sphinx_port = Integer.parseInt(context.getInitParameter("sphinx_port"));
-		String sphinx_host = (String)context.getInitParameter("sphinx_host");
-
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
 		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", 0);
 
-		SphinxClient sphinx = new SphinxClient(sphinx_host, sphinx_port);
+		SqlSession sess = IgneousFactory.openSession();
 		try {
-			sphinx.SetConnectTimeout(10000); // Ten second timeout
-			sphinx.SetMatchMode(SphinxClient.SPH_MATCH_EXTENDED2);
+			HashMap<String, Object> params;
+			StringBuilder query = new StringBuilder();
 
-			int start = 0;
-			String s_start = request.getParameter("start");
-			if(s_start != null){ start = Integer.parseInt(s_start); }
+			// Parse the textual query using our custom Lucene-based parser
+			SQLQueryParser parser = null;
+			String q = request.getParameter("q");
+			if(q != null && q.trim().length() > 0){
+				parser = new SQLQueryParser(FIELDS);
+				parser.parse(q, "everything");
 
-			int max = 25;
-			String s_max = request.getParameter("max");
-			if(s_max != null){ max = Integer.parseInt(s_max); }
-				
-			sphinx.SetLimits(start, max, max_matches);
-
-			int sort = 0;
-			String s_sort = request.getParameter("sort");
-			if(s_sort != null){ sort = Integer.parseInt(s_sort); }
-
-			int dir = 0;
-			String s_dir = request.getParameter("dir");
-			if(s_dir != null){ dir = Integer.parseInt(s_dir); }
-
-			switch(sort){
-				// Sort by collection
-				case 1:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_collection DESC, collection " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by core
-				case 2:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_core DESC, core " + 
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by location/container
-				case 3:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_location DESC, location " + 
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sorty by set
-				case 4:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_set DESC, set " + 
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by top
-				case 5:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_top DESC, top " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by bottom
-				case 6:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_bottom DESC, bottom " + 
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by well
-				case 7:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_well_null DESC, sort_well " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by well_number
-				case 8:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_well_number_null DESC, sort_well_number " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by barcode
-				case 9:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_barcode DESC, barcode " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by borehole
-				case 10:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_borehole_null DESC, sort_borehole " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by box
-				case 11:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_box_null DESC, sort_box " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by prospect
-				case 12:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_prospect_null DESC, sort_prospect " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				// Sort by sample number
-				case 13:
-					sphinx.SetSortMode(
-						SphinxClient.SPH_SORT_EXTENDED,
-						"sort_sample DESC, sample " +
-						(dir == 0 ? "ASC" : "DESC")
-					);
-				break;
-
-				default: sphinx.SetSortMode(SphinxClient.SPH_SORT_RELEVANCE, null);
+				query.append(parser.getWhereClause());
+				params = new HashMap<String, Object>(parser.getParameters());	
+			} else {
+				params = new HashMap<String, Object>();
 			}
 
-			// Filter by keywords
-			String[] keywords = request.getParameterValues("keyword_id");
-			if(keywords != null){
-				for(String keyword : keywords){
-					try {
-						long keyword_id = Long.parseLong(keyword);
-						sphinx.SetFilter("keyword_id", keyword_id, false);
-					} catch(Exception ex){
-						// Explicitly ignore faulty IDs
-					}
+			// Handle spatial queries
+			String wkt = request.getParameter("wkt");
+			if(wkt != null && wkt.trim().length() > 0){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append(
+					"ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))"
+				);
+				params.put("wkt", wkt);
+			}
+
+			// Handle top/bottom range queries
+			String top = request.getParameter("top");
+			String bottom = request.getParameter("bottom");
+			if(top != null || bottom != null){
+				// If one is null, populate the other
+				if(top == null){ top = bottom; }
+				else if(bottom == null){ bottom = top; }
+
+				try {
+					BigDecimal bd_top = new BigDecimal(top);
+					BigDecimal bd_bottom = new BigDecimal(bottom);
+
+					if(query.length() > 0){ query.append(" AND "); }
+					query.append("numrange(");
+					query.append(" LEAST(#{top}, #{bottom}),");
+					query.append(" GREATEST(#{top}, #{bottom}),");
+					query.append(" '[]') && intervalrange");
+
+					params.put("top", bd_top);
+					params.put("bottom", bd_bottom);
+				} catch(Exception ex){
+					throw new Exception("Invalid Interval");
 				}
 			}
 
-			// Filter by prospect
-			String prospect = request.getParameter("prospect_id");
-			if(prospect != null){
-				long prospect_id = Long.parseLong(prospect);
-				sphinx.SetFilter("prospect_id", prospect_id, false);
+			// Handle keyword_id query - Keywords are cached in an
+			// array of integers in the materialized view
+			// inventory_search because there are so many keywords
+			// that this is the fastest approach as an average. Joins
+			// are faster assuming smaller numbers of keywords, but
+			// get significantly more expensive as keywords are added
+			String[] keywords = request.getParameterValues("keyword_id");
+			if(isIntegerArray(keywords)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("SORT(ARRAY[");
+				for(int i = 0; i < keywords.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(keywords[i]);
+				}
+				query.append("]) <@ keyword_ids");
 			}
 
-			// Filter by borehole
-			String borehole = request.getParameter("borehole_id");
-			if(borehole != null){
-				long borehole_id = Long.parseLong(borehole);
-				sphinx.SetFilter("borehole_id", borehole_id, false);
+			// Handle borehole_ids -
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
+			String[] boreholes = request.getParameterValues("borehole_id");
+			if(isIntegerArray(boreholes)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("SELECT inventory_id FROM inventory_borehole");
+				query.append(" WHERE borehole_id IN (");
+				for(int i = 0; i < boreholes.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(boreholes[i]);
+				}
+				query.append(")))::int[])");
 			}
 
-			// Filter by well
-			String well = request.getParameter("well_id");
-			if(well != null){
-				long well_id = Long.parseLong(well);
-				sphinx.SetFilter("well_id", well_id, false);
+			// Handle well_ids -
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
+			String[] wells = request.getParameterValues("well_id");
+			if(isIntegerArray(wells)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("SELECT inventory_id FROM inventory_well");
+				query.append(" WHERE well_id IN (");
+				for(int i = 0; i < wells.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(wells[i]);
+				}
+				query.append(")))::int[])");
+			}
+
+			// Handle prospect_ids -
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
+			String[] prospects = request.getParameterValues("prospect_id");
+			if(isIntegerArray(prospects)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("SELECT inventory_id FROM inventory_prospect");
+				query.append(" WHERE prospect_id IN (");
+				for(int i = 0; i < prospects.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(prospects[i]);
+				}
+				query.append(")))::int[])");
+			}
+
+			// Handle shotpoint_ids -
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
+			String[] shotpoints = request.getParameterValues("shotpoint_id");
+			if(isIntegerArray(shotpoints)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("SELECT inventory_id FROM inventory_shotpoint");
+				query.append(" WHERE shotpoint_id IN (");
+				for(int i = 0; i < shotpoints.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(shotpoints[i]);
+				}
+				query.append(")))::int[])");
+			}
+
+			// Handle shotline_ids -
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
+			String[] shotlines = request.getParameterValues("shotline_id");
+			if(isIntegerArray(shotlines)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("SELECT inventory_id FROM inventory_shotline");
+				query.append(" WHERE shotline_id IN (");
+				for(int i = 0; i < shotlines.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(shotlines[i]);
+				}
+				query.append(")))::int[])");
+			}
+
+			// Handle quadrangle_ids -
+			// IN() is faster in this context than ANY() becase of
+			// the larger number of rows
+			String[] quads = request.getParameterValues("quadrangle_id");
+			if(isIntegerArray(quads)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id IN (");
+				query.append("SELECT inventory_id FROM inventory_quadrangle");
+				query.append(" WHERE quadrangle_id IN (");
+				for(int i = 0; i < quads.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(quads[i]);
+				}
+				query.append("))");
+			}
+
+			// Handle mining_district_ids 
+			// ANY() is faster than IN() in this context because of
+			// the smaller number of rows
+			String[] mds = request.getParameterValues("mining_district_id");
+			if(isIntegerArray(mds)){
+				if(query.length() > 0){ query.append(" AND "); }
+				query.append("inventory_id = ANY((SELECT ARRAY(");
+				query.append("SELECT inventory_id FROM inventory_mining_district");
+				query.append(" WHERE mining_district_id IN (");
+				for(int i = 0; i < mds.length; i++){
+					if(i > 0){ query.append(","); }
+					query.append(mds[i]);
+				}
+				query.append(")))::int[])");
 			}
 
 			HashMap json = new HashMap();
 
-			SqlSession sess = IgneousFactory.openSession();
-			try {
-				StringBuilder select = new StringBuilder("id");
+			// Only proceed is there's some kind of filter on the results
+			if(query.length() > 0){
+				StringBuilder order = new StringBuilder();
 
-				// Filter by interval top
-				String top = request.getParameter("top");
-				String bottom = request.getParameter("bottom");
-				if(top != null || bottom != null){
-					// If one is null, populate the other
-					if(top == null){ top = bottom; }
-					else if(bottom == null){ bottom = top; }
+				int sort = 0;
+				String s_sort = request.getParameter("sort");
+				if(s_sort != null){ sort = Integer.parseInt(s_sort); }
 
-					try {
-						long ltop = Long.valueOf(top);
-						long lbot = Long.valueOf(bottom);
+				int dir = 0;
+				String s_dir = request.getParameter("dir");
+				if(s_dir != null){ dir = Integer.parseInt(s_dir); }
 
-						select.append(",IF(MAX(MIN(top, bottom), MIN(");
-						select.append(ltop).append(",").append(lbot);
-						select.append(")) <= MIN(MAX(top, bottom), MAX(");
-						select.append(ltop).append(",").append(lbot);
-						select.append(")), 1, 0) AS it_criteria");
-						sphinx.SetFilter("it_criteria", 1, false);
-					} catch(Exception ex){
-						throw new Exception("Invalid Interval");
-					}
-				}
+				switch(sort){
+					// Sort by collection
+					case 1:
+						order.append(
+							" ORDER BY collection_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
 
-				// Filter by Mining District
-				String[] mining_districts = request.getParameterValues("mining_district_id");
-				if(mining_districts != null){
-					int count = 0;
-					for(String mining_district : mining_districts){
-						try {
-							long mining_district_id = Long.parseLong(mining_district);
-							select.append(count == 0 ? ",IN(mining_district_id," : ",");
-							select.append(String.valueOf(mining_district_id));
-							count++;
-						} catch(Exception ex){
-							// Explicitly ignore faulty IDs
+					// Sort by core
+					case 2:
+						order.append(
+							" ORDER BY core_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by location/container
+					case 3:
+						order.append(
+							" ORDER BY location_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sorty by set
+					case 4:
+						order.append(
+							" ORDER BY set_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by top
+					case 5:
+						order.append(
+							" ORDER BY top " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by bottom
+					case 6:
+						order.append(
+							" ORDER BY bottom IS NULL " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by well
+					case 7:
+						order.append(
+							" ORDER BY well_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by well_number
+					case 8:
+						order.append(
+							" ORDER BY well_number_sort " + 
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by barcode
+					case 9:
+						order.append(
+							" ORDER BY barcode_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by borehole
+					case 10:
+						order.append(
+							" ORDER BY borehole_sort " + 
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by box
+					case 11:
+						order.append(
+							" ORDER BY box_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by prospect
+					case 12:
+						order.append(
+							" ORDER BY prospect_sort " +
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					// Sort by sample number
+					case 13:
+						order.append(
+							" ORDER BY sample_sort " + 
+							(dir == 0 ? "ASC" : "DESC") +
+							" NULLS LAST"
+						);
+					break;
+
+					default:
+						// If possible, use ranked sorting order
+						if(parser != null && parser.getOrderClause().length() > 0){
+							order.append(" ORDER BY " + parser.getOrderClause());
 						}
-					}
-
-					if(count > 0){
-						select.append(") AS md_criteria");
-						sphinx.SetFilter("md_criteria", 1, false);
-					}
 				}
 
-				// Filter by Quadrangle
-				String[] quadrangles = request.getParameterValues("quadrangle_id");
-				if(quadrangles != null){
-					int count = 0;
-					for(String quadrangle : quadrangles){
-						try {
-							long quadrangle_id = Long.parseLong(quadrangle);
-							select.append(count == 0 ? ",IN(quadrangle_id," : ",");
-							select.append(String.valueOf(quadrangle_id));
-							count++;
-						} catch(Exception ex){
-							// Explicitly ignore faulty IDs
-						}
-					}
+				int max = 25;
+				String s_max = request.getParameter("max");
+				if(s_max != null){ max = Integer.parseInt(s_max); }
+				order.append(" LIMIT ");
+				order.append(max);
 
-					if(count > 0){
-						select.append(") AS qr_criteria");
-						sphinx.SetFilter("qr_criteria", 1, false);
-					}
-				}
+				int start = 0;
+				String s_start = request.getParameter("start");
+				if(s_start != null){ start = Integer.parseInt(s_start); }
+				order.append(" OFFSET ");
+				order.append(start);
 
-				String wkt = request.getParameter("wkt");
-				if(wkt != null){
-					List<HashMap<String, Integer>> ids = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getMultiIDByWKT", wkt
-					);
+				params.put("_query",
+					"(" +
+						SQL_COUNT + query.toString() +
+					") UNION ALL (" +
+						SQL_QUERY + query.toString() + order.toString() +
+					")"
+				);
+				//System.out.println("q: " + params.get("_query"));
+				List<Integer> list = sess.selectList(
+					"gov.alaska.dggs.igneous.SearchMapper.search", params
+				);
+				Integer found = list.remove(0);
 
-					if(ids != null && ids.size() > 0){
-						int last = 0;
-						Iterator<HashMap<String, Integer>> itr = ids.iterator();
-						for(int i = 0; itr.hasNext(); i++){
-							HashMap<String, Integer> row = itr.next();
-								
-							int type = row.get("type");
-							if(type != last){
-								last = type;
-								select.append(i == 0 ? "," : ")|");
-
-								switch(type){
-									case 1: select.append("IN(borehole_id"); break;
-									case 2: select.append("IN(well_id"); break;
-									case 3: select.append("IN(outcrop_id"); break;
-									case 4: select.append("IN(shotline_id"); break;
-								}
-							}
-							select.append(",");
-							select.append(String.valueOf(row.get("id")));
-						}
-						select.append(") AS spatial_criteria");
-						sphinx.SetFilter("spatial_criteria", 1, false);
-					} else {
-						sphinx.SetFilter("id", 0, false);
-					}
-				}
-
-				StringBuilder query = new StringBuilder();
-				if(request.getParameter("q") != null){
-					query.append(request.getParameter("q").trim());
-				}
-
-				sphinx.SetSelect(select.toString());
-
-				SphinxResult sr = sphinx.Query(query.toString(), "inventory");
-				if(sr == null){ throw new Exception(sphinx.GetLastError()); }
-
-				long[] ids = new long[sr.matches.length];
-				for(int i = 0; i < sr.matches.length; i++){
-					ids[i] = sr.matches[i].docId;
-				}
-
-				json.put("size", sr.total);
-				json.put("found", sr.totalFound);
-
-				if(ids.length > 0){
+				if(!list.isEmpty()){
+					json.put("found", found);
 					List<Inventory> items = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getSearchResults", ids
+						"gov.alaska.dggs.igneous.Inventory.getSearchResults", list
 					);
 					json.put("list", items);
-				} else {
-					json.put("list", new ArrayList(0));
 				}
-			} finally {
-				sess.close();
 			}
 
 			response.setContentType("application/json");
@@ -427,16 +495,25 @@ public class SearchServlet extends HttpServlet
 		} catch(Exception ex){
 			response.setStatus(500);
 			response.setContentType("text/plain");
-			String msg = ex.getMessage();
-			if(msg != null && msg.indexOf("Read timed out") != -1){
-				response.getOutputStream().print("Spatial search returned too many results. Try again with a smaller area.");
-			} else {
-				response.getOutputStream().print(ex.getMessage());
-			}
+			response.getOutputStream().print(ex.getMessage());
 			//ex.printStackTrace();
 		} finally {
-			sphinx.Close();
+			sess.close();
 		}
 	}
 
+	// This function returns false if a provided string array
+	// contains anything besides integers. It's used to santize input
+	// directly from connecting clients, when they send ID numbers
+	// for filtering
+	private boolean isIntegerArray(String[] arr){
+		if(arr != null && arr.length > 0){
+			try {
+				for(String el : arr){ Integer.valueOf(el); }
+				return true;
+			} catch(Exception ex){ }
+		}
+
+		return false;
+	}
 }

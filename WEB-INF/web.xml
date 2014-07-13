@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<display-name>igneous</display-name>
+	<display-name>igneousdev</display-name>
 
 	<welcome-file-list>
 		<welcome-file>search</welcome-file>
@@ -83,18 +83,8 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Search2Servlet</servlet-name>
-		<url-pattern>/search.json</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>Search2Servlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.Search2Servlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
 		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/search2.json</url-pattern>
+		<url-pattern>/search.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
