@@ -13,7 +13,7 @@
 			iv.barcode, iv.alt_barcode,
 			iv.box_number, iv.set_number,
 			iv.core_number, iv.state_number,
-			iv.description,
+			iv.description, iv.remark,
 			iv.interval_top, iv.interval_bottom,
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
@@ -65,6 +65,7 @@
 		<result property="description" column="description" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
+		<result property="remark" column="remark" />
 		<result property="container_path" column="container_path" />
 		<result property="bin" column="bin" />
 
