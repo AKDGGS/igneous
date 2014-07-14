@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gov.alaska.dggs.igneous.Container">
+	<update id="updateBarcode" parameterType="map">
+		UPDATE container SET barcode = #{new_barcode}
+		WHERE barcode = #{old_barcode}
+	</update>
+
+
+	<update id="updateAltBarcode" parameterType="map">
+		UPDATE container SET barcode = #{new_barcode}
+		WHERE alt_barcode = #{old_barcode}
+	</update>
+</mapper>

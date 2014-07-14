@@ -36,6 +36,7 @@
 
 	<mappers>
 		<mapper resource="inventory.xml" />
+		<mapper resource="container.xml" />
 		<mapper resource="borehole.xml" />
 		<mapper resource="prospect.xml" />
 		<mapper resource="well.xml" />

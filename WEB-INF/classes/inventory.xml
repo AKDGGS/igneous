@@ -7,6 +7,7 @@
 		SELECT inventory_id FROM inventory WHERE inventory_id = ? OR inventory_id = ?
 	</select>
 
+
 	<sql id="getBy">
 		SELECT iv.inventory_id, iv.sample_number,
 			iv.barcode, iv.alt_barcode,
@@ -31,17 +32,20 @@
 			co.container_id = iv.container_id
 	</sql>
 
+
 	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		<include refid="getBy" />
 		WHERE iv.barcode = #{barcode}
 		LIMIT 100
 	</select>
 
+
 	<select id="getByAltBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		<include refid="getBy" />
 		WHERE iv.alt_barcode = #{barcode}
 		LIMIT 100
 	</select>
+
 
 	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		<include refid="getBy" />
@@ -305,4 +309,16 @@
 			<result property="alias" column="keyword_alias" />
 		</collection>
 	</resultMap>
+
+
+	<update id="updateBarcode" parameterType="map">
+		UPDATE inventory SET barcode = #{new_barcode}
+		WHERE barcode = #{old_barcode}
+	</update>
+
+
+	<update id="updateAltBarcode" parameterType="map">
+		UPDATE inventory SET barcode = #{new_barcode}
+		WHERE alt_barcode = #{old_barcode}
+	</update>
 </mapper>
