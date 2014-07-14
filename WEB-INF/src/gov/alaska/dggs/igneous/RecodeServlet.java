@@ -94,10 +94,11 @@ public class RecodeServlet extends HttpServlet
 
 			if(r == 0) throw new Exception("No codes updated.");
 
-			sess.commit(true);
+			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
 		} catch(Exception ex){
+			sess.rollback();
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());

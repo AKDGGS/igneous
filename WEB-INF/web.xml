@@ -213,6 +213,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>AddInventoryServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.AddInventoryServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AddInventoryServlet</servlet-name>
+		<url-pattern>/addinventory.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>QuadrangleServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.QuadrangleServlet</servlet-class>
 	</servlet>

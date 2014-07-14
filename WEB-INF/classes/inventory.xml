@@ -321,4 +321,10 @@
 		UPDATE inventory SET barcode = #{new_barcode}
 		WHERE alt_barcode = #{old_barcode}
 	</update>
+
+
+	<insert id="insertBasic" parameterType="map">
+		INSERT INTO inventory (barcode, remark)
+		VALUES (#{barcode}, #{remark})
+	</insert>
 </mapper>

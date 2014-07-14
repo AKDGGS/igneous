@@ -11,14 +11,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import java.util.HashMap;
+
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
-import gov.alaska.dggs.igneous.model.Audit;
-import gov.alaska.dggs.igneous.model.AuditGroup;
 
 
-public class AuditServlet extends HttpServlet
+public class AddInventoryServlet extends HttpServlet
 {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
@@ -28,19 +28,14 @@ public class AuditServlet extends HttpServlet
 	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
-		String t = request.getParameter("t"); // List of barcodes in "t"
-		if(t == null){ throw new ServletException("Barcode list cannot be empty."); }
 
-		t = t.trim();
-		if(t.length() < 1){ throw new ServletException("Barcode list cannot be empty."); }
+		String barcode = request.getParameter("barcode");
+		if(barcode == null){
+			throw new ServletException("Barcode cannot be empty.");
+		} barcode = barcode.trim();
 
-		String codes[] = t.split(";");
-
-		String n = request.getParameter("n"); // Note in "n"
-		if(n != null){
-			n = n.trim();
-			if(n.length() == 0){ n = null; }
-		}
+		String remark = request.getParameter("remark");
+		if(remark != null) remark = remark.trim();
 
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
@@ -49,20 +44,16 @@ public class AuditServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			AuditGroup group = new AuditGroup();
-			group.setRemark(n);
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("barcode", barcode);
+			params.put("remark", remark);
 
-			sess.insert("gov.alaska.dggs.igneous.Audit.insertGroup", group);
-			if(group.getID() == 0){ throw new Exception("Audit group insert failed"); }
+			int r = sess.insert(
+				"gov.alaska.dggs.igneous.Inventory.insertBasic",
+				params
+			);
 
-			for(String code : codes){
-				Audit a = new Audit();
-				a.setGroup(group);
-				a.setBarcode(code);
-
-				sess.insert("gov.alaska.dggs.igneous.Audit.insert", a);
-				if(a.getID() == 0){ throw new Exception("Audit insert failed."); }
-			}
+			if(r < 1) throw new Exception("Insert failed.");
 
 			sess.commit();
 			response.setContentType("application/json");

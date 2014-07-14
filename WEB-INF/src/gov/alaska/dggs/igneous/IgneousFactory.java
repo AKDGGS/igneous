@@ -18,7 +18,7 @@ public class IgneousFactory implements ServletContextListener
 
 	public static SqlSession openSession()
 	{
-		return factory.openSession();
+		return factory.openSession(false);
 	}
 
 
