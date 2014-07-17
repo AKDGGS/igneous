@@ -8,7 +8,7 @@ public class Inventory implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private int id;
+	private Integer id;
 	private String sample_number, barcode, alt_barcode;
 	private String description;
 	private String box, set, core, state;
@@ -33,8 +33,11 @@ public class Inventory implements Serializable
 	private List<Publication> publications;
 
 
-	public int getID(){ return id; }
+	public Integer getID(){ return id; }
+
 	public String getBarcode(){ return barcode; }
+	public void setBarcode(String barcode){ this.barcode = barcode; }
+
 	public String getAltBarcode(){ return alt_barcode; }
 	public String getSampleNumber(){ return sample_number; }
 	public String getContainerPath(){ return container_path; }
@@ -43,7 +46,10 @@ public class Inventory implements Serializable
 	public String getCore(){ return core; }
 	public String getSet(){ return set; }
 	public String getDescription(){ return description; }
+
 	public String getRemark(){ return remark; }
+	public void setRemark(String remark){ this.remark = remark; }
+
 	public String getWKT(){ return wkt; }
 	public String getBin(){ return bin; }
 

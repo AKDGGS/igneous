@@ -324,8 +324,25 @@
 	</update>
 
 
-	<insert id="insertBasic" parameterType="map">
+	<insert id="insert" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
 		INSERT INTO inventory (barcode, remark)
 		VALUES (#{barcode}, #{remark})
+	</insert>
+
+
+	<insert id="insertQuality" parameterType="InventoryQuality" useGeneratedKeys="true" keyColumn="inventory_quality_id" keyProperty="id">
+		INSERT INTO inventory_quality (
+			inventory_id, remark, username,
+			needs_detail, unsorted, possible_radiation,
+			damaged, box_damaged, missing,
+			data_missing, barcode_missing, label_obscured,
+			insufficient_material
+		) VALUES (
+			#{inventory.id}, #{remark}, #{username},
+			#{needs_detail}, #{unsorted}, #{possible_radiation},
+			#{damaged}, #{box_damaged}, #{missing},
+			#{data_missing}, #{barcode_missing}, #{label_obscured},
+			#{insufficient_material}
+		)
 	</insert>
 </mapper>

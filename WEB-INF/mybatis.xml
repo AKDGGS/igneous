@@ -6,6 +6,7 @@
 <configuration>
 	<typeAliases>
 		<typeAlias alias="Inventory" type="gov.alaska.dggs.igneous.model.Inventory" />
+		<typeAlias alias="InventoryQuality" type="gov.alaska.dggs.igneous.model.InventoryQuality" />
 		<typeAlias alias="Borehole" type="gov.alaska.dggs.igneous.model.Borehole" />
 		<typeAlias alias="Prospect" type="gov.alaska.dggs.igneous.model.Prospect" />
 		<typeAlias alias="Keyword" type="gov.alaska.dggs.igneous.model.Keyword" />

@@ -16,6 +16,8 @@ import java.util.HashMap;
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
+import gov.alaska.dggs.igneous.model.Inventory;
+import gov.alaska.dggs.igneous.model.InventoryQuality;
 
 
 public class AddInventoryServlet extends HttpServlet
@@ -44,16 +46,20 @@ public class AddInventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("barcode", barcode);
-			params.put("remark", remark);
+			Inventory i = new Inventory();
+			i.setBarcode(barcode);
+			i.setRemark(remark);
 
-			int r = sess.insert(
-				"gov.alaska.dggs.igneous.Inventory.insertBasic",
-				params
-			);
+			sess.insert("gov.alaska.dggs.igneous.Inventory.insert", i);
+			if(i.getID() == null) throw new Exception("Inventory insert failed.");
 
-			if(r < 1) throw new Exception("Insert failed.");
+			InventoryQuality iq = new InventoryQuality(i);
+			iq.setUsername("gmc_app");
+			iq.setRemark("Added via scanner");
+			iq.setNeedsDetail(true);
+
+			sess.insert("gov.alaska.dggs.igneous.Inventory.insertQuality", iq);
+			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
 
 			sess.commit();
 			response.setContentType("application/json");
