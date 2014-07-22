@@ -130,6 +130,7 @@
 				SELECT DISTINCT container_id,
 					COALESCE(barcode, alt_barcode) AS barcode
 				FROM inventory
+				WHERE active
 			) AS q
 			GROUP BY container_id
 		) AS cc ON cc.container_id = qag.container_id
@@ -161,7 +162,7 @@
 			LEFT OUTER JOIN inventory AS i ON (
 				a.barcode = COALESCE(i.barcode, i.alt_barcode)
 				OR ('GMC-' || a.barcode) = i.barcode
-			) AND  i.active = true
+			) AND i.active = true
 			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
 			WHERE a.audit_group_id = #{audit_group_id}
 			ORDER BY a.audit_id
@@ -176,14 +177,13 @@
 				c.path_cache AS path
 			FROM inventory AS i
 			LEFT OUTER JOIN audit AS a ON (
-				(
-					a.barcode = COALESCE(i.barcode, i.alt_barcode)
-					OR ('GMC-' || a.barcode) = i.barcode
-				) AND a.audit_group_id = #{audit_group_id}
-			) AND i.active = true
+				a.barcode = COALESCE(i.barcode, i.alt_barcode)
+				OR ('GMC-' || a.barcode) = i.barcode
+			) AND a.audit_group_id = #{audit_group_id}
 			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
 			<if test="container_id != null">
 			WHERE i.container_id = #{container_id}
+				AND i.active = true
 			</if>
 		)) AS q ORDER BY s_barcode, i_barcode
 	</select>
