@@ -119,7 +119,7 @@
 
 	<servlet>
 		<servlet-name>InventoryServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.InventoryServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.InventoryServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -194,7 +194,7 @@
 
 	<servlet>
 		<servlet-name>AuditServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.AuditServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.AuditServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -204,7 +204,7 @@
 
 	<servlet>
 		<servlet-name>RecodeServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.RecodeServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.RecodeServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -214,7 +214,7 @@
 
 	<servlet>
 		<servlet-name>AddInventoryServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.AddInventoryServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.AddInventoryServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

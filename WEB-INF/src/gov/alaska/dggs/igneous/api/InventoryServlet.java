@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.Arrays;
@@ -86,31 +88,55 @@ public class InventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List<Inventory> inventory = null;
+			List output = null;
 
 			if(id != null){
-				inventory = sess.selectList(
+				output = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByID", id
 				);
 			} else if(barcode != null){
-				HashMap<String, String> query = new HashMap<String, String>();
-				query.put("barcode", barcode);
-
-				inventory = sess.selectList(
+				output = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
 				);
 
-				if(inventory.size() == 0 && !barcode.startsWith("GMC")){
-					inventory = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getByBarcode",
-						("GMC-" + barcode)
-					);
-				}
+				if(output.size() == 0){
+					output = new ArrayList();
 
-				if(inventory.size() == 0){
-					inventory = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getByAltBarcode", query
+					List<Map> containers = sess.selectList(
+						"gov.alaska.dggs.igneous.Container.getTotalsByBarcode", barcode
 					);
+					
+					for(Map container : containers){
+						HashMap row = new HashMap(8);
+						Integer container_id = (Integer)container.get("container_id");
+
+						row.put("container_id", container_id);
+						row.put("name", container.get("name"));
+						row.put("total", container.get("total"));
+
+						row.put("collections", sess.selectList(
+							"gov.alaska.dggs.igneous.Container.getCollectionTotalsByID",
+							container_id
+						));
+						row.put("wells", sess.selectList(
+							"gov.alaska.dggs.igneous.Container.getWellTotalsByID",
+							container_id
+						));
+						row.put("boreholes", sess.selectList(
+							"gov.alaska.dggs.igneous.Container.getBoreholeTotalsByID",
+							container_id
+						));
+						row.put("outcrops", sess.selectList(
+							"gov.alaska.dggs.igneous.Container.getOutcropTotalsByID",
+							container_id
+						));
+						row.put("shotlines", sess.selectList(
+							"gov.alaska.dggs.igneous.Container.getShotlineTotalsByID",
+							container_id
+						));
+
+						output.add(row);
+					}
 				}
 			}
 
@@ -128,7 +154,7 @@ public class InventoryServlet extends HttpServlet
 				}
 
 				response.setContentType("application/json");
-				serializer.serialize(inventory, out);
+				serializer.serialize(output, out);
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }

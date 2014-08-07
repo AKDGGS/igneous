@@ -13,4 +13,93 @@
 		UPDATE container SET barcode = #{new_barcode}
 		WHERE alt_barcode = #{old_barcode}
 	</update>
+
+
+	<select id="getTotalsByBarcode" parameterType="String" resultType="HashMap">
+		SELECT iv.container_id, co.path_cache AS name,
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
+		FROM container AS co
+		JOIN inventory AS iv
+			ON iv.container_id = co.container_id
+		WHERE iv.active AND co.barcode = #{barcode}
+		GROUP BY iv.container_id, co.path_cache
+		ORDER BY co.path_cache
+	</select>
+
+
+	<select id="getCollectionTotalsByID" parameterType="int" resultType="HashMap">
+		SELECT co.name AS collection,
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
+		FROM inventory AS iv
+		JOIN collection AS co
+			ON co.collection_id = iv.collection_id
+		WHERE iv.active AND iv.container_id = #{container_id}
+		GROUP BY co.name
+	</select>
+
+
+	<select id="getWellTotalsByID" parameterType="int" resultType="HashMap">
+		SELECT we.name AS well,
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
+		FROM container AS co
+		JOIN inventory AS iv
+			ON iv.container_id = co.container_id
+		JOIN inventory_well AS ivw
+			ON ivw.inventory_id = iv.inventory_id
+		JOIN well AS we
+			ON we.well_id = ivw.well_id
+		WHERE iv.active AND iv.container_id = #{container_id}
+		GROUP BY we.name
+	</select>
+
+
+	<select id="getBoreholeTotalsByID" parameterType="int" resultType="HashMap">
+		SELECT ps.name AS prospect,
+			bh.name AS borehole,
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
+		FROM container AS co
+		JOIN inventory AS iv
+			ON iv.container_id = co.container_id
+		JOIN inventory_borehole AS ivb
+			ON ivb.inventory_id = iv.inventory_id
+		JOIN borehole AS bh
+			ON bh.borehole_id = ivb.borehole_id
+		LEFT OUTER JOIN prospect AS ps
+			ON ps.prospect_id = bh.prospect_id
+		WHERE iv.active AND iv.container_id = #{container_id}
+		GROUP BY ps.name, bh.name
+		ORDER BY ps.name, bh.name
+	</select>
+
+
+	<select id="getOutcropTotalsByID" parameterType="int" resultType="HashMap">
+		SELECT oc.name AS outcrop,
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
+		FROM container AS co
+		JOIN inventory AS iv
+			ON iv.container_id = co.container_id
+		JOIN inventory_outcrop AS ivo
+			ON ivo.inventory_id = iv.inventory_id
+		JOIN outcrop AS oc
+			ON oc.outcrop_id = ivo.outcrop_id
+		WHERE iv.active AND iv.container_id = #{container_id}
+		GROUP BY oc.outcrop_id, oc.name
+	</select>
+
+
+	<select id="getShotlineTotalsByID" parameterType="int" resultType="HashMap">
+		SELECT sl.name AS shotline,
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
+		FROM container AS co
+		JOIN inventory AS iv
+			ON iv.container_id = co.container_id
+		JOIN inventory_shotpoint AS ivs
+			ON ivs.inventory_id = iv.inventory_id
+		JOIN shotpoint AS sp
+			ON sp.shotpoint_id = ivs.shotpoint_id
+		JOIN shotline AS sl
+			ON sl.shotline_id = sp.shotline_id
+		WHERE iv.active AND iv.container_id = #{container_id}
+		GROUP BY co.container_id, sl.shotline_id, sl.name
+	</select>
 </mapper>

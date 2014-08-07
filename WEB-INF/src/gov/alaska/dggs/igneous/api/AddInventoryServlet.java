@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -16,9 +16,11 @@ import java.util.HashMap;
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
+import gov.alaska.dggs.igneous.model.Inventory;
+import gov.alaska.dggs.igneous.model.InventoryQuality;
 
 
-public class RecodeServlet extends HttpServlet
+public class AddInventoryServlet extends HttpServlet
 {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
@@ -29,15 +31,13 @@ public class RecodeServlet extends HttpServlet
 	{
 		ServletContext context = getServletContext();
 
-		String oldcode = request.getParameter("old");
-		if(oldcode == null){
-			throw new ServletException("Old barcode cannot be empty.");
-		} oldcode = oldcode.trim();
+		String barcode = request.getParameter("barcode");
+		if(barcode == null){
+			throw new ServletException("Barcode cannot be empty.");
+		} barcode = barcode.trim();
 
-		String newcode = request.getParameter("new");
-		if(newcode == null){
-			throw new ServletException("New barcode cannot be empty.");
-		} newcode = newcode.trim();
+		String remark = request.getParameter("remark");
+		if(remark != null) remark = remark.trim();
 
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
@@ -46,53 +46,20 @@ public class RecodeServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			HashMap<String, String> params = new HashMap<String, String>();
-			int r = 0;
+			Inventory i = new Inventory();
+			i.setBarcode(barcode);
+			i.setRemark(remark);
 
-			params.put("old_barcode", oldcode);
-			params.put("new_barcode", newcode);
+			sess.insert("gov.alaska.dggs.igneous.Inventory.insert", i);
+			if(i.getID() == null) throw new Exception("Inventory insert failed.");
 
-			// First, try updating the barcode
-			r += sess.update(
-				"gov.alaska.dggs.igneous.Inventory.updateBarcode",
-				params
-			);
+			InventoryQuality iq = new InventoryQuality(i);
+			iq.setUsername("gmc_app");
+			iq.setRemark("Added via scanner");
+			iq.setNeedsDetail(true);
 
-			// Update any container barcodes you find, as well
-			r += sess.update(
-				"gov.alaska.dggs.igneous.Container.updateBarcode",
-				params
-			);
-
-			// If those updates fail, try updating the alt_barcode
-			if(r == 0){
-				r += sess.update(
-					"gov.alaska.dggs.igneous.Inventory.updateAltBarcode",
-					params
-				);
-
-				r += sess.update(
-					"gov.alaska.dggs.igneous.Container.updateAltBarcode",
-					params
-				);
-			}
-
-			// Finally, if all that fails, try appending "GMC-" to it
-			if(r == 0){
-				params.put("old_barcode", "GMC-" + oldcode);
-
-				r += sess.update(
-					"gov.alaska.dggs.igneous.Inventory.updateBarcode",
-					params
-				);
-
-				r += sess.update(
-					"gov.alaska.dggs.igneous.Container.updateBarcode",
-					params
-				);
-			}
-
-			if(r == 0) throw new Exception("No codes updated.");
+			sess.insert("gov.alaska.dggs.igneous.Inventory.insertQuality", iq);
+			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
 
 			sess.commit();
 			response.setContentType("application/json");

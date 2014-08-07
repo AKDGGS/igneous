@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
