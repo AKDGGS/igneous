@@ -17,7 +17,7 @@
 
 	<select id="getTotalsByBarcode" parameterType="String" resultType="HashMap">
 		SELECT iv.container_id, co.path_cache AS name,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
 		FROM container AS co
 		JOIN inventory AS iv
 			ON iv.container_id = co.container_id
