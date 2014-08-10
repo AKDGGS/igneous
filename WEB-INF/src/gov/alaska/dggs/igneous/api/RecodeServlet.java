@@ -29,16 +29,6 @@ public class RecodeServlet extends HttpServlet
 	{
 		ServletContext context = getServletContext();
 
-		String oldcode = request.getParameter("old");
-		if(oldcode == null){
-			throw new ServletException("Old barcode cannot be empty.");
-		} oldcode = oldcode.trim();
-
-		String newcode = request.getParameter("new");
-		if(newcode == null){
-			throw new ServletException("New barcode cannot be empty.");
-		} newcode = newcode.trim();
-
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
 		response.setHeader("Pragma","no-cache");
@@ -46,6 +36,16 @@ public class RecodeServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
+			String oldcode = request.getParameter("old");
+			if(oldcode == null){
+				throw new Exception("Old barcode cannot be empty.");
+			} oldcode = oldcode.trim();
+
+			String newcode = request.getParameter("new");
+			if(newcode == null){
+				throw new Exception("New barcode cannot be empty.");
+			} newcode = newcode.trim();
+
 			HashMap<String, String> params = new HashMap<String, String>();
 			int r = 0;
 
@@ -102,7 +102,6 @@ public class RecodeServlet extends HttpServlet
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
-			ex.printStackTrace();
 		} finally {
 			sess.close();	
 		}

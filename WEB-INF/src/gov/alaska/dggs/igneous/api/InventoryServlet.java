@@ -169,7 +169,6 @@ public class InventoryServlet extends HttpServlet
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
-			ex.printStackTrace();
 		} finally {
 			sess.close();	
 		}
