@@ -319,7 +319,7 @@
 	</update>
 
 
-	<insert id="insert" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
+	<insert id="insert" parameterType="Inventory" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
 		INSERT INTO inventory (barcode, remark)
 		VALUES (#{barcode}, #{remark})
 	</insert>

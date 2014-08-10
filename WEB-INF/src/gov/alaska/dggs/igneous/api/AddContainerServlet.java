@@ -16,11 +16,10 @@ import java.util.HashMap;
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
-import gov.alaska.dggs.igneous.model.Inventory;
-import gov.alaska.dggs.igneous.model.InventoryQuality;
+import gov.alaska.dggs.igneous.model.Container;
 
 
-public class AddInventoryServlet extends HttpServlet
+public class AddContainerServlet extends HttpServlet
 {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
@@ -43,23 +42,21 @@ public class AddInventoryServlet extends HttpServlet
 				throw new Exception("Barcode cannot be empty.");
 			}
 
+			String name = request.getParameter("name");
+			if(name == null || (name = name.trim()).length() == 0){
+				throw new Exception("Name cannot be empty.");
+			}
+
 			String remark = request.getParameter("remark");
 			if(remark != null) remark = remark.trim();
 
-			Inventory i = new Inventory();
-			i.setBarcode(barcode);
-			i.setRemark(remark);
+			Container c = new Container();
+			c.setBarcode(barcode);
+			c.setName(name);
+			c.setRemark(remark);
 
-			sess.insert("gov.alaska.dggs.igneous.Inventory.insert", i);
-			if(i.getID() == null) throw new Exception("Inventory insert failed.");
-
-			InventoryQuality iq = new InventoryQuality(i);
-			iq.setUsername("gmc_app");
-			iq.setRemark("Added via scanner");
-			iq.setNeedsDetail(true);
-
-			sess.insert("gov.alaska.dggs.igneous.Inventory.insertQuality", iq);
-			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
+			sess.insert("gov.alaska.dggs.igneous.Container.insert", c);
+			if(c.getID() == null) throw new Exception("Container insert failed.");
 
 			sess.commit();
 			response.setContentType("application/json");

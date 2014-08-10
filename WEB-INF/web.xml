@@ -223,6 +223,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>AddContainerServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.AddContainerServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AddContainerServlet</servlet-name>
+		<url-pattern>/addcontainer.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>QuadrangleServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.QuadrangleServlet</servlet-class>
 	</servlet>

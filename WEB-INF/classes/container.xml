@@ -15,6 +15,15 @@
 	</update>
 
 
+	<insert id="insert" parameterType="Container" useGeneratedKeys="true" keyColumn="container_id" keyProperty="id">
+		INSERT INTO container (
+			barcode, alt_barcode, name, remark
+		) VALUES (
+			#{barcode}, #{alt_barcode}, #{name}, #{remark}
+		)
+	</insert>
+
+
 	<select id="getTotalsByBarcode" parameterType="String" resultType="HashMap">
 		WITH RECURSIVE r AS (
 			SELECT container_id, path_cache

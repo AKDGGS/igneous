@@ -24,6 +24,7 @@
 		<typeAlias alias="Shotline" type="gov.alaska.dggs.igneous.model.Shotline" />
 		<typeAlias alias="Project" type="gov.alaska.dggs.igneous.model.Project" />
 		<typeAlias alias="Publication" type="gov.alaska.dggs.igneous.model.Publication" />
+		<typeAlias alias="Container" type="gov.alaska.dggs.igneous.model.Container" />
 	</typeAliases>
 
 	<environments default="development">
