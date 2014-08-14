@@ -78,8 +78,12 @@
 
 
 	<select id="getBoreholeTotalsByID" parameterType="List" resultType="HashMap">
-		SELECT ps.name AS prospect,
-			bh.name AS borehole,
+		SELECT 
+			(
+				COALESCE(ps.name, '') ||
+				CASE WHEN ps.name IS NULL THEN '' ELSE ' - ' END ||
+				bh.name
+			) AS borehole,
 			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
 		FROM container AS co
 		JOIN inventory AS iv

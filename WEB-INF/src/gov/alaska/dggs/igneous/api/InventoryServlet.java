@@ -44,6 +44,12 @@ public class InventoryServlet extends HttpServlet
 		serializer.include("collections");
 		serializer.include("publications");
 
+		serializer.include("summary.wells");
+		serializer.include("summary.boreholes");
+		serializer.include("summary.keywords");
+		serializer.include("summary.shotpoints");
+		serializer.include("summary.collections");
+
 		serializer.exclude("class");
 		serializer.exclude("intervalUnit.class");
 		serializer.exclude("collection.class");
@@ -89,27 +95,29 @@ public class InventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List loutput = null;
-			Map moutput = null;
+			List output = null;
 
 			if(id != null){
-				loutput = sess.selectList(
+				output = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByID", id
 				);
 			} else if(barcode != null){
-				loutput = sess.selectList(
+				output = sess.selectList(
 					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
 				);
 
-				if(loutput.size() == 0){
+				if(output.size() == 0){
 					List<Map> containers = sess.selectList(
 						"gov.alaska.dggs.igneous.Container.getTotalsByBarcode", barcode
 					);
 
 					if(containers.size() > 0){
-						moutput = new HashMap();
+						output = new ArrayList();
+
+						HashMap item = new HashMap();
 						Long total = new Long(0);
 						String name = null;
+
 						List<Integer> ids = new ArrayList<Integer>();
 						for(Map container : containers){
 							if(name == null && container.containsKey("name")){
@@ -119,29 +127,33 @@ public class InventoryServlet extends HttpServlet
 							total += (Long)container.get("total");
 						}
 
-						moutput.put("total", total);
-						moutput.put("name", name);
+						item.put("containerPath", name);
+						item.put("barcode", barcode);
 
-						moutput.put("collections", sess.selectList(
+						HashMap summary = new HashMap();
+						summary.put("total", total);
+						summary.put("collections", sess.selectList(
 							"gov.alaska.dggs.igneous.Container.getCollectionTotalsByID",
 							ids
 						));
-						moutput.put("keywords", sess.selectOne(
+						summary.put("keywords", sess.selectOne(
 							"gov.alaska.dggs.igneous.Container.getKeywordSummaryByID",
 							ids
 						));
-						moutput.put("wells", sess.selectList(
+						summary.put("wells", sess.selectList(
 							"gov.alaska.dggs.igneous.Container.getWellTotalsByID",
 							ids
 						));
-						moutput.put("boreholes", sess.selectList(
+						summary.put("boreholes", sess.selectList(
 							"gov.alaska.dggs.igneous.Container.getBoreholeTotalsByID",
 							ids
 						));
-						moutput.put("shotlines", sess.selectList(
+						summary.put("shotlines", sess.selectList(
 							"gov.alaska.dggs.igneous.Container.getShotlineTotalsByID",
 							ids
 						));
+						item.put("summary", summary);
+						output.add(item);
 					}
 				}
 			}
@@ -160,7 +172,7 @@ public class InventoryServlet extends HttpServlet
 				}
 
 				response.setContentType("application/json");
-				serializer.serialize(moutput == null ? loutput : moutput, out);
+				serializer.serialize(output, out);
 			} finally {
 				if(out != null){ out.close(); }
 				if(gos != null){ gos.close(); }
