@@ -3,12 +3,7 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="gov.alaska.dggs.igneous.Inventory">
-	<select id="getTest" resultSetType="FORWARD_ONLY" parameterType="map" resultMap="InventoryMap">
-		SELECT inventory_id FROM inventory WHERE inventory_id = ? OR inventory_id = ?
-	</select>
-
-
-	<sql id="getBy">
+	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="ByBarcodeInventoryMap">
 		SELECT iv.inventory_id, iv.sample_number,
 			iv.barcode, iv.alt_barcode,
 			iv.box_number, iv.set_number,
@@ -30,11 +25,6 @@
 			iun.unit_id = iv.interval_unit_id
 		LEFT OUTER JOIN container AS co ON
 			co.container_id = iv.container_id
-	</sql>
-
-
-	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
-		<include refid="getBy" />
 		WHERE iv.barcode = #{barcode}
 			OR iv.barcode = ('GMC-' || #{barcode})
 			OR iv.alt_barcode = #{barcode}
@@ -42,13 +32,7 @@
 	</select>
 
 
-	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
-		<include refid="getBy" />
-		WHERE iv.inventory_id = #{id}
-	</select>
-
-
-	<resultMap id="InventoryMap" type="Inventory">
+	<resultMap id="ByBarcodeInventoryMap" type="Inventory">
 		<id property="id" column="inventory_id" />
 		<result property="sample_number" column="sample_number" />
 		<result property="barcode" column="barcode" />
@@ -74,6 +58,88 @@
 			<id property="id" column="collection_id" />
 			<result property="name" column="collection_name" />
 			<result property="description" column="collection_description" />
+		</association>
+
+		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
+		<collection property="wells" column="inventory_id" ofType="Well" select="gov.alaska.dggs.igneous.Well.getByInventoryID" />
+		<collection property="boreholes" column="inventory_id" ofType="Borehole" select="gov.alaska.dggs.igneous.Borehole.getByInventoryID" />
+		<collection property="outcrops" column="inventory_id" ofType="Outcrop" select="gov.alaska.dggs.igneous.Outcrop.getByInventoryID" />
+		<collection property="files" column="inventory_id" ofType="File" select="gov.alaska.dggs.igneous.File.getByInventoryID" />
+		<collection property="publications" column="inventory_id" ofType="Publication" select="gov.alaska.dggs.igneous.Publication.getByInventoryID" />
+		<collection property="shotpoints" column="inventory_id" ofType="Shotpoint" select="gov.alaska.dggs.igneous.Shotpoint.getByInventoryID" />
+	</resultMap>
+
+
+	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
+		SELECT iv.inventory_id, iv.sample_number,
+			iv.barcode, iv.alt_barcode,
+			iv.box_number, iv.set_number,
+			iv.core_number, iv.state_number,
+			iv.description, iv.remark,
+			iv.interval_top, iv.interval_bottom,
+			iun.unit_id AS interval_unit_id,
+			iun.name AS interval_unit_name,
+			iun.abbr AS interval_unit_abbr,
+
+			cl.collection_id,
+			cl.name AS collection_name,
+			cl.description AS collection_description,
+
+			co.container_id,
+			co.name AS container_name,
+			co.remark AS container_remark,
+			co.barcode AS container_barcode,
+			co.alt_barcode AS container_alt_barcode,
+			co.path_cache,
+
+			(
+				SELECT bin FROM inventory_bin WHERE inventory_id = iv.inventory_id
+			) AS bin
+		FROM inventory AS iv
+		LEFT OUTER JOIN collection AS cl ON
+			cl.collection_id = iv.collection_id
+		LEFT OUTER JOIN unit AS iun ON
+			iun.unit_id = iv.interval_unit_id
+		LEFT OUTER JOIN container AS co ON
+			co.container_id = iv.container_id
+		WHERE iv.inventory_id = #{id}
+	</select>
+
+
+	<resultMap id="InventoryMap" type="Inventory">
+		<id property="id" column="inventory_id" />
+		<result property="sample_number" column="sample_number" />
+		<result property="barcode" column="barcode" />
+		<result property="alt_barcode" column="alt_barcode" />
+		<result property="box" column="box_number" />
+		<result property="set" column="set_number" />
+		<result property="core" column="core_number" />
+		<result property="state" column="state_number" />
+		<result property="description" column="description" />
+		<result property="interval_top" column="interval_top" />
+		<result property="interval_bottom" column="interval_bottom" />
+		<result property="remark" column="remark" />
+		<result property="bin" column="bin" />
+
+		<association property="interval_unit" javaType="Unit">
+			<id property="id" column="interval_unit_id" />
+			<result property="abbr" column="interval_unit_abbr" />
+			<result property="name" column="interval_unit_name" />
+		</association>
+
+		<association property="collection" javaType="iCollection">
+			<id property="id" column="collection_id" />
+			<result property="name" column="collection_name" />
+			<result property="description" column="collection_description" />
+		</association>
+
+		<association property="container" javaType="Container">
+			<id property="id" column="container_id" />
+			<result property="name" column="container_name" />
+			<result property="remark" column="container_remark" />
+			<result property="barcode" column="container_barcode" />
+			<result property="alt_barcode" column="container_alt_barcode" />
+			<result property="path_cache" column="path_cache" />
 		</association>
 
 		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />

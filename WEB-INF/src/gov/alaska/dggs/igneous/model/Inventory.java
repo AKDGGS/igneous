@@ -16,9 +16,11 @@ public class Inventory implements Serializable
 	private String wkt;
 	private Integer interval_top, interval_bottom;
 	private Unit interval_unit;
+
 	private Collection collection;
 	private CoreDiameter core_diameter;
 	private Project project;
+	private Container container;
 
 	private String container_path;
 	private String bin;
@@ -60,6 +62,7 @@ public class Inventory implements Serializable
 	public CoreDiameter getCoreDiameter(){ return core_diameter; }
 	public Collection getCollection(){ return collection; }
 	public Project getProject(){ return project; }
+	public Container getContainer(){ return container; }
 
 	public List<Keyword> getKeywords(){ return keywords; }
 	public List<Borehole> getBoreholes(){ return boreholes; }

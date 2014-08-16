@@ -43,6 +43,7 @@ public class InventoryServlet extends HttpServlet
 		serializer.include("shotpoints");
 		serializer.include("collections");
 		serializer.include("publications");
+		serializer.include("container");
 
 		serializer.include("summary.wells");
 		serializer.include("summary.boreholes");
@@ -51,6 +52,7 @@ public class InventoryServlet extends HttpServlet
 		serializer.include("summary.collections");
 
 		serializer.exclude("class");
+		serializer.exclude("container.class");
 		serializer.exclude("intervalUnit.class");
 		serializer.exclude("collection.class");
 		serializer.exclude("keywords.class");

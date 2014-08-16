@@ -78,6 +78,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>InventoryViewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.InventoryViewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>InventoryViewServlet</servlet-name>
+		<url-pattern>/inventory/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>SearchServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
 	</servlet>

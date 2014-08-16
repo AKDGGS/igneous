@@ -10,7 +10,7 @@ public class Container implements Serializable
 
 	private Integer id;
 	private String barcode, alt_barcode;
-	private String remark, name;
+	private String remark, name, path_cache;
 
 	public Integer getID(){ return id; }
 
@@ -25,4 +25,6 @@ public class Container implements Serializable
 
 	public String getName(){ return name; }
 	public void setName(String name){ this.name = name; }
+
+	public String getPathCache(){ return path_cache; }
 }
