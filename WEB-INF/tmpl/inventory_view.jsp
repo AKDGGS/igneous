@@ -2,6 +2,8 @@
 	taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@
 	taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@
+	taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -9,8 +11,9 @@
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			dl { display: table; margin: 8px 4px; }
-			dt { display: table-cell; width: 160px; }
-			dd { display: table-cell; margin: 0px; }
+			dt, dd { display: table-cell; }
+			dt { width: 160px; }
+			dd { margin: 0px; }
 		</style>
 	</head>
 	<body>
@@ -31,10 +34,55 @@
 		</div>
 
 		<div class="container">
+			<dl>
+				<dt>ID</dt>
+				<dd>${inventory.ID}</dd>
+			</dl>
+
+			<c:if test="${!empty inventory.container}">
+			<dl>
+				<dt>Location</dt>
+				<dd><a href="../container/${inventory.container.ID}">${inventory.container.pathCache}</a></dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.DGGSSampleID}">
+			<dl>
+				<dt>DGGS Sample ID</dt>
+				<dd>${inventory.DGGSSampleID}</dd>
+			</dl>
+			</c:if>
+
 			<c:if test="${!empty inventory.sampleNumber}">
 			<dl>
 				<dt>Sample Number</dt>
 				<dd>${inventory.sampleNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.sampleNumberPrefix}">
+			<dl>
+				<dt>Sample Number Prefix</dt>
+				<dd>${inventory.sampleNumberPrefix}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.altSampleNumber}">
+			<dl>
+				<dt>Alt. Sample Number</dt>
+				<dd>${inventory.altSampleNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.publishedSampleNumber}">
+			<dl>
+				<dt>Published Sample No.</dt>
+				<dd>${inventory.publishedSampleNumber}</dd>
+			</dl>
+
+			<dl>
+				<dt>Published No. Suffix</dt>
+				<dd><span title="${inventory.publishedNumberHasSuffix ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.publishedNumberHasSuffix ? 'ok' : 'remove'}"></span></dd>
 			</dl>
 			</c:if>
 
@@ -52,45 +100,80 @@
 			</dl>
 			</c:if>
 
-			<c:if test="${!empty inventory.box}">
+			<c:if test="${!empty inventory.stateNumber}">
 			<dl>
-				<dt>Box</dt>
-				<dd>${inventory.box}</dd>
+				<dt>State Number</dt>
+				<dd>${inventory.stateNumber}</dd>
 			</dl>
 			</c:if>
 
-			<c:if test="${!empty inventory.set}">
+			<c:if test="${!empty inventory.boxNumber}">
 			<dl>
-				<dt>Set</dt>
-				<dd>${inventory.set}</dd>
+				<dt>Box Number</dt>
+				<dd>${inventory.boxNumber}</dd>
 			</dl>
 			</c:if>
 
-			<c:if test="${!empty inventory.core}">
+			<c:if test="${!empty inventory.setNumber}">
 			<dl>
-				<dt>Core</dt>
-				<dd>${inventory.core}</dd>
+				<dt>Set Number</dt>
+				<dd>${inventory.setNumber}</dd>
 			</dl>
 			</c:if>
 
-			<c:if test="${!empty inventory.state}">
+			<c:if test="${!empty inventory.splitNumber}">
 			<dl>
-				<dt>State</dt>
-				<dd>${inventory.state}</dd>
+				<dt>Split Number</dt>
+				<dd>${inventory.splitNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.slideNumber}">
+			<dl>
+				<dt>Slide Number</dt>
+				<dd>${inventory.slideNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.slipNumber}">
+			<dl>
+				<dt>Slip Number</dt>
+				<dd>${inventory.slipNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.labNumber}">
+			<dl>
+				<dt>Lab Number</dt>
+				<dd>${inventory.labNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.coreNumber}">
+			<dl>
+				<dt>Core Number</dt>
+				<dd>${inventory.coreNumber}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.coreDiameter}">
+			<dl>
+				<dt>Core Diameter</dt>
+				<dd>${inventory.coreDiameter.diameter} <c:if test="${!empty inventory.coreDiameter.unit}">${inventory.coreDiameter.unit.abbr}</c:if> <c:if test="${!empty inventory.coreDiameter.name}">(${inventory.coreDiameter.name})</c:if></dd>
 			</dl>
 			</c:if>
 
 			<c:if test="${!empty inventory.intervalTop}">
 			<dl>
 				<dt>Interval Top</dt>
-				<dd>${inventory.intervalTop}</dd>
+				<dd>${inventory.intervalTop} <c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit.abbr}</c:if></dd>
 			</dl>
 			</c:if>
 
 			<c:if test="${!empty inventory.intervalBottom}">
 			<dl>
 				<dt>Interval Bottom</dt>
-				<dd>${inventory.intervalBottom}</dd>
+				<dd>${inventory.intervalBottom} <c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit.abbr}</c:if></dd>
 			</dl>
 			</c:if>
 
@@ -108,12 +191,73 @@
 			</dl>
 			</c:if>
 
-			<c:if test="${!empty inventory.container}">
+			<c:if test="${!empty inventory.tray}">
 			<dl>
-				<dt>Location</dt>
-				<dd>${inventory.container.pathCache}</dd>
+				<dt>Tray</dt>
+				<dd>${inventory.tray}</dd>
 			</dl>
 			</c:if>
+
+			<c:if test="${!empty inventory.weight}">
+			<dl>
+				<dt>Weight</dt>
+				<dd>${inventory.weight} <c:if test="${!empty inventory.weightUnit}">${inventory.weightUnit.abbr}</c:if></dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.sampleFrequency}">
+			<dl>
+				<dt>Sample Frequency</dt>
+				<dd>${inventory.sampleFrequency}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.recovery}">
+			<dl>
+				<dt>Recovery</dt>
+				<dd>${inventory.recovery}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.radiationMSVH}">
+			<dl>
+				<dt>Radiation (MSVH)</dt>
+				<dd>${inventory.radiationMSVH}</dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.keywords}">
+			<dl>
+				<dt>Keywords</dt>
+				<dd><c:forEach items="${inventory.keywords}" var="keyword" varStatus="stat">${stat.count gt 1 ? "," : ""} <a href="../search#keyword_id=${keyword.ID}">${keyword.name}</a></c:forEach></dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.received}">
+			<dl>
+				<dt>Received Date</dt>
+				<dd><fmt:formatDate pattern="M/d/yyyy" value="${inventory.received}"/></dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.entered}">
+			<dl>
+				<dt>Entered Date</dt>
+				<dd><fmt:formatDate pattern="M/d/yyyy" value="${inventory.entered}"/></dd>
+			</dl>
+			</c:if>
+
+			<c:if test="${!empty inventory.modified}">
+			<dl>
+				<dt>Modified Date</dt>
+				<dd><fmt:formatDate pattern="M/d/yyyy" value="${inventory.modified}"/></dd>
+			</dl>
+			</c:if>
+
+			<dl>
+				<dt>Skeleton</dt>
+				<dd><span title="${inventory.skeleton ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.skeleton ? 'ok' : 'remove'}"></span></dd>
+			</dl>
 
 			<dl>
 				<dt>Publish</dt>
@@ -127,7 +271,7 @@
 
 			<hr />
 
-			<div id="crapo">
+			<div id="tab-related">
 				<c:forEach items="${inventory.publications}" var="publication">
 				<div class="container">
 					<dl>
@@ -181,6 +325,12 @@
 					<dl>
 						<dt>Borehole Alt. Names</dt>
 						<dd>${borehole.altNames}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty borehole.prospect}">
+					<dl>
+						<dt>Prospect Name</dt>
+						<dd><a href="../prospect/${borehole.prospect.ID}">${borehole.prospect.name}</a></dd>
 					</dl>
 					</c:if>
 				</div>

@@ -37,10 +37,10 @@
 		<result property="sample_number" column="sample_number" />
 		<result property="barcode" column="barcode" />
 		<result property="alt_barcode" column="alt_barcode" />
-		<result property="box" column="box_number" />
-		<result property="set" column="set_number" />
-		<result property="core" column="core_number" />
-		<result property="state" column="state_number" />
+		<result property="box_number" column="box_number" />
+		<result property="set_number" column="set_number" />
+		<result property="core_number" column="core_number" />
+		<result property="state_number" column="state_number" />
 		<result property="description" column="description" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
@@ -71,16 +71,8 @@
 
 
 	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
-		SELECT iv.inventory_id, iv.sample_number,
-			iv.barcode, iv.alt_barcode,
-			iv.box_number, iv.set_number,
-			iv.core_number, iv.state_number,
-			iv.description, iv.remark,
-			iv.interval_top, iv.interval_bottom,
-			iv.active, iv.can_publish,
-			iun.unit_id AS interval_unit_id,
-			iun.name AS interval_unit_name,
-			iun.abbr AS interval_unit_abbr,
+		SELECT iv.inventory_id,
+			iv.parent_id,
 
 			cl.collection_id,
 			cl.name AS collection_name,
@@ -91,44 +83,134 @@
 			co.remark AS container_remark,
 			co.barcode AS container_barcode,
 			co.alt_barcode AS container_alt_barcode,
-			co.path_cache,
+			co.path_cache AS container_path_cache,
 
+			iv.dggs_sample_id,
+			iv.sample_number,
+			iv.sample_number_prefix,
+			iv.alt_sample_number,
+			iv.published_sample_number,
+			iv.published_number_has_suffix,
+			iv.barcode,
+			iv.alt_barcode,
+			iv.state_number,
+			iv.box_number,
+			iv.set_number,
+			iv.split_number,
+			iv.slide_number,
+			iv.lab_number,
+			iv.map_number,
+			iv.description, 
+			iv.remark,
+			iv.tray,
+			iv.interval_top,
+			iv.interval_bottom,
+			iun.unit_id AS interval_unit_id,
+			iun.name AS interval_unit_name,
+			iun.abbr AS interval_unit_abbr,
+			iv.core_number,
+
+			cd.core_diameter_id,
+			cd.name AS core_diameter_name,
+			cd.core_diameter,
+			cdun.unit_id AS core_diameter_unit_id,
+			cdun.name AS core_diameter_unit_name,
+			cdun.abbr AS core_diameter_unit_abbr,
+
+			iv.weight,
+			wun.unit_id AS weight_unit_id,
+			wun.name AS weight_unit_name,
+			wun.abbr AS weight_unit_abbr,
+
+			iv.sample_frequency,
+			iv.recovery,
+			iv.can_publish,
+			iv.skeleton,
+			iv.radiation_msvh,
+			iv.received_date,
+			iv.entered_date,
+			iv.modified_date,
+
+			iv.active,
+			
 			(
 				SELECT bin FROM inventory_bin WHERE inventory_id = iv.inventory_id
 			) AS bin
 		FROM inventory AS iv
-		LEFT OUTER JOIN collection AS cl ON
-			cl.collection_id = iv.collection_id
-		LEFT OUTER JOIN unit AS iun ON
-			iun.unit_id = iv.interval_unit_id
-		LEFT OUTER JOIN container AS co ON
-			co.container_id = iv.container_id
+		LEFT OUTER JOIN collection AS cl
+			ON cl.collection_id = iv.collection_id
+		LEFT OUTER JOIN unit AS iun
+			ON iun.unit_id = iv.interval_unit_id
+		LEFT OUTER JOIN container AS co
+			ON co.container_id = iv.container_id
+		LEFT OUTER JOIN core_diameter AS cd
+			ON cd.core_diameter_id = iv.core_diameter_id
+		LEFT OUTER JOIN unit AS cdun
+			ON cdun.unit_id = cd.unit_id
+		LEFT OUTER JOIN unit AS wun
+			ON wun.unit_id = iv.weight_unit_id
 		WHERE iv.inventory_id = #{id}
 	</select>
 
 
 	<resultMap id="InventoryMap" type="Inventory">
 		<id property="id" column="inventory_id" />
+		<result property="dggs_sample_id" column="dggs_sample_id" />
 		<result property="sample_number" column="sample_number" />
+		<result property="sample_number_prefix" column="sample_number_prefix" />
+		<result property="alt_sample_number" column="alt_sample_number" />
+		<result property="published_sample_number" column="published_sample_number" />
+		<result property="published_number_has_suffix" column="published_number_has_suffix" />
 		<result property="barcode" column="barcode" />
 		<result property="alt_barcode" column="alt_barcode" />
-		<result property="box" column="box_number" />
-		<result property="set" column="set_number" />
-		<result property="core" column="core_number" />
-		<result property="state" column="state_number" />
-		<result property="remark" column="remark" />
-		<result property="bin" column="bin" />
-		<result property="active" column="active" />
-		<result property="can_publish" column="can_publish" />
-
+		<result property="state_number" column="state_number" />
+		<result property="box_number" column="box_number" />
+		<result property="set_number" column="set_number" />
+		<result property="split_number" column="split_number" />
+		<result property="slide_number" column="slide_number" />
+		<result property="slip_number" column="slip_number" />
+		<result property="lab_number" column="lab_number" />
+		<result property="map_number" column="map_number" />
 		<result property="description" column="description" />
+		<result property="remark" column="remark" />
+		<result property="tray" column="tray" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
+		<result property="core_number" column="core_number" />
+		<result property="weight" column="weight" />
+		<result property="sample_frequency" column="sample_frequency" />
+		<result property="recovery" column="recovery" />
+		<result property="can_publish" column="can_publish" />
+		<result property="skeleton" column="skeleton" />
+		<result property="radiation_msvh" column="radiation_msvh" />
+		<result property="received" column="received_date" />
+		<result property="entered" column="entered_date" />
+		<result property="modified" column="modified_date" />
+		<result property="active" column="active" />
+
+		<result property="bin" column="bin" />
 
 		<association property="interval_unit" javaType="Unit">
 			<id property="id" column="interval_unit_id" />
-			<result property="abbr" column="interval_unit_abbr" />
 			<result property="name" column="interval_unit_name" />
+			<result property="abbr" column="interval_unit_abbr" />
+		</association>
+
+		<association property="core_diameter" javaType="CoreDiameter">
+			<id property="id" column="core_diameter_id" />
+			<result property="diameter" column="core_diameter" />
+			<result property="name" column="core_diameter_name" />
+			<association property="unit" javaType="Unit">
+				<id property="id" column="core_diameter_unit_id" />
+				<result property="name" column="core_diameter_unit_name" />
+				<result property="abbr" column="core_diameter_unit_abbr" />
+			</association>
+		</association>
+
+		<association property="weight_unit" javaType="Unit">
+			<id property="id" column="weight_unit_id" />
+			<result property="name" column="weight_unit_name" />
+			<result property="abbr" column="weight_unit_abbr" />
 		</association>
 
 		<association property="collection" javaType="iCollection">
@@ -143,7 +225,7 @@
 			<result property="remark" column="container_remark" />
 			<result property="barcode" column="container_barcode" />
 			<result property="alt_barcode" column="container_alt_barcode" />
-			<result property="path_cache" column="path_cache" />
+			<result property="path_cache" column="container_path_cache" />
 		</association>
 
 		<collection property="keywords" column="inventory_id" ofType="Keyword" select="gov.alaska.dggs.igneous.Keyword.getByInventoryID" />
@@ -295,10 +377,10 @@
 		<result property="barcode" column="barcode" />
 		<result property="alt_barcode" column="alt_barcode" />
 		<result property="container_path" column="container_path" />
-		<result property="box" column="box_number" />
-		<result property="set" column="set_number" />
-		<result property="core" column="core_number" />
-		<result property="state" column="state_number" />
+		<result property="box_number" column="box_number" />
+		<result property="set_number" column="set_number" />
+		<result property="core_number" column="core_number" />
+		<result property="state_number" column="state_number" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
 		<result property="wkt" column="wkt" />

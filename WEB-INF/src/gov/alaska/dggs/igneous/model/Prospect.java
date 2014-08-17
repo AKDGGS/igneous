@@ -2,7 +2,6 @@ package gov.alaska.dggs.igneous.model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 
 public class Prospect implements Serializable
@@ -11,16 +10,18 @@ public class Prospect implements Serializable
 
 
 	private int id;
-	private String name, alt_names;
-	private String ardf;
-	private List<Borehole> boreholes;
-
-
 	public int getID(){ return id; }
+
+	private String name;
 	public String getName(){ return name; }
+
+	private String alt_names;
 	public String getAltNames(){ return alt_names; }
+
+	private String ardf;
 	public String getARDF(){ return ardf; }
 
+	private List<Borehole> boreholes;
 	public List<Borehole> getBoreholes(){ return boreholes; }
 	public void setBoreholes(List<Borehole> boreholes){ this.boreholes = boreholes; }
 }

@@ -587,18 +587,18 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if('box' in obj){
-						td.appendChild(document.createTextNode(obj['box']));
+					if('boxNumber' in obj){
+						td.appendChild(document.createTextNode(obj['boxNumber']));
 					}
-					if('set' in obj){
+					if('setNumber' in obj){
 						td.appendChild(document.createElement('br'));	
-						td.appendChild(document.createTextNode(obj['set']));
+						td.appendChild(document.createTextNode(obj['setNumber']));
 					}
 					tr.appendChild(td);
 
 					td = document.createElement('td');
-					if('core' in obj){
-						td.appendChild(document.createTextNode(obj['core']));
+					if('coreNumber' in obj){
+						td.appendChild(document.createTextNode(obj['coreNumber']));
 					}
 					if('coreDiameter' in obj){
 						td.appendChild(document.createElement('br'));	
