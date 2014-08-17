@@ -77,6 +77,7 @@
 			iv.core_number, iv.state_number,
 			iv.description, iv.remark,
 			iv.interval_top, iv.interval_bottom,
+			iv.active, iv.can_publish,
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
 			iun.abbr AS interval_unit_abbr,
@@ -115,11 +116,14 @@
 		<result property="set" column="set_number" />
 		<result property="core" column="core_number" />
 		<result property="state" column="state_number" />
+		<result property="remark" column="remark" />
+		<result property="bin" column="bin" />
+		<result property="active" column="active" />
+		<result property="can_publish" column="can_publish" />
+
 		<result property="description" column="description" />
 		<result property="interval_top" column="interval_top" />
 		<result property="interval_bottom" column="interval_bottom" />
-		<result property="remark" column="remark" />
-		<result property="bin" column="bin" />
 
 		<association property="interval_unit" javaType="Unit">
 			<id property="id" column="interval_unit_id" />

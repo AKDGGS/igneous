@@ -15,6 +15,9 @@ public class Inventory implements Serializable
 	private String remark;
 	private String wkt;
 	private Integer interval_top, interval_bottom;
+	private Boolean can_publish;
+	private Boolean active;
+
 	private Unit interval_unit;
 
 	private Collection collection;
@@ -51,6 +54,9 @@ public class Inventory implements Serializable
 
 	public String getRemark(){ return remark; }
 	public void setRemark(String remark){ this.remark = remark; }
+
+	public Boolean getActive(){ return active; }
+	public Boolean getCanPublish(){ return can_publish; }
 
 	public String getWKT(){ return wkt; }
 	public String getBin(){ return bin; }
