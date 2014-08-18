@@ -243,6 +243,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>MoveServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.MoveServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>MoveServlet</servlet-name>
+		<url-pattern>/move.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>QuadrangleServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.QuadrangleServlet</servlet-class>
 	</servlet>

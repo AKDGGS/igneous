@@ -471,6 +471,14 @@
 	</update>
 
 
+	<update id="moveInventoryByBarcode" parameterType="Map">
+		UPDATE inventory SET container_id = #{container_id}
+		WHERE barcode = #{barcode}
+			OR barcode = ('GMC-' || #{barcode})
+			OR alt_barcode = #{barcode}
+	</update>
+
+
 	<insert id="insert" parameterType="Inventory" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
 		INSERT INTO inventory (barcode, remark)
 		VALUES (#{barcode}, #{remark})

@@ -24,6 +24,23 @@
 	</insert>
 
 
+	<select id="getContainerIDsByBarcode" parameterType="String" resultType="Integer">
+		SELECT container_id
+		FROM container
+		WHERE barcode = #{barcode}
+			OR barcode = ('GMC-' || #{barcode})
+			OR alt_barcode = #{barcode} 
+	</select>
+
+
+	<update id="moveContainerByBarcode" parameterType="Map">
+		UPDATE container SET parent_container_id = #{container_id}
+		WHERE barcode = #{barcode}
+			OR barcode = ('GMC-' || #{barcode})
+			OR alt_barcode = #{barcode}
+	</update>
+
+
 	<select id="getTotalsByBarcode" parameterType="String" resultType="HashMap">
 		WITH RECURSIVE r AS (
 			SELECT container_id, path_cache
