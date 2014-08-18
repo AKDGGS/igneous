@@ -36,27 +36,29 @@ public class AuditServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			String t = request.getParameter("t"); // List of barcodes in "t"
-			if(t == null) throw new Exception("Barcode list cannot be empty.");
+			String barcode = request.getParameter("barcode");
+			if(barcode == null) throw new Exception("Barcode list cannot be empty.");
 
-			t = t.trim();
-			if(t.length() < 1) throw new Exception("Barcode list cannot be empty.");
+			barcode = barcode.trim();
+			if(barcode.length() < 1){
+				throw new Exception("Barcode list cannot be empty.");
+			}
 
-			String codes[] = t.split(";");
+			String barcodes[] = barcode.split(";");
 
-			String n = request.getParameter("n"); // Note in "n"
-			if(n != null){
-				n = n.trim();
-				if(n.length() == 0){ n = null; }
+			String remark = request.getParameter("remark");
+			if(remark != null){
+				remark = remark.trim();
+				if(remark.length() == 0) remark = null;
 			}
 
 			AuditGroup group = new AuditGroup();
-			group.setRemark(n);
+			group.setRemark(remark);
 
 			sess.insert("gov.alaska.dggs.igneous.Audit.insertGroup", group);
 			if(group.getID() == 0){ throw new Exception("Audit group insert failed"); }
 
-			for(String code : codes){
+			for(String code : barcodes){
 				Audit a = new Audit();
 				a.setGroup(group);
 				a.setBarcode(code);
