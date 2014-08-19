@@ -242,7 +242,7 @@
 			</dl>
 
 			<ul id="tabs" class="nav nav-tabs" style="width: 100%">
-				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.boreholes) + fn:length(inventory.shotpoints) + fn:length(inventory.publications)}</span></a></li>
+				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
 				<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
 			</ul>
 
@@ -335,6 +335,31 @@
 						<dd>${well.APINumber}</dd>
 					</dl>
 					</c:if>
+				</div>
+				</c:forEach>
+
+				<c:forEach items="${inventory.shotlines}" var="shotline">
+				<div class="container">
+					<dl>
+						<dt>Shotline Name</dt>
+						<dd><a href="../shotline/${shotline.ID}">${shotline.name}</a></dd>
+					</dl>
+					<c:if test="${!empty shotline.altNames}">
+					<dl>
+						<dt>Shotline Alt. Names</dt>
+						<dd>${shotline.altNames}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty shotline.year}">
+					<dl>
+						<dt>Shotline Year</dt>
+						<dd>${shotline.year}</dd>
+					</dl>
+					</c:if>
+					<dl>
+						<dt>Shotpoint(s)</dt>
+						<dd><c:forEach items="${shotline.shotpoints}" var="shotpoint" varStatus="stat">${stat.count gt 1 ? ', ' : ''}<fmt:formatNumber groupingUsed="false" value="${shotpoint.number}"/></c:forEach></dd>
+					</dl>
 				</div>
 				</c:forEach>
 			</div>

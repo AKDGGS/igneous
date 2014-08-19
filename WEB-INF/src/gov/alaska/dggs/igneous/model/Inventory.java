@@ -150,9 +150,6 @@ public class Inventory implements Serializable
 	private List<Shotpoint> shotpoints;
 	public List<Shotpoint> getShotpoints(){ return shotpoints; }
 
-	private List<Shotline> shotlines;
-	public List<Shotline> getShotlines(){ return shotlines; }
-
 	private List<File> files;
 	public List<File> getFiles(){ return files; }
 
@@ -164,6 +161,9 @@ public class Inventory implements Serializable
 
 
 	// Fields that do not corrospond to a field in the database
+	private List<Shotline> shotlines;
+	public List<Shotline> getShotlines(){ return shotlines; }
+
 	private String container_path;
 	public String getContainerPath(){ return container_path; }
 
@@ -172,6 +172,4 @@ public class Inventory implements Serializable
 
 	private String bin;
 	public String getBin(){ return bin; }
-
-
 }

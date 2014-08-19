@@ -10,10 +10,11 @@ public class Shotpoint implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	private int id;
-	private BigDecimal number;
-	private Shotline shotline;
-
 	public int getID(){ return id; }
+
+	private BigDecimal number;
 	public BigDecimal getNumber(){ return number; }
+
+	private Shotline shotline;
 	public Shotline getShotline(){ return shotline; }
 }

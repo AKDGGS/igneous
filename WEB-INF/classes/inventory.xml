@@ -234,7 +234,7 @@
 		<collection property="outcrops" column="inventory_id" ofType="Outcrop" select="gov.alaska.dggs.igneous.Outcrop.getByInventoryID" />
 		<collection property="files" column="inventory_id" ofType="File" select="gov.alaska.dggs.igneous.File.getByInventoryID" />
 		<collection property="publications" column="inventory_id" ofType="Publication" select="gov.alaska.dggs.igneous.Publication.getByInventoryID" />
-		<collection property="shotpoints" column="inventory_id" ofType="Shotpoint" select="gov.alaska.dggs.igneous.Shotpoint.getByInventoryID" />
+		<collection property="shotlines" column="inventory_id" ofType="Shotline" select="gov.alaska.dggs.igneous.Shotline.getByInventoryID" />
 		<collection property="notes" column="inventory_id" ofType="Note" select="gov.alaska.dggs.igneous.Note.getByInventoryID" />
 	</resultMap>
 

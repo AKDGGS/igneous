@@ -52,6 +52,7 @@
 		<mapper resource="file.xml" />
 		<mapper resource="publication.xml" />
 		<mapper resource="shotpoint.xml" />
+		<mapper resource="shotline.xml" />
 		<mapper resource="quality.xml" />
 		<mapper resource="audit.xml" />
 		<mapper resource="note.xml" />
