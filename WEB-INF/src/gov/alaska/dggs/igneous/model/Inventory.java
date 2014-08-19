@@ -159,6 +159,9 @@ public class Inventory implements Serializable
 	private List<Publication> publications;
 	public List<Publication> getPublications(){ return publications; }
 
+	private List<Note> notes;
+	public List<Note> getNotes(){ return notes; }
+
 
 	// Fields that do not corrospond to a field in the database
 	private String container_path;

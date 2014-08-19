@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Note">
+	<sql id="getBy">
+		SELECT n.note_id, n.note, n.note_date, n.is_public, n.username,
+			nt.note_type_id, nt.name, nt.description
+		FROM note AS n
+		JOIN note_type AS nt
+			ON nt.note_type_id = n.note_type_id
+	</sql>
+
+
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="NoteMap">
+		<include refid="getBy" />
+		JOIN inventory_note AS iv
+			ON iv.note_id = n.note_id
+		WHERE iv.inventory_id = #{inventory_id}
+			AND n.active
+		ORDER BY note_date DESC
+	</select>
+
+
+	<resultMap id="NoteMap" type="Note">
+		<id property="id" column="note_id" />
+		<result property="note" column="note" />
+		<result property="date" column="note_date" />
+		<result property="is_public" column="is_public" />
+		<result property="username" column="username" />
+
+		<association property="type" javaType="NoteType">
+			<id property="id" column="note_type_id" />
+			<result property="name" column="name" />
+			<result property="description" column="description" />
+		</association>
+	</resultMap>
+</mapper>

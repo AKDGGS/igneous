@@ -454,7 +454,12 @@ hr {
 	text-decoration: none;
 	white-space: nowrap;
 }
-.nav-tabs a:hover { background-color: #eee; }
+.nav-tabs > li > a:hover { background-color: #eee; }
+.nav-tabs > li.active > a:hover {
+	background-color: #fff;
+	color: #428bca;
+	cursor: default;
+}
 
 .nav-pills > li > a {
 	background-color: #fff;
