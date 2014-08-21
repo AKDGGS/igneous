@@ -95,6 +95,12 @@
 				<dd>${inventory.altBarcode}</dd>
 			</dl>
 			</c:if>
+			<c:if test="${!empty inventory.collection}">
+			<dl>
+				<dt>Collection</dt>
+				<dd>${inventory.collection.name}</dd>
+			</dl>
+			</c:if>
 			<c:if test="${!empty inventory.stateNumber}">
 			<dl>
 				<dt>State Number</dt>
