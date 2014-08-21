@@ -152,19 +152,19 @@
 			<c:if test="${!empty inventory.coreDiameter}">
 			<dl>
 				<dt>Core Diameter</dt>
-				<dd>${inventory.coreDiameter.diameter} <c:if test="${!empty inventory.coreDiameter.unit}">${inventory.coreDiameter.unit.abbr}</c:if> <c:if test="${!empty inventory.coreDiameter.name}">(${inventory.coreDiameter.name})</c:if></dd>
+				<dd>${inventory.coreDiameter.diameter} <c:if test="${!empty inventory.coreDiameter.unit}">${inventory.coreDiameter.unit.abbr}</c:if> <c:if test="${!empty inventory.coreDiameter.name}"> (${inventory.coreDiameter.name})</c:if></dd>
 			</dl>
 			</c:if>
 			<c:if test="${!empty inventory.intervalTop}">
 			<dl>
 				<dt>Interval Top</dt>
-				<dd><fmt:formatNumber value="${inventory.intervalTop}" /> <c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit.abbr}</c:if></dd>
+				<dd><fmt:formatNumber value="${inventory.intervalTop}" /> <c:if test="${!empty inventory.intervalUnit}"> ${inventory.intervalUnit.abbr}</c:if></dd>
 			</dl>
 			</c:if>
 			<c:if test="${!empty inventory.intervalBottom}">
 			<dl>
 				<dt>Interval Bottom</dt>
-				<dd><fmt:formatNumber value="${inventory.intervalBottom}" /> <c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit.abbr}</c:if></dd>
+				<dd><fmt:formatNumber value="${inventory.intervalBottom}" /> <c:if test="${!empty inventory.intervalUnit}"> ${inventory.intervalUnit.abbr}</c:if></dd>
 			</dl>
 			</c:if>
 			<c:if test="${!empty inventory.description}">
@@ -188,7 +188,7 @@
 			<c:if test="${!empty inventory.weight}">
 			<dl>
 				<dt>Weight</dt>
-				<dd><fmt:formatNumber value="${inventory.weight}" /> <c:if test="${!empty inventory.weightUnit}">${inventory.weightUnit.abbr}</c:if></dd>
+				<dd><fmt:formatNumber value="${inventory.weight}" /> <c:if test="${!empty inventory.weightUnit}"> ${inventory.weightUnit.abbr}</c:if></dd>
 			</dl>
 			</c:if>
 			<c:if test="${!empty inventory.sampleFrequency}">
@@ -298,6 +298,12 @@
 
 				<c:forEach items="${inventory.boreholes}" var="borehole">
 				<div class="container">
+					<c:if test="${!empty borehole.prospect}">
+					<dl>
+						<dt>Prospect Name</dt>
+						<dd><a href="../prospect/${borehole.prospect.ID}">${borehole.prospect.name}</a></dd>
+					</dl>
+					</c:if>
 					<dl>
 						<dt>Borehole Name</dt>
 						<dd><a href="../borehole/${borehole.ID}">${borehole.name}</a></dd>
@@ -306,12 +312,6 @@
 					<dl>
 						<dt>Borehole Alt. Names</dt>
 						<dd>${borehole.altNames}</dd>
-					</dl>
-					</c:if>
-					<c:if test="${!empty borehole.prospect}">
-					<dl>
-						<dt>Prospect Name</dt>
-						<dd><a href="../prospect/${borehole.prospect.ID}">${borehole.prospect.name}</a></dd>
 					</dl>
 					</c:if>
 				</div>
