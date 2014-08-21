@@ -500,7 +500,17 @@ hr {
 .datagrid-warning > thead > tr:last-child > th { border-top: 1px solid #fbeed5; }
 
 .al-r { text-align: right !important; }
+
 .nowrap { white-space: nowrap; }
+.hidden { display: none; }
+
+.tag { margin: 0px 4px; padding: 2px 4px; border-radius: 4px; border: none; }
+.tag-primary { color: #fff; background-color: #428bca; }
+.tag-danger { color: #fff; background-color: #d9534f; }
+.tag-warning { color: #fff; background-color: #f0ad4e; }
+.tag-success { color: #fff; background-color: #5cb85c; }
+.tag-info { color: #fff; background-color: #5bc0de; }
+
 
 /*** Open Layers ***/
 /* Disables accelerated transformations, fixing the "white line" bug

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gov.alaska.dggs.igneous.InventoryQuality">
+	<sql id="getBy">
+		SELECT inventory_quality_id,
+			check_date,
+			remark,
+			username,
+			needs_detail,
+			unsorted,
+			possible_radiation,
+			damaged,
+			box_damaged,
+			missing,
+			data_missing,
+			barcode_missing,
+			label_obscured,
+			insufficient_material
+		FROM inventory_quality
+	</sql>
+
+	<select id="getByInventoryID" parameterType="Integer" resultSetType="FORWARD_ONLY" resultMap="InventoryQualityMap">
+		<include refid="getBy" />
+		WHERE inventory_id = #{inventory_id}
+		ORDER BY check_date DESC
+	</select>
+
+
+	<resultMap id="InventoryQualityMap" type="InventoryQuality">
+		<id property="id" column="inventory_quality_id" />
+		<result property="date" column="check_date" />
+		<result property="remark" column="remark" />
+		<result property="username" column="username" />
+		<result property="needs_detail" column="needs_detail" />
+		<result property="unsorted" column="unsorted" />
+		<result property="possible_radiation" column="possible_radiation" />
+		<result property="damaged" column="damaged" />
+		<result property="box_damaged" column="box_damaged" />
+		<result property="missing" column="missing" />
+		<result property="data_missing" column="data_missing" />
+		<result property="barcode_missing" column="barcode_missing" />
+		<result property="label_obscured" column="label_obscured" />
+		<result property="insufficient_material" column="insufficient_material" />
+	</resultMap>
+
+
+	<insert id="insert" parameterType="InventoryQuality" useGeneratedKeys="true" keyColumn="inventory_quality_id" keyProperty="id">
+		INSERT INTO inventory_quality (
+			inventory_id, remark, username, check_date,
+			needs_detail, unsorted, possible_radiation,
+			damaged, box_damaged, missing,
+			data_missing, barcode_missing, label_obscured,
+			insufficient_material
+		) VALUES (
+			#{inventory.id}, #{remark}, #{username}, #{date},
+			#{needs_detail}, #{unsorted}, #{possible_radiation},
+			#{damaged}, #{box_damaged}, #{missing},
+			#{data_missing}, #{barcode_missing}, #{label_obscured},
+			#{insufficient_material}
+		)
+	</insert>
+</mapper>

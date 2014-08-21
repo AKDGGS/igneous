@@ -236,6 +236,7 @@
 		<collection property="publications" column="inventory_id" ofType="Publication" select="gov.alaska.dggs.igneous.Publication.getByInventoryID" />
 		<collection property="shotlines" column="inventory_id" ofType="Shotline" select="gov.alaska.dggs.igneous.Shotline.getByInventoryID" />
 		<collection property="notes" column="inventory_id" ofType="Note" select="gov.alaska.dggs.igneous.Note.getByInventoryID" />
+		<collection property="qualities" column="inventory_id" ofType="InventoryQuality" select="gov.alaska.dggs.igneous.InventoryQuality.getByInventoryID" />
 	</resultMap>
 
 
@@ -483,22 +484,5 @@
 	<insert id="insert" parameterType="Inventory" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
 		INSERT INTO inventory (barcode, remark)
 		VALUES (#{barcode}, #{remark})
-	</insert>
-
-
-	<insert id="insertQuality" parameterType="InventoryQuality" useGeneratedKeys="true" keyColumn="inventory_quality_id" keyProperty="id">
-		INSERT INTO inventory_quality (
-			inventory_id, remark, username,
-			needs_detail, unsorted, possible_radiation,
-			damaged, box_damaged, missing,
-			data_missing, barcode_missing, label_obscured,
-			insufficient_material
-		) VALUES (
-			#{inventory.id}, #{remark}, #{username},
-			#{needs_detail}, #{unsorted}, #{possible_radiation},
-			#{damaged}, #{box_damaged}, #{missing},
-			#{data_missing}, #{barcode_missing}, #{label_obscured},
-			#{insufficient_material}
-		)
 	</insert>
 </mapper>

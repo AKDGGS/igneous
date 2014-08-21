@@ -58,7 +58,7 @@ public class AddInventoryServlet extends HttpServlet
 			iq.setRemark("Added via scanner");
 			iq.setNeedsDetail(true);
 
-			sess.insert("gov.alaska.dggs.igneous.Inventory.insertQuality", iq);
+			sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
 			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
 
 			sess.commit();

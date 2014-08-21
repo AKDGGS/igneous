@@ -159,6 +159,9 @@ public class Inventory implements Serializable
 	private List<Note> notes;
 	public List<Note> getNotes(){ return notes; }
 
+	private List<InventoryQuality> qualities;
+	public List<InventoryQuality> getQualities(){ return qualities; }
+
 
 	// Fields that do not corrospond to a field in the database
 	private List<Shotline> shotlines;

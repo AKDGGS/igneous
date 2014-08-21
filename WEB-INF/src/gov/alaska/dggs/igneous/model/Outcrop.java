@@ -9,14 +9,23 @@ public class Outcrop implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
-	private int id;
-	private String name, number;
-	private Integer year;
-	private boolean is_onshore;
 
+	private int id;
 	public int getID(){ return id; }
+
+
+	private String name;
 	public String getName(){ return name; }
+
+
+	private String number;
 	public String getNumber(){ return number; }
+
+
+	private Integer year;
 	public Integer getYear(){ return year; }
+
+
+	private boolean is_onshore;
 	public boolean isOnshore(){ return is_onshore; }
 }

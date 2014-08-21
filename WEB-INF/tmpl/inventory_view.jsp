@@ -17,8 +17,7 @@
 			dt { width: 160px; }
 			dd { margin: 0px; }
 			pre { margin: 0px; }
-			.hidden { display: none; }
-			.notehd { color: #777; }
+			.notehd, .qualityhd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 		</style>
 	</head>
@@ -244,6 +243,7 @@
 			<ul id="tabs" class="nav nav-tabs" style="width: 100%">
 				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
 				<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
+				<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
 			</ul>
 
 			<div id="tab-related">
@@ -362,6 +362,27 @@
 					</dl>
 				</div>
 				</c:forEach>
+
+				<c:forEach items="${inventory.outcrops}" var="outcrop">
+				<div class="container">
+					<dl>
+						<dt>Outcrop Name</dt>
+						<dd><a href="../outcrop/${outcrop.ID}">${outcrop.name}</a></dd>
+					</dl>
+					<c:if test="${!empty outcrop.number}">
+					<dl>
+						<dt>Outcrop Number</dt>
+						<dd>${outcrop.number}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty outcrop.number}">
+					<dl>
+						<dt>Outcrop Year</dt>
+						<dd>${outcrop.year}</dd>
+					</dl>
+					</c:if>
+				</div>
+				</c:forEach>
 			</div>
 
 			<div id="tab-notes" class="hidden">
@@ -372,13 +393,33 @@
 				</div>
 				</c:forEach>
 			</div>
+
+			<div id="tab-qualities" class="hidden">
+				<c:forEach items="${inventory.qualities}" var="quality" varStatus="stat">
+				<div class="container">
+					<div class="qualityhd">
+						<fmt:formatDate pattern="M/d/yyyy" value="${quality.date}"/>, ${quality.username}
+						<c:if test="${quality.needsDetail}"><span class="tag tag-danger">NEEDS DETAIL</span></c:if>
+						<c:if test="${quality.unsorted}"><span class="tag tag-danger">UNSORTED</span></c:if>
+						<c:if test="${quality.possibleRadiation}"><span class="tag tag-danger">POSSIBLE RADIATION</span></c:if>
+						<c:if test="${quality.damaged}"><span class="tag tag-danger">DAMAGED</span></c:if>
+						<c:if test="${quality.boxDamaged}"><span class="tag tag-danger">BOX DAMAGED</span></c:if>
+						<c:if test="${quality.missing}"><span class="tag tag-danger">MISSING</span></c:if>
+						<c:if test="${quality.dataMissing}"><span class="tag tag-danger">DATA MISSING</span></c:if>
+						<c:if test="${quality.labelObscured}"><span class="tag tag-danger">LABEL OBSCURED</span></c:if>
+						<c:if test="${quality.insufficientMaterial}"><span class="tag tag-danger">INSUFFICIENT MATERIAL</span></c:if>
+					</div>
+					<c:if test="${!empty quality.remark}"><pre>${fn:escapeXml(quality.remark)}</pre></c:if>
+				</div>
+				</c:forEach>
+			</div>
 		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){
 				$('#tabs a').click(function(e){
-					$('#tab-related, #tab-notes').hide();
+					$('#tab-related, #tab-notes, #tab-qualities').hide();
 
 					$('#tabs li').removeClass('active');
 					$(this).parent().addClass('active');

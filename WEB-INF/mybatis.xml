@@ -56,6 +56,7 @@
 		<mapper resource="quality.xml" />
 		<mapper resource="audit.xml" />
 		<mapper resource="note.xml" />
+		<mapper resource="inventory_quality.xml" />
 		<mapper class="gov.alaska.dggs.igneous.SearchMapper" />
 	</mappers>
 </configuration>
