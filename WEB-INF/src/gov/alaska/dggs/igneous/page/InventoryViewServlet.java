@@ -18,6 +18,11 @@ import gov.alaska.dggs.igneous.model.Inventory;
 
 public class InventoryViewServlet extends HttpServlet
 {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
+		doGet(request, response);
+	}
+
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();

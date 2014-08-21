@@ -238,7 +238,7 @@ $(function(){
 
 					var td = document.createElement('td');
 					var a = document.createElement('a');
-					a.href = 'detail/' + obj['ID'];
+					a.href = '../inventory/' + obj['ID'];
 					a.appendChild(document.createTextNode(obj['ID']));
 					td.appendChild(a);
 					tr.appendChild(td);

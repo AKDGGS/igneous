@@ -303,6 +303,12 @@
 						<dt>Prospect Name</dt>
 						<dd><a href="../prospect/${borehole.prospect.ID}">${borehole.prospect.name}</a></dd>
 					</dl>
+					<c:if test="${!empty borehole.prospect.ARDF}">
+					<dl>
+						<dt>Prospect ARDF</dt>
+						<dd><a href="http://tin.er.usgs.gov/ardf/show.php?labno=${borehole.prospect.ARDF}">${borehole.prospect.ARDF}</a></dd>
+					</dl>
+					</c:if>
 					</c:if>
 					<dl>
 						<dt>Borehole Name</dt>
