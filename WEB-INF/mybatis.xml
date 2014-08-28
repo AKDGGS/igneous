@@ -25,6 +25,7 @@
 		<typeAlias alias="Project" type="gov.alaska.dggs.igneous.model.Project" />
 		<typeAlias alias="Publication" type="gov.alaska.dggs.igneous.model.Publication" />
 		<typeAlias alias="Container" type="gov.alaska.dggs.igneous.model.Container" />
+		<typeAlias alias="ContainerLog" type="gov.alaska.dggs.igneous.model.ContainerLog" />
 		<typeAlias alias="Note" type="gov.alaska.dggs.igneous.model.Note" />
 		<typeAlias alias="NoteType" type="gov.alaska.dggs.igneous.model.NoteType" />
 	</typeAliases>

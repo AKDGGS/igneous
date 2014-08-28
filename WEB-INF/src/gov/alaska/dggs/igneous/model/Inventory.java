@@ -162,6 +162,9 @@ public class Inventory implements Serializable
 	private List<InventoryQuality> qualities;
 	public List<InventoryQuality> getQualities(){ return qualities; }
 
+	private List<ContainerLog> containerlog;
+	public List<ContainerLog> getContainerLog(){ return containerlog; }
+
 
 	// Fields that do not corrospond to a field in the database
 	private List<Shotline> shotlines;

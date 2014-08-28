@@ -149,4 +149,21 @@
 			AND iv.container_id IN <foreach item="i" collection="list" open="(" separator="," close=")">${i}</foreach>
 		GROUP BY co.container_id, sl.shotline_id, sl.name
 	</select>
+
+
+	<select id="getContainerLogByInventoryID" parameterType="int" resultMap="ContainerLogMap">
+		SELECT icl.inventory_container_log_id, con.path_cache, icl.log_date
+		FROM inventory_container_log AS icl
+		JOIN container AS con
+			ON con.container_id = icl.container_id
+		WHERE icl.inventory_id = #{id}
+		ORDER BY icl.log_date DESC
+	</select>
+
+
+	<resultMap id="ContainerLogMap" type="ContainerLog">
+		<id property="id" column="inventory_container_log_id" />
+		<result property="path_cache" column="path_cache" />
+		<result property="date" column="log_date" />
+	</resultMap>
 </mapper>

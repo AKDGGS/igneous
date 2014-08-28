@@ -237,6 +237,7 @@
 		<collection property="shotlines" column="inventory_id" ofType="Shotline" select="gov.alaska.dggs.igneous.Shotline.getByInventoryID" />
 		<collection property="notes" column="inventory_id" ofType="Note" select="gov.alaska.dggs.igneous.Note.getByInventoryID" />
 		<collection property="qualities" column="inventory_id" ofType="InventoryQuality" select="gov.alaska.dggs.igneous.InventoryQuality.getByInventoryID" />
+		<collection property="containerlog" column="inventory_id" ofType="ContainerLog" select="gov.alaska.dggs.igneous.Container.getContainerLogByInventoryID" />
 	</resultMap>
 
 

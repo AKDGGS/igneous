@@ -17,7 +17,7 @@
 			dt { width: 160px; }
 			dd { margin: 0px; }
 			pre { margin: 0px; }
-			.notehd, .qualityhd { color: #777; }
+			.notehd, .qualityhd, .loghd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 		</style>
 	</head>
@@ -250,6 +250,7 @@
 				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
 				<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
 				<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
+				<li><a href="#containerlog">Container Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
 			</ul>
 
 			<div id="tab-related">
@@ -425,13 +426,21 @@
 				</div>
 				</c:forEach>
 			</div>
+
+			<div id="tab-containerlog" class="hidden">
+				<c:forEach items="${inventory.containerLog}" var="log" varStatus="stat">
+				<div class="container">
+					<span class="loghd"><fmt:formatDate pattern="M/d/yyyy k:mm" value="${log.date}"/></span>, ${log.pathCache}
+				</div>
+				</c:forEach>
+			</div>
 		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){
 				$('#tabs a').click(function(e){
-					$('#tab-related, #tab-notes, #tab-qualities').hide();
+					$('#tab-related, #tab-notes, #tab-qualities, #tab-containerlog').hide();
 
 					$('#tabs li').removeClass('active');
 					$(this).parent().addClass('active');
