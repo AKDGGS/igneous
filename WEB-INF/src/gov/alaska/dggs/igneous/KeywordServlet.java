@@ -17,10 +17,6 @@ import java.util.List;
 
 import flexjson.JSONSerializer;
 
-import org.sphx.api.SphinxClient;
-import org.sphx.api.SphinxResult;
-import org.sphx.api.SphinxMatch;
-
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;

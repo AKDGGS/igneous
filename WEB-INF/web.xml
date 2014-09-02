@@ -19,24 +19,6 @@
 		<param-value>true</param-value>
 	</context-param>
 
-	<context-param>
-		<description>Sphinx host/IP</description>
-		<param-name>sphinx_host</param-name>
-		<param-value>127.0.0.1</param-value>
-	</context-param>
-
-	<context-param>
-		<description>Sphinx port</description>
-		<param-name>sphinx_port</param-name>
-		<param-value>9312</param-value>
-	</context-param>
-
-	<context-param>
-		<description>Sphinx max matches</description>
-		<param-name>sphinx_max_matches</param-name>
-		<param-value>7500</param-value>
-	</context-param>
-
 	<servlet>
 		<servlet-name>SearchPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchPageServlet</servlet-class>
