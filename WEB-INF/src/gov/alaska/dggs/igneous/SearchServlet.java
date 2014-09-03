@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.ByteArrayOutputStream;
 
 import java.math.BigDecimal;
 import java.util.zip.GZIPOutputStream;
@@ -18,8 +19,25 @@ import java.util.HashMap;
 import java.util.Date;
 import java.util.Properties;
 
+import java.text.DateFormat;
+
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Element;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Font;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.HeaderFooter;
+import com.lowagie.text.Table;
+import com.lowagie.text.Cell;
+
+import java.awt.Color;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -103,7 +121,7 @@ public class SearchServlet extends HttpServlet
 	private static final String SQL_COUNT = 
 		"SELECT COUNT(*) inventory_id FROM inventory_search WHERE ";
 
-	public HashMap<String, Object> buildParameters(HttpServletRequest request) throws Exception
+	private HashMap<String, Object> buildParameters(HttpServletRequest request) throws Exception
 	{
 		HashMap<String, Object> params;
 		StringBuilder query = new StringBuilder();
@@ -434,6 +452,8 @@ public class SearchServlet extends HttpServlet
 			order.append(" OFFSET ");
 			order.append(start);
 
+			// returns the total number of results first, so we have a total
+			// for display purposes
 			params.put("_query",
 				"(" +
 					SQL_COUNT + query.toString() +
@@ -481,25 +501,10 @@ public class SearchServlet extends HttpServlet
 				}
 			}
 
-			response.setContentType("application/json");
-
-			OutputStreamWriter out = null;
-			GZIPOutputStream gos = null;
-			try { 
-				// If GZIP is supported by the requesting browser, use it.
-				String encoding = request.getHeader("Accept-Encoding");
-				if(encoding != null && encoding.contains("gzip")){
-					response.setHeader("Content-Encoding", "gzip");
-					gos = new GZIPOutputStream(response.getOutputStream(), 8196);
-					out = new OutputStreamWriter(gos, "utf-8");
-				} else {
-					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
-				}
-				
-				serializer.serialize(json, out);
-			} finally {
-				if(out != null){ out.close(); }
-				if(gos != null){ gos.close(); }
+			if(request.getServletPath().endsWith("json")){
+				respondJSON(request, response, json);
+			} else {
+				respondPDF(request, response, json);
 			}
 		} catch(Exception ex){
 			response.setStatus(500);
@@ -510,6 +515,137 @@ public class SearchServlet extends HttpServlet
 			sess.close();
 		}
 	}
+
+
+  @SuppressWarnings("unchecked")
+	private void respondJSON(HttpServletRequest request, HttpServletResponse response, HashMap json) throws Exception
+	{
+		response.setContentType("application/json");
+
+		OutputStreamWriter out = null;
+		GZIPOutputStream gos = null;
+		try { 
+			// If GZIP is supported by the requesting browser, use it.
+			String encoding = request.getHeader("Accept-Encoding");
+			if(encoding != null && encoding.contains("gzip")){
+				response.setHeader("Content-Encoding", "gzip");
+				gos = new GZIPOutputStream(response.getOutputStream(), 8196);
+				out = new OutputStreamWriter(gos, "utf-8");
+			} else {
+				out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+			}
+			
+			serializer.serialize(json, out);
+		} finally {
+			if(out != null){ out.close(); }
+			if(gos != null){ gos.close(); }
+		}
+	}
+
+
+  @SuppressWarnings("unchecked")
+	private void respondPDF(HttpServletRequest request, HttpServletResponse response, HashMap json) throws Exception
+	{
+		String app_url = (String)getServletContext().getInitParameter("app_url");
+		response.setContentType("application/pdf");
+
+		PdfWriter writer = null;
+		ByteArrayOutputStream bos = null;
+		try {
+			bos = new ByteArrayOutputStream();
+
+			Document doc = new Document(PageSize.A4, 50, 50, 25, 25);
+			writer = PdfWriter.getInstance(doc, bos);
+
+			DateFormat fmt = DateFormat.getDateTimeInstance(
+				DateFormat.LONG, DateFormat.LONG
+			);
+
+			HeaderFooter footer = new HeaderFooter(
+				new Phrase(
+					(fmt.format(new Date()) + ", Page "),
+					FontFactory.getFont(FontFactory.HELVETICA, 10)
+				), true
+			);
+			footer.setAlignment(HeaderFooter.ALIGN_RIGHT);
+			footer.setBorder(HeaderFooter.TOP);
+			footer.setBorderWidth(1.0f);
+			doc.setFooter(footer);
+			doc.open();
+
+			Paragraph p = new Paragraph(
+				"Query Results",
+				FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16)
+			);
+			p.setAlignment(Element.ALIGN_CENTER);
+			doc.add(p);
+
+			p = new Paragraph(
+				15, "Alaska Geologic Materials Center (GMC)\n" +
+				"Alaska Department of Natural Resources\n" +
+				"Phone: 907-696-0079 || Fax: 907-696-0078\n",
+				FontFactory.getFont(FontFactory.HELVETICA, 12)
+			);
+			p.setAlignment(Element.ALIGN_CENTER);
+
+			Chunk c = new Chunk(
+				app_url,
+				FontFactory.getFont(FontFactory.HELVETICA, 12, Color.BLUE)
+			);
+			c.setAnchor(app_url);
+			c.setUnderline(0.2f, -3f);
+			p.add(c);
+			doc.add(p);
+
+			p = new Paragraph(
+				10, "Search:\n",
+				FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)
+			);
+			p.setSpacingAfter(15);
+			p.setSpacingBefore(30);
+			doc.add(p);
+
+			c = new Chunk(
+				app_url + "#" + request.getQueryString(),
+				FontFactory.getFont(FontFactory.HELVETICA, 12, Color.BLUE)
+			);
+			c.setAnchor(app_url + "#" + request.getQueryString());
+			c.setUnderline(0.2f, -3f);
+
+			p = new Paragraph(c);
+			doc.add(p);
+
+			p = new Paragraph(
+				15, "Search Results:",
+				FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)
+			);
+			p.setSpacingAfter(15);
+			p.setSpacingBefore(30);
+			doc.add(p);
+
+			List<Inventory> items = (List<Inventory>)json.get("list");
+			if(items != null){
+				p = new Paragraph(
+					25, "Results found.",
+					FontFactory.getFont(FontFactory.HELVETICA, 12)
+				);
+				doc.add(p);
+			} else {
+				p = new Paragraph(
+					25, "No results found.",
+					FontFactory.getFont(FontFactory.HELVETICA, 12)
+				);
+				doc.add(p);
+			}
+
+			doc.close();
+			bos.writeTo(response.getOutputStream());
+		} finally {
+			if(writer != null){ writer.close(); }
+			if(bos != null){ bos.close(); }
+		}
+	}
+
 
 	// This function returns false if a provided string array
 	// contains anything besides integers. It's used to santize input

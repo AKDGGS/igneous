@@ -19,6 +19,15 @@
 		<param-value>true</param-value>
 	</context-param>
 
+	<context-param>
+		<description>
+			Application's URL - used for report rendering, primarily
+			Always include the trailing slash!
+		</description>
+		<param-name>app_url</param-name>
+		<param-value>http://146.63.145.77/igneous/</param-value>
+	</context-param>
+
 	<servlet>
 		<servlet-name>SearchPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchPageServlet</servlet-class>
@@ -77,6 +86,11 @@
 	<servlet-mapping>
 		<servlet-name>SearchServlet</servlet-name>
 		<url-pattern>/search.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SearchServlet</servlet-name>
+		<url-pattern>/search.pdf</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
@@ -147,21 +161,6 @@
 	<servlet-mapping>
 		<servlet-name>FileDownloadServlet</servlet-name>
 		<url-pattern>/file/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>OilGasServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.OilGasServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>OilGasServlet</servlet-name>
-		<url-pattern>/oilgas.html</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>OilGasServlet</servlet-name>
-		<url-pattern>/oilgas.pdf</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
