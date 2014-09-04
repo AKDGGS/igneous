@@ -124,6 +124,10 @@
 
 							<span class="spacer">|</span>
 
+							<button class="btn btn-info" id="print">Print All</button>
+
+							<span class="spacer">|</span>
+
 							Displaying <span id="page_start"></span>
 							- <span id="page_end"></span> of
 							<span id="page_found"></span>

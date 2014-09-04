@@ -36,17 +36,24 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.HeaderFooter;
 import com.lowagie.text.Table;
 import com.lowagie.text.Cell;
+import com.lowagie.text.Rectangle;
 
 import java.awt.Color;
 
 import org.apache.ibatis.session.SqlSession;
 
+import gov.alaska.dggs.SQLQueryParser;
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
+import gov.alaska.dggs.igneous.model.Well;
+import gov.alaska.dggs.igneous.model.Shotline;
+import gov.alaska.dggs.igneous.model.Outcrop;
+import gov.alaska.dggs.igneous.model.Borehole;
+import gov.alaska.dggs.igneous.model.Prospect;
 import gov.alaska.dggs.igneous.model.Keyword;
+import gov.alaska.dggs.igneous.model.CoreDiameter;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.igneous.transformer.IterableTransformer;
-import gov.alaska.dggs.SQLQueryParser;
 
 
 public class SearchServlet extends HttpServlet
@@ -121,7 +128,7 @@ public class SearchServlet extends HttpServlet
 	private static final String SQL_COUNT = 
 		"SELECT COUNT(*) inventory_id FROM inventory_search WHERE ";
 
-	private HashMap<String, Object> buildParameters(HttpServletRequest request) throws Exception
+	private HashMap<String, Object> buildParameters(HttpServletRequest request, boolean canlimit) throws Exception
 	{
 		HashMap<String, Object> params;
 		StringBuilder query = new StringBuilder();
@@ -440,17 +447,19 @@ public class SearchServlet extends HttpServlet
 					}
 			}
 
-			int max = 25;
-			String s_max = request.getParameter("max");
-			if(s_max != null){ max = Integer.parseInt(s_max); }
-			order.append(" LIMIT ");
-			order.append(max);
+			if(canlimit){
+				int max = 25;
+				String s_max = request.getParameter("max");
+				if(s_max != null){ max = Integer.parseInt(s_max); }
+				order.append(" LIMIT ");
+				order.append(max);
 
-			int start = 0;
-			String s_start = request.getParameter("start");
-			if(s_start != null){ start = Integer.parseInt(s_start); }
-			order.append(" OFFSET ");
-			order.append(start);
+				int start = 0;
+				String s_start = request.getParameter("start");
+				if(s_start != null){ start = Integer.parseInt(s_start); }
+				order.append(" OFFSET ");
+				order.append(start);
+			}
 
 			// returns the total number of results first, so we have a total
 			// for display purposes
@@ -484,7 +493,11 @@ public class SearchServlet extends HttpServlet
 		try {
 			HashMap json = new HashMap();
 
-			HashMap<String, Object> params = buildParameters(request);
+			boolean isjson = request.getServletPath().endsWith("json");
+
+			// If it's JSON, limit the number of results
+			HashMap<String, Object> params = buildParameters(request, isjson);
+
 			if(!params.isEmpty()){
 				//System.out.println("q: " + params.get("_query"));
 				List<Integer> list = sess.selectList(
@@ -501,11 +514,9 @@ public class SearchServlet extends HttpServlet
 				}
 			}
 
-			if(request.getServletPath().endsWith("json")){
-				respondJSON(request, response, json);
-			} else {
-				respondPDF(request, response, json);
-			}
+			if(isjson){ respondJSON(request, response, json); }
+			else { respondPDF(request, response, json); }
+
 		} catch(Exception ex){
 			response.setStatus(500);
 			response.setContentType("text/plain");
@@ -554,7 +565,7 @@ public class SearchServlet extends HttpServlet
 		try {
 			bos = new ByteArrayOutputStream();
 
-			Document doc = new Document(PageSize.A4, 50, 50, 25, 25);
+			Document doc = new Document(PageSize.A4, 15, 15, 10, 10);
 			writer = PdfWriter.getInstance(doc, bos);
 
 			DateFormat fmt = DateFormat.getDateTimeInstance(
@@ -581,7 +592,7 @@ public class SearchServlet extends HttpServlet
 			doc.add(p);
 
 			p = new Paragraph(
-				15, "Alaska Geologic Materials Center (GMC)\n" +
+				15, "Geologic Materials Center (GMC)\n" +
 				"Alaska Department of Natural Resources\n" +
 				"Phone: 907-696-0079 || Fax: 907-696-0078\n",
 				FontFactory.getFont(FontFactory.HELVETICA, 12)
@@ -619,17 +630,216 @@ public class SearchServlet extends HttpServlet
 				15, "Search Results:",
 				FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)
 			);
-			p.setSpacingAfter(15);
+			p.setSpacingAfter(5);
 			p.setSpacingBefore(30);
 			doc.add(p);
 
 			List<Inventory> items = (List<Inventory>)json.get("list");
-			if(items != null){
-				p = new Paragraph(
-					25, "Results found.",
-					FontFactory.getFont(FontFactory.HELVETICA, 12)
-				);
-				doc.add(p);
+			if(items != null && !items.isEmpty()){
+				// Font used for table header
+				Font hfont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
+				// Font used for table body
+				Font bfont = FontFactory.getFont(FontFactory.HELVETICA, 9);
+				// Default "Leading" property (leading being the space between lines
+				float leading = 9;
+				// Color for zebra striping odd rows
+				Color oddzebra = Color.WHITE;
+				// Color for zebra striping even rows
+				Color evenzebra = new Color(221, 221, 221);
+
+
+				Table table = new Table(9);
+				table.setWidth(100); // Table's percentage width
+				table.setWidths(new float[]{ // Cells percentage widths
+					18, // Related
+					10, // Sample
+					7, // Box/Set
+					8, // Core No/Diameter
+					7, // Top/Bottom
+					14, // Keywords
+					9, // Collection
+					13, // Barcode
+					14  // Location
+				});
+				table.setBorder(Rectangle.NO_BORDER);
+				table.setPadding(1);
+				table.setSpacing(0);
+				table.setCellsFitPage(true); // Force cells to exist on same page
+
+				Cell cell = new Cell();
+				cell.setBorder(Rectangle.NO_BORDER);
+				cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+				table.setDefaultCell(cell);
+
+				table.addCell(new Paragraph(leading, "Related", hfont));
+				table.addCell(new Paragraph(leading, "Sample", hfont));
+				table.addCell(new Paragraph(leading, "Box /\nSet", hfont));
+				table.addCell(new Paragraph(leading, "Core No /\nDiameter", hfont));
+				table.addCell(new Paragraph(leading, "Top /\nBottom", hfont));
+				table.addCell(new Paragraph(leading, "Keywords", hfont));
+				table.addCell(new Paragraph(leading, "Collection", hfont));
+				table.addCell(new Paragraph(leading, "Barcode", hfont));
+				table.addCell(new Paragraph(leading, "Location", hfont));
+				table.endHeaders();
+
+				cell.setVerticalAlignment(Element.ALIGN_TOP);
+
+				boolean zebra = true;
+				for(Inventory item : items){
+					zebra = !zebra;
+					cell.setBackgroundColor(zebra ? oddzebra : evenzebra);
+
+					// Begin "Related"
+					StringBuilder related = new StringBuilder();
+
+					for(Well well : item.getWells()){
+						if(related.length() > 0) related.append("\n");
+
+						related.append("Well: ");
+						related.append(well.getName());
+						if(well.getWellNumber() != null){
+							related.append(" - ");
+							related.append(well.getWellNumber());
+						}
+						if(well.getAPINumber() != null){
+							related.append("\nAPI: ");
+							related.append(well.getAPINumber());
+						}
+					}
+
+					for(Borehole borehole : item.getBoreholes()){
+						if(related.length() > 0) related.append("\n");
+
+						if(borehole.getProspect() != null){
+							Prospect prospect = borehole.getProspect();
+							related.append("Prospect: ");
+							related.append(prospect.getName());
+							if(prospect.getAltNames() != null){
+								related.append("(");
+								related.append(prospect.getAltNames());
+								related.append(")");
+							}
+							related.append("\n");
+						}
+
+						related.append("Borehole: ");
+						related.append(borehole.getName());
+					}
+
+					for(Outcrop outcrop : item.getOutcrops()){
+						if(related.length() > 0) related.append("\n");
+
+						related.append("Outcrop: ");
+						related.append(outcrop.getName());
+						if(outcrop.getNumber() != null){
+							related.append(" - ");
+							related.append(outcrop.getNumber());
+						}
+					}
+
+					Paragraph prel = new Paragraph(leading, related.toString(), bfont);
+					table.addCell(prel);
+					// End "Related"
+					
+
+					// Begin "Sample"
+					StringBuilder sample = new StringBuilder();
+					if(item.getSampleNumber() != null){
+						sample.append(item.getSampleNumber());
+					}
+					table.addCell(new Paragraph(leading, sample.toString(), bfont));
+					// End "Sample"
+
+
+					// Begin "Box/Set"
+					StringBuilder boxset = new StringBuilder();
+					if(item.getBoxNumber() != null){
+						boxset.append(item.getBoxNumber());
+					}
+					if(item.getSetNumber() != null){
+						boxset.append("\n");
+						boxset.append(item.getSetNumber());
+					}
+					table.addCell(new Paragraph(leading, boxset.toString(), bfont));
+					// End "Box/Set"
+
+
+					// Begin "Core No/Diameter"
+					StringBuilder core = new StringBuilder();
+					if(item.getCoreNumber() != null){
+						core.append(item.getCoreNumber());
+					}
+					if(item.getCoreDiameter() != null){
+						core.append("\n");
+						CoreDiameter diameter = item.getCoreDiameter();
+						if(diameter.getName() != null){
+							core.append(diameter.getName());
+						} else {
+							core.append(diameter.getDiameter());
+							if(diameter.getUnit() != null){
+								core.append(" ");
+								core.append(diameter.getUnit().getAbbr());
+							}
+						}
+					}
+					table.addCell(new Paragraph(leading, core.toString(), bfont));
+					// End "Core No/Diameter"
+
+
+					// Begin "Top/Bottom"
+					StringBuilder tobo = new StringBuilder();
+					if(item.getIntervalTop() != null){
+						tobo.append(item.getIntervalTop());
+						if(item.getIntervalUnit() != null){
+							tobo.append(" ");
+							tobo.append(item.getIntervalUnit().getAbbr());
+						}
+					}
+					if(item.getIntervalBottom() != null){
+						tobo.append(" ");
+						tobo.append(item.getIntervalBottom());
+						if(item.getIntervalUnit() != null){
+							tobo.append(" ");
+							tobo.append(item.getIntervalUnit().getAbbr());
+						}
+					}
+					table.addCell(new Paragraph(leading, core.toString(), bfont));
+					// End "Top/Bottom"
+
+
+					// Begin "Keywords"
+					StringBuilder keywords = new StringBuilder();
+					for(Keyword keyword : item.getKeywords()){
+						if(keywords.length() > 0) keywords.append(", ");
+						keywords.append(keyword.getName());
+					}
+					table.addCell(new Paragraph(leading, keywords.toString(), bfont));
+					// Ends "Keywords"
+
+
+					// Begin "Collection"
+					StringBuilder collection = new StringBuilder();
+					if(item.getCollection() != null){
+						collection.append(item.getCollection().getName());
+					}
+					table.addCell(new Paragraph(leading, collection.toString(), bfont));
+					// End "Collection"
+
+
+					// Begin "Barcode"
+					String barcode = item.getBarcode();
+					if(barcode == null){ barcode = item.getAltBarcode(); }
+					if(barcode == null){ barcode = ""; }
+					table.addCell(new Paragraph(leading, barcode, bfont));
+					// End "Barcode"
+
+					// Begin "Location"
+					String location = item.getContainerPath();
+					if(location == null){ location = ""; }
+					table.addCell(new Paragraph(leading, location, bfont));
+					// End "Location"
+				}
+				doc.add(table);
 			} else {
 				p = new Paragraph(
 					25, "No results found.",

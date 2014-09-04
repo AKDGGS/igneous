@@ -791,6 +791,11 @@ $(function(){
 
 	$('#keyword_id').change(function(){ search.execute(); });
 
+	$('#print').click(function(){
+		var hash = window.location.hash.substr(1);
+		window.location.href = 'search.pdf?' + hash;
+	});
+
 	var quadrangle_loaded = $.Deferred();
 	$.ajax({
 		url: 'quadrangle.json', dataType: 'json',
