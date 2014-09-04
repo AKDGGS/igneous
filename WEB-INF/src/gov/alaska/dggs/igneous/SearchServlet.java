@@ -739,6 +739,29 @@ public class SearchServlet extends HttpServlet
 						}
 					}
 
+					for(Shotline shotline : item.getShotlines()){
+						if(related.length() > 0) related.append("\n");
+
+						related.append("Shotline: ");
+						related.append(shotline.getName());
+						if(shotline.getYear() != null){
+							related.append(", ");
+							related.append(shotline.getYear());
+						}
+
+						if(shotline.getShotlineMax() != null){
+							related.append("\nShotpoints: ");
+							related.append(shotline.getShotlineMin());
+							related.append(" - ");
+							related.append(shotline.getShotlineMax());
+						}
+
+						if(item.getProject() != null){
+							related.append("\nProject: ");
+							related.append(item.getProject().getName());
+						}
+					}
+
 					Paragraph prel = new Paragraph(leading, related.toString(), bfont);
 					table.addCell(prel);
 					// End "Related"
