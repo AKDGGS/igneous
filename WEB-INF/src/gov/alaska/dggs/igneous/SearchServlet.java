@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import java.text.DateFormat;
+import java.text.NumberFormat;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
@@ -647,6 +648,7 @@ public class SearchServlet extends HttpServlet
 				// Color for zebra striping even rows
 				Color evenzebra = new Color(221, 221, 221);
 
+				NumberFormat nformat = NumberFormat.getInstance();
 
 				Table table = new Table(9);
 				table.setWidth(100); // Table's percentage width
@@ -789,21 +791,21 @@ public class SearchServlet extends HttpServlet
 					// Begin "Top/Bottom"
 					StringBuilder tobo = new StringBuilder();
 					if(item.getIntervalTop() != null){
-						tobo.append(item.getIntervalTop());
+						tobo.append(nformat.format(item.getIntervalTop()));
 						if(item.getIntervalUnit() != null){
 							tobo.append(" ");
 							tobo.append(item.getIntervalUnit().getAbbr());
 						}
 					}
 					if(item.getIntervalBottom() != null){
-						tobo.append(" ");
-						tobo.append(item.getIntervalBottom());
+						tobo.append("\n");
+						tobo.append(nformat.format(item.getIntervalBottom()));
 						if(item.getIntervalUnit() != null){
 							tobo.append(" ");
 							tobo.append(item.getIntervalUnit().getAbbr());
 						}
 					}
-					table.addCell(new Paragraph(leading, core.toString(), bfont));
+					table.addCell(new Paragraph(leading, tobo.toString(), bfont));
 					// End "Top/Bottom"
 
 
@@ -832,6 +834,7 @@ public class SearchServlet extends HttpServlet
 					if(barcode == null){ barcode = ""; }
 					table.addCell(new Paragraph(leading, barcode, bfont));
 					// End "Barcode"
+
 
 					// Begin "Location"
 					String location = item.getContainerPath();
