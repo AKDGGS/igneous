@@ -120,6 +120,7 @@ public class SearchServlet extends HttpServlet
 		FIELDS.setProperty("outcropnumber", "simple");
 		FIELDS.setProperty("shotline", "simple");
 		FIELDS.setProperty("keyword", "simple");
+		FIELDS.setProperty("quadrangle", "simple");
 
 		FIELDS.setProperty("everything", "simple");
 	}
