@@ -442,6 +442,15 @@ public class SearchServlet extends HttpServlet
 					);
 				break;
 
+				// Sort by keywords (keyword group, then name)
+				case 14:
+					order.append(
+						" ORDER BY keyword_sort " + 
+						(dir == 0 ? "ASC" : "DESC") +
+						" NULLS LAST"
+					);
+				break;
+
 				default:
 					// If possible, use ranked sorting order
 					if(parser != null && parser.getOrderClause().length() > 0){
@@ -461,6 +470,8 @@ public class SearchServlet extends HttpServlet
 				if(s_start != null){ start = Integer.parseInt(s_start); }
 				order.append(" OFFSET ");
 				order.append(start);
+			} else {
+				order.append(" LIMIT 10000");
 			}
 
 			// returns the total number of results first, so we have a total

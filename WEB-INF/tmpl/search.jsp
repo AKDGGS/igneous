@@ -107,6 +107,7 @@
 								<option value="11">Box</option>
 								<option value="1">Collection</option>
 								<option value="2">Core Number</option>
+								<option value="14">Keywords</option>
 								<option value="3">Location</option>
 								<option value="12">Prospect</option>
 								<option value="13">Sample</option>
