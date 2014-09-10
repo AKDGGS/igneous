@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Date;
@@ -40,6 +41,13 @@ import com.lowagie.text.Cell;
 import com.lowagie.text.Rectangle;
 
 import java.awt.Color;
+
+import org.supercsv.io.CsvMapWriter;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
+import org.supercsv.cellprocessor.ift.CellProcessor;
+import org.supercsv.cellprocessor.constraint.NotNull;
+import org.supercsv.cellprocessor.Optional;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -527,8 +535,13 @@ public class SearchServlet extends HttpServlet
 				}
 			}
 
-			if(isjson){ respondJSON(request, response, json); }
-			else { respondPDF(request, response, json); }
+			if(isjson){
+				respondJSON(request, response, json);
+			} else if(request.getServletPath().endsWith("csv")){ 
+				respondCSV(request, response, json);
+			} else {
+				respondPDF(request, response, json);
+			}
 
 		} catch(Exception ex){
 			response.setStatus(500);
@@ -558,8 +571,232 @@ public class SearchServlet extends HttpServlet
 			} else {
 				out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 			}
-			
+
 			serializer.serialize(json, out);
+		} finally {
+			if(out != null){ out.close(); }
+			if(gos != null){ gos.close(); }
+		}
+	}
+
+
+  @SuppressWarnings("unchecked")
+	private void respondCSV(HttpServletRequest request, HttpServletResponse response, HashMap json) throws Exception
+	{
+		response.setContentType("text/csv");
+
+		OutputStreamWriter out = null;
+		GZIPOutputStream gos = null;
+		try { 
+			// If GZIP is supported by the requesting browser, use it.
+			String encoding = request.getHeader("Accept-Encoding");
+			if(encoding != null && encoding.contains("gzip")){
+				response.setHeader("Content-Encoding", "gzip");
+				gos = new GZIPOutputStream(response.getOutputStream(), 8196);
+				out = new OutputStreamWriter(gos, "utf-8");
+			} else {
+				out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
+			}
+			
+			CsvMapWriter writer = new CsvMapWriter(
+				out, CsvPreference.EXCEL_PREFERENCE
+			);
+
+			CellProcessor processors[] = new CellProcessor[]{
+				new NotNull(),  // ID
+				new Optional(), // Related
+				new Optional(), // Sample
+				new Optional(), // Box
+				new Optional(), // Set
+				new Optional(), // Core Number
+				new Optional(), // Core Diameter
+				new Optional(), // Core Diameter Units
+				new Optional(), // Top
+				new Optional(), // Bottom
+				new Optional(), // Top/Bottom Units
+				new Optional(), // Keywords
+				new Optional(), // Collection
+				new Optional(), // Barcode
+				new Optional()  // Location
+			};
+
+			String header[] = new String[]{
+				"id", "Related", "Sample", "Box", "Set", "Core Number",
+				"Core Diameter", "Core Diameter Units", 
+				"Top", "Bottom", "Top/Bottom Units",
+				"Keywords", "Collection", "Barcode", "Location"
+			};
+
+			writer.writeHeader(header);
+
+			List<Inventory> items = (List<Inventory>)json.get("list");
+			if(items != null && !items.isEmpty()){
+				for(Inventory item : items){
+					Map row = new HashMap();
+
+					// ID
+					row.put("id", item.getID());
+
+					// Begin "Related"
+					StringBuilder related = new StringBuilder();
+
+					for(Well well : item.getWells()){
+						if(related.length() > 0) related.append("\n");
+
+						related.append("Well: ");
+						related.append(well.getName());
+						if(well.getWellNumber() != null){
+							related.append(" - ");
+							related.append(well.getWellNumber());
+						}
+						if(well.getAPINumber() != null){
+							related.append("\nAPI: ");
+							related.append(well.getAPINumber());
+						}
+					}
+
+					for(Borehole borehole : item.getBoreholes()){
+						if(related.length() > 0) related.append("\n");
+
+						if(borehole.getProspect() != null){
+							Prospect prospect = borehole.getProspect();
+							related.append("Prospect: ");
+							related.append(prospect.getName());
+							if(prospect.getAltNames() != null){
+								related.append("(");
+								related.append(prospect.getAltNames());
+								related.append(")");
+							}
+							related.append("\n");
+						}
+
+						related.append("Borehole: ");
+						related.append(borehole.getName());
+					}
+
+					for(Outcrop outcrop : item.getOutcrops()){
+						if(related.length() > 0) related.append("\n");
+
+						related.append("Outcrop: ");
+						related.append(outcrop.getName());
+						if(outcrop.getNumber() != null){
+							related.append(" - ");
+							related.append(outcrop.getNumber());
+						}
+					}
+
+					for(Shotline shotline : item.getShotlines()){
+						if(related.length() > 0) related.append("\n");
+
+						related.append("Shotline: ");
+						related.append(shotline.getName());
+						if(shotline.getYear() != null){
+							related.append(", ");
+							related.append(shotline.getYear());
+						}
+
+						if(shotline.getShotlineMax() != null){
+							related.append("\nShotpoints: ");
+							related.append(shotline.getShotlineMin());
+							related.append(" - ");
+							related.append(shotline.getShotlineMax());
+						}
+
+						if(item.getProject() != null){
+							related.append("\nProject: ");
+							related.append(item.getProject().getName());
+						}
+					}
+
+					if(related.length() > 0){
+						row.put("Related", related.toString());
+					}
+					// End "Related"
+
+					// "Sample"
+					if(item.getSampleNumber() != null){
+						row.put("Sample", item.getSampleNumber());
+					}
+
+					// "Box"
+					if(item.getBoxNumber() != null){
+						row.put("Box", item.getBoxNumber());
+					}
+
+					// "Set"
+					if(item.getSetNumber() != null){
+						row.put("Set", item.getSetNumber());
+					}
+
+					// "Core Number"
+					if(item.getCoreNumber() != null){
+						row.put("Core Number", item.getCoreNumber());
+					}
+
+					// Begin "Core Diameter"
+					if(item.getCoreDiameter() != null){
+						CoreDiameter diameter = item.getCoreDiameter();
+						if(diameter.getName() != null){
+							row.put("Core Diameter", diameter.getName());
+						} else {
+							row.put("Core Diameter", diameter.getDiameter());
+
+							// "Core Diameter Units"
+							if(diameter.getUnit() != null){
+								row.put("Core Diameter Units", diameter.getUnit().getAbbr());
+							}
+						}
+					}
+					// End "Core Diameter"
+
+					// "Top"
+					StringBuilder tobo = new StringBuilder();
+					if(item.getIntervalTop() != null){
+						row.put("Top", item.getIntervalTop());
+					}
+
+					// "Bottom"
+					if(item.getIntervalBottom() != null){
+						row.put("Bottom", item.getIntervalBottom());
+					}
+
+					// "Top/Bottom Units"
+					if((item.getIntervalBottom() != null || item.getIntervalTop() != null) && item.getIntervalUnit() != null){
+						row.put("Top/Bottom Units", item.getIntervalUnit().getAbbr());
+					}
+					// End "Top/Bottom"
+
+					// Begin "Keywords"
+					StringBuilder keywords = new StringBuilder();
+					for(Keyword keyword : item.getKeywords()){
+						if(keywords.length() > 0) keywords.append(", ");
+						keywords.append(keyword.getName());
+					}
+					if(keywords.length() > 0){
+						row.put("Keywords", keywords.toString());
+					}
+					// Ends "Keywords"
+
+					// "Collection"
+					if(item.getCollection() != null){
+						row.put("Collection", item.getCollection().getName());
+					}
+
+					// Begin "Barcode"
+					String barcode = item.getBarcode();
+					if(barcode == null) barcode = item.getAltBarcode();
+					if(barcode != null) row.put("Barcode", barcode);
+					// End "Barcode"
+
+					// "Location"
+					if(item.getContainerPath() != null){
+						row.put("Location", item.getContainerPath());
+					}
+
+					writer.write(row, header, processors);
+				}
+			}
+			writer.close();
 		} finally {
 			if(out != null){ out.close(); }
 			if(gos != null){ gos.close(); }

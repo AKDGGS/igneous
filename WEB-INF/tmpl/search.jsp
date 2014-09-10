@@ -124,9 +124,10 @@
 							</select>
 
 							<span class="spacer">|</span>
-
-							<button class="btn btn-info" id="print">Print All</button>
-
+							
+							<a id="pdf" href="#pdf">PDF</a> /
+							<a id="csv" href="#csv">CSV</a>
+						
 							<span class="spacer">|</span>
 
 							Displaying <span id="page_start"></span>

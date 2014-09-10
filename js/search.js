@@ -791,9 +791,18 @@ $(function(){
 
 	$('#keyword_id').change(function(){ search.execute(); });
 
-	$('#print').click(function(){
+	$('#pdf').click(function(){
 		var hash = window.location.hash.substr(1);
 		window.location.href = 'search.pdf?' + hash;
+
+		return false;
+	});
+
+	$('#csv').click(function(){
+		var hash = window.location.hash.substr(1);
+		window.location.href = 'search.csv?' + hash;
+
+		return false;
 	});
 
 	var quadrangle_loaded = $.Deferred();
