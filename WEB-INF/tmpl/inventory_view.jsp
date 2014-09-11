@@ -243,7 +243,7 @@
 			</dl>
 
 			<ul id="tabs" class="nav nav-tabs" style="width: 100%">
-				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
+				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.outcrops) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
 				<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
 				<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
 				<li><a href="#containerlog">Container Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
