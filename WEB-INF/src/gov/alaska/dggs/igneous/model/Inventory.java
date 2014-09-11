@@ -115,9 +115,6 @@ public class Inventory implements Serializable
 	private Boolean can_publish;
 	public Boolean getCanPublish(){ return can_publish; }
 
-	private Boolean skeleton;
-	public Boolean getSkeleton(){ return skeleton; }
-
 	private BigDecimal radiation_msvh;
 	public BigDecimal getRadiationMSVH(){ return radiation_msvh; }
 

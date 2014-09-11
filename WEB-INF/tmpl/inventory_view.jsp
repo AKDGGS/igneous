@@ -234,10 +234,6 @@
 			</dl>
 			</c:if>
 			<dl>
-				<dt>Skeleton</dt>
-				<dd><span title="${inventory.skeleton ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.skeleton ? 'ok' : 'remove'}"></span></dd>
-			</dl>
-			<dl>
 				<dt>Publish</dt>
 				<dd><span title="${inventory.canPublish ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.canPublish ? 'ok' : 'remove'}"></span></dd>
 			</dl>

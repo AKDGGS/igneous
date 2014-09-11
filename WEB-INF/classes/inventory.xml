@@ -125,7 +125,6 @@
 			iv.sample_frequency,
 			iv.recovery,
 			iv.can_publish,
-			iv.skeleton,
 			iv.radiation_msvh,
 			iv.received_date,
 			iv.entered_date,
@@ -181,7 +180,6 @@
 		<result property="sample_frequency" column="sample_frequency" />
 		<result property="recovery" column="recovery" />
 		<result property="can_publish" column="can_publish" />
-		<result property="skeleton" column="skeleton" />
 		<result property="radiation_msvh" column="radiation_msvh" />
 		<result property="received" column="received_date" />
 		<result property="entered" column="entered_date" />
