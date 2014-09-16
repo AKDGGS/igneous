@@ -30,7 +30,7 @@ import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.igneous.transformer.IterableTransformer;
 
 
-public class InventoryServlet extends HttpServlet
+public class SummaryServlet extends HttpServlet
 {
 	private static JSONSerializer serializer;
 	static {
@@ -39,32 +39,10 @@ public class InventoryServlet extends HttpServlet
 		serializer.include("boreholes");
 		serializer.include("outcrops");
 		serializer.include("keywords");
-		serializer.include("files");
 		serializer.include("shotpoints");
 		serializer.include("collections");
-		serializer.include("publications");
-		serializer.include("container");
 
 		serializer.exclude("class");
-		serializer.exclude("container.class");
-		serializer.exclude("intervalUnit.class");
-		serializer.exclude("collection.class");
-		serializer.exclude("coreDiameter.class");
-		serializer.exclude("coreDiameter.unit.class");
-		serializer.exclude("keywords.class");
-		serializer.exclude("keywords.group.class");
-		serializer.exclude("wells.class");
-		serializer.exclude("wells.unit.class");
-		serializer.exclude("boreholes.class");
-		serializer.exclude("boreholes.measuredDepthUnit.class");
-		serializer.exclude("boreholes.prospect.class");
-		serializer.exclude("outcrops.class");
-		serializer.exclude("shotpoints.class");
-		serializer.exclude("shotpoints.shotline.class");
-		serializer.exclude("files.class");
-		serializer.exclude("files.type.class");
-		serializer.exclude("publications.class");
-		serializer.exclude("WKT");
 
 		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
 		serializer.transform(new ExcludeTransformer(), void.class);
@@ -93,16 +71,49 @@ public class InventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List output = null;
+			HashMap output = new HashMap();
 
-			if(id != null){
-				output = sess.selectList(
-					"gov.alaska.dggs.igneous.Inventory.getByID", id
-				);
-			} else if(barcode != null){
-				output = sess.selectList(
-					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
-				);
+			List<Map> containers = sess.selectList(
+				"gov.alaska.dggs.igneous.Container.getTotalsByBarcode", barcode
+			);
+
+			if(containers.size() > 0){
+				Long total = new Long(0);
+				String name = null;
+
+				List<Integer> ids = new ArrayList<Integer>();
+				for(Map container : containers){
+					if(name == null && container.containsKey("name")){
+						name = (String)container.get("name");
+					}
+					ids.add((Integer)container.get("container_id"));
+					total += (Long)container.get("total");
+				}
+
+				output.put("containerPath", name);
+				output.put("barcode", barcode);
+				output.put("total", total);
+
+				output.put("collections", sess.selectList(
+					"gov.alaska.dggs.igneous.Container.getCollectionTotalsByID",
+					ids
+				));
+				output.put("keywords", sess.selectOne(
+					"gov.alaska.dggs.igneous.Container.getKeywordSummaryByID",
+					ids
+				));
+				output.put("wells", sess.selectList(
+					"gov.alaska.dggs.igneous.Container.getWellTotalsByID",
+					ids
+				));
+				output.put("boreholes", sess.selectList(
+					"gov.alaska.dggs.igneous.Container.getBoreholeTotalsByID",
+					ids
+				));
+				output.put("shotlines", sess.selectList(
+					"gov.alaska.dggs.igneous.Container.getShotlineTotalsByID",
+					ids
+				));
 			}
 
 			OutputStreamWriter out = null;

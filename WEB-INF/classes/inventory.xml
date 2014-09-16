@@ -28,6 +28,19 @@
 		WHERE iv.barcode = #{barcode}
 			OR iv.barcode = ('GMC-' || #{barcode})
 			OR iv.alt_barcode = #{barcode}
+			OR iv.container_id IN (
+				WITH RECURSIVE r AS (
+					SELECT container_id
+					FROM container WHERE barcode = #{barcode}
+
+					UNION ALL
+
+					SELECT co.container_id
+					FROM r
+					JOIN container AS co
+						ON r.container_id = co.parent_container_id
+				) SELECT container_id FROM r
+			)
 		LIMIT 100
 	</select>
 

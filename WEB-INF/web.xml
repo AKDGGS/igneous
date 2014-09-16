@@ -239,6 +239,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>SummaryServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.SummaryServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SummaryServlet</servlet-name>
+		<url-pattern>/summary.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>QuadrangleServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.QuadrangleServlet</servlet-class>
 	</servlet>
