@@ -110,7 +110,7 @@ $(function(){
 						else { li.addClass('active'); }
 
 						var keyword_ids = $('#keyword_controls li.active a').map(function(){
-							return this.getAttribute('data-keyword-id').split(',');
+							return this.getAttribute('data-keyword-id');
 						}).get();
 
 						if(keyword_ids.length == 0){

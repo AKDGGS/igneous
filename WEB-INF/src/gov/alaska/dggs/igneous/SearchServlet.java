@@ -199,13 +199,31 @@ public class SearchServlet extends HttpServlet
 		// get significantly more expensive as keywords are added
 		String[] keywords = request.getParameterValues("keyword_id");
 		if(isIntegerArray(keywords)){
-			if(query.length() > 0){ query.append(" AND "); }
+			if(query.length() > 0) query.append(" AND ");
 			query.append("SORT(ARRAY[");
 			for(int i = 0; i < keywords.length; i++){
-				if(i > 0){ query.append(","); }
+				if(i > 0) query.append(",");
 				query.append(keywords[i]);
 			}
 			query.append("]) <@ keyword_ids");
+		} else {
+			// This segment handles cases where we're being provided
+			// groups of comma-separated keyword_ids.
+			if(query.length() > 0) query.append(" AND ");
+			query.append("(");
+			for(int i = 0; i < keywords.length; i++){
+				if(i > 0) query.append(" OR ");
+				String keyword_ids[] = keywords[i].split(",");
+				if(isIntegerArray(keyword_ids)){
+					query.append("SORT(ARRAY[");
+					for(int x = 0; x < keyword_ids.length; x++){
+						if(x > 0) query.append(",");
+						query.append(keyword_ids[x]);
+					}
+					query.append("]) <@ keyword_ids");
+				}
+			}
+			query.append(")");
 		}
 
 		// Handle borehole_ids -
