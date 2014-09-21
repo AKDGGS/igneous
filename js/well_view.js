@@ -178,8 +178,12 @@ $(function(){
 
 					// Box
 					td = document.createElement('td');
-					if('box' in obj){
-						td.appendChild(document.createTextNode(obj['box']));
+					if('boxNumber' in obj){
+						td.appendChild(document.createTextNode(obj['boxNumber']));
+					}
+					if('setNumber' in obj){
+						td.appendChild(document.createElement('br'));
+						td.appendChild(document.createTextNode(obj['setNumber']));
 					}
 					tr.appendChild(td);
 

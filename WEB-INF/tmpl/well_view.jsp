@@ -103,8 +103,8 @@
 					</tr>
 					<tr>
 						<th>ID</th>
-						<th>Box</th>
-						<th>Top / Bottom</th>
+						<th>Box /<br>Set</th>
+						<th>Top /<br>Bottom</th>
 						<th>Keywords</th>
 						<th>Collection</th>
 						<th>Barcode</th>
