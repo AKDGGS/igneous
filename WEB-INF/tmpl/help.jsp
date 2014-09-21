@@ -120,6 +120,10 @@
 						<td>quadrangle</td>
 						<td>Quadrangle Name (string)</td>
 					</tr>
+					<tr>
+						<td>everything</td>
+						<td>All fields (string) (implicit)</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
