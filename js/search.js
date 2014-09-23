@@ -422,6 +422,16 @@ $(function(){
 			} else {
 				AlertTool.clear();
 
+				// Update CSV link with hash parameters
+				$('#csv').attr(
+					'href', 'search.csv?' + window.location.hash.substr(1)
+				);
+
+				// Update PDF link with hash parameters
+				$('#pdf').attr(
+					'href', 'search.pdf?' + window.location.hash.substr(1)
+				);
+
 				var layer = clearmap();
 				var body = document.getElementById('inventory_body');
 				while(body.hasChildNodes()){ body.removeChild(body.firstChild); }
@@ -790,20 +800,6 @@ $(function(){
 	});
 
 	$('#keyword_id').change(function(){ search.execute(); });
-
-	$('#pdf').click(function(){
-		var hash = window.location.hash.substr(1);
-		window.location.href = 'search.pdf?' + hash;
-
-		return false;
-	});
-
-	$('#csv').click(function(){
-		var hash = window.location.hash.substr(1);
-		window.location.href = 'search.csv?' + hash;
-
-		return false;
-	});
 
 	var quadrangle_loaded = $.Deferred();
 	$.ajax({
