@@ -5,6 +5,7 @@
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			th { text-align: left; }
+			pre { margin-left: 30px; }
 		</style>
 	</head>
 	<body>
@@ -28,6 +29,39 @@
 			<h2>Search Help</h2>
 
 			<h3>The Search Bar</h3>
+			<p>
+				The Search Bar queries many different database fields.
+				Users may specify which fields to query explicitly by 
+				specifying the field name followed by a colon. For example,
+				if you wanted to query the USGS collection, looking
+				for inventory around the Anchorage area you could search:
+
+				<pre>anchorage collection:usgs</pre>
+			<p>
+
+			<p>
+				Numeric fields can be searched exactly the same as string fields.
+				For example, if you wanted to query all cuttings in the database
+				that had a top interval of 100, you could search:
+
+				<pre>cuttings top:100</pre>
+
+				It is also possible to search for ranges in numeric fields. For
+				example, if you wanted to query all core in the database
+				that had a top interval between 500 and 550, you could search:
+
+				<pre>core top:[500 TO 550]</pre>
+
+				<i><b>* Note:</b> "TO" inside the range is case sensitive</i>
+			</p>
+
+			<p>
+				A complete list of fields available for searching can be found
+				below.
+			</p>
+
+			<br><br>
+	
 			<table>
 				<thead>
 					<tr>
