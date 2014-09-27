@@ -18,6 +18,7 @@
 
 			label { font-size: 14px; font-weight: bold; }
 			.navbar { white-space: nowrap; }
+			.datagrid thead td { padding: 4px !important; }
 			th { white-space: nowrap; font-size: 85%; }
 
 			@media print {
@@ -86,21 +87,25 @@
 					<tr class="noprint">
 						<td colspan="13" style="text-align: right">
 							<input type="hidden" name="start" id="start" value="0" />
-							<label for="max">Showing</label>
-							<select name="max" id="max">
-								<option value="10">10</option>
-								<option value="25" selected="selected">25</option>
-								<option value="50">50</option>
-								<option value="100">100</option>
-								<option value="250">250</option>
-								<option value="500">500</option>
-								<option value="1000">1000</option>
-							</select>
+
+							Displaying <span id="page_start"></span>
+							- <span id="page_end"></span> of
+							<span id="page_found"></span>
 
 							<span class="spacer">|</span>
 
+							<a id="pdf" href="#pdf">PDF</a> /
+							<a id="csv" href="#csv">CSV</a>
+						
+							<span class="spacer">|</span>
+
+							<ul class="pagination" id="page_control"></ul>
+						</td>
+					</tr>
+					<tr class="noprint">
+						<td colspan="13" style="text-align: right">
 							<label for="sort">Sort by</label>
-							<select name="sort" id="sort">
+							<select name="sort">
 								<option value="0">Best Match</option>
 								<option value="9">Barcode</option>
 								<option value="10">Borehole</option>
@@ -118,25 +123,47 @@
 								<option value="8">Well Number</option>
 							</select>
 
-							<select name="dir" id="dir">
-								<option value="0">Ascending</option>
-								<option value="1">Descending</option>
+							<select name="dir">
+								<option value="0">Asc</option>
+								<option value="1">Desc</option>
+							</select>
+
+							<select name="sort">
+								<option value="0">Best Match</option>
+								<option value="9">Barcode</option>
+								<option value="10">Borehole</option>
+								<option value="11">Box</option>
+								<option value="1">Collection</option>
+								<option value="2">Core Number</option>
+								<option value="14">Keywords</option>
+								<option value="3">Location</option>
+								<option value="12">Prospect</option>
+								<option value="13">Sample</option>
+								<option value="4">Set Number</option>
+								<option value="5">Top</option>
+								<option value="6">Bottom</option>
+								<option value="7">Well Name</option>
+								<option value="8">Well Number</option>
+							</select>
+
+							<select name="dir">
+								<option value="0">Asc</option>
+								<option value="1">Desc</option>
 							</select>
 
 							<span class="spacer">|</span>
-							
-							<a id="pdf" href="#pdf">PDF</a> /
-							<a id="csv" href="#csv">CSV</a>
-						
-							<span class="spacer">|</span>
 
-							Displaying <span id="page_start"></span>
-							- <span id="page_end"></span> of
-							<span id="page_found"></span>
+							<label for="max">Showing</label>
+							<select name="max" id="max">
+								<option value="10">10</option>
+								<option value="25" selected="selected">25</option>
+								<option value="50">50</option>
+								<option value="100">100</option>
+								<option value="250">250</option>
+								<option value="500">500</option>
+								<option value="1000">1000</option>
+							</select>
 
-							<span class="spacer">|</span>
-
-							<ul class="pagination" id="page_control"></ul>
 						</td>
 					</tr>
 					<tr>

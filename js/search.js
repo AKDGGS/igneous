@@ -4,7 +4,7 @@ var search, map, popup;
 function reset()
 {
 	$('#max').val(25);
-	$('#start, #sort, #dir').val(0);
+	$('#start, select[name=sort], select[name=dir]').val(0);
 	$('#q').val('').blur();
 }
 
@@ -735,7 +735,7 @@ $(function(){
 		return false;	
 	});
 
-	$('#sort, #max, #dir').change(function(){ search.execute(); });
+	$('select[name=sort], select[name=dir], #max').change(function(){ search.execute(); });
 
 	$('#q, #top, #bottom').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }

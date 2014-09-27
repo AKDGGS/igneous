@@ -38,13 +38,23 @@ Search.prototype = {
 	},
 
 	getSort: function(){
-		var e = document.getElementById('sort');
-		return Number(e.options[e.selectedIndex].value);
+		var e = document.getElementsByName('sort');
+
+		var r = [];
+		for(i=0; i < e.length; i++){
+			r.push(Number(e[i].options[e[i].selectedIndex].value));
+		}
+		return r;
 	},
 
 	getDir: function(){
-		var e = document.getElementById('dir');
-		return Number(e.options[e.selectedIndex].value);
+		var e = document.getElementsByName('dir');
+
+		var r = [];
+		for(i=0; i < e.length; i++){
+			r.push(Number(e[i].options[e[i].selectedIndex].value));
+		}
+		return r;
 	},
 
 	getStart: function(){
@@ -178,10 +188,17 @@ Search.prototype = {
 			if(max !== 25){ params['max'] = max; }
 
 			var sort = this.getSort();
-			if(sort !== 0){ params['sort'] = sort; }
-
 			var dir = this.getDir();
-			if(dir !== 0){ params['dir'] = dir; }
+			if(dir.length == sort.length){
+				for(i=0; i < sort.length; i++){
+					if(sort[i] !== 0 || dir[i] !== 0){
+						params['sort'] = sort;
+						params['dir'] = dir;
+					}
+				}
+			} else {
+				console.warn('sort and dir have differing lengths.');
+			}
 			
 			var currsearch = this.encodeParameters(params);
 			if(this.lastsearch.length > 0 && currsearch !== this.lastsearch){
@@ -292,6 +309,7 @@ Search.prototype = {
         }
       }
     }
+
     return r;
   },
 

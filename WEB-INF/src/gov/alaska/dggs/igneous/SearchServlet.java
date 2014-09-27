@@ -350,146 +350,150 @@ public class SearchServlet extends HttpServlet
 		if(query.length() > 0){
 			StringBuilder order = new StringBuilder();
 
-			int sort = 0;
-			String s_sort = request.getParameter("sort");
-			if(s_sort != null){ sort = Integer.parseInt(s_sort); }
+			String dirs[] = request.getParameterValues("dir");
+			String sorts[] = request.getParameterValues("sort");
+			if(sorts != null && dirs != null && dirs.length == sorts.length){
+				for(int i = 0; i < sorts.length; i++){
+					int sort = Integer.parseInt(sorts[i]);
+					int dir = Integer.parseInt(dirs[i]);
 
-			int dir = 0;
-			String s_dir = request.getParameter("dir");
-			if(s_dir != null){ dir = Integer.parseInt(s_dir); }
+					switch(sort){
+						// Sort by collection
+						case 1:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("collection_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-			switch(sort){
-				// Sort by collection
-				case 1:
-					order.append(
-						" ORDER BY collection_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by core
+						case 2:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("core_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by core
-				case 2:
-					order.append(
-						" ORDER BY core_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by location/container
+						case 3:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("location_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by location/container
-				case 3:
-					order.append(
-						" ORDER BY location_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sorty by set
+						case 4:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("set_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sorty by set
-				case 4:
-					order.append(
-						" ORDER BY set_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by top
+						case 5:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("top ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by top
-				case 5:
-					order.append(
-						" ORDER BY top " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by bottom
+						case 6:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("bottom ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by bottom
-				case 6:
-					order.append(
-						" ORDER BY bottom IS NULL " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by well
+						case 7:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("well_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by well
-				case 7:
-					order.append(
-						" ORDER BY well_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by well_number
+						case 8:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("well_number_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by well_number
-				case 8:
-					order.append(
-						" ORDER BY well_number_sort " + 
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by barcode
+						case 9:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("barcode_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by barcode
-				case 9:
-					order.append(
-						" ORDER BY barcode_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by borehole
+						case 10:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("borehole_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by borehole
-				case 10:
-					order.append(
-						" ORDER BY borehole_sort " + 
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by box
+						case 11:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("box_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by box
-				case 11:
-					order.append(
-						" ORDER BY box_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by prospect
+						case 12:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("prospect_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by prospect
-				case 12:
-					order.append(
-						" ORDER BY prospect_sort " +
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by sample number
+						case 13:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("sample_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by sample number
-				case 13:
-					order.append(
-						" ORDER BY sample_sort " + 
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
+						// Sort by keywords (keyword group, then name)
+						case 14:
+							if(order.length() == 0) order.append(" ORDER BY ");
+							else order.append(", ");
+							order.append("keyword_sort ");
+							order.append(dir == 0 ? "ASC" : "DESC");
+							order.append(" NULLS LAST");
+						break;
 
-				// Sort by keywords (keyword group, then name)
-				case 14:
-					order.append(
-						" ORDER BY keyword_sort " + 
-						(dir == 0 ? "ASC" : "DESC") +
-						" NULLS LAST"
-					);
-				break;
-
-				default:
-					// If possible, use ranked sorting order
-					if(parser != null && parser.getOrderClause().length() > 0){
-						order.append(" ORDER BY " + parser.getOrderClause());
+						default:
+							// If possible, use ranked sorting order
+							if(parser != null && parser.getOrderClause().length() > 0){
+								if(order.length() == 0) order.append(" ORDER BY ");
+								else order.append(", ");
+								order.append(parser.getOrderClause());
+							}
+						break;
 					}
+				}
 			}
 
 			if(canlimit){
@@ -546,7 +550,7 @@ public class SearchServlet extends HttpServlet
 			HashMap<String, Object> params = buildParameters(request, isjson);
 
 			if(!params.isEmpty()){
-				//System.out.println("q: " + params.get("_query"));
+				System.out.println("q: " + params.get("_query"));
 				List<Integer> list = sess.selectList(
 					"gov.alaska.dggs.igneous.SearchMapper.search", params
 				);
