@@ -41,44 +41,61 @@
 	</update>
 
 
-	<select id="getTotalsByBarcode" parameterType="String" resultType="HashMap">
-		WITH RECURSIVE r AS (
-			SELECT container_id, path_cache
-			FROM container
-			WHERE barcode = #{barcode}
-				OR alt_barcode = #{barcode}
-				OR barcode = 'GMC-' || #{barcode}
+	<select id="getTotalsByBarcode" parameterType="String" resultType="Map">
+		(
+			SELECT c.container_id, c.path_cache, true AS include,
+				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, 'None')) AS total
+			FROM inventory AS iv
+			LEFT OUTER JOIN container AS c
+				ON c.container_id = iv.container_id
+			WHERE iv.active
+				AND iv.container_id IN (
+					WITH RECURSIVE r AS (
+					SELECT container_id
+					FROM container
+					WHERE COALESCE(barcode, alt_barcode) = #{barcode}
 
-			UNION ALL
+					UNION ALL
 
-			SELECT co.container_id, co.path_cache
-			FROM r
-			JOIN container AS co
-				ON r.container_id = co.parent_container_id
+					SELECT co.container_id
+					FROM r
+					JOIN container AS co
+						ON r.container_id = co.parent_container_id
+					) SELECT container_id FROM r
+				)
+			GROUP BY c.container_id, c.path_cache
+			ORDER BY c.path_cache
+		) UNION (
+			SELECT c.container_id, c.path_cache, false AS include,
+				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, 'None')) AS total
+			FROM inventory AS iv
+			JOIN container AS c
+				ON c.container_id = iv.container_id
+			WHERE iv.active
+				AND COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+			GROUP BY c.container_id, c.path_cache
+			ORDER BY c.path_cache
 		)
-		SELECT r.container_id, r.path_cache AS name,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
-		FROM r
-		JOIN inventory AS iv
-			ON iv.container_id = r.container_id
-		GROUP BY r.container_id, r.path_cache
-		ORDER BY r.path_cache		
 	</select>
 
 
-	<select id="getCollectionTotalsByID" parameterType="List" resultType="HashMap">
+	<select id="getCollectionTotals" parameterType="Map" resultType="Map">
 		SELECT co.name AS collection,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
+			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, 'None')) AS total
 		FROM inventory AS iv
 		JOIN collection AS co
 			ON co.collection_id = iv.collection_id
-		WHERE iv.active
-			AND iv.container_id IN <foreach item="i" collection="list" open="(" separator="," close=")">${i}</foreach>
+		WHERE iv.active AND (
+			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+			<if test="container_id != null">
+			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
+			</if>
+		)
 		GROUP BY co.name
 	</select>
 
 
-	<select id="getWellTotalsByID" parameterType="List" resultType="HashMap">
+	<select id="getWellTotals" parameterType="Map" resultType="Map">
 		SELECT we.name AS well,
 			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
 		FROM container AS co
@@ -88,13 +105,17 @@
 			ON ivw.inventory_id = iv.inventory_id
 		JOIN well AS we
 			ON we.well_id = ivw.well_id
-		WHERE iv.active
-			AND iv.container_id IN <foreach item="i" collection="list" open="(" separator="," close=")">${i}</foreach>
+		WHERE iv.active AND (
+			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+			<if test="container_id != null">
+			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
+			</if>
+		)
 		GROUP BY we.name
 	</select>
 
 
-	<select id="getBoreholeTotalsByID" parameterType="List" resultType="HashMap">
+	<select id="getBoreholeTotals" parameterType="Map" resultType="Map">
 		SELECT 
 			(
 				COALESCE(ps.name, '') ||
@@ -111,14 +132,18 @@
 			ON bh.borehole_id = ivb.borehole_id
 		LEFT OUTER JOIN prospect AS ps
 			ON ps.prospect_id = bh.prospect_id
-		WHERE iv.active
-			AND iv.container_id IN <foreach item="i" collection="list" open="(" separator="," close=")">${i}</foreach>
+		WHERE iv.active AND (
+			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+			<if test="container_id != null">
+			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
+			</if>
+		)
 		GROUP BY ps.name, bh.name
 		ORDER BY ps.name, bh.name
 	</select>
 
 
-	<select id="getKeywordSummaryByID" parameterType="List" resultType="String">
+	<select id="getKeywordSummary" parameterType="Map" resultType="String">
 		SELECT STRING_AGG(name, ', ' ORDER BY keyword_group_id, name) AS keywords
 		FROM keyword
 		WHERE keyword_id IN (
@@ -126,14 +151,18 @@
 			FROM inventory AS iv
 			JOIN inventory_keyword AS ik
 				ON iv.inventory_id = ik.inventory_id
-			WHERE iv.active
-				AND iv.container_id IN <foreach item="i" collection="list" open="(" separator="," close=")">${i}</foreach>
+			WHERE iv.active AND (
+				COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+				<if test="container_id != null">
+				OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
+				</if>
+			)
 		)
 		LIMIT 1
 	</select>
 
 
-	<select id="getShotlineTotalsByID" parameterType="List" resultType="HashMap">
+	<select id="getShotlineTotals" parameterType="Map" resultType="Map">
 		SELECT sl.name AS shotline,
 			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode, '*')) AS total
 		FROM container AS co
@@ -145,8 +174,12 @@
 			ON sp.shotpoint_id = ivs.shotpoint_id
 		JOIN shotline AS sl
 			ON sl.shotline_id = sp.shotline_id
-		WHERE iv.active
-			AND iv.container_id IN <foreach item="i" collection="list" open="(" separator="," close=")">${i}</foreach>
+		WHERE iv.active AND (
+			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+			<if test="container_id != null">
+			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
+			</if>
+		)
 		GROUP BY co.container_id, sl.shotline_id, sl.name
 	</select>
 

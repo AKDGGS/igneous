@@ -41,6 +41,7 @@ public class SummaryServlet extends HttpServlet
 		serializer.include("keywords");
 		serializer.include("shotpoints");
 		serializer.include("collections");
+		serializer.include("containers");
 
 		serializer.exclude("class");
 
@@ -73,46 +74,56 @@ public class SummaryServlet extends HttpServlet
 		try {
 			HashMap output = new HashMap();
 
-			List<Map> containers = sess.selectList(
+			List<Map> results = sess.selectList(
 				"gov.alaska.dggs.igneous.Container.getTotalsByBarcode", barcode
 			);
 
-			if(containers.size() > 0){
-				Long total = new Long(0);
-				String name = null;
-
+			if(results.size() > 0){
+				Long count = new Long(0);
+				List<Map> containers = new ArrayList<Map>();
 				List<Integer> ids = new ArrayList<Integer>();
-				for(Map container : containers){
-					if(name == null && container.containsKey("name")){
-						name = (String)container.get("name");
-					}
-					ids.add((Integer)container.get("container_id"));
-					total += (Long)container.get("total");
+
+				for(Map result : results){
+					Boolean include = (Boolean)result.get("include");
+					if(include) ids.add((Integer)result.get("container_id"));
+
+					String name = (String)result.get("path_cache");
+					Long total = (Long)result.get("total");
+
+					count += total;
+
+					Map container = new HashMap(2);
+					container.put("container", name);
+					container.put("total", total);
+					containers.add(container);
 				}
 
-				output.put("containerPath", name);
-				output.put("barcode", barcode);
-				output.put("total", total);
+				output.put("total", count);
+				output.put("containers", containers);
+
+				HashMap params = new HashMap(2);
+				if(!ids.isEmpty()) params.put("container_id", ids); 
+				params.put("barcode", barcode);
 
 				output.put("collections", sess.selectList(
-					"gov.alaska.dggs.igneous.Container.getCollectionTotalsByID",
-					ids
+					"gov.alaska.dggs.igneous.Container.getCollectionTotals",
+					params
 				));
 				output.put("keywords", sess.selectOne(
-					"gov.alaska.dggs.igneous.Container.getKeywordSummaryByID",
-					ids
+					"gov.alaska.dggs.igneous.Container.getKeywordSummary",
+					params
 				));
 				output.put("wells", sess.selectList(
-					"gov.alaska.dggs.igneous.Container.getWellTotalsByID",
-					ids
+					"gov.alaska.dggs.igneous.Container.getWellTotals",
+					params
 				));
 				output.put("boreholes", sess.selectList(
-					"gov.alaska.dggs.igneous.Container.getBoreholeTotalsByID",
-					ids
+					"gov.alaska.dggs.igneous.Container.getBoreholeTotals",
+					params
 				));
 				output.put("shotlines", sess.selectList(
-					"gov.alaska.dggs.igneous.Container.getShotlineTotalsByID",
-					ids
+					"gov.alaska.dggs.igneous.Container.getShotlineTotals",
+					params
 				));
 			}
 
