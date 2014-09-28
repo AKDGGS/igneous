@@ -344,6 +344,16 @@
 						<dd>${well.APINumber}</dd>
 					</dl>
 					</c:if>
+					<c:forEach items="${well.operators}" var="operator">
+					<dl>
+						<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
+						<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
+					</dl>
+					<dl>
+						<dt>Operator Type</dt>
+						<dd>${operator.type.name}</dd>
+					</dl>
+					</c:forEach>
 				</div>
 				</c:forEach>
 

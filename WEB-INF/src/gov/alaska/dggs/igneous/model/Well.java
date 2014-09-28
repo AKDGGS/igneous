@@ -12,27 +12,54 @@ public class Well implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	private int id;
-	private String name, alt_names, well_number, api_number;
-	private boolean is_onshore, is_federal;
-	private Date completion_date, spud_date;
-	private BigDecimal measured_depth, vertical_depth, elevation, elevation_kb;
-	private Unit unit;
-	private String permit_status, completion_status;
-
 	public int getID(){ return id; }
+
+	private String name;
 	public String getName(){ return name; }
+
+	private String alt_names;
 	public String getAltNames(){ return alt_names; }
+
+	private String well_number;
 	public String getWellNumber(){ return well_number; }
+
+	private String api_number;
 	public String getAPINumber(){ return api_number; }
-	public boolean isOnshore(){ return is_onshore; }
-	public boolean isFederal(){ return is_federal; }
+
+	private Boolean is_onshore;
+	public Boolean isOnshore(){ return is_onshore; }
+
+	private Boolean is_federal;
+	public Boolean isFederal(){ return is_federal; }
+
+	private Date completion_date;
 	public Date getCompletionDate(){ return completion_date; }
+
+	private Date spud_date;
 	public Date getSpudDate(){ return spud_date; }
+
+	private BigDecimal measured_depth;
 	public BigDecimal getMeasuredDepth(){ return measured_depth; }
+
+	private BigDecimal vertical_depth;
 	public BigDecimal getVerticalDepth(){ return vertical_depth; }
+
+	private BigDecimal elevation;
 	public BigDecimal getElevation(){ return elevation; }
+
+	private BigDecimal elevation_kb;
 	public BigDecimal getElevationKB(){ return elevation_kb; }
+
+	private Unit unit;
 	public Unit getUnit(){ return unit; }
+
+	private String permit_status;
 	public String getPermitStatus(){ return permit_status; }
+
+	private String completion_status;
 	public String getCompletionStatus(){ return completion_status; }
+
+	private List<Organization> operators;
+	public List<Organization> getOperators(){ return operators; }
+
 }

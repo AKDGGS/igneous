@@ -36,6 +36,7 @@ public class InventoryServlet extends HttpServlet
 	static {
 		serializer = new JSONSerializer();
 		serializer.include("wells");
+		serializer.include("wells.operators");
 		serializer.include("boreholes");
 		serializer.include("outcrops");
 		serializer.include("keywords");
@@ -55,6 +56,8 @@ public class InventoryServlet extends HttpServlet
 		serializer.exclude("keywords.group.class");
 		serializer.exclude("wells.class");
 		serializer.exclude("wells.unit.class");
+		serializer.exclude("wells.operators.class");
+		serializer.exclude("wells.operators.type.class");
 		serializer.exclude("boreholes.class");
 		serializer.exclude("boreholes.measuredDepthUnit.class");
 		serializer.exclude("boreholes.prospect.class");

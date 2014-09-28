@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Organization">
+	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="OrganizationMap">
+		SELECT o.organization_id, o.name, o.abbr, o.remark,
+			t.organization_type_id, t.name AS type, wo.is_current
+		FROM organization AS o
+		JOIN organization_type AS t
+			ON t.organization_type_id = o.organization_type_id
+		JOIN well_operator AS wo
+			ON wo.organization_id = o.organization_id
+		WHERE wo.well_id = #{well_id}
+		ORDER BY wo.is_current, o.name
+	</select>
+
+
+	<resultMap id="OrganizationMap" type="Organization">
+		<id property="id" column="organization_id" />
+		<result property="name" column="name" />
+		<result property="abbr" column="abbr" />
+		<result property="remark" column="remark" />
+
+		<!-- Only a transient property -->
+		<result property="is_current" column="is_current" />
+
+		<association property="type" javaType="OrganizationType">
+			<id property="id" column="organization_type_id" />
+			<result property="name" column="type" />
+		</association>
+	</resultMap>
+</mapper>

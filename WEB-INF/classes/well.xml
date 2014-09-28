@@ -59,6 +59,8 @@
 			<result property="name" column="unit_name" />
 			<result property="description" column="unit_description" />
 		</association>
+
+		<collection property="operators" column="well_id" ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByWellID" />
 	</resultMap>
 
 
