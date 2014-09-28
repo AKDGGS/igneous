@@ -40,7 +40,7 @@
 			)
 		)
 	</sql>
-	<select id="getMissingBranch" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getMissingBranch" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingBranch" />
 	</select>
 	<select id="getMissingBranchCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -67,7 +67,7 @@
 			)
 		)
 	</sql>
-	<select id="getMissingType" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getMissingType" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingType" />
 	</select>
 	<select id="getMissingTypeCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -92,7 +92,7 @@
 		GROUP BY barcode
 		HAVING COUNT(DISTINCT container_id) &gt; 1
 	</sql>
-	<select id="getSeparatedBarcodes" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getSeparatedBarcodes" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="SeparatedBarcodes" />
 	</select>
 	<select id="getSeparatedBarcodesCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -132,7 +132,7 @@
 			FROM inventory_publication
 		)
 	</sql>
-	<select id="getMissingMetadata" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getMissingMetadata" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingMetadata" />
 	</select>
 	<select id="getMissingMetadataCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -177,7 +177,7 @@
 			LIMIT 1
 		)
 	</sql>
-	<select id="getMissingMetadataNoBLM" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getMissingMetadataNoBLM" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingMetadataNoBLM" />
 	</select>
 	<select id="getMissingMetadataNoBLMCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -194,7 +194,7 @@
 			ON co.container_id = iv.container_id
 		WHERE iv.container_id IS NULL AND iv.active = true
 	</sql>
-	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingContainer" />
 	</select>
 	<select id="getMissingContainerCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -214,7 +214,7 @@
 		FROM inventory
 		WHERE active = true AND POSITION('-' IN barcode) = 0
 	</sql>
-	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="BarcodeOverlap" />
 	</select>
 	<select id="getBarcodeOverlapCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -230,7 +230,7 @@
 				well_number IS NULL OR LENGTH(TRIM(BOTH FROM well_number)) = 0
 			) AND well_id IN (SELECT DISTINCT well_id FROM inventory_well)
 	</sql>
-	<select id="getWellNumberEmpty" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getWellNumberEmpty" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="WellNumberEmpty" />
 	</select>
 	<select id="getWellNumberEmptyCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -245,7 +245,7 @@
 		WHERE api_number IS NOT NULL
 			AND LENGTH(api_number) &lt;&gt; 14
 	</sql>
-	<select id="getAPIBadLength" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getAPIBadLength" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="APIBadLength" />
 	</select>
 	<select id="getAPIBadLengthCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -262,7 +262,7 @@
 			AND interval_bottom IS NOT NULL
 			AND interval_bottom &lt; interval_top
 	</sql>
-	<select id="getBottomOverTop" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getBottomOverTop" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="BottomOverTop" />
 	</select>
 	<select id="getBottomOverTopCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -280,7 +280,7 @@
 			SELECT DISTINCT well_id FROM inventory_well
 		)
 	</sql>
-	<select id="getWellNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getWellNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="WellNoSpatial" />
 	</select>
 	<select id="getWellNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -296,7 +296,7 @@
 			SELECT borehole_id FROM borehole_geog
 		)
 	</sql>
-	<select id="getBoreholeNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getBoreholeNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="BoreholeNoSpatial" />
 	</select>
 	<select id="getBoreholeNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -312,7 +312,7 @@
 			SELECT outcrop_id FROM outcrop_geog
 		)
 	</sql>
-	<select id="getOutcropNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getOutcropNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="OutcropNoSpatial" />
 	</select>
 	<select id="getOutcropNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -328,7 +328,7 @@
 			SELECT shotpoint_id FROM shotpoint_geog
 		)
 	</sql>
-	<select id="getShotpointNoSpatial" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getShotpointNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="ShotpointNoSpatial" />
 	</select>
 	<select id="getShotpointNoSpatialCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -346,7 +346,7 @@
 			AND (iv.sample_number IS NULL
 			OR LENGTH(TRIM(BOTH FROM iv.sample_number)) = 0)
 	</sql>
-	<select id="getOutcropInventoryNoSampleNumber" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getOutcropInventoryNoSampleNumber" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="OutcropInventoryNoSampleNumber" />
 	</select>
 	<select id="getOutcropInventoryNoSampleNumberCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -379,7 +379,7 @@
 		WHERE iv.active
 			AND LENGTH(TRIM(BOTH FROM COALESCE(iv.barcode, iv.alt_barcode, r.barcode, ''))) = 0
 	</sql>
-	<select id="getMissingBarcode" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getMissingBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingBarcode" />
 	</select>
 	<select id="getMissingBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
@@ -403,11 +403,102 @@
 				iv.interval_bottom - GREATEST(we.measured_depth, we.vertical_depth)
 			) DESC
 	</sql>
-	<select id="getInventoryDeeperThanWell" resultSetType="FORWARD_ONLY" resultType="HashMap">
+	<select id="getInventoryDeeperThanWell" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="InventoryDeeperThanWell" />
 	</select>
 	<select id="getInventoryDeeperThanWellCount" resultSetType="FORWARD_ONLY" resultType="int">
 		SELECT COUNT(*)
 		FROM (<include refid="InventoryDeeperThanWell" />) AS q
+	</select>
+
+
+	<sql id="WellWithNoInventory">
+		SELECT well_id AS id, name AS desc
+		FROM well
+		WHERE well_id NOT IN (
+			SELECT DISTINCT well_id FROM inventory_well
+		)
+	</sql>
+	<select id="getWellWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="WellWithNoInventory" />
+	</select>
+	<select id="getWellWithNoInventoryCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="WellWithNoInventory" />) AS q
+	</select>
+
+
+	<sql id="BoreholeWithNoInventory">
+		SELECT borehole_id AS id,
+			CASE WHEN p.name IS NOT NULL
+			THEN p.name || ' - '
+			ELSE '' END || b.name AS desc
+		FROM borehole AS b
+		LEFT OUTER JOIN prospect AS p
+			ON p.prospect_id = b.prospect_id
+		WHERE borehole_id NOT IN (
+			SELECT DISTINCT borehole_id FROM inventory_borehole
+		)	
+	</sql>
+	<select id="getBoreholeWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="BoreholeWithNoInventory" />
+	</select>
+	<select id="getBoreholeWithNoInventoryCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="BoreholeWithNoInventory" />) AS q
+	</select>
+
+
+	<sql id="OutcropWithNoInventory">
+		SELECT outcrop_id AS id, name AS desc
+		FROM outcrop
+		WHERE outcrop_id NOT IN (
+			SELECT DISTINCT outcrop_id FROM inventory_outcrop
+		)
+	</sql>
+	<select id="getOutcropWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="OutcropWithNoInventory" />
+	</select>
+	<select id="getOutcropWithNoInventoryCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OutcropWithNoInventory" />) AS q
+	</select>
+
+
+	<sql id="ShotpointWithNoInventory">
+		SELECT sp.shotpoint_id AS id,
+			sl.name ||
+			CASE WHEN sp.shotpoint_number IS NOT NULL
+			THEN ' - ' || sp.shotpoint_number
+			ELSE '' END AS desc
+		FROM shotpoint AS sp
+		JOIN shotline AS sl
+			ON sl.shotline_id = sp.shotline_id
+		WHERE shotpoint_id NOT IN (
+			SELECT DISTINCT shotpoint_id FROM inventory_shotpoint
+		)
+	</sql>
+	<select id="getShotpointWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="ShotpointWithNoInventory" />
+	</select>
+	<select id="getShotpointWithNoInventoryCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="ShotpointWithNoInventory" />) AS q
+	</select>
+
+
+	<sql id="ProspectWithNoBorehole">
+		SELECT prospect_id AS id, name AS desc
+		FROM prospect
+		WHERE prospect_id NOT IN (
+			SELECT DISTINCT prospect_id FROM borehole
+		)
+	</sql>
+	<select id="getProspectWithNoBorehole" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="ProspectWithNoBorehole" />
+	</select>
+	<select id="getProspectWithNoBoreholeCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="ProspectWithNoBorehole" />) AS q
 	</select>
 </mapper>

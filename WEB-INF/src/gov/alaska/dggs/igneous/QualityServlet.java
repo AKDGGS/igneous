@@ -86,6 +86,21 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getInventoryDeeperThanWell",
 			"Well Inventory bottom greater than well bottom"
 		);
+		addReport(reports, "warning", "getProspectWithNoBorehole",
+			"Prospects with no corresponding Borehole"
+		);
+		addReport(reports, "warning", "getShotpointWithNoInventory",
+			"Shotpoints with no linked inventory"
+		);
+		addReport(reports, "warning", "getOutcropWithNoInventory",
+			"Outcrops with no linked inventory"
+		);
+		addReport(reports, "warning", "getBoreholeWithNoInventory",
+			"Boreholes with no linked inventory"
+		);
+		addReport(reports, "warning", "getWellWithNoInventory",
+			"Wells with no linked inventory"
+		);
 	}
 
 
