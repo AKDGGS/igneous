@@ -550,7 +550,7 @@ public class SearchServlet extends HttpServlet
 			HashMap<String, Object> params = buildParameters(request, isjson);
 
 			if(!params.isEmpty()){
-				System.out.println("q: " + params.get("_query"));
+				//System.out.println("q: " + params.get("_query"));
 				List<Integer> list = sess.selectList(
 					"gov.alaska.dggs.igneous.SearchMapper.search", params
 				);
