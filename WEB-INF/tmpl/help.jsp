@@ -56,11 +56,22 @@
 			</p>
 
 			<p>
+				It'a also possible to search for items that do not match
+				specific criteria. For example, if you wanted to find
+				mineral-related inventory that was not from an outcrop,
+				you could search:
+
+				<pre>keyword:mineral NOT keyword:outcrop</pre>
+
+				<i><b>* Note:</b> "NOT" is case sensitive</i>
+			</p>
+
+			<p>
 				A complete list of fields available for searching can be found
 				below.
 			</p>
 
-			<br><br>
+			<br>
 	
 			<table>
 				<thead>
