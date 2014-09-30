@@ -837,6 +837,18 @@ public class SearchServlet extends HttpServlet
   @SuppressWarnings("unchecked")
 	private void respondPDF(HttpServletRequest request, HttpServletResponse response, HashMap json) throws Exception
 	{
+		// Are we at any point sorting by keywords? If so, enable
+		// breaking the report by keywords
+		String lastkeyword = "";
+		boolean sortkeyword = false;
+		String sorts[] = request.getParameterValues("sort");
+		for(int i = 0; i < sorts.length; i++){
+			if(Integer.parseInt(sorts[i]) == 14){
+				sortkeyword = true;
+				break;
+			}
+		}
+
 		String app_url = (String)getServletContext().getInitParameter("app_url");
 		response.setContentType("application/pdf");
 
@@ -947,6 +959,11 @@ public class SearchServlet extends HttpServlet
 				table.setSpacing(0);
 				table.setCellsFitPage(true); // Force cells to exist on same page
 
+				// Use this to force a table to fit on a page, and not be broken
+				// - this directive is ignored if the table is too big
+				// to fit on a page, even alone
+				// table.setTableFitsPage(true);
+
 				Cell cell = new Cell();
 				cell.setBorder(Rectangle.NO_BORDER);
 				cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
@@ -967,6 +984,26 @@ public class SearchServlet extends HttpServlet
 
 				boolean zebra = true;
 				for(Inventory item : items){
+					// Render keywords first, as we may be adding a row for it
+					StringBuilder keywords = new StringBuilder();
+					for(Keyword keyword : item.getKeywords()){
+						if(keywords.length() > 0) keywords.append(", ");
+
+						keywords.append(keyword.getName());
+					}
+
+					if(sortkeyword && !lastkeyword.equals(keywords.toString())){
+						Paragraph kwparagraph = new Paragraph(
+							30, keywords.toString(),
+							FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13)
+						);
+
+						Cell kwcell = new Cell(kwparagraph);
+						kwcell.setBackgroundColor(Color.WHITE);
+						kwcell.setColspan(9);
+						table.addCell(kwcell);
+					} lastkeyword = keywords.toString();
+
 					zebra = !zebra;
 					cell.setBackgroundColor(zebra ? oddzebra : evenzebra);
 
@@ -1111,12 +1148,7 @@ public class SearchServlet extends HttpServlet
 					// End "Top/Bottom"
 
 
-					// Begin "Keywords"
-					StringBuilder keywords = new StringBuilder();
-					for(Keyword keyword : item.getKeywords()){
-						if(keywords.length() > 0) keywords.append(", ");
-						keywords.append(keyword.getName());
-					}
+					// Begin "Keywords" - built above
 					table.addCell(new Paragraph(leading, keywords.toString(), bfont));
 					// Ends "Keywords"
 
