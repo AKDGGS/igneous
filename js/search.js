@@ -8,7 +8,9 @@ function reset()
 	$('#q').val('').blur();
 }
 
-
+// Clears the map of all features tied to search results
+// non-search features, like those added by the user by drawing
+// a AoE don't have the 'default' renderIntent and are preserved
 function clearmap()
 {
 	popup.close();
@@ -25,11 +27,13 @@ function clearmap()
 	return layer;
 }
 
-
+// Restores search parameters based on the location hash
 function restore()
 {
 	if(window.location.hash.length > 1){
 		reset();
+
+		var sortcount = 0, dircount = 0;
 
 		var hash = window.location.hash.substr(1).split('&');
 		for(var i in hash){
@@ -96,10 +100,28 @@ function restore()
 						).attr('selected', 'selected').get(0);
 					break;
 
+					// This code makes sure sort is restored even
+					// if there's an unlimited number of sort levels
+					case 'sort':
+						var sort = document.getElementsByName('sort');
+						if(sortcount < sort.length){
+							$(sort[sortcount]).val(val);
+						} ++sortcount;
+					break;
+
+					// See sort
+					case 'dir':
+						var dir = document.getElementsByName('dir');
+						if(dircount < dir.length){
+							$(dir[dircount]).val(val);
+						} ++dircount;
+					break;
+
 					case 'top':
 					case 'bottom':
 						$('#advanced').addClass('active');
 						$('#advanced_cell').show();
+						// do not break here, actually do the default, too.
 
 					default: $('#'+key).val(val);
 				}
@@ -709,6 +731,7 @@ $(function(){
 		} // End onparse
 	});
 
+	// show and hide "advanced" tab
 	$('#advanced').click(function(){
 		var shown = $(this).hasClass('active');
 		if(shown){
@@ -723,6 +746,7 @@ $(function(){
 		return false;
 	});
 
+	// Search if someone clicks it
 	$('#search').click(function(){
 		search.execute();
 		
@@ -730,17 +754,23 @@ $(function(){
 		return false;
 	});
 
+	// Goto the help page if someone clicks it
 	$('#help').click(function(){
 		window.location.href = 'help';
 		return false;	
 	});
 
+	// If the sort, direction or max are updated, search
 	$('select[name=sort], select[name=dir], #max').change(function(){ search.execute(); });
 
+	// If someone hits enter on any text field, search
 	$('#q, #top, #bottom').keypress(function(e){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
+	// Load the mining districts dynamically from some json
+	// we also want to keep the wkt by attaching it to the option
+	// as a property, so we can reference it later
 	var mining_district_loaded = $.Deferred();
 	$.ajax({
 		url: 'mining_district.json', dataType: 'json',
@@ -761,6 +791,9 @@ $(function(){
 		}
 	});
 
+	// If the mining district changes, pull the wkt from 
+	// the selected option(s) attribute, and display it on the map
+	// also run the search
 	$('#mining_district_id').change(function(){
 		var layer = map.getLayersByName('Result Layer')[0];
 		destroyFeaturesByOrigin(layer, 'mining_district');
@@ -778,6 +811,7 @@ $(function(){
 		search.execute();
 	});
 
+	// Load the keywords dynamically from some json
 	var keyword_loaded = $.Deferred();
 	$.ajax({
 		url: 'keyword.json', dataType: 'json',
@@ -799,8 +833,11 @@ $(function(){
 		}
 	});
 
+	// Search if the keywords change
 	$('#keyword_id').change(function(){ search.execute(); });
 
+	// Load the quadrangles from some json, preserve the wkt
+	// as an attribute attached to the option
 	var quadrangle_loaded = $.Deferred();
 	$.ajax({
 		url: 'quadrangle.json', dataType: 'json',
@@ -821,6 +858,9 @@ $(function(){
 		}
 	});
 
+	// If the quadrangle changes, update the map displaying
+	// the selected quadrangles based on the wkt we attached
+	// earlier to the option as an attribute
 	$('#quadrangle_id').change(function(){
 		var layer = map.getLayersByName('Result Layer')[0];
 		destroyFeaturesByOrigin(layer, 'quadrangle');
@@ -847,6 +887,8 @@ $(function(){
 });
 
 
+// OpenLayers rendering must be delayed until
+// load - it's very picky about this
 $(window).load(function(){
 	map.render('map');
 	map.updateSize();
