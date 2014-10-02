@@ -67,6 +67,17 @@
 			</p>
 
 			<p>
+				By default, searches are conducted using logical conjuction (AND),
+				it is however possible to search using logical disjunction (OR)
+				using the OR operator. So if you wanted to find inventory
+				that was either core or cuttings, you could search:
+
+				<pre>keyword:cuttings OR keyword:core</pre>
+
+				<i><b>* Note:</b> "OR" is case sensitive</i>
+			</p>
+
+			<p>
 				A complete list of fields available for searching can be found
 				below.
 			</p>
