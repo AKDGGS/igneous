@@ -15,15 +15,12 @@
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			#inventory_container { display: none; }
-			#keyword_controls { display: none; margin: 0px; }
-			#keyword_controls > div { margin-bottom: 4px; }
-			.half-left { width: 50%; float: left; }
-			.half-left > div { margin: 4px 8px; }
-			.half-left > dl { margin: 4px 8px; }
-			.half-right { width: 50%; margin: 0px 0px 0px auto; }
-			#map { width: 100%; height: 400px; background-color: black; margin: 0px; }
-			dd a { white-space: nowrap; }
+			.half-left { width: 50%; }
+			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
+			#map { width: 100%; height: 400px; background-color: black; margin: 0px; }
+
+			dd a { white-space: nowrap; }
 			dl { display: table; margin: 8px 4px; }
 			dt, dd { display: table-cell; }
 			dt { width: 160px; }
@@ -45,6 +42,10 @@
 		</div>
 
 		<div class="container" id="overview_container">
+			<div class="half-right">
+				<div id="map"></div>
+			</div>
+
 			<div class="half-left">
 				<dl>
 					<dt>Name</dt>
@@ -159,9 +160,6 @@
 				</c:if>
 			</div>
 
-			<div class="half-right">
-				<div id="map"></div>
-			</div>
 		</div>
 
 
