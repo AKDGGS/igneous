@@ -41,8 +41,8 @@
 		<id property="id" column="well_id" />
 
 		<result property="name" column="name" />
-		<result property="well_number" column="well_number" />
 		<result property="alt_names" column="alt_names" />
+		<result property="well_number" column="well_number" />
 		<result property="api_number" column="api_number" />
 		<result property="is_onshore" column="is_onshore" />
 		<result property="is_federal" column="is_federal" />
@@ -64,76 +64,7 @@
 	</resultMap>
 
 
-	<!-- Query used exclusively by the Oil and Gas Report -->
-	<select id="getOilGas" resultSetType="FORWARD_ONLY" resultType="HashMap">
-		SELECT w.well_id, w.name AS well_name, w.well_number, w.api_number, (
-			SELECT
-				TRUNC(ST_Y(ll)::numeric, 4) || ', ' || TRUNC(ST_X(ll)::numeric, 4)
-			FROM (
-				SELECT wg.geog AS ll
-				FROM well_geog_point AS wg
-				WHERE wg.well_id = w.well_id
-				LIMIT 1
-			) AS q1
-		) AS lonlat, q.name, q.top, q.bottom, q.total
-		FROM well AS w 
-		JOIN (
-			SELECT iw.well_id, k.name, MIN(interval_top) AS top,
-			MAX(interval_bottom) AS bottom, COUNT(i.inventory_id) AS total
-			FROM inventory_well AS iw
-			JOIN inventory AS i ON i.inventory_id = iw.inventory_id
-			JOIN inventory_keyword AS ik ON ik.inventory_id = iw.inventory_id
-			JOIN keyword AS k ON k.keyword_id = ik.keyword_id
-			WHERE k.keyword_group_id = (
-				SELECT keyword_group_id
-				FROM keyword_group
-				WHERE LOWER(name) = LOWER('sample source')
-			) OR keyword_group_id = (
-				SELECT keyword_group_id
-				FROM keyword_group
-				WHERE LOWER(name) = LOWER('sample material')
-			) OR (
-				k.name = 'residues'
-				AND keyword_group_id = (
-					SELECT keyword_group_id
-					FROM keyword_group
-					WHERE LOWER(name) = LOWER('sample type')
-				)
-			)
-			GROUP BY iw.well_id, k.name
-
-			UNION ALL
-
-			SELECT well_id, 'data reports' AS name, null AS top,
-				null AS bottom, COUNT(publication_id) AS total
-			FROM (
-				SELECT DISTINCT iw.well_id, ip.publication_id
-				FROM inventory_well AS iw
-				JOIN inventory_publication AS ip ON ip.inventory_id = iw.inventory_id
-				JOIN publication AS p ON p.publication_id = ip.publication_id
-				WHERE publication_series = 'Geologic Materials Center Data Report Publications'
-			) AS q
-			GROUP BY well_id
-		) AS q ON q.well_id = w.well_id
-		ORDER BY well_name, well_number, q.name
-	</select>
-
-
-	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
-		SELECT k.keyword_id, k.name AS keyword,
-			COUNT(*) AS count
-		FROM inventory_well AS iw
-		JOIN inventory_keyword AS ik
-			ON ik.inventory_id = iw.inventory_id
-		JOIN keyword AS k
-			ON k.keyword_id = ik.keyword_id
-		WHERE iw.well_id = #{well_id}
-		GROUP BY k.keyword_id, k.name
-		ORDER BY k.name
-	</select>
-
-
-	<select id="getWKT" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="long" resultType="String">
 		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
 		FROM well_geog
 		WHERE well_id = #{well_id}

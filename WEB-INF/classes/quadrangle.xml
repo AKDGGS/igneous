@@ -41,9 +41,12 @@
 	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="QuadrangleMap">
 		<include refid="getBy" />
 		FROM well_geog AS wg
-		JOIN quadrangle AS qr ON ST_Intersects(qr.geog, wg.geog)
+		JOIN quadrangle_geog AS qg
+			ON ST_Intersects(qg.geog, wg.geog)
+		JOIN quadrangle AS qr
+			ON qr.quadrangle_id = qg.quadrangle_id
 		WHERE wg.well_id = #{well_id}
-			AND qr.scale = 250000
+			AND qg.scale = 250000
 	</select>
 
 

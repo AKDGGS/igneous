@@ -27,10 +27,12 @@ public class Well implements Serializable
 	public String getAPINumber(){ return api_number; }
 
 	private Boolean is_onshore;
-	public Boolean isOnshore(){ return is_onshore; }
+	// Only "getX" because JSTL requires "isX" methods to return boolean
+	public Boolean getOnshore(){ return is_onshore; }
 
 	private Boolean is_federal;
-	public Boolean isFederal(){ return is_federal; }
+	// Only "getX" because JSTL requires "isX" methods to return boolean
+	public Boolean getFederal(){ return is_federal; }
 
 	private Date completion_date;
 	public Date getCompletionDate(){ return completion_date; }
@@ -61,5 +63,4 @@ public class Well implements Serializable
 
 	private List<Organization> operators;
 	public List<Organization> getOperators(){ return operators; }
-
 }

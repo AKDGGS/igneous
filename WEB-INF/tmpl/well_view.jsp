@@ -1,4 +1,12 @@
-<!DOCTYPE html>
+<%@
+	page trimDirectiveWhitespaces="true"
+%><%@
+	taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
+%><%@
+	taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@
+	taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
+%><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
@@ -15,6 +23,11 @@
 			.half-right { width: 50%; margin: 0px 0px 0px auto; }
 			#map { width: 100%; height: 400px; background-color: black; margin: 0px; }
 			dd a { white-space: nowrap; }
+
+			dl { display: table; margin: 8px 4px; }
+			dt, dd { display: table-cell; }
+			dt { width: 160px; }
+			dd { margin: 0px; }
 		</style>
 	</head>
 	<body>
@@ -33,14 +46,117 @@
 
 		<div class="container" id="overview_container">
 			<div class="half-left">
-				<dl id="overview">Loading..</dl>
+				<dl>
+					<dt>Name</dt>
+					<dd>${well.name}</dd>
+				</dl>
+				<c:if test="${!empty well.altNames}">
+				<dl>
+					<dt>Alternative Name(s)</dt>
+					<dd>${well.altNames}</dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.wellNumber}">
+				<dl>
+					<dt>Well Number</dt>
+					<dd>${well.wellNumber}</dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.APINumber}">
+				<dl>
+					<dt>API Number</dt>
+					<dd>${well.APINumber}</dd>
+				</dl>
+				</c:if>
+				<dl>
+					<dt>Onshore</dt>
+					<dd><span title="${well.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${well.onshore ? 'ok' : 'remove'}"></span></dd>
+				</dl>
+				<dl>
+					<dt>Federal</dt>
+					<dd><span title="${well.federal ? 'true' : 'false'}" class="glyphicon glyphicon-${well.federal ? 'ok' : 'remove'}"></span></dd>
+				</dl>
+				<c:if test="${!empty well.spudDate}">
+				<dl>
+					<dt>Spud Date</dt>
+					<dd><fmt:formatDate pattern="M/d/yyyy" value="${well.spudDate}"/></dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.completionDate}">
+				<dl>
+					<dt>Completion Date</dt>
+					<dd><fmt:formatDate pattern="M/d/yyyy" value="${well.completionDate}"/></dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.measuredDepth}">
+				<dl>
+					<dt>Measured Depth</dt>
+					<dd><fmt:formatNumber value="${well.measuredDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.verticalDepth}">
+				<dl>
+					<dt>Vertical Depth</dt>
+					<dd><fmt:formatNumber value="${well.verticalDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.elevation}">
+				<dl>
+					<dt>Elevation</dt>
+					<dd><fmt:formatNumber value="${well.elevation}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.elevationKB}">
+				<dl>
+					<dt>Kelly Bushing Elevation</dt>
+					<dd><fmt:formatNumber value="${well.elevationKB}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.permitStatus}">
+				<dl>
+					<dt>Permit Status</dt>
+					<dd>${well.permitStatus}</dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty well.completionStatus}">
+				<dl>
+					<dt>Completion Status</dt>
+					<dd>${well.completionStatus}</dd>
+				</dl>
+				</c:if>
+				<c:forEach items="${well.operators}" var="operator">
+				<dl>
+					<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
+					<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
+				</dl>
+				<dl>
+					<dt>Operator Type</dt>
+					<dd>${operator.type.name}</dd>
+				</dl>
+				</c:forEach>
+				<c:if test="${!empty quadrangles}">
+				<dl>
+					<dt>Quadrangle</dt>
+					<dd>
+					<c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">
+						${stat.count gt 1 ? ", " : ""} <a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a>
+					</c:forEach>
+					</ddl>
+				</dl>
+				</c:if>
 
-				<div id="keyword_controls">
-					<div>
-						<span class="label label-info">Keywords</span>
-						<ul class="nav nav-pills" id="keywords"></ul>
-					</div>
+				<c:if test="${!empty keywords}">
+				<br>
+
+				<div>
+					<span class="label label-info">Keywords</span>
+					<ul class="nav nav-pills" id="keywords">
+					<c:forEach items="${keywords}" var="keyword">
+					<li><a href="#" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
+					</c:forEach>
+					</ul>
 				</div>
+				</c:if>
 			</div>
 
 			<div class="half-right">
@@ -54,7 +170,9 @@
 				<thead>
 					<tr>
 						<td colspan="13" style="text-align: right">
-							<input type="hidden" name="start" id="start" value="0" />
+							<input type="hidden" name="well_id" id="well_id" value="${well.ID}">
+							<input type="hidden" name="wkt" id="wkt" value="${wkt}">
+							<input type="hidden" name="start" id="start" value="0">
 							<label for="max">Showing</label>
 							<select name="max" id="max">
 								<option value="10">10</option>
@@ -115,7 +233,8 @@
 			</table>
 		</div>
 
-		<script>var id = ${id};</script>
+		<c:if test="${!empty wkt}"><script>var wkt = '${wkt}';</script>
+		</c:if>
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.13.1/OpenLayers.js"></script>
