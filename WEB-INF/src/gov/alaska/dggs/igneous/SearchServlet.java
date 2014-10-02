@@ -842,10 +842,12 @@ public class SearchServlet extends HttpServlet
 		String lastkeyword = "";
 		boolean sortkeyword = false;
 		String sorts[] = request.getParameterValues("sort");
-		for(int i = 0; i < sorts.length; i++){
-			if(Integer.parseInt(sorts[i]) == 14){
-				sortkeyword = true;
-				break;
+		if(sorts != null){
+			for(int i = 0; i < sorts.length; i++){
+				if(Integer.parseInt(sorts[i]) == 14){
+					sortkeyword = true;
+					break;
+				}
 			}
 		}
 
