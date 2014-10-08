@@ -427,6 +427,7 @@
 						<c:if test="${quality.dataMissing}"><span class="tag tag-danger">DATA MISSING</span></c:if>
 						<c:if test="${quality.labelObscured}"><span class="tag tag-danger">LABEL OBSCURED</span></c:if>
 						<c:if test="${quality.insufficientMaterial}"><span class="tag tag-danger">INSUFFICIENT MATERIAL</span></c:if>
+						<c:if test="${!quality.needsDetail && !quality.unsorted && !quality.possibleRadiation && !quality.damaged && !quality.boxDamaged && !quality.missing && !quality.dataMissing && !quality.labelObscured && !quality.insufficientMaterial}"><span class="tag tag-success">GOOD</span></c:if>
 					</div>
 					<c:if test="${!empty quality.remark}"><pre>${fn:escapeXml(quality.remark)}</pre></c:if>
 				</div>

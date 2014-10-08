@@ -105,6 +105,7 @@ public class SummaryServlet extends HttpServlet
 				if(!ids.isEmpty()) params.put("container_id", ids); 
 				params.put("barcode", barcode);
 
+				output.put("barcode", barcode);
 				output.put("collections", sess.selectList(
 					"gov.alaska.dggs.igneous.Container.getCollectionTotals",
 					params

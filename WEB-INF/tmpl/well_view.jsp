@@ -145,23 +145,21 @@
 					</ddl>
 				</dl>
 				</c:if>
-
-				<c:if test="${!empty keywords}">
-				<br>
-
-				<div>
-					<span class="label label-info">Keywords</span>
-					<ul class="nav nav-pills" id="keywords">
-					<c:forEach items="${keywords}" var="keyword">
-					<li><a href="#" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
-					</c:forEach>
-					</ul>
-				</div>
-				</c:if>
 			</div>
-
 		</div>
 
+		<div class="container">
+			<c:if test="${!empty keywords}">
+			<div>
+				<span class="label label-info">Keywords</span>
+				<ul class="nav nav-pills" id="keywords">
+				<c:forEach items="${keywords}" var="keyword">
+				<li><a href="#" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
+				</c:forEach>
+				</ul>
+			</div>
+			</c:if>
+		</div>
 
 		<div id="inventory_container" class="container">
 			<table class="datagrid datagrid-info"> 
