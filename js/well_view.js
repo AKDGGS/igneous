@@ -12,6 +12,22 @@ $(function(){
 		if(e.keyCode === 13){ $('#search').click(); }
 	});
 
+	$('#tabs a').click(function(e){
+		$('#tabs a').each(function(i, e){
+			var name = $(e).attr('href').substring(1);
+			$('#tab-'+name).hide();
+		});
+
+		$('#tabs li').removeClass('active');
+		$(this).parent().addClass('active');
+
+		var ref = $(this).attr('href').substring(1);
+		$('#tab-'+ref).show();
+
+		e.preventDefault();
+		return false;
+	});
+
 	$('#keywords a').click(function(){
 		var li = $(this).parent('li');
 

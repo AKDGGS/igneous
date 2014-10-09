@@ -23,6 +23,16 @@
 	</select>
 
 
+	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="NoteMap">
+		<include refid="getBy" />
+		JOIN well_note AS wn
+			ON wn.note_id = n.note_id
+		WHERE wn.well_id = #{well_id}
+			AND n.active
+		ORDER BY note_date DESC
+	</select>
+
+
 	<resultMap id="NoteMap" type="Note">
 		<id property="id" column="note_id" />
 		<result property="note" column="note" />

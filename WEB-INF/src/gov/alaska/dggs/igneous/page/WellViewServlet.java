@@ -50,6 +50,9 @@ public class WellViewServlet extends HttpServlet
 			request.setAttribute("wkt", sess.selectOne(
 				"gov.alaska.dggs.igneous.Well.getWKTByID", id
 			));
+			request.setAttribute("notes", sess.selectList(
+				"gov.alaska.dggs.igneous.Note.getByWellID", id
+			));
 
 			request.getRequestDispatcher(
 				"/WEB-INF/tmpl/well_view.jsp"

@@ -15,20 +15,23 @@
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			#inventory_container { display: none; }
-			#keyword_container { clear: both; padding: 10px 0px 10px 0px; }
 			#keyword_container a { margin: 2px 0px 0px 2px; }
 			#keyword_container .active { box-shadow: none !important; background-color: transparent !important; }
 
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
-			#map { width: 100%; height: 400px; background-color: black; margin: 0px; }
+			#map { width: 100%; height: 300px; background-color: black; margin: 0px; }
 
 			dd a { white-space: nowrap; }
 			dl { display: table; margin: 8px 4px; }
 			dt, dd { display: table-cell; }
 			dt { width: 160px; }
 			dd { margin: 0px; }
+
+			pre { margin: 0px; }
+			.notehd { color: #777; }
+			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 		</style>
 	</head>
 	<body>
@@ -129,16 +132,6 @@
 					<dd>${well.completionStatus}</dd>
 				</dl>
 				</c:if>
-				<c:forEach items="${well.operators}" var="operator">
-				<dl>
-					<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
-					<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
-				</dl>
-				<dl>
-					<dt>Operator Type</dt>
-					<dd>${operator.type.name}</dd>
-				</dl>
-				</c:forEach>
 				<c:if test="${!empty quadrangles}">
 				<dl>
 					<dt>Quadrangle</dt>
@@ -151,6 +144,8 @@
 				</c:if>
 			</div>
 		</div>
+
+		<div style="clear:both"></div>
 
 		<div class="container" id="keyword_container">
 			<c:if test="${!empty keywords}">
@@ -165,72 +160,104 @@
 			</c:if>
 		</div>
 
-		<div id="inventory_container" class="container">
-			<table class="datagrid datagrid-info"> 
-				<thead>
-					<tr>
-						<td colspan="13" style="text-align: right">
-							<input type="hidden" name="well_id" id="well_id" value="${well.ID}">
-							<input type="hidden" name="wkt" id="wkt" value="${wkt}">
-							<input type="hidden" name="start" id="start" value="0">
-							<label for="max">Showing</label>
-							<select name="max" id="max">
-								<option value="10">10</option>
-								<option value="25" selected="selected">25</option>
-								<option value="50">50</option>
-								<option value="100">100</option>
-								<option value="250">250</option>
-								<option value="500">500</option>
-								<option value="1000">1000</option>
-							</select>
+		<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
+			<li class="active"><a href="#inventory">Inventory</a></li>
+			<li><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
+			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
+		</ul>
+	
+		<div id="tab-inventory">
+			<div id="inventory_container" class="container">
+				<table class="datagrid datagrid-info"> 
+					<thead>
+						<tr>
+							<td colspan="13" style="text-align: right">
+								<input type="hidden" name="well_id" id="well_id" value="${well.ID}">
+								<input type="hidden" name="wkt" id="wkt" value="${wkt}">
+								<input type="hidden" name="start" id="start" value="0">
+								<label for="max">Showing</label>
+								<select name="max" id="max">
+									<option value="10">10</option>
+									<option value="25" selected="selected">25</option>
+									<option value="50">50</option>
+									<option value="100">100</option>
+									<option value="250">250</option>
+									<option value="500">500</option>
+									<option value="1000">1000</option>
+								</select>
 
-							<span class="spacer">|</span>
+								<span class="spacer">|</span>
 
-							<label for="sort">Sort by</label>
-							<select name="sort" id="sort">
-								<option value="0">Best Match</option>
-								<option value="9">Barcode</option>
-								<option value="10">Borehole</option>
-								<option value="11">Box</option>
-								<option value="1">Collection</option>
-								<option value="2">Core Number</option>
-								<option value="3">Location</option>
-								<option value="12">Prospect</option>
-								<option value="4">Set Number</option>
-								<option value="5">Top</option>
-								<option value="6">Bottom</option>
-								<option value="7">Well Name</option>
-								<option value="8">Well Number</option>
-							</select>
+								<label for="sort">Sort by</label>
+								<select name="sort" id="sort">
+									<option value="0">Best Match</option>
+									<option value="9">Barcode</option>
+									<option value="10">Borehole</option>
+									<option value="11">Box</option>
+									<option value="1">Collection</option>
+									<option value="2">Core Number</option>
+									<option value="3">Location</option>
+									<option value="12">Prospect</option>
+									<option value="4">Set Number</option>
+									<option value="5">Top</option>
+									<option value="6">Bottom</option>
+									<option value="7">Well Name</option>
+									<option value="8">Well Number</option>
+								</select>
 
-							<select name="dir" id="dir">
-								<option value="0">Ascending</option>
-								<option value="1">Descending</option>
-							</select>
+								<select name="dir" id="dir">
+									<option value="0">Ascending</option>
+									<option value="1">Descending</option>
+								</select>
 
-							<span class="spacer">|</span>
+								<span class="spacer">|</span>
 
-							Displaying <span id="page_start"></span>
-							- <span id="page_end"></span> of
-							<span id="page_found"></span>
+								Displaying <span id="page_start"></span>
+								- <span id="page_end"></span> of
+								<span id="page_found"></span>
 
-							<span class="spacer">|</span>
+								<span class="spacer">|</span>
 
-							<ul class="pagination" id="page_control"></ul>
-						</td>
-					</tr>
-					<tr>
-						<th>ID</th>
-						<th>Box /<br>Set</th>
-						<th>Top /<br>Bottom</th>
-						<th>Keywords</th>
-						<th>Collection</th>
-						<th>Barcode</th>
-						<th>Location</th>
-					</tr>
-				</thead>
-				<tbody id="inventory_body"></tbody>
-			</table>
+								<ul class="pagination" id="page_control"></ul>
+							</td>
+						</tr>
+						<tr>
+							<th>ID</th>
+							<th>Box /<br>Set</th>
+							<th>Top /<br>Bottom</th>
+							<th>Keywords</th>
+							<th>Collection</th>
+							<th>Barcode</th>
+							<th>Location</th>
+						</tr>
+					</thead>
+					<tbody id="inventory_body"></tbody>
+				</table>
+			</div>
+		</div>
+
+		<div id="tab-operators" class="hidden">
+			<c:forEach items="${well.operators}" var="operator">
+				<div class="container">
+				<dl>
+					<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
+					<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
+				</dl>
+				<dl>
+					<dt>Operator Type</dt>
+					<dd>${operator.type.name}</dd>
+				</dl>
+			</div>
+			</c:forEach>
+		</div>
+
+		<div id="tab-notes" class="hidden">
+			<c:forEach items="${notes}" var="note" varStatus="stat">
+			<div class="container">
+				<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
+				<pre>${fn:escapeXml(note.note)}</pre>
+			</div>
+			</c:forEach>
 		</div>
 
 		<c:if test="${!empty wkt}"><script>var wkt = '${wkt}';</script>
