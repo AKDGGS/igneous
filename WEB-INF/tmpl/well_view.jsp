@@ -15,6 +15,7 @@
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			#inventory_container { display: none; }
+			#keyword_container { clear: both; padding: 10px 0px 10px 0px; }
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
@@ -148,7 +149,7 @@
 			</div>
 		</div>
 
-		<div class="container">
+		<div class="container" id="keyword_container">
 			<c:if test="${!empty keywords}">
 			<div>
 				<span class="label label-info">Keywords</span>
