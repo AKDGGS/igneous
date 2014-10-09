@@ -139,7 +139,7 @@
 					<c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">
 						${stat.count gt 1 ? ", " : ""} <a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a>
 					</c:forEach>
-					</ddl>
+					</dd>
 				</dl>
 				</c:if>
 			</div>
@@ -147,26 +147,51 @@
 
 		<div style="clear:both"></div>
 
-		<div class="container" id="keyword_container">
-			<c:if test="${!empty keywords}">
-			<div>
-				<span class="label label-info">Keywords</span>
-				<ul class="nav nav-pills" id="keywords">
-				<c:forEach items="${keywords}" var="keyword">
-				<li><a href="#" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
-				</c:forEach>
-				</ul>
+		<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
+			<li class="active"><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
+			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
+			<li><a href="#inventory">Inventory</a></li>
+		</ul>
+
+		<div id="tab-operators">
+			<c:forEach items="${well.operators}" var="operator">
+				<div class="container">
+				<dl>
+					<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
+					<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
+				</dl>
+				<dl>
+					<dt>Operator Type</dt>
+					<dd>${operator.type.name}</dd>
+				</dl>
 			</div>
-			</c:if>
+			</c:forEach>
 		</div>
 
-		<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
-			<li class="active"><a href="#inventory">Inventory</a></li>
-			<li><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
-			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
-		</ul>
-	
-		<div id="tab-inventory">
+		<div id="tab-notes" class="hidden">
+			<c:forEach items="${notes}" var="note" varStatus="stat">
+			<div class="container">
+				<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
+				<pre>${fn:escapeXml(note.note)}</pre>
+			</div>
+			</c:forEach>
+		</div>
+
+
+		<div id="tab-inventory" class="hidden">
+			<div class="container" id="keyword_container">
+				<c:if test="${!empty keywords}">
+				<div>
+					<span class="label label-info">Keywords</span>
+					<ul class="nav nav-pills" id="keywords">
+					<c:forEach items="${keywords}" var="keyword">
+					<li><a href="#" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
+					</c:forEach>
+					</ul>
+				</div>
+				</c:if>
+			</div>
+
 			<div id="inventory_container" class="container">
 				<table class="datagrid datagrid-info"> 
 					<thead>
@@ -234,30 +259,6 @@
 					<tbody id="inventory_body"></tbody>
 				</table>
 			</div>
-		</div>
-
-		<div id="tab-operators" class="hidden">
-			<c:forEach items="${well.operators}" var="operator">
-				<div class="container">
-				<dl>
-					<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
-					<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
-				</dl>
-				<dl>
-					<dt>Operator Type</dt>
-					<dd>${operator.type.name}</dd>
-				</dl>
-			</div>
-			</c:forEach>
-		</div>
-
-		<div id="tab-notes" class="hidden">
-			<c:forEach items="${notes}" var="note" varStatus="stat">
-			<div class="container">
-				<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
-				<pre>${fn:escapeXml(note.note)}</pre>
-			</div>
-			</c:forEach>
 		</div>
 
 		<c:if test="${!empty wkt}"><script>var wkt = '${wkt}';</script>
