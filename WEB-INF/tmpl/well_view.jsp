@@ -16,6 +16,9 @@
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			#inventory_container { display: none; }
 			#keyword_container { clear: both; padding: 10px 0px 10px 0px; }
+			#keyword_container a { margin: 2px 0px 0px 2px; }
+			#keyword_container .active { box-shadow: none !important; background-color: transparent !important; }
+
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
