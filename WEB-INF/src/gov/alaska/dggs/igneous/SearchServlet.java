@@ -129,6 +129,8 @@ public class SearchServlet extends HttpServlet
 		FIELDS.setProperty("shotline", "simple");
 		FIELDS.setProperty("keyword", "simple");
 		FIELDS.setProperty("quadrangle", "simple");
+		FIELDS.setProperty("note", "english");
+		FIELDS.setProperty("notetype", "simple");
 
 		FIELDS.setProperty("everything", "simple");
 	}

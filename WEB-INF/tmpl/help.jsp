@@ -78,6 +78,21 @@
 			</p>
 
 			<p>
+				In certain instances, it's helpful to be able to search for partial
+				terms. For example, if you wanted to find inventory with a well
+				name that started with "al", you could search:
+
+				<pre>well:al*</pre>
+
+				Wildcard searching pairs well with the NOT operator. For example,
+				if you wanted to search for terms that began with "en" but
+				not include any inventory with the "energy" keyword, you could
+				search:
+
+				<pre>en* NOT keyword:energy</pre>
+			</p>
+
+			<p>
 				A complete list of fields available for searching can be found
 				below.
 			</p>
@@ -175,6 +190,14 @@
 					<tr>
 						<td>quadrangle</td>
 						<td>Quadrangle Name (string)</td>
+					</tr>
+					<tr>
+						<td>note</td>
+						<td>Notes attached to inventory (string)</td>
+					</tr>
+					<tr>
+						<td>notetype</td>
+						<td>Type of notes attached to inventory (string)</td>
 					</tr>
 					<tr>
 						<td>everything</td>
