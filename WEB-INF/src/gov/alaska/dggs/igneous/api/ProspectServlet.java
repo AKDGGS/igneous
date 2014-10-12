@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -14,26 +14,32 @@ import java.io.ByteArrayOutputStream;
 
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
+import java.util.Date;
 
 import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
 
 import org.apache.ibatis.session.SqlSession;
 
+import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
+import gov.alaska.dggs.igneous.transformer.IterableTransformer;
 import gov.alaska.dggs.igneous.IgneousFactory;
-import gov.alaska.dggs.igneous.model.Quadrangle;
+import gov.alaska.dggs.igneous.model.Prospect;
 import gov.alaska.dggs.ETagUtil;
 
 
-public class QuadrangleServlet extends HttpServlet
+public class ProspectServlet extends HttpServlet
 {
 	private static JSONSerializer serializer;
 	static {
 		serializer = new JSONSerializer();
-		serializer.exclude("altName");
-		serializer.exclude("abbr");
-		serializer.exclude("altAbbr");
-		serializer.exclude("scale");
+		serializer.exclude("altNames");
+		serializer.exclude("ARDF");
 		serializer.exclude("class");
+
+		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
+		serializer.transform(new ExcludeTransformer(), void.class);
+		serializer.transform(new IterableTransformer(), Iterable.class);
 	}
 
 
@@ -48,16 +54,16 @@ public class QuadrangleServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List<Quadrangle> quads = sess.selectList(
-				"gov.alaska.dggs.igneous.Quadrangle.getList"
+			List<Prospect> prospects = sess.selectList(
+				"gov.alaska.dggs.igneous.Prospect.getList"
 			);
 			
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
 			ByteArrayOutputStream baos = null;
 			try {
-				// Quadrangles are slightly less than 40k uncompressed
-				baos = new ByteArrayOutputStream(40960);
+				// Prospects are slightly less than 12 kilobytes uncompressed
+				baos = new ByteArrayOutputStream(12288);
 
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
@@ -69,7 +75,7 @@ public class QuadrangleServlet extends HttpServlet
 					out = new OutputStreamWriter(baos, "utf-8");
 				}
 
-				serializer.serialize(quads, out);
+				serializer.serialize(prospects, out);
 				out.flush(); if(gos != null){ gos.finish(); }
 
 				byte[] output = baos.toByteArray();

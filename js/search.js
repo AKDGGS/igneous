@@ -56,8 +56,7 @@ function restore()
 					break;
 
 					case 'mining_district_id':
-						$('#advanced').addClass('active');
-						$('#advanced_cell').show();
+						showAdvanced();
 
 						var opt = $('#mining_district_id').find(
 							'option[value="' + val +'"]'
@@ -74,8 +73,7 @@ function restore()
 					break;
 
 					case 'quadrangle_id':
-						$('#advanced').addClass('active');
-						$('#advanced_cell').show();
+						showAdvanced();
 
 						var opt = $('#quadrangle_id').find(
 							'option[value="' + val +'"]'
@@ -92,10 +90,17 @@ function restore()
 					break;
 
 					case 'keyword_id':
-						$('#advanced').addClass('active');
-						$('#advanced_cell').show();
+						showAdvanced();
 
 						var opt = $('#keyword_id').find(
+							'option[value="' + val +'"]'
+						).attr('selected', 'selected').get(0);
+					break;
+
+					case 'prospect_id':
+						showAdvanced();
+
+						var opt = $('#prospect_id').find(
 							'option[value="' + val +'"]'
 						).attr('selected', 'selected').get(0);
 					break;
@@ -119,11 +124,11 @@ function restore()
 
 					case 'top':
 					case 'bottom':
-						$('#advanced').addClass('active');
-						$('#advanced_cell').show();
+						showAdvanced();
 						// do not break here, actually do the default, too.
 
-					default: $('#'+key).val(val);
+					default:
+						$('#'+key).val(val);
 				}
 			}
 		}
@@ -404,6 +409,12 @@ $(function(){
 			// Add advanced search's quadrangle to parameters
 			$('#quadrangle_id').find(':selected').each(function(i,v){
 				Search.prototype.addProperty(o, 'quadrangle_id', $(v).val());
+				searchok = true;
+			});
+
+			// Add advanced search's prospect to parameters
+			$('#prospect_id').find(':selected').each(function(i,v){
+				Search.prototype.addProperty(o, 'prospect_id', $(v).val());
 				searchok = true;
 			});
 
@@ -734,13 +745,8 @@ $(function(){
 	// show and hide "advanced" tab
 	$('#advanced').click(function(){
 		var shown = $(this).hasClass('active');
-		if(shown){
-			$('#advanced_cell').hide();
-			$(this).removeClass('active');
-		} else {
-			$('#advanced_cell').show();
-			$(this).addClass('active');
-		}
+		if(shown) hideAdvanced();
+		else showAdvanced();
 
 		$(this).blur();
 		return false;
@@ -832,7 +838,6 @@ $(function(){
 			keyword_loaded.resolve();
 		}
 	});
-
 	// Search if the keywords change
 	$('#keyword_id').change(function(){ search.execute(); });
 
@@ -878,9 +883,34 @@ $(function(){
 		search.execute();
 	});
 
+	// Load the prospects from some json
+	var prospect_loaded = $.Deferred();
+	$.ajax({
+		url: 'prospect.json', dataType: 'json',
+		error: function(xhr){
+			// Silently ignore failure
+			prospect_loaded.resolve();
+		},
+		success: function(json){
+			var ps_el = document.getElementById('prospect_id');
+			for(var i in json){
+				var option = document.createElement('option');
+				option.value = json[i]['ID'];
+				option.appendChild(document.createTextNode(json[i]['name']));
+				ps_el.appendChild(option);
+			}
+			prospect_loaded.resolve();
+		}
+	});
+	// Search if the keywords change
+	$('#prospect_id').change(function(){ search.execute(); });
+
 	// Wait for outside resources to finish loading, then restore
 	// the search state
-	$.when( mining_district_loaded, keyword_loaded, quadrangle_loaded ).done(function(){
+	$.when(
+		mining_district_loaded, keyword_loaded, quadrangle_loaded,
+		prospect_loaded
+	).done(function(){
 		if(restore()){ search.execute(false); }
 		search.setuponhashchange();
 	});
@@ -893,3 +923,24 @@ $(window).load(function(){
 	map.render('map');
 	map.updateSize();
 });
+
+
+function showAdvanced()
+{
+	var advanced = $('#advanced');
+	if(!advanced.hasClass('active')){
+		advanced.addClass('active');
+		$('#advanced_cell').show();
+		map.updateSize();
+	}
+}
+
+function hideAdvanced()
+{
+	var advanced = $('#advanced');
+	if(advanced.hasClass('active')){
+		advanced.removeClass('active');
+		$('#advanced_cell').hide();
+		map.updateSize();
+	}
+}

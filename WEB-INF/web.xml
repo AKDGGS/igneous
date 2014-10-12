@@ -110,7 +110,7 @@
 
 	<servlet>
 		<servlet-name>ProspectServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.ProspectServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.ProspectServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -240,7 +240,7 @@
 
 	<servlet>
 		<servlet-name>QuadrangleServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.QuadrangleServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.QuadrangleServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

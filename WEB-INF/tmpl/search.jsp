@@ -7,14 +7,15 @@
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
 			.tbl_container { padding: 0px; margin: 0px; width: 100%; border-collapse: collapse; }
-			.tbl_container td, .tbl_container tr { padding: 0px; margin: 0px; }
+			.tbl_container td, .tbl_container tr { padding: 0px !important; margin: 0px !important; }
 
 			#inventory_container { display: none; }
 			#map { width: 100%; height: 450px; }
-			#advanced_cell { width: 250px; display: none; padding: 4px 8px; vertical-align: top; }
+			#advanced_cell { width: 265px; display: none; padding: 4px 8px; vertical-align: top; }
 			#advanced_cell label { display: block; padding: 0px; }
-			#advanced_cell select { padding: 0px; margin: 0px 0px 10px 0px; }
+			#advanced_cell select { padding: 0px; margin: 0px 0px 10px 0px; max-width: 235px; }
 			#advanced_cell span { font-size: 14px; }
+			#advanced_container { height: 450px; overflow-y: auto; overflow-x: hidden; padding: 0px 8px; margin: 0px; }
 
 			label { font-size: 14px; font-weight: bold; }
 			.navbar { white-space: nowrap; }
@@ -64,18 +65,23 @@
 						<div id="map"></div>
 					</td>
 					<td id="advanced_cell">
-						<label for="mining_district_id">Mining District</label>
-						<select size="5" multiple="multiple" name="mining_district_id" id="mining_district_id"></select>
+						<div id="advanced_container">
+							<label for="mining_district_id">Mining District</label>
+							<select size="5" multiple="multiple" name="mining_district_id" id="mining_district_id"></select>
 
-						<label for="keyword_id">Keyword</label>
-						<select size="5" multiple="multiple" name="keyword_id" id="keyword_id"></select>
+							<label for="keyword_id">Keyword</label>
+							<select size="5" multiple="multiple" name="keyword_id" id="keyword_id"></select>
 
-						<label for="quadrangle_id">Quadrangle</label>
-						<select size="5" multiple="multiple" name="quadrangle_id" id="quadrangle_id"></select>
+							<label for="quadrangle_id">Quadrangle</label>
+							<select size="5" multiple="multiple" name="quadrangle_id" id="quadrangle_id"></select>
 
-						<label for="top">Interval</label>
-						<span>Top</span> <input type="text" size="5" name="top" id="top" />
-						<span>Bottom</span> <input type="text" size="5" name="bottom" id="bottom" />
+							<label for="prospect_id">Prospect</label>
+							<select size="5" multiple="multiple" name="prospect_id" id="prospect_id"></select>
+
+							<label for="top">Interval</label>
+							<span>Top</span> <input type="text" size="5" name="top" id="top" />
+							<span>Bottom</span> <input type="text" size="5" name="bottom" id="bottom" />
+						</div>
 					</td>
 				</tr>
 			</table>

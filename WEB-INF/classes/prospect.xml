@@ -4,21 +4,25 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Prospect">
+	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="ProspectMap">
+		SELECT prospect_id, name, alt_names, ardf_number
+		FROM prospect
+		ORDER BY LOWER(name)
+	</select>
+
+
 	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="ProspectMap">
 		SELECT prospect_id, name, alt_names, ardf_number
 		FROM prospect
 		WHERE prospect_id = #{id}
 	</select>
 
+
 	<resultMap id="ProspectMap" type="Prospect">
 		<id property="id" column="prospect_id" />
-
 		<result property="name" column="name" />
 		<result property="alt_names" column="alt_names" />
 		<result property="ardf" column="ardf_number" />
-
-		<collection property="boreholes" column="prospect_id" ofType="Borehole"
-			javaType="List" select="gov.alaska.dggs.igneous.Borehole.getByProspectID" />
 	</resultMap>
 
 
