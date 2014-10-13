@@ -1,4 +1,12 @@
-<!DOCTYPE html>
+<%@
+	page trimDirectiveWhitespaces="true"
+%><%@
+	taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
+%><%@
+	taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@
+	taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
+%><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
@@ -111,6 +119,7 @@
 					<tr class="noprint">
 						<td colspan="13" style="text-align: right">
 							<label for="sort">Sort by</label>
+							<c:forEach begin="0" end="1">
 							<select name="sort">
 								<option value="0">Best Match</option>
 								<option value="9">Barcode</option>
@@ -133,29 +142,7 @@
 								<option value="0">Asc</option>
 								<option value="1">Desc</option>
 							</select>
-
-							<select name="sort">
-								<option value="0">Best Match</option>
-								<option value="9">Barcode</option>
-								<option value="10">Borehole</option>
-								<option value="11">Box</option>
-								<option value="1">Collection</option>
-								<option value="2">Core Number</option>
-								<option value="14">Keywords</option>
-								<option value="3">Location</option>
-								<option value="12">Prospect</option>
-								<option value="13">Sample</option>
-								<option value="4">Set Number</option>
-								<option value="5">Top</option>
-								<option value="6">Bottom</option>
-								<option value="7">Well Name</option>
-								<option value="8">Well Number</option>
-							</select>
-
-							<select name="dir">
-								<option value="0">Asc</option>
-								<option value="1">Desc</option>
-							</select>
+							</c:forEach>
 
 							<span class="spacer">|</span>
 

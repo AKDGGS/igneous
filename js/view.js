@@ -2,7 +2,7 @@ var search;
 
 
 $(function(){
-  $('#sort, #max, #dir').change(function(){ search.execute(); });
+  $('[name=sort], [name=dir],#max').change(function(){ search.execute(); });
 
 	$('#search').click(function(){
 		window.location.href = '../search#q=' + $('#q').val();
@@ -75,7 +75,11 @@ $(function(){
 		},
 
 		onparam: function(o){
-			o['well_id'] = $('#well_id').val();
+			if($('#well_id').length) o['well_id'] = $('#well_id').val();
+			if($('#prospect_id').length) o['prospect_id'] = $('#prospect_id').val();
+			if($('#borehole_id').length) o['borehole_id'] = $('#borehole_id').val();
+			if($('#shotline_id').length) o['shotline_id'] = $('#shotline_id').val();
+			if($('#outcrop_id').length) o['outcrop_id'] = $('#outcrop_id').val();
 			if('keyword_id' in this){ o['keyword_id'] = this['keyword_id']; }
 			return true;
 		},
