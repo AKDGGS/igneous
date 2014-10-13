@@ -902,14 +902,14 @@ $(function(){
 			prospect_loaded.resolve();
 		}
 	});
-	// Search if the keywords change
+	// Search if the prospects change
 	$('#prospect_id').change(function(){ search.execute(); });
 
 	// Wait for outside resources to finish loading, then restore
 	// the search state
 	$.when(
-		mining_district_loaded, keyword_loaded, quadrangle_loaded,
-		prospect_loaded
+		mining_district_loaded, keyword_loaded,
+		quadrangle_loaded, prospect_loaded
 	).done(function(){
 		if(restore()){ search.execute(false); }
 		search.setuponhashchange();
@@ -924,7 +924,7 @@ $(window).load(function(){
 	map.updateSize();
 });
 
-
+// Show the advanced pane
 function showAdvanced()
 {
 	var advanced = $('#advanced');
@@ -935,6 +935,7 @@ function showAdvanced()
 	}
 }
 
+// Hide the advanced pane
 function hideAdvanced()
 {
 	var advanced = $('#advanced');
