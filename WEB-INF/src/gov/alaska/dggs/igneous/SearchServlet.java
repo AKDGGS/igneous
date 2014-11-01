@@ -230,7 +230,7 @@ public class SearchServlet extends HttpServlet
 							if(x > 0) query.append(",");
 							query.append(keyword_ids[x]);
 						}
-						query.append("]) <@ keyword_ids");
+						query.append("]) = keyword_ids");
 					}
 				}
 				query.append(")");
