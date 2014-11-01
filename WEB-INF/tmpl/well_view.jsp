@@ -137,7 +137,7 @@
 					<dt>Quadrangle</dt>
 					<dd>
 					<c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">
-						${stat.count gt 1 ? ", " : ""} <a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a>
+						${stat.count gt 1 ? ", " : ""}<a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a>
 					</c:forEach>
 					</dd>
 				</dl>
@@ -151,6 +151,7 @@
 			<li class="active"><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
 			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
 			<li><a href="#inventory">Inventory</a></li>
+			<li><a href="#files">Files</a></li>
 		</ul>
 
 		<div id="tab-operators">
@@ -228,6 +229,8 @@
 									<option value="4">Set Number</option>
 									<option value="5">Top</option>
 									<option value="6">Bottom</option>
+									<option value="7">Well Name</option>
+									<option value="8">Well Number</option>
 								</select>
 
 								<select name="dir">
@@ -258,6 +261,10 @@
 					</thead>
 					<tbody id="inventory_body"></tbody>
 				</table>
+			</div>
+
+
+			<div id="tab-files" class="hidden">
 			</div>
 		</div>
 
