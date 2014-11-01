@@ -135,10 +135,7 @@
 				<c:if test="${!empty quadrangles}">
 				<dl>
 					<dt>Quadrangle</dt>
-					<dd>
-					<c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">
-						${stat.count gt 1 ? ", " : ""}<a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a>
-					</c:forEach>
+					<dd><c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">${stat.count gt 1 ? ", " : ""}<a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a></c:forEach>
 					</dd>
 				</dl>
 				</c:if>
