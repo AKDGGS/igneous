@@ -18,7 +18,7 @@
 	</sql>
 
 
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
 		<include refid="getBy" />
 		FROM borehole AS bh
 		LEFT OUTER JOIN unit AS mdu
@@ -29,7 +29,7 @@
 	</select>
 
 
-	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
+	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
 		<include refid="getBy" />
 		FROM borehole AS bh
 		LEFT OUTER JOIN unit AS mdu
@@ -41,7 +41,7 @@
 	</select>
 
 
-	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="BoreholeMap">
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
 		<include refid="getBy" />
 		FROM inventory_borehole AS ib
 		JOIN borehole AS bh
@@ -82,40 +82,10 @@
 	</resultMap>
 
 
-	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
-		SELECT k.keyword_id, k.name AS keyword, COUNT(*) AS count
-		FROM inventory_borehole AS ib
-		JOIN inventory_keyword AS ik
-			ON ik.inventory_id = ib.inventory_id
-		JOIN keyword AS k
-			ON k.keyword_id = ik.keyword_id
-		WHERE ib.borehole_id = #{borehole_id}
-			AND k.keyword_id IN (
-				SELECT keyword_id
-				FROM keyword
-				WHERE name = 'residues'
-					OR keyword_group_id IN (
-						SELECT keyword_group_id
-						FROM keyword_group
-						WHERE name = 'source' OR
-							name = 'material'
-					)
-			)
-		GROUP BY k.keyword_id, k.name
-		ORDER BY k.name
-	</select>
-
-
-	<select id="getWKT" resultSetType="FORWARD_ONLY" parameterType="long" resultType="HashMap">
+	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
 		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
 		FROM borehole_geog
 		WHERE borehole_id = #{id}
 		LIMIT 1
-	</select>
-
-
-	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT borehole_id FROM borehole_geog
-		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
 	</select>
 </mapper>
