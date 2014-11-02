@@ -119,6 +119,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>CollectionServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.CollectionServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CollectionServlet</servlet-name>
+		<url-pattern>/collection.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>InventoryServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.InventoryServlet</servlet-class>
 	</servlet>

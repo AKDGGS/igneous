@@ -349,6 +349,22 @@ public class SearchServlet extends HttpServlet
 			query.append(")))::int[])");
 		}
 
+		// Handle collection_ids 
+		// ANY() is faster than IN() in this context because of
+		// the smaller number of rows
+		String[] cids = request.getParameterValues("collection_id");
+		if(isIntegerArray(cids)){
+			if(query.length() > 0){ query.append(" AND "); }
+			query.append("inventory_id = ANY((SELECT ARRAY(");
+			query.append("SELECT inventory_id FROM inventory");
+			query.append(" WHERE collection_id IN (");
+			for(int i = 0; i < cids.length; i++){
+				if(i > 0){ query.append(","); }
+				query.append(cids[i]);
+			}
+			query.append(")))::int[])");
+		}
+
 		// Only proceed is there's some kind of filter on the results
 		if(query.length() > 0){
 			StringBuilder order = new StringBuilder();

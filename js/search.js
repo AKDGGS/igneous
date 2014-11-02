@@ -105,6 +105,14 @@ function restore()
 						).attr('selected', 'selected').get(0);
 					break;
 
+					case 'collection_id':
+						showAdvanced();
+
+						var opt = $('#collection_id').find(
+							'option[value="' + val +'"]'
+						).attr('selected', 'selected').get(0);
+					break;
+
 					// This code makes sure sort is restored even
 					// if there's an unlimited number of sort levels
 					case 'sort':
@@ -415,6 +423,12 @@ $(function(){
 			// Add advanced search's prospect to parameters
 			$('#prospect_id').find(':selected').each(function(i,v){
 				Search.prototype.addProperty(o, 'prospect_id', $(v).val());
+				searchok = true;
+			});
+
+			// Add advanced search's prospect to parameters
+			$('#collection_id').find(':selected').each(function(i,v){
+				Search.prototype.addProperty(o, 'collection_id', $(v).val());
 				searchok = true;
 			});
 
@@ -905,11 +919,34 @@ $(function(){
 	// Search if the prospects change
 	$('#prospect_id').change(function(){ search.execute(); });
 
+	// Load the prospects from some json
+	var collection_loaded = $.Deferred();
+	$.ajax({
+		url: 'collection.json', dataType: 'json',
+		error: function(xhr){
+			// Silently ignore failure
+			collection_loaded.resolve();
+		},
+		success: function(json){
+			var ps_el = document.getElementById('collection_id');
+			for(var i in json){
+				var option = document.createElement('option');
+				option.value = json[i]['ID'];
+				option.appendChild(document.createTextNode(json[i]['name']));
+				ps_el.appendChild(option);
+			}
+			collection_loaded.resolve();
+		}
+	});
+	// Search if the prospects change
+	$('#collection_id').change(function(){ search.execute(); });
+
 	// Wait for outside resources to finish loading, then restore
 	// the search state
 	$.when(
 		mining_district_loaded, keyword_loaded,
-		quadrangle_loaded, prospect_loaded
+		quadrangle_loaded, prospect_loaded,
+		collection_loaded
 	).done(function(){
 		if(restore()){ search.execute(false); }
 		search.setuponhashchange();

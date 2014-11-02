@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Collection">
+	<sql id="getBy">
+		SELECT c.collection_id, c.name, c.description,
+			o.organization_id, o.name AS organization_name,
+			o.abbr AS organization_abbr
+	</sql>
+
+
+	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="CollectionMap">
+		<include refid="getBy" />
+		FROM collection AS c
+		JOIN organization AS o
+			ON o.organization_id = c.organization_id
+		ORDER BY c.name
+	</select>
+
+
+	<resultMap id="CollectionMap" type="iCollection">
+		<id property="id" column="collection_id" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+
+		<association property="organization" javaType="Organization">
+			<id property="id" column="organization_id" />
+			<result property="name" column="organization_name" />
+			<result property="abbr" column="organization_abbr" />
+		</association>
+	</resultMap>
+</mapper>

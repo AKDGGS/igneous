@@ -86,6 +86,9 @@
 							<label for="prospect_id">Prospect</label>
 							<select size="5" multiple="multiple" name="prospect_id" id="prospect_id"></select>
 
+							<label for="collection_id">Collection</label>
+							<select size="5" multiple="multiple" name="collection_id" id="collection_id"></select>
+
 							<label for="top">Interval</label>
 							<span>Top</span> <input type="text" size="5" name="top" id="top" />
 							<span>Bottom</span> <input type="text" size="5" name="bottom" id="bottom" />

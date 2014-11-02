@@ -14,14 +14,17 @@ public class Organization implements Serializable
 	public String getName(){ return name; }
 
 	private String abbr;
-	public String getAbbreviation(){ return abbr; }
+	public String getAbbr(){ return abbr; }
 
 	private String remark;
 	public String getRemark(){ return remark; }
 
-	private Boolean is_current;
-	public boolean isCurrent(){ return is_current; }
-
 	private OrganizationType type;
 	public OrganizationType getType(){ return type; }
+
+	// For well_operator.is_current
+	private Boolean is_current;
+	public boolean isCurrent(){
+		return is_current == null ? false : is_current;
+	}
 }
