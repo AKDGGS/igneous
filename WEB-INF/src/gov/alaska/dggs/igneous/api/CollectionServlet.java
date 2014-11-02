@@ -62,8 +62,8 @@ public class CollectionServlet extends HttpServlet
 			GZIPOutputStream gos = null;
 			ByteArrayOutputStream baos = null;
 			try {
-				// Collections are slightly less than 12 kilobytes uncompressed
-				baos = new ByteArrayOutputStream(12288);
+				// Collections are slightly less than 5 kilobytes uncompressed
+				baos = new ByteArrayOutputStream(5120);
 
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
