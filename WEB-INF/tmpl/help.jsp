@@ -31,8 +31,8 @@
 			<h3>The Search Bar</h3>
 			<p>
 				The Search Bar queries many different database fields.
-				Users may specify which fields to query explicitly by 
-				specifying the field name followed by a colon. For example,
+				Users may indicate which fields to query by specifying
+				the field name followed by a colon. For example,
 				if you wanted to query the USGS collection, looking
 				for inventory around the Anchorage area you could search:
 
@@ -56,7 +56,7 @@
 			</p>
 
 			<p>
-				It'a also possible to search for items that do not match
+				It's also possible to search for items that do not match
 				specific criteria. For example, if you wanted to find
 				mineral-related inventory that was not from an outcrop,
 				you could search:
@@ -80,7 +80,7 @@
 			<p>
 				In certain instances, it's helpful to be able to search for partial
 				terms. For example, if you wanted to find inventory with a well
-				name that started with "al", you could search:
+				name that had terms starting with "al", you could search:
 
 				<pre>well:al*</pre>
 
@@ -90,6 +90,15 @@
 				search:
 
 				<pre>en* NOT keyword:energy</pre>
+			</p>
+
+			<p>
+				Often it is useful to group searches that feature logical operators.
+				For example, if you wanted to show any wells name that had terms
+				starting with "al" or "en", but omit cuttings for both, you
+				could search:
+
+				<pre>(well:en* OR well:al*) NOT keyword:cuttings</pre>
 			</p>
 
 			<p>
