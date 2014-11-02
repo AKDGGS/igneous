@@ -13,7 +13,7 @@
 		JOIN well_operator AS wo
 			ON wo.organization_id = o.organization_id
 		WHERE wo.well_id = #{well_id}
-		ORDER BY wo.is_current, o.name
+		ORDER BY wo.is_current DESC, o.name
 	</select>
 
 
