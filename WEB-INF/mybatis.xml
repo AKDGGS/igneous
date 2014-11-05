@@ -28,6 +28,8 @@
 		<typeAlias alias="ContainerLog" type="gov.alaska.dggs.igneous.model.ContainerLog" />
 		<typeAlias alias="Note" type="gov.alaska.dggs.igneous.model.Note" />
 		<typeAlias alias="NoteType" type="gov.alaska.dggs.igneous.model.NoteType" />
+		<typeAlias alias="URL" type="gov.alaska.dggs.igneous.model.URL" />
+		<typeAlias alias="URLType" type="gov.alaska.dggs.igneous.model.URLType" />
 		<typeAlias alias="Organization" type="gov.alaska.dggs.igneous.model.Organization" />
 		<typeAlias alias="OrganizationType" type="gov.alaska.dggs.igneous.model.OrganizationType" />
 	</typeAliases>
@@ -59,6 +61,7 @@
 		<mapper resource="quality.xml" />
 		<mapper resource="audit.xml" />
 		<mapper resource="note.xml" />
+		<mapper resource="url.xml" />
 		<mapper resource="inventory_quality.xml" />
 		<mapper resource="organization.xml" />
 		<mapper resource="collection.xml" />

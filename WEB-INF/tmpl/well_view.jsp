@@ -153,6 +153,7 @@
 			<li class="active"><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
 			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
 			<li><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
+			<li><a href="#urls">URLs <span class="badge">${fn:length(urls)}</span></a></li>
 			<li><a href="#files">Files</a></li>
 		</ul>
 
@@ -263,14 +264,31 @@
 					<tbody id="inventory_body"></tbody>
 				</table>
 			</div>
-
-
-			<div id="tab-files" class="hidden">
-			</div>
 		</div>
 
-		<c:if test="${!empty wkt}"><script>var wkt = '${wkt}';</script>
-		</c:if>
+		<div id="tab-files" class="hidden"></div>
+
+		<div id="tab-urls" class="hidden">
+			<c:forEach items="${urls}" var="url" varStatus="stat">
+			<div class="container">
+				<dl>
+					<dt>URL Description</dt>
+					<dd>${url.description}</dd>
+				</dl>
+				<c:if test="${!empty url.type}">
+				<dl>
+					<dt>URL Type</dt>
+					<dd>${url.type.name}</dd>
+				</dl>
+				</c:if>
+				<dl>
+					<dt>URL</dt>
+					<dd><a href="${url.URL}">${url.URL}</a></dd>
+				</dl>
+			</div>
+			</c:forEach>
+		</div>
+
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.13.1/OpenLayers.js"></script>

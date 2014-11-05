@@ -1,6 +1,5 @@
 var search;
 
-
 $(function(){
   $('[name=sort], [name=dir],#max').change(function(){ search.execute(); });
 

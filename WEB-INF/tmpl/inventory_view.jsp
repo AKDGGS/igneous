@@ -247,6 +247,7 @@
 				<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
 				<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
 				<li><a href="#containerlog">Container Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
+				<li><a href="#urls">URLs <span class="badge">${fn:length(inventory.URLs)}</span></a></li>
 			</ul>
 
 			<div id="tab-related">
@@ -438,6 +439,27 @@
 				<c:forEach items="${inventory.containerLog}" var="log" varStatus="stat">
 				<div class="container">
 					<span class="loghd"><fmt:formatDate pattern="M/d/yyyy k:mm" value="${log.date}"/></span>, ${log.pathCache}
+				</div>
+				</c:forEach>
+			</div>
+
+			<div id="tab-urls" class="hidden">
+				<c:forEach items="${inventory.URLs}" var="url" varStatus="stat">
+				<div class="container">
+					<dl>
+						<dt>URL Description</dt>
+						<dd>${url.description}</dd>
+					</dl>
+					<c:if test="${!empty url.type}">
+					<dl>
+						<dt>URL Type</dt>
+						<dd>${url.type.name}</dd>
+					</dl>
+					</c:if>
+					<dl>
+						<dt>URL</dt>
+						<dd><a href="${url.URL}">${url.URL}</a></dd>
+					</dl>
 				</div>
 				</c:forEach>
 			</div>

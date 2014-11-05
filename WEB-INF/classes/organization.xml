@@ -4,7 +4,7 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Organization">
-	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="OrganizationMap">
+	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="OrganizationMap">
 		SELECT o.organization_id, o.name, o.abbr, o.remark,
 			t.organization_type_id, t.name AS type, wo.is_current
 		FROM organization AS o
@@ -14,6 +14,19 @@
 			ON wo.organization_id = o.organization_id
 		WHERE wo.well_id = #{well_id}
 		ORDER BY wo.is_current DESC, o.name
+	</select>
+
+
+	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="OrganizationMap">
+		SELECT o.organization_id, o.name, o.abbr, o.remark,
+			t.organization_type_id, t.name AS type
+		FROM organization AS o
+		JOIN organization_type AS t
+			ON t.organization_type_id = o.organization_type_id
+		JOIN borehole_organization AS bo
+			ON bo.organization_id = o.organization_id
+		WHERE bo.borehole_id = #{borehole_id}
+		ORDER BY o.name
 	</select>
 
 

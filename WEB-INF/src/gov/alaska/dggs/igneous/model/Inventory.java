@@ -162,6 +162,9 @@ public class Inventory implements Serializable
 	private List<ContainerLog> containerlog;
 	public List<ContainerLog> getContainerLog(){ return containerlog; }
 
+	private List<URL> urls;
+	public List<URL> getURLs(){ return urls; }
+
 
 	// Fields that do not corrospond to a field in the database
 	private List<Shotline> shotlines;

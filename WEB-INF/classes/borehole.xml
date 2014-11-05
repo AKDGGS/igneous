@@ -60,7 +60,7 @@
 		<result property="name" column="borehole_name" />
 		<result property="alt_names" column="alt_borehole_names" />
 		<result property="is_onshore" column="is_onshore" />
-		<result property="completion" column="completion_date" />
+		<result property="completion_date" column="completion_date" />
 
 		<result property="measured_depth" column="measured_depth" />
 		<result property="elevation" column="elevation" />

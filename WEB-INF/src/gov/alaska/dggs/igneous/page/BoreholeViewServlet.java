@@ -13,11 +13,11 @@ import java.io.InputStream;
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
-import gov.alaska.dggs.igneous.model.Well;
+import gov.alaska.dggs.igneous.model.Borehole;
 import gov.alaska.dggs.igneous.model.Quadrangle;
 
 
-public class WellViewServlet extends HttpServlet
+public class BoreholeViewServlet extends HttpServlet
 {
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
@@ -35,30 +35,30 @@ public class WellViewServlet extends HttpServlet
 
 			Integer id = Integer.valueOf(path.substring(1));
 
-			Well well = sess.selectOne(
-				"gov.alaska.dggs.igneous.Well.getByID", id
+			Borehole borehole = sess.selectOne(
+				"gov.alaska.dggs.igneous.Borehole.getByID", id
 			);
-			if(well == null){ throw new Exception("ID not found."); }
+			if(borehole == null){ throw new Exception("ID not found."); }
 
-			request.setAttribute("well", well);
+			request.setAttribute("borehole", borehole);
 			request.setAttribute("keywords", sess.selectList(
-				"gov.alaska.dggs.igneous.Keyword.getGroupsByWellID", id
+				"gov.alaska.dggs.igneous.Keyword.getGroupsByBoreholeID", id
 			));
 			request.setAttribute("quadrangles", sess.selectList(
-				"gov.alaska.dggs.igneous.Quadrangle.getByWellID", id
+				"gov.alaska.dggs.igneous.Quadrangle.getByBoreholeID", id
 			));
 			request.setAttribute("wkt", sess.selectOne(
-				"gov.alaska.dggs.igneous.Well.getWKTByID", id
+				"gov.alaska.dggs.igneous.Borehole.getWKTByID", id
 			));
 			request.setAttribute("notes", sess.selectList(
-				"gov.alaska.dggs.igneous.Note.getByWellID", id
+				"gov.alaska.dggs.igneous.Note.getByBoreholeID", id
 			));
-			request.setAttribute("urls", sess.selectList(
-				"gov.alaska.dggs.igneous.URL.getByWellID", id
+			request.setAttribute("organizations", sess.selectList(
+				"gov.alaska.dggs.igneous.Organization.getByBoreholeID", id
 			));
 
 			request.getRequestDispatcher(
-				"/WEB-INF/tmpl/well_view.jsp"
+				"/WEB-INF/tmpl/borehole_view.jsp"
 			).forward(request, response);
 		} catch(Exception ex){
 			throw new ServletException(ex);
