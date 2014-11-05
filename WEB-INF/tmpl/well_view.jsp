@@ -144,10 +144,15 @@
 
 		<div style="clear:both"></div>
 
+		<c:set var="inventory_count" value="0" />
+		<c:forEach items="${keywords}" var="keyword">
+			<c:set var="inventory_count" value="${inventory_count + keyword.count}" />
+		</c:forEach>
+
 		<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
 			<li class="active"><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
 			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
-			<li><a href="#inventory">Inventory</a></li>
+			<li><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
 			<li><a href="#files">Files</a></li>
 		</ul>
 
@@ -174,7 +179,6 @@
 			</div>
 			</c:forEach>
 		</div>
-
 
 		<div id="tab-inventory" class="hidden">
 			<div class="container" id="keyword_container">
