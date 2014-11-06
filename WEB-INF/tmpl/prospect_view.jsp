@@ -67,7 +67,7 @@
 				<c:if test="${!empty prospect.ARDF}">
 				<dl>
 					<dt>ARDF Number</dt>
-					<dd>${prospect.ARDF}</dd>
+					<dd><a href="http://mrdata.usgs.gov/ardf/show-ardf.php?ardf_num=${prospect.ARDF}">${prospect.ARDF}</a></dd>
 				</dl>
 				</c:if>
 				<c:if test="${!empty boreholes}">
