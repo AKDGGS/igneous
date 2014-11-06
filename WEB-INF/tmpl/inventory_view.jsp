@@ -348,7 +348,7 @@
 					<c:forEach items="${well.operators}" var="operator">
 					<dl>
 						<dt>${operator.current ? 'Current' : 'Previous'} Operator</dt>
-						<dd>${operator.name} <c:if test="${!empty operator.abbreviation}">(${operator.abbreviation})</c:if></dd>
+						<dd>${operator.name} <c:if test="${!empty operator.abbr}">(${operator.abbr})</c:if></dd>
 					</dl>
 					<dl>
 						<dt>Operator Type</dt>
