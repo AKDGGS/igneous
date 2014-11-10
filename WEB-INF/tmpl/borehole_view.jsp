@@ -61,7 +61,7 @@
 				</dl>
 				<c:if test="${!empty borehole.prospect.altNames}">
 				<dl>
-					<dt>Alternative Name(s)</dt>
+					<dt>Alternative Prospect Name(s)</dt>
 					<dd>${borehole.prospect.altNames}</dd>
 				</dl>
 				</c:if>
