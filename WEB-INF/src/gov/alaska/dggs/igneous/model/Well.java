@@ -63,4 +63,10 @@ public class Well implements Serializable
 
 	private List<Organization> operators;
 	public List<Organization> getOperators(){ return operators; }
+
+	private List<Note> notes;
+	public List<Note> getNotes(){ return notes; }
+
+	private List<URL> urls;
+	public List<URL> getURLs(){ return urls; }
 }

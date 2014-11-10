@@ -54,13 +54,31 @@
 			</div>
 
 			<div class="half-left">
+				<c:if test="${!empty borehole.prospect}">
 				<dl>
-					<dt>Name</dt>
+					<dt>Prospect Name</dt>
+					<dd><a href="../search#prospect_id=${borehole.prospect.ID}">${borehole.prospect.name}</a></dd>
+				</dl>
+				<c:if test="${!empty borehole.prospect.altNames}">
+				<dl>
+					<dt>Alternative Name(s)</dt>
+					<dd>${borehole.prospect.altNames}</dd>
+				</dl>
+				</c:if>
+				<c:if test="${!empty borehole.prospect.ARDF}">
+				<dl>
+					<dt>ARDF Number</dt>
+					<dd><a href="http://mrdata.usgs.gov/ardf/show-ardf.php?ardf_num=${borehole.prospect.ARDF}">${borehole.prospect.ARDF}</a></dd>
+				</dl>
+				</c:if>
+				</c:if>
+				<dl>
+					<dt>Borehole Name</dt>
 					<dd>${borehole.name}</dd>
 				</dl>
 				<c:if test="${!empty borehole.altNames}">
 				<dl>
-					<dt>Alternative Name(s)</dt>
+					<dt>Alternative Borehole Name(s)</dt>
 					<dd>${borehole.altNames}</dd>
 				</dl>
 				</c:if>
@@ -104,15 +122,15 @@
 		</c:forEach>
 
 		<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
-			<li class="active"><a href="#organizations">Organizations <span class="badge">${fn:length(organizations)}</span></a></li>
-			<li><a href="#notes">Notes <span class="badge">${fn:length(notes)}</span></a></li>
+			<li class="active"><a href="#organizations">Organizations <span class="badge">${fn:length(borehole.organizations)}</span></a></li>
+			<li><a href="#notes">Notes <span class="badge">${fn:length(borehole.notes)}</span></a></li>
 			<li><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
 			<li><a href="#urls">URLs <span class="badge">${fn:length(urls)}</span></a></li>
 			<li><a href="#files">Files</a></li>
 		</ul>
 
 		<div id="tab-organizations">
-			<c:forEach items="${organizations}" var="organization">
+			<c:forEach items="${borehole.organizations}" var="organization">
 				<div class="container">
 				<dl>
 					<dt>Organization</dt>
@@ -127,7 +145,7 @@
 		</div>
 
 		<div id="tab-notes" class="hidden">
-			<c:forEach items="${notes}" var="note" varStatus="stat">
+			<c:forEach items="${borehole.notes}" var="note" varStatus="stat">
 			<div class="container">
 				<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
 				<pre>${fn:escapeXml(note.note)}</pre>

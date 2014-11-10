@@ -46,4 +46,10 @@ public class Borehole implements Serializable
 
 	private List<Organization> organizations;
 	public List<Organization> getOrganizations(){ return organizations; }
+
+	private List<Note> notes;
+	public List<Note> getNotes(){ return notes; }
+
+	private List<URL> urls;
+	public List<URL> getURLs(){ return urls; }
 }

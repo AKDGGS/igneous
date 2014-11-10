@@ -50,12 +50,6 @@ public class BoreholeViewServlet extends HttpServlet
 			request.setAttribute("wkt", sess.selectOne(
 				"gov.alaska.dggs.igneous.Borehole.getWKTByID", id
 			));
-			request.setAttribute("notes", sess.selectList(
-				"gov.alaska.dggs.igneous.Note.getByBoreholeID", id
-			));
-			request.setAttribute("organizations", sess.selectList(
-				"gov.alaska.dggs.igneous.Organization.getByBoreholeID", id
-			));
 
 			request.getRequestDispatcher(
 				"/WEB-INF/tmpl/borehole_view.jsp"

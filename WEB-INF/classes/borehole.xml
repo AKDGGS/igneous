@@ -5,51 +5,48 @@
 
 <mapper namespace="gov.alaska.dggs.igneous.Borehole">
 	<sql id="getBy">
-		SELECT bh.borehole_id, bh.prospect_id,
+		SELECT bh.borehole_id,
 			bh.name AS borehole_name,
 			bh.alt_names AS alt_borehole_names,
 			bh.is_onshore, bh.completion_date,
-			
+
 			bh.measured_depth, mdu.unit_id AS mdu_unit_id,
 			mdu.abbr AS mdu_unit_abbr, mdu.name AS mdu_unit_name,
 
 			bh.elevation, evu.unit_id AS evu_unit_id,
-			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name
+			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name,
+
+			ph.prospect_id,
+			ph.name AS prospect_name,
+			ph.alt_names AS alt_prospect_names,
+			ph.ardf_number
+		FROM borehole AS bh
+		LEFT OUTER JOIN prospect AS ph
+			ON ph.prospect_id = bh.prospect_id
+		LEFT OUTER JOIN unit AS mdu
+			ON mdu.unit_id = measured_depth_unit_id
+		LEFT OUTER JOIN unit AS evu
+			ON evu.unit_id = elevation_unit_id
 	</sql>
 
 
 	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
 		<include refid="getBy" />
-		FROM borehole AS bh
-		LEFT OUTER JOIN unit AS mdu
-			ON mdu.unit_id = measured_depth_unit_id
-		LEFT OUTER JOIN unit AS evu
-			ON evu.unit_id = elevation_unit_id
 		WHERE bh.borehole_id = #{borehole_id}
 	</select>
 
 
 	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
 		<include refid="getBy" />
-		FROM borehole AS bh
-		LEFT OUTER JOIN unit AS mdu
-			ON mdu.unit_id = measured_depth_unit_id
-		LEFT OUTER JOIN unit AS evu
-			ON evu.unit_id = elevation_unit_id
-		WHERE bh.prospect_id = #{prospect_id}
+		WHERE ph.prospect_id = #{prospect_id}
 		ORDER BY LOWER(bh.name)
 	</select>
 
 
 	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="BoreholeMap">
 		<include refid="getBy" />
-		FROM inventory_borehole AS ib
-		JOIN borehole AS bh
-			ON bh.borehole_id = ib.borehole_id
-		LEFT OUTER JOIN unit AS mdu
-			ON mdu.unit_id = measured_depth_unit_id
-		LEFT OUTER JOIN unit AS evu
-			ON evu.unit_id = elevation_unit_id
+		JOIN inventory_borehole AS ib
+			ON ib.borehole_id = bh.borehole_id
 		WHERE ib.inventory_id = #{inventory_id}
 	</select>
 
@@ -77,8 +74,21 @@
 			<result property="name" column="evu_unit_name" />
 		</association>
 
-		<association property="prospect" column="prospect_id" javaType="Prospect"
-			select="gov.alaska.dggs.igneous.Prospect.getByID" />
+		<association property="prospect" javaType="Prospect">
+			<id property="id" column="prospect_id" />
+			<result property="name" column="prospect_name" />
+			<result property="alt_names" column="alt_prospect_names" />
+			<result property="ardf" column="ardf_number" />
+		</association>
+
+		<collection property="notes" column="borehole_id"
+			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByBoreholeID" />
+
+		<collection property="organizations" column="borehole_id"
+			ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByBoreholeID" />
+		
+		<collection property="urls" column="borehole_id"
+			ofType="URL" select="gov.alaska.dggs.igneous.URL.getByBoreholeID" />
 	</resultMap>
 
 

@@ -14,25 +14,22 @@
 			w.permit_status, w.completion_status,
 			u.unit_id, u.name AS unit_name, u.abbr AS unit_abbr,
 			u.description AS unit_description
+		FROM well AS w
+		LEFT OUTER JOIN unit AS u
+			ON u.unit_id = w.unit_id
 	</sql>
 
 
 	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
 		<include refid="getBy" />
-		FROM well AS w
-		LEFT OUTER JOIN unit AS u
-			ON u.unit_id = w.unit_id
 		WHERE w.well_id = #{id}
 	</select>
 
 
 	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
 		<include refid="getBy" />
-		FROM inventory_well AS iw
-		JOIN well AS w
-			ON w.well_id = iw.well_id
-		LEFT OUTER JOIN unit AS u
-			ON u.unit_id = w.unit_id
+		JOIN inventory_well AS iw
+		 ON iw.well_id = w.well_id
 		WHERE iw.inventory_id = #{id}
 	</select>
 
@@ -60,7 +57,12 @@
 			<result property="description" column="unit_description" />
 		</association>
 
-		<collection property="operators" column="well_id" ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByWellID" />
+		<collection property="operators" column="well_id"
+			ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByWellID" />
+		<collection property="notes" column="well_id"
+			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByWellID" />
+		<collection property="urls" column="well_id"
+			ofType="URL" select="gov.alaska.dggs.igneous.URL.getByWellID" />
 	</resultMap>
 
 
