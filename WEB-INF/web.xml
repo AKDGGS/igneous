@@ -69,6 +69,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>OutcropViewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.OutcropViewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>OutcropViewServlet</servlet-name>
+		<url-pattern>/outcrop/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>InventoryViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.InventoryViewServlet</servlet-class>
 	</servlet>

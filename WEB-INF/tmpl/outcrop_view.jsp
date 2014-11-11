@@ -54,52 +54,26 @@
 			</div>
 
 			<div class="half-left">
-				<c:if test="${!empty borehole.prospect}">
 				<dl>
-					<dt>Prospect Name</dt>
-					<dd><a href="../search#prospect_id=${borehole.prospect.ID}">${borehole.prospect.name}</a></dd>
+					<dt>Outcrop Name</dt>
+					<dd>${outcrop.name}</dd>
 				</dl>
-				<c:if test="${!empty borehole.prospect.altNames}">
+				<c:if test="${!empty outcrop.number}">
 				<dl>
-					<dt>Alternative Prospect Name(s)</dt>
-					<dd>${borehole.prospect.altNames}</dd>
-				</dl>
-				</c:if>
-				<c:if test="${!empty borehole.prospect.ARDF}">
-				<dl>
-					<dt>ARDF Number</dt>
-					<dd><a href="http://mrdata.usgs.gov/ardf/show-ardf.php?ardf_num=${borehole.prospect.ARDF}">${borehole.prospect.ARDF}</a></dd>
+					<dt>Outcrop Number</dt>
+					<dd>${outcrop.number}</dd>
 				</dl>
 				</c:if>
-				</c:if>
+				<c:if test="${!empty outcrop.year}">
 				<dl>
-					<dt>Borehole Name</dt>
-					<dd>${borehole.name}</dd>
-				</dl>
-				<c:if test="${!empty borehole.altNames}">
-				<dl>
-					<dt>Alternative Borehole Name(s)</dt>
-					<dd>${borehole.altNames}</dd>
+					<dt>Outcrop Year</dt>
+					<dd>${outcrop.year}</dd>
 				</dl>
 				</c:if>
-				<c:if test="${!empty borehole.completionDate}">
 				<dl>
-					<dt>Completion Date</dt>
-					<dd><fmt:formatDate pattern="M/d/yyyy" value="${borehole.completionDate}"/></dd>
+					<dt>Onshore</dt>
+					<dd><span title="${outcrop.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${outcrop.onshore ? 'ok' : 'remove'}"></span></dd>
 				</dl>
-				</c:if>
-				<c:if test="${!empty borehole.measuredDepth}">
-				<dl>
-					<dt>Measured Depth</dt>
-					<dd><fmt:formatNumber value="${borehole.measuredDepth}" /> <c:if test="${!empty borehole.measuredDepthUnit}">&nbsp;${borehole.measuredDepthUnit.abbr}</c:if></dd>
-				</dl>
-				</c:if>
-				<c:if test="${!empty borehole.elevation}">
-				<dl>
-					<dt>Elevation</dt>
-					<dd><fmt:formatNumber value="${borehole.elevation}" /> <c:if test="${!empty borehole.elevationUnit}">&nbsp;${borehole.elevationUnit.abbr}</c:if></dd>
-				</dl>
-				</c:if>
 				<c:if test="${!empty quadrangles}">
 				<dl>
 					<dt>Quadrangle</dt>
@@ -107,10 +81,6 @@
 					</dd>
 				</dl>
 				</c:if>
-				<dl>
-					<dt>Onshore</dt>
-					<dd><span title="${borehole.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${borehole.onshore ? 'ok' : 'remove'}"></span></dd>
-				</dl>
 			</div>
 		</div>
 
@@ -122,15 +92,14 @@
 		</c:forEach>
 
 		<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
-			<li class="active"><a href="#organizations">Organizations <span class="badge">${fn:length(borehole.organizations)}</span></a></li>
-			<li><a href="#notes">Notes <span class="badge">${fn:length(borehole.notes)}</span></a></li>
+			<li class="active"><a href="#organizations">Organizations <span class="badge">${fn:length(outcrop.organizations)}</span></a></li>
+			<li><a href="#notes">Notes <span class="badge">${fn:length(outcrop.notes)}</span></a></li>
 			<li><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
-			<li><a href="#urls">URLs <span class="badge">${fn:length(borehole.URLs)}</span></a></li>
 			<li><a href="#files">Files</a></li>
 		</ul>
 
 		<div id="tab-organizations">
-			<c:forEach items="${borehole.organizations}" var="organization">
+			<c:forEach items="${outcrop.organizations}" var="organization">
 				<div class="container">
 				<dl>
 					<dt>Organization</dt>
@@ -145,7 +114,7 @@
 		</div>
 
 		<div id="tab-notes" class="hidden">
-			<c:forEach items="${borehole.notes}" var="note" varStatus="stat">
+			<c:forEach items="${outcrop.notes}" var="note">
 			<div class="container">
 				<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
 				<pre>${fn:escapeXml(note.note)}</pre>
@@ -172,7 +141,7 @@
 					<thead>
 						<tr>
 							<td colspan="13" style="text-align: right">
-								<input type="hidden" name="borehole_id" id="borehole_id" value="${borehole.ID}">
+								<input type="hidden" name="outcrop_id" id="outcrop_id" value="${outcrop.ID}">
 								<input type="hidden" name="wkt" id="wkt" value="${wkt}">
 								<input type="hidden" name="start" id="start" value="0">
 								<label for="max">Showing</label>
@@ -239,27 +208,6 @@
 		</div>
 
 		<div id="tab-files" class="hidden"></div>
-
-		<div id="tab-urls" class="hidden">
-			<c:forEach items="${borehole.URLs}" var="url" varStatus="stat">
-			<div class="container">
-				<dl>
-					<dt>URL Description</dt>
-					<dd>${url.description}</dd>
-				</dl>
-				<c:if test="${!empty url.type}">
-				<dl>
-					<dt>URL Type</dt>
-					<dd>${url.type.name}</dd>
-				</dl>
-				</c:if>
-				<dl>
-					<dt>URL</dt>
-					<dd><a href="${url.URL}">${url.URL}</a></dd>
-				</dl>
-			</div>
-			</c:forEach>
-		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>

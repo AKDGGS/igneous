@@ -7,37 +7,41 @@
 	<sql id="getBy">
 		SELECT o.outcrop_id, o.name,
 			o.outcrop_number, o.is_onshore, o.year
+		FROM outcrop AS o
 	</sql>
 
 
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="OutcropMap">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="OutcropMap">
 		<include refid="getBy" />
-		FROM outcrop AS o
 		WHERE o.outcrop_id = #{outcrop_id}
 	</select>
 
 
-	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="OutcropMap">
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="OutcropMap">
 		<include refid="getBy" />
-		FROM inventory_outcrop AS io
-		JOIN outcrop AS o
-			ON o.outcrop_id = io.outcrop_id
+		JOIN inventory_outcrop AS io
+			ON io.outcrop_id = o.outcrop_id
 		WHERE io.inventory_id = #{inventory_id}
 	</select>
 
 
 	<resultMap id="OutcropMap" type="Outcrop">
 		<id property="id" column="outcrop_id" />
-
 		<result property="name" column="name" />
 		<result property="number" column="outcrop_number" />
 		<result property="is_onshore" column="is_onshore" />
 		<result property="year" column="year" />
+		<collection property="organizations" column="outcrop_id"
+			ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByOutcropID" />
+		<collection property="notes" column="outcrop_id"
+			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByOutcropID" />
 	</resultMap>
 
 
-	<select id="getIDByWKT" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT DISTINCT outcrop_id FROM outcrop_geog
-		WHERE ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))
+	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
+		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
+		FROM outcrop_geog
+		WHERE outcrop_id = #{outcrop_id}
+		LIMIT 1
 	</select>
 </mapper>

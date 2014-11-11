@@ -20,16 +20,16 @@
 	</sql>
 
 
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="WellMap">
 		<include refid="getBy" />
 		WHERE w.well_id = #{id}
 	</select>
 
 
-	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="WellMap">
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="WellMap">
 		<include refid="getBy" />
 		JOIN inventory_well AS iw
-		 ON iw.well_id = w.well_id
+			ON iw.well_id = w.well_id
 		WHERE iw.inventory_id = #{id}
 	</select>
 
@@ -66,7 +66,7 @@
 	</resultMap>
 
 
-	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="long" resultType="String">
+	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
 		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
 		FROM well_geog
 		WHERE well_id = #{well_id}

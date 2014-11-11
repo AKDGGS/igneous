@@ -317,6 +317,22 @@ public class SearchServlet extends HttpServlet
 			query.append(")))::int[])");
 		}
 
+		// Handle outcrop_ids -
+		// ANY() is faster than IN() in this context because of
+		// the smaller number of rows
+		String[] outcrops = request.getParameterValues("outcrop_id");
+		if(isIntegerArray(outcrops)){
+			if(query.length() > 0){ query.append(" AND "); }
+			query.append("inventory_id = ANY((SELECT ARRAY(");
+			query.append("SELECT inventory_id FROM inventory_outcrop");
+			query.append(" WHERE outcrop_id IN (");
+			for(int i = 0; i < outcrops.length; i++){
+				if(i > 0){ query.append(","); }
+				query.append(outcrops[i]);
+			}
+			query.append(")))::int[])");
+		}
+
 		// Handle quadrangle_ids -
 		// IN() is faster in this context than ANY() becase of
 		// the larger number of rows
