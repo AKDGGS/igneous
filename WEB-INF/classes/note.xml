@@ -53,6 +53,16 @@
 	</select>
 
 
+	<select id="getByShotlineID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="NoteMap">
+		<include refid="getBy" />
+		JOIN shotline_note AS sn
+			ON sn.note_id = n.note_id
+		WHERE sn.shotline_id = #{shotline_id}
+			AND n.active
+		ORDER BY note_date DESC
+	</select>
+
+
 	<resultMap id="NoteMap" type="Note">
 		<id property="id" column="note_id" />
 		<result property="note" column="note" />

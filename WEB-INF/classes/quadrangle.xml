@@ -60,6 +60,15 @@
 	</select>
 
 
+	<select id="getByShotlineID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="QuadrangleMap">
+		<include refid="getBy" />
+		JOIN shotline_geog AS sg
+			ON ST_Intersects(sg.geog, qg.geog)
+		WHERE sg.shotline_id = #{shotline_id}
+			AND qr.scale = 250000
+	</select>
+
+
 	<resultMap id="QuadrangleMap" type="Quadrangle">
 		<id property="id" column="quadrangle_id" />
 		<result property="name" column="name" />

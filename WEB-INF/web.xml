@@ -79,6 +79,16 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>ShotlineViewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.ShotlineViewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ShotlineViewServlet</servlet-name>
+		<url-pattern>/shotline/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>InventoryViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.InventoryViewServlet</servlet-class>
 	</servlet>

@@ -81,12 +81,10 @@
 			<result property="ardf" column="ardf_number" />
 		</association>
 
-		<collection property="notes" column="borehole_id"
-			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByBoreholeID" />
-
 		<collection property="organizations" column="borehole_id"
 			ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByBoreholeID" />
-		
+		<collection property="notes" column="borehole_id"
+			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByBoreholeID" />
 		<collection property="urls" column="borehole_id"
 			ofType="URL" select="gov.alaska.dggs.igneous.URL.getByBoreholeID" />
 	</resultMap>

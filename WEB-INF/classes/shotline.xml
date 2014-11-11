@@ -18,7 +18,14 @@
 	</sql>
 
 
-	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="Integer" resultMap="ShotlineMap">
+	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="ShotlineMap">
+		<include refid="getBy" />
+		WHERE sl.shotline_id = #{shotline_id}
+		ORDER BY sl.shotline_id, sp.shotpoint_number
+	</select>
+
+
+	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="ShotlineMap">
 		<include refid="getBy" />
 		JOIN inventory_shotpoint AS isp
 			ON isp.shotpoint_id = sp.shotpoint_id
@@ -38,5 +45,18 @@
 			<id property="id" column="shotpoint_id" />
 			<result property="number" column="shotpoint_number" />
 		</collection>
+
+		<collection property="notes" column="shotline_id"
+			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByShotlineID" />
+		<collection property="urls" column="shotline_id"
+			ofType="URL" select="gov.alaska.dggs.igneous.URL.getByShotlineID" />
 	</resultMap>
+
+
+	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
+		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
+		FROM shotline_geog
+		WHERE shotline_id = #{shotline_id}
+		LIMIT 1
+	</select>
 </mapper>

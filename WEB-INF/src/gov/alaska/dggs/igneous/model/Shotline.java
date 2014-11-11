@@ -27,6 +27,12 @@ public class Shotline implements Serializable
 	private List<Shotpoint> shotpoints;
 	public List<Shotpoint> getShotpoints(){ return shotpoints; }
 
+	private List<Note> notes;
+	public List<Note> getNotes(){ return notes; }
+
+	private List<URL> urls;
+	public List<URL> getURLs(){ return urls; }
+
 	// Aggregate fields that have no database counter-part
 	private BigDecimal shotline_min;
 	public BigDecimal getShotlineMin(){ return shotline_min; }

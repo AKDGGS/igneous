@@ -37,6 +37,14 @@
 	</select>
 
 
+	<select id="getByShotlineID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="URLMap">
+		<include refid="getBy" />
+		JOIN shotline_url AS su
+			ON su.url_id = u.url_id
+		WHERE su.shotline_id = #{shotline_id}
+	</select>
+
+
 	<resultMap id="URLMap" type="URL">
 		<id property="id" column="url_id" />
 		<result property="url" column="url" />
