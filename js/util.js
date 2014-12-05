@@ -695,7 +695,7 @@ function initMap()
 				numDigits: 3, emptyString: 'Unknown',
 				displayProjection: new OpenLayers.Projection('EPSG:4326')
 			}),
-			new OpenLayers.Control.ScaleLine({ geodetic: true }),
+			new OpenLayers.Control.ScaleLine({ geodesic: true }),
 			new OpenLayers.Control.Navigation()
 		]
 	});
