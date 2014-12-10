@@ -38,6 +38,7 @@
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>BoreholeViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.BoreholeViewServlet</servlet-class>
@@ -47,6 +48,7 @@
 		<servlet-name>BoreholeViewServlet</servlet-name>
 		<url-pattern>/borehole/*</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>ProspectViewServlet</servlet-name>
@@ -58,6 +60,7 @@
 		<url-pattern>/prospect/*</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>WellViewPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.WellViewServlet</servlet-class>
@@ -67,6 +70,7 @@
 		<servlet-name>WellViewPageServlet</servlet-name>
 		<url-pattern>/well/*</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>OutcropViewServlet</servlet-name>
@@ -78,6 +82,7 @@
 		<url-pattern>/outcrop/*</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>ShotlineViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.ShotlineViewServlet</servlet-class>
@@ -88,6 +93,7 @@
 		<url-pattern>/shotline/*</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>InventoryViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.InventoryViewServlet</servlet-class>
@@ -97,6 +103,18 @@
 		<servlet-name>InventoryViewServlet</servlet-name>
 		<url-pattern>/inventory/*</url-pattern>
 	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>InventoryStashServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.InventoryStashServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>InventoryStashServlet</servlet-name>
+		<url-pattern>/stash.json</url-pattern>
+	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>SearchServlet</servlet-name>
@@ -118,6 +136,7 @@
 		<url-pattern>/search.csv</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>ProspectServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.ProspectServlet</servlet-class>
@@ -127,6 +146,7 @@
 		<servlet-name>ProspectServlet</servlet-name>
 		<url-pattern>/prospect.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>CollectionServlet</servlet-name>
@@ -138,6 +158,7 @@
 		<url-pattern>/collection.json</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>InventoryServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.InventoryServlet</servlet-class>
@@ -147,6 +168,7 @@
 		<servlet-name>InventoryServlet</servlet-name>
 		<url-pattern>/inventory.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>BarcodeServlet</servlet-name>
@@ -158,6 +180,7 @@
 		<url-pattern>/barcode</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>MiningDistrictServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.MiningDistrictServlet</servlet-class>
@@ -167,6 +190,7 @@
 		<servlet-name>MiningDistrictServlet</servlet-name>
 		<url-pattern>/mining_district.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>FileDownloadServlet</servlet-name>
@@ -178,6 +202,7 @@
 		<url-pattern>/file/*</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>QualityServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.QualityServlet</servlet-class>
@@ -187,6 +212,7 @@
 		<servlet-name>QualityServlet</servlet-name>
 		<url-pattern>/quality.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>QualityPageServlet</servlet-name>
@@ -198,6 +224,7 @@
 		<url-pattern>/quality.html</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>AuditServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.AuditServlet</servlet-class>
@@ -207,6 +234,7 @@
 		<servlet-name>AuditServlet</servlet-name>
 		<url-pattern>/audit.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>RecodeServlet</servlet-name>
@@ -218,6 +246,7 @@
 		<url-pattern>/recode.json</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>AddInventoryServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.AddInventoryServlet</servlet-class>
@@ -227,6 +256,7 @@
 		<servlet-name>AddInventoryServlet</servlet-name>
 		<url-pattern>/addinventory.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>AddContainerServlet</servlet-name>
@@ -238,6 +268,7 @@
 		<url-pattern>/addcontainer.json</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>MoveServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.MoveServlet</servlet-class>
@@ -247,6 +278,7 @@
 		<servlet-name>MoveServlet</servlet-name>
 		<url-pattern>/move.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>SummaryServlet</servlet-name>
@@ -258,6 +290,7 @@
 		<url-pattern>/summary.json</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>QuadrangleServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.QuadrangleServlet</servlet-class>
@@ -267,6 +300,7 @@
 		<servlet-name>QuadrangleServlet</servlet-name>
 		<url-pattern>/quadrangle.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>KeywordServlet</servlet-name>
@@ -278,6 +312,7 @@
 		<url-pattern>/keyword.json</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>AuditReportServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.AuditReportServlet</servlet-class>
@@ -287,6 +322,7 @@
 		<servlet-name>AuditReportServlet</servlet-name>
 		<url-pattern>/audit_report.json</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>AuditReportPageServlet</servlet-name>
@@ -298,6 +334,7 @@
 		<url-pattern>/audit.html</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>HelpPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.HelpPageServlet</servlet-class>
@@ -307,6 +344,7 @@
 		<servlet-name>HelpPageServlet</servlet-name>
 		<url-pattern>/help</url-pattern>
 	</servlet-mapping>
+
 
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>

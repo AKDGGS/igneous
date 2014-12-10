@@ -474,6 +474,14 @@
 	</resultMap>
 
 
+	<select id="getStashByID" parameterType="String" resultSetType="FORWARD_ONLY" resultType="String">
+		SELECT stash
+		FROM inventory
+		WHERE inventory_id = #{inventory_id}
+		LIMIT 1
+	</select>
+
+
 	<update id="updateBarcode" parameterType="map">
 		UPDATE inventory SET barcode = #{new_barcode}
 		WHERE barcode = #{old_barcode}

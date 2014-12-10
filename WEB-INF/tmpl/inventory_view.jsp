@@ -13,12 +13,17 @@
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			dl { display: table; margin: 8px 4px; }
-			dt, dd { display: table-cell; }
+			dt, dd { display: table-cell; vertical-align: top; }
 			dt { width: 160px; }
 			dd { margin: 0px; }
 			pre { margin: 0px; }
 			.notehd, .qualityhd, .loghd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
+
+			#stash-dd table { border-collapse: collapse; font-size: 12px; font-family: Tahoma, Geneva, sans-serif; }
+			#stash-dd table th { text-align: left; }
+			#stash-dd table th, #stash-dd table td { border: 1px solid #bbb; padding: 4px 8px; }
+			#stash-dd table tr:nth-child(odd){ background-color: #eee; }
 		</style>
 	</head>
 	<body>
@@ -240,6 +245,10 @@
 			<dl>
 				<dt>Active</dt>
 				<dd><span title="${inventory.active ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.active ? 'ok' : 'remove'}"></span></dd>
+			</dl>
+			<dl>
+				<dt><a id="stash-link" href="#">Show Stash</a></dt>
+				<dd id="stash-dd"></dd>
 			</dl>
 
 			<ul id="tabs" class="nav nav-tabs" style="width: 100%">
@@ -491,7 +500,85 @@
 					e.preventDefault();
 					return false;
 				});
+
+				$('#stash-link').click(function(e){
+					var anchor = $(this);
+					if(anchor.text() === 'Show Stash'){
+						$.getJSON('../stash.json', {id: ${inventory.ID}}, function(json){
+							var el = parseJSON(json);
+							document.getElementById('stash-dd').appendChild(el);
+							anchor.text('Hide Stash');
+						});
+					} else {
+						$('#stash-dd').empty();
+						anchor.text('Show Stash');
+					}
+
+					e.preventDefault();
+					return false;
+				});
 			});
+
+			function parseJSON(obj){
+				var type = Object.prototype.toString.call(obj);
+
+				switch(type){
+					case '[object Boolean]':
+						return document.createTextNode(obj.toString());
+
+					case '[object String]':
+						return document.createTextNode(obj);
+
+					case '[object Number]':
+						return document.createTextNode(obj.toString());
+
+					case '[object Null]':
+						return document.createTextNode('(null)');
+
+					case '[object Object]':
+						var tbl = document.createElement('table');
+						var count = 0;
+						for(var i in obj){
+							var tr = document.createElement('tr');
+
+							var th = document.createElement('th');
+							th.appendChild(document.createTextNode(i));
+							tr.appendChild(th);
+
+							var td = document.createElement('td');
+							td.appendChild(parseJSON(obj[i]));
+							tr.appendChild(td);
+
+							tbl.appendChild(tr);
+							count++;
+						}
+						if(count > 0) return tbl;
+						else return document.createTextNode('(Empty Object)');
+
+					case '[object Array]':
+						if(obj.length < 1) return document.createTextNode('(Empty List)');
+
+						var tbl = document.createElement('table');
+						for(var i = obj.length; i--;){
+							var tr = document.createElement('tr');
+
+							var th = document.createElement('th');
+							th.appendChild(document.createTextNode(i));
+							tr.appendChild(th);
+
+							var td = document.createElement('td');
+							td.appendChild(parseJSON(obj[i]));
+							tr.appendChild(td);
+
+							tbl.appendChild(tr);
+						}
+						return tbl;
+
+					default:
+						return document.createTextNode('Unknown - ' + type);
+				}
+			}
+
 		</script>
 	</body>
 </html>
