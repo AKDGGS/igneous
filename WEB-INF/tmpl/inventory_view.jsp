@@ -232,6 +232,12 @@
 				<dd><fmt:formatDate pattern="M/d/yyyy" value="${inventory.entered}"/></dd>
 			</dl>
 			</c:if>
+			<c:if test="${!empty inventory.user}">
+			<dl>
+				<dt>Last Modified By</dt>
+				<dd>${inventory.user}</dd>
+			</dl>
+			</c:if>
 			<c:if test="${!empty inventory.modified}">
 			<dl>
 				<dt>Modified Date</dt>

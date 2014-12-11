@@ -141,7 +141,9 @@
 			iv.radiation_msvh,
 			iv.received_date,
 			iv.entered_date,
+
 			iv.modified_date,
+			iv.modified_user,
 
 			iv.active,
 			
@@ -197,6 +199,7 @@
 		<result property="received" column="received_date" />
 		<result property="entered" column="entered_date" />
 		<result property="modified" column="modified_date" />
+		<result property="user" column="modified_user" />
 		<result property="active" column="active" />
 
 		<result property="bin" column="bin" />

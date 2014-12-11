@@ -127,6 +127,9 @@ public class Inventory implements Serializable
 	private Date modified;
 	public Date getModified(){ return modified; }
 
+	private String user;
+	public String getUser(){ return user; }
+
 	private Boolean active;
 	public Boolean getActive(){ return active; }
 
