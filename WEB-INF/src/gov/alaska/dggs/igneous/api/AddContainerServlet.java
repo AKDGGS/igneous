@@ -17,6 +17,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Container;
+import gov.alaska.dggs.igneous.model.ContainerType;
 
 
 public class AddContainerServlet extends HttpServlet
@@ -54,6 +55,11 @@ public class AddContainerServlet extends HttpServlet
 			c.setBarcode(barcode);
 			c.setName(name);
 			c.setRemark(remark);
+
+			ContainerType type = (ContainerType)sess.selectOne(
+				"gov.alaska.dggs.igneous.Container.getContainerTypeByName", "unknown"
+			);
+			c.setType(type);
 
 			sess.insert("gov.alaska.dggs.igneous.Container.insert", c);
 			if(c.getID() == null) throw new Exception("Container insert failed.");

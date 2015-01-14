@@ -17,9 +17,9 @@
 
 	<insert id="insert" parameterType="Container" useGeneratedKeys="true" keyColumn="container_id" keyProperty="id">
 		INSERT INTO container (
-			barcode, alt_barcode, name, remark
+			container_type_id, barcode, alt_barcode, name, remark
 		) VALUES (
-			#{barcode}, #{alt_barcode}, #{name}, #{remark}
+			#{type.id}, #{barcode}, #{alt_barcode}, #{name}, #{remark}
 		)
 	</insert>
 
@@ -39,6 +39,27 @@
 			OR barcode = ('GMC-' || #{barcode})
 			OR alt_barcode = #{barcode}
 	</update>
+
+
+	<select id="getContainerTypeByID" parameterType="int" resultMap="ContainerTypeMap">
+		SELECT container_type_id, name
+		FROM container_type
+		WHERE container_type_id = #{container_type_id}
+	</select>
+
+
+	<select id="getContainerTypeByName" parameterType="String" resultMap="ContainerTypeMap">
+		SELECT container_type_id, name
+		FROM container_type
+		WHERE name = #{name}
+		LIMIT 1
+	</select>
+
+
+	<resultMap id="ContainerTypeMap" type="ContainerType">
+		<id property="id" column="container_type_id" />
+		<result property="name" column="name" />
+	</resultMap>
 
 
 	<select id="getTotalsByBarcode" parameterType="String" resultType="Map">
