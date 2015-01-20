@@ -10,7 +10,7 @@
 			username,
 			needs_detail,
 			unsorted,
-			possible_radiation,
+			radiation_risk,
 			damaged,
 			box_damaged,
 			missing,
@@ -35,7 +35,7 @@
 		<result property="username" column="username" />
 		<result property="needs_detail" column="needs_detail" />
 		<result property="unsorted" column="unsorted" />
-		<result property="possible_radiation" column="possible_radiation" />
+		<result property="radiation" column="radiation_risk" />
 		<result property="damaged" column="damaged" />
 		<result property="box_damaged" column="box_damaged" />
 		<result property="missing" column="missing" />
@@ -49,13 +49,13 @@
 	<insert id="insert" parameterType="InventoryQuality" useGeneratedKeys="true" keyColumn="inventory_quality_id" keyProperty="id">
 		INSERT INTO inventory_quality (
 			inventory_id, remark, username, check_date,
-			needs_detail, unsorted, possible_radiation,
+			needs_detail, unsorted, radiation_risk,
 			damaged, box_damaged, missing,
 			data_missing, barcode_missing, label_obscured,
 			insufficient_material
 		) VALUES (
 			#{inventory.id}, #{remark}, #{username}, #{date},
-			#{needs_detail}, #{unsorted}, #{possible_radiation},
+			#{needs_detail}, #{unsorted}, #{radiation},
 			#{damaged}, #{box_damaged}, #{missing},
 			#{data_missing}, #{barcode_missing}, #{label_obscured},
 			#{insufficient_material}

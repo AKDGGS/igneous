@@ -44,9 +44,9 @@ public class InventoryQuality implements Serializable
 	public void setUnsorted(Boolean b){ unsorted = b; }
 
 
-	private Boolean possible_radiation;
-	public Boolean getPossibleRadiation(){ return possible_radiation; }
-	public void setPossibleRadiation(Boolean b){ possible_radiation = b; }
+	private Boolean radiation;
+	public Boolean getRadiation(){ return radiation; }
+	public void setRadiation(Boolean b){ radiation = b; }
 
 
 	private Boolean damaged;
@@ -91,7 +91,7 @@ public class InventoryQuality implements Serializable
 		date = new Date();
 		needs_detail = Boolean.valueOf(false);
 		unsorted = Boolean.valueOf(false);
-		possible_radiation = Boolean.valueOf(false);
+		radiation = Boolean.valueOf(false);
 		damaged = Boolean.valueOf(false);
 		box_damaged = Boolean.valueOf(false);
 		missing = Boolean.valueOf(false);
