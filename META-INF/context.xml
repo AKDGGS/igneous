@@ -1,0 +1,5 @@
+<Context>
+	<ResourceLink name="jdbc/igneous" global="jdbc/igneousdev"
+		type="javax.sql.DataSource" />
+</Context>
+
