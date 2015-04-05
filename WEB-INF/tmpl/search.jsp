@@ -179,6 +179,13 @@
 			</table>
 		</div>
 
+		<div class="container" style="text-align: right; margin-top: 20px;">
+			<b>Other Tools:</b>
+			[<a href="container_log.html">Move Log</a>]
+			[<a href="quality.html">Quality Assurance</a>]
+			[<a href="audit.html">Audit</a>]
+		</div>
+
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.13.1/OpenLayers.js"></script>

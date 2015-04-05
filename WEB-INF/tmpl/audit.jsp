@@ -36,6 +36,8 @@
 		</div>
 
 		<div class="container">
+			<h3>Audit Log</h3>
+
 			<label for="start">Start Date: </label>
 			<input type="text" id="start" name="start" size="20" tabindex="2" value="1/1/10 00:00:00" />
 
@@ -55,6 +57,13 @@
 			<input type="text" id="path" name="path" size="35" value="" />
 
 			<div id="dest"></div>
+		</div>
+
+		<div class="container" style="text-align: right; margin-top: 20px;">
+			<b>Other Tools:</b>
+			[<a href="container_log.html">Move Log</a>]
+			[<a href="quality.html">Quality Assurance</a>]
+			[<a href="audit.html">Audit</a>]
 		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>

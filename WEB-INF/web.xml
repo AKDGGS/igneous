@@ -345,6 +345,15 @@
 		<url-pattern>/help</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>ContainerLogViewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.ContainerLogViewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ContainerLogViewServlet</servlet-name>
+		<url-pattern>/container_log.html</url-pattern>
+	</servlet-mapping>
 
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>

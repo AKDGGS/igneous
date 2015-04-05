@@ -15,9 +15,7 @@
 			iun.abbr AS interval_unit_abbr,
 			cl.collection_id, cl.name AS collection_name,
 			cl.description AS collection_description,
-			co.path_cache AS container_path, (
-				SELECT bin FROM inventory_bin WHERE inventory_id = iv.inventory_id
-			) AS bin
+			co.path_cache AS container_path
 		FROM inventory AS iv
 		LEFT OUTER JOIN collection AS cl ON
 			cl.collection_id = iv.collection_id
@@ -145,11 +143,7 @@
 			iv.modified_date,
 			iv.modified_user,
 
-			iv.active,
-			
-			(
-				SELECT bin FROM inventory_bin WHERE inventory_id = iv.inventory_id
-			) AS bin
+			iv.active
 		FROM inventory AS iv
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
