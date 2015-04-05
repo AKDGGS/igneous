@@ -25,6 +25,7 @@ public class Inventory implements Serializable
 
 	private Container container;
 	public Container getContainer(){ return container; }
+	public void setContainer(Container container){ this.container = container; }
 
 	private BigDecimal dggs_sample_id;
 	public BigDecimal getDGGSSampleID(){ return dggs_sample_id; }

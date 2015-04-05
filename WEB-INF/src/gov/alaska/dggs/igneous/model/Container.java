@@ -10,6 +10,7 @@ public class Container implements Serializable
 
 	private Integer id;
 	public Integer getID(){ return id; }
+	public void setID(Integer id){ this.id = id; }
 
 	private String barcode;
 	public String getBarcode(){ return barcode; }

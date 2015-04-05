@@ -28,6 +28,17 @@
 		<param-value>http://146.63.145.77/igneous/</param-value>
 	</context-param>
 
+	<context-param>
+		<description>
+			Strict mode - when disabled inventory that is moved and doesn't
+			exist is automatically created. Usually not a good idea
+			unless you're moving thousands of things and assume some
+			of them are not properly inventoried.
+		</description>
+		<param-name>strict_mode</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
 	<servlet>
 		<servlet-name>SearchPageServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.SearchPageServlet</servlet-class>

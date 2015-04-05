@@ -500,7 +500,7 @@
 
 
 	<insert id="insert" parameterType="Inventory" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
-		INSERT INTO inventory (barcode, remark)
-		VALUES (#{barcode}, #{remark})
+		INSERT INTO inventory (barcode, remark, container_id)
+		VALUES (#{barcode}, #{remark}, #{container.id})
 	</insert>
 </mapper>

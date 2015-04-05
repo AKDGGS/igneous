@@ -160,4 +160,10 @@
 		GROUP BY keywords, ids
 		ORDER BY keywords
 	</select>
+
+
+	<insert id="addToInventory" parameterType="Map">
+		INSERT INTO inventory_keyword (inventory_id, keyword_id)
+		VALUES (#{inventory.id}, #{keyword.id})
+	</insert>
 </mapper>
