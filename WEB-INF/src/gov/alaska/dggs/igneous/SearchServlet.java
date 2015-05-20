@@ -669,7 +669,7 @@ public class SearchServlet extends HttpServlet
 
 			CellProcessor processors[] = new CellProcessor[]{
 				new NotNull(),  // ID
-				new StrReplace("(\r\n|\n|\r)", ";"), // Related
+				new Optional(new StrReplace("(\r\n|\n|\r)", ";")), // Related
 				new Optional(), // Sample
 				new Optional(), // Box
 				new Optional(), // Set
