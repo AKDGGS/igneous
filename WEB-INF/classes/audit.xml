@@ -16,21 +16,13 @@
 	</insert>
 
 	<!--
-		The whole barcode comparison wierdness in the functions below is a
-		product of the fact that some barcodes are entered incorrectly in the
-		database. If you scan such barcodes, they'll return "00001283", but
-		will be entered in the database (and printed on the label) as
-		"GMC-00001283"
-	-->
-
-	<!--
 		This function prints summary details on problems with an audit
 		for a range. It's only appropriate if we're assuming each
 		audit_group in the date range is a discrete container.
 	-->
 	<select id="getReportByDate" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
-		SELECT qag.audit_group_id, qag.remark, qag.container_id,
-			qag.path_cache AS path, dp.duplicates, nm.no_match,
+		SELECT qag.audit_group_id, qag.remark, qc.container_id,
+			qc.path_cache AS path, dp.duplicates, nm.no_match,
 			ws.wrong_shelf,
 			<!--
 				calculate the difference between the total number of barcodes
@@ -39,39 +31,11 @@
 				if the container count is null, because if the container
 				count is null it means we couldn't find a container.
 			-->
-			ABS(COALESCE(agc.cnt,0) - COALESCE(cc.cnt,agc.cnt)) AS difference
-		FROM (
-			<!--
-				Query all audit groups, find matching barcodes in inventory,
-				pair them up to find distinct containers. Count said 
-				containers and determine which is the highest, select
-				only one (the highest count) for each audit_group and
-				spit that out. Also, filter by date and path_cache
-				as necessary.
-			-->
-			SELECT DISTINCT ON (audit_group_id)
-				q.audit_group_id, q.remark, c.container_id, c.path_cache,
-				COUNT(c.container_id) AS container_count
-			FROM (
-				SELECT DISTINCT a.audit_group_id, ag.remark, i.container_id,
-					COALESCE(i.barcode, i.alt_barcode) AS barcode
-				FROM audit AS a
-				JOIN audit_group AS ag
-					ON ag.audit_group_id = a.audit_group_id
-				LEFT OUTER JOIN inventory AS i ON (
-					a.barcode = COALESCE(i.barcode, i.alt_barcode)
-					OR ('GMC-' || a.barcode) = i.barcode
-				) AND i.active = true
-				WHERE ag.create_date BETWEEN
-					#{start}::timestamp AND #{end}::timestamp
-			) AS q
-			LEFT OUTER JOIN container AS c ON c.container_id = q.container_id
-			<if test="path != null">
-			WHERE c.path_cache ILIKE #{path}
-			</if>
-			GROUP BY q.audit_group_id, q.remark, c.container_id
-			ORDER BY q.audit_group_id, container_count DESC
-		) AS qag
+			ABS(COALESCE(agc.cnt, 0) - COALESCE(cc.cnt, agc.cnt, 0)) AS difference
+		FROM audit_group AS qag
+		LEFT OUTER JOIN container AS qc
+			ON qag.remark = COALESCE(qc.barcode, qc.alt_barcode)
+			AND qc.active
 		LEFT OUTER JOIN (
 			<!-- Count duplicates for each audit group -->
 			SELECT q.audit_group_id, COUNT(*) AS duplicates
@@ -89,27 +53,37 @@
 				Count the number of barcodes that couldn't be matched
 				for each group
 			-->
-			SELECT a.audit_group_id, COUNT(*) AS no_match
-			FROM audit AS a
-			LEFT OUTER JOIN inventory AS i ON (
-				a.barcode = COALESCE(i.barcode, i.alt_barcode)
-				OR ('GMC-' || a.barcode) = i.barcode
-			) AND i.active = true
+			SELECT ag.audit_group_id, COUNT(*) AS no_match
+			FROM audit_group AS ag
+			JOIN audit AS a
+				ON a.audit_group_id = ag.audit_group_id
+			LEFT OUTER JOIN inventory AS i
+				ON a.barcode = COALESCE(i.barcode, i.alt_barcode)
+				AND i.active
+			LEFT OUTER JOIN container AS c
+				ON a.barcode = COALESCE(c.barcode, c.alt_barcode)
+				AND c.active
 			WHERE i.inventory_id IS NULL
-			GROUP BY a.audit_group_id
+				AND c.container_id IS NULL
+			GROUP BY ag.audit_group_id
 		) AS nm ON nm.audit_group_id = qag.audit_group_id
 		LEFT OUTER JOIN (
 			<!-- Count the number of distinct container_ids in each group -->
-			SELECT audit_group_id,
-				COUNT(container_id) AS wrong_shelf
+			SELECT audit_group_id, COUNT(container_id) AS wrong_shelf
 			FROM (
-				SELECT a.audit_group_id, i.container_id, COUNT(*)
+				SELECT a.audit_group_id, i.container_id
 				FROM audit AS a
-				JOIN inventory AS i ON (
-					a.barcode = COALESCE(i.barcode, i.alt_barcode)
-					OR ('GMC-' || a.barcode) = i.barcode
-				) AND i.active = true
-				GROUP BY a.audit_group_id, i.container_id
+				JOIN inventory AS i
+					ON a.barcode = COALESCE(i.barcode, i.alt_barcode)
+					AND i.active
+
+				UNION
+
+				SELECT a.audit_group_id, c.parent_container_id AS container_id
+				FROM audit AS a
+				JOIN container AS c
+					ON a.barcode = COALESCE(c.barcode, c.alt_barcode)
+					AND c.active
 			) AS q
 			GROUP BY audit_group_id
 			HAVING COUNT(container_id) > 1
@@ -131,10 +105,25 @@
 					COALESCE(barcode, alt_barcode) AS barcode
 				FROM inventory
 				WHERE active
+					AND COALESCE(barcode, alt_barcode) IS NOT NULL
+					AND container_id IS NOT NULL
+
+				UNION
+
+				SELECT DISTINCT parent_container_id AS container_id,
+					COALESCE(barcode, alt_barcode) AS barcode
+				FROM container
+				WHERE active
+					AND COALESCE(barcode, alt_barcode) IS NOT NULL
+					AND parent_container_id IS NOT NULL
 			) AS q
 			GROUP BY container_id
-		) AS cc ON cc.container_id = qag.container_id
-		ORDER BY qag.path_cache
+		) AS cc ON cc.container_id = qc.container_id
+		WHERE qag.create_date BETWEEN #{start}::timestamp AND #{end}::timestamp
+		<if test="path != null">
+			AND qc.path_cache ILIKE #{path}
+		</if>
+		ORDER BY qc.path_cache
 	</select>
 
 
@@ -152,39 +141,60 @@
 		entries in the database for that barcode.
 	-->
 	<select id="getReportDetail" resultSetType="FORWARD_ONLY" parameterType="map" resultType="HashMap">
-		SELECT * FROM ((
-			SELECT DISTINCT ON(a.audit_id)
-				a.barcode AS s_barcode,
-				COALESCE(i.barcode, i.alt_barcode) AS i_barcode,
-				c.container_id,
-				c.path_cache AS path
-			FROM audit AS a
-			LEFT OUTER JOIN inventory AS i ON (
-				a.barcode = COALESCE(i.barcode, i.alt_barcode)
-				OR ('GMC-' || a.barcode) = i.barcode
-			) AND i.active = true
-			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
-			WHERE a.audit_group_id = #{audit_group_id}
-			ORDER BY a.audit_id
-			<if test="container_id != null">
-				, i.container_id = #{container_id} DESC
-			</if>
-		) UNION (
-			SELECT DISTINCT ON(i.barcode, i.alt_barcode)
-				a.barcode AS s_barcode,
-				COALESCE(i.barcode, i.alt_barcode) AS i_barcode,
-				c.container_id,
-				c.path_cache AS path
-			FROM inventory AS i
-			LEFT OUTER JOIN audit AS a ON (
-				a.barcode = COALESCE(i.barcode, i.alt_barcode)
-				OR ('GMC-' || a.barcode) = i.barcode
-			) AND a.audit_group_id = #{audit_group_id}
-			LEFT OUTER JOIN container AS c ON c.container_id = i.container_id
-			<if test="container_id != null">
-			WHERE i.container_id = #{container_id}
-				AND i.active = true
-			</if>
-		)) AS q ORDER BY s_barcode, i_barcode
+		SELECT
+			a.barcode AS s_barcode,
+			ic.barcode AS i_barcode,
+			ic.container_id,
+			ic.path_cache AS path
+		FROM (
+			SELECT barcode
+			FROM audit
+			WHERE audit_group_id = #{audit_group_id}
+		) AS a
+		FULL OUTER JOIN (
+			SELECT DISTINCT ON (barcode) *
+			FROM (
+				SELECT DISTINCT
+					COALESCE(i.barcode, i.alt_barcode) AS barcode,
+					c.container_id,
+					c.path_cache
+				FROM inventory AS i
+				LEFT OUTER JOIN container AS c
+					ON c.container_id = i.container_id
+				WHERE
+					<if test="container_id != null">
+					i.container_id = #{container_id} OR
+					</if>
+					COALESCE(i.barcode, i.alt_barcode) IN (
+						SELECT barcode
+						FROM audit
+						WHERE audit_group_id = #{audit_group_id}
+					)
+				
+				UNION
+				
+				SELECT DISTINCT
+					COALESCE(c.barcode, c.alt_barcode) AS barcode,
+					cc.container_id,
+					cc.path_cache
+				FROM container AS c
+				LEFT OUTER JOIN container AS cc
+					ON cc.container_id = c.parent_container_id
+				WHERE 
+					<if test="container_id != null">
+					c.parent_container_id = #{container_id} OR
+					</if>
+					COALESCE(c.barcode, c.alt_barcode) IN (
+						SELECT barcode
+						FROM audit
+						WHERE audit_group_id = #{audit_group_id}
+					)
+			) AS q
+			ORDER BY barcode
+				<if test="container_id != null">
+				,container_id = #{container_id} DESC
+				</if>
+		) AS ic ON ic.barcode = a.barcode
+		ORDER BY a.barcode, ic.barcode
 	</select>
 </mapper>
