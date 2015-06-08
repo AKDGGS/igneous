@@ -356,28 +356,13 @@
 
 
 	<sql id="MissingBarcode">
-		WITH RECURSIVE r AS (
-			SELECT container_id AS rid, container_id, parent_container_id,
-				COALESCE(barcode, alt_barcode) AS barcode
-			FROM container
-
-			UNION ALL
-
-			SELECT r.rid, co.container_id, co.parent_container_id,
-				COALESCE(co.barcode, co.alt_barcode, r.barcode) AS barcode
-			FROM r
-			JOIN container AS co
-				ON r.container_id = co.parent_container_id
-		)
-		SELECT iv.inventory_id AS id,
-			COALESCE(co.path_cache, '') || COALESCE(iv.remark, '') AS desc
-		FROM inventory AS iv
-		LEFT OUTER JOIN r
-			ON r.container_id = iv.container_id AND r.barcode IS NOT NULL
-		LEFT OUTER JOIN container AS co
-			ON co.container_id = iv.container_id 
-		WHERE iv.active
-			AND LENGTH(TRIM(BOTH FROM COALESCE(iv.barcode, iv.alt_barcode, r.barcode, ''))) = 0
+		SELECT i.inventory_id AS id,
+			COALESCE(c.path_cache, '') || ' ' || COALESCE(i.remark, '') AS desc
+		FROM inventory AS i
+		LEFT OUTER JOIN container AS c
+			ON c.container_id = i.container_id
+		WHERE i.active AND 
+			COALESCE(i.barcode, i.alt_barcode, c.barcode, c.alt_barcode) IS NULL
 	</sql>
 	<select id="getMissingBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingBarcode" />
