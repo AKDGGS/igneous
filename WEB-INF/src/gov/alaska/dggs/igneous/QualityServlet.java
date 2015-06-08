@@ -56,6 +56,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "critical", "getMissingBarcode",
 			"Inventory has no barcode or alternate barcode"
 		);
+		addReport(reports, "critical", "getDuplicateContainers",
+			"Containers with the same name and parent hierarchy"
+		);
 		addReport(reports, "warning", "getMissingContainer",
 			"Inventory without a container"
 		);

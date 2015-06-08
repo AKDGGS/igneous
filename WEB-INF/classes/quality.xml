@@ -539,4 +539,19 @@
 		FROM (<include refid="OrphanedOrganizations" />) AS q
 	</select>
 
+
+	<sql id="DuplicateContainers">
+		SELECT path_cache AS id, COUNT(*) AS desc
+		FROM container
+		GROUP BY path_cache
+		HAVING COUNT(*) > 1
+	</sql>
+	<select id="getDuplicateContainers" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="DuplicateContainers" />
+	</select>
+	<select id="getDuplicateContainersCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="DuplicateContainers" />) AS q
+	</select>
+
 </mapper>
