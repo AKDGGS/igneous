@@ -501,4 +501,57 @@
 		SELECT COUNT(*)
 		FROM (<include refid="ProspectWithNoBorehole" />) AS q
 	</select>
+
+
+	<sql id="OrphanedOrganizations">
+		SELECT organization_id AS id, name AS desc
+		FROM organization
+		WHERE organization_id NOT IN (
+			SELECT organization_id
+			FROM borehole_organization
+
+			UNION
+
+			SELECT organization_id
+			FROM outcrop_organization
+
+			UNION
+
+			SELECT organization_id
+			FROM person_organization
+
+			UNION
+
+			SELECT organization_id
+			FROM publication_organization
+
+			UNION
+
+			SELECT organization_id
+			FROM well_stratigraphy_organization
+
+			UNION
+
+			SELECT organization_id
+			FROM well_operator
+
+			UNION
+
+			SELECT organization_id
+			FROM project
+
+			UNION
+
+			SELECT organization_id
+			FROM collection
+		)
+	</sql>
+	<select id="getOrphanedOrganizations" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="OrphanedOrganizations" />
+	</select>
+	<select id="getOrphanedOrganizationsCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OrphanedOrganizations" />) AS q
+	</select>
+
 </mapper>

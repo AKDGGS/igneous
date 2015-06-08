@@ -101,6 +101,10 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getWellWithNoInventory",
 			"Wells with no linked inventory"
 		);
+		addReport(reports, "warning", "getOrphanedOrganizations",
+			"Organizations not referenced in other tables"
+		);
+
 	}
 
 
