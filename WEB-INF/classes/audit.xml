@@ -161,7 +161,7 @@
 				FROM inventory AS i
 				LEFT OUTER JOIN container AS c
 					ON c.container_id = i.container_id
-				WHERE
+				WHERE i.active AND
 					<if test="container_id != null">
 					i.container_id = #{container_id} OR
 					</if>
