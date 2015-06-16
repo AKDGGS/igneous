@@ -107,7 +107,12 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getOrphanedOrganizations",
 			"Organizations not referenced in other tables"
 		);
-
+		addReport(reports, "warning", "getEmptyInventoryBarcode",
+			"Inventory barcodes that are blank but not null"
+		);
+		addReport(reports, "warning", "getEmptyContainerBarcode",
+			"Container barcodes that are blank but not null"
+		);
 	}
 
 
