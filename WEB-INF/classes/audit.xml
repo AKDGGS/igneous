@@ -161,7 +161,7 @@
 				FROM inventory AS i
 				LEFT OUTER JOIN container AS c
 					ON c.container_id = i.container_id
-				WHERE i.active AND
+				WHERE i.active AND (
 					<if test="container_id != null">
 					i.container_id = #{container_id} OR
 					</if>
@@ -170,6 +170,7 @@
 						FROM audit
 						WHERE audit_group_id = #{audit_group_id}
 					)
+				)
 				
 				UNION
 				
@@ -180,7 +181,7 @@
 				FROM container AS c
 				LEFT OUTER JOIN container AS cc
 					ON cc.container_id = c.parent_container_id
-				WHERE 
+				WHERE c.active AND (
 					<if test="container_id != null">
 					c.parent_container_id = #{container_id} OR
 					</if>
@@ -189,6 +190,7 @@
 						FROM audit
 						WHERE audit_group_id = #{audit_group_id}
 					)
+				)
 			) AS q
 			ORDER BY barcode
 				<if test="container_id != null">
