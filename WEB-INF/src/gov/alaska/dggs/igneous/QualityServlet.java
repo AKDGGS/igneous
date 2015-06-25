@@ -113,6 +113,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getEmptyContainerBarcode",
 			"Container barcodes that are blank but not null"
 		);
+		addReport(reports, "warning", "getInventoryContainerBarcode",
+			"Duplicate barcodes between container and inventory"
+		);
 	}
 
 

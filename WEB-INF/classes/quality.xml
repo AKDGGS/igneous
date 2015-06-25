@@ -492,42 +492,28 @@
 		SELECT organization_id AS id, name AS desc
 		FROM organization
 		WHERE organization_id NOT IN (
-			SELECT organization_id
+			SELECT DISTINCT organization_id
 			FROM borehole_organization
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM outcrop_organization
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM person_organization
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM publication_organization
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM well_stratigraphy_organization
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM well_operator
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM project
-
-			UNION
-
-			SELECT organization_id
+		) AND organization_id NOT IN (
+			SELECT DISTINCT organization_id
 			FROM collection
 		)
 	</sql>
@@ -590,6 +576,23 @@
 	<select id="getEmptyContainerBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
 		SELECT COUNT(*)
 		FROM (<include refid="EmptyContainerBarcode" />) AS q
+	</select>
+
+
+	<sql id="InventoryContainerBarcode">
+		SELECT i.barcode AS id,
+			('inventory_id: ' || i.inventory_id || ' '
+			'container_id: ' || c.container_id) AS desc
+		FROM inventory AS i
+		JOIN container AS c
+			ON COALESCE(c.barcode, c.alt_barcode) = COALESCE(i.barcode, i.alt_barcode)
+	</sql>
+	<select id="getInventoryContainerBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="InventoryContainerBarcode" />
+	</select>
+	<select id="getInventoryContainerBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="InventoryContainerBarcode" />) AS q
 	</select>
 
 </mapper>
