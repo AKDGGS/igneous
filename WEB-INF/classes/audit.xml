@@ -68,25 +68,37 @@
 			GROUP BY ag.audit_group_id
 		) AS nm ON nm.audit_group_id = qag.audit_group_id
 		LEFT OUTER JOIN (
-			<!-- Count the number of distinct container_ids in each group -->
+			<!-- Count the number of incorrect container_id's in each group -->
 			SELECT audit_group_id, COUNT(container_id) AS wrong_shelf
 			FROM (
-				SELECT a.audit_group_id, i.container_id
-				FROM audit AS a
+				SELECT ag.audit_group_id, i.container_id
+				FROM audit_group AS ag
+				JOIN audit AS a
+					ON a.audit_group_id = ag.audit_group_id
+				JOIN container AS c
+					ON ag.remark = COALESCE(c.barcode, c.alt_barcode)
+					AND c.active
 				JOIN inventory AS i
 					ON a.barcode = COALESCE(i.barcode, i.alt_barcode)
 					AND i.active
+				WHERE c.container_id &lt;&gt; i.container_id
 
-				UNION
+				UNION ALL
 
-				SELECT a.audit_group_id, c.parent_container_id AS container_id
-				FROM audit AS a
-				JOIN container AS c
-					ON a.barcode = COALESCE(c.barcode, c.alt_barcode)
-					AND c.active
+				SELECT ag.audit_group_id,
+					c2.parent_container_id AS container_id
+				FROM audit_group AS ag
+				JOIN audit AS a
+					ON a.audit_group_id = ag.audit_group_id
+				JOIN container AS c1
+					ON ag.remark = COALESCE(c1.barcode, c1.alt_barcode)
+					AND c1.active
+				JOIN container AS c2
+					ON a.barcode = COALESCE(c2.barcode, c2.alt_barcode)
+					AND c2.active
+				WHERE c1.container_id &lt;&gt; c2.parent_container_id
 			) AS q
 			GROUP BY audit_group_id
-			HAVING COUNT(container_id) > 1
 		) AS ws ON ws.audit_group_id = qag.audit_group_id
 		LEFT OUTER JOIN (
 			<!-- Count the total number of distinct barcodes in this each group -->
