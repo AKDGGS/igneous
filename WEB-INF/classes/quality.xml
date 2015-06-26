@@ -28,7 +28,7 @@
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.container_id
-		WHERE iv.active = true AND iv.inventory_id NOT IN (
+		WHERE iv.active AND iv.inventory_id NOT IN (
 			SELECT inventory_id
 			FROM inventory_keyword AS ik
 			JOIN keyword AS k
@@ -55,7 +55,7 @@
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.container_id
-		WHERE iv.active = true AND iv.inventory_id NOT IN (
+		WHERE iv.active AND iv.inventory_id NOT IN (
 			SELECT inventory_id
 			FROM inventory_keyword AS ik
 			JOIN keyword AS k
@@ -85,7 +85,7 @@
 			FROM inventory AS iv
 			JOIN container AS co
 				ON co.container_id = iv.container_id
-			WHERE iv.active = true AND (iv.barcode IS NOT NULL
+			WHERE iv.active AND (iv.barcode IS NOT NULL
 				OR iv.alt_barcode IS NOT NULL)
 				AND POSITION('MSLIDE' IN co.path_cache) = 0
 		) AS q1
@@ -107,7 +107,7 @@
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.inventory_id
-		WHERE iv.active = true AND iv.inventory_id NOT IN (
+		WHERE iv.active AND iv.inventory_id NOT IN (
 			SELECT inventory_id
 			FROM inventory_well
 			
@@ -147,7 +147,7 @@
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.inventory_id
-		WHERE iv.active = true AND iv.inventory_id NOT IN (
+		WHERE iv.active AND iv.inventory_id NOT IN (
 			SELECT inventory_id
 			FROM inventory_well
 			
@@ -192,7 +192,7 @@
 		FROM inventory AS iv
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.container_id
-		WHERE iv.container_id IS NULL AND iv.active = true
+		WHERE iv.active AND iv.container_id IS NULL
 	</sql>
 	<select id="getMissingContainer" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="MissingContainer" />
@@ -206,13 +206,13 @@
 	<sql id="BarcodeOverlap">
 		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
 		FROM inventory
-		WHERE active = true AND POSITION('-' IN barcode) &lt;&gt; 0
+		WHERE active AND POSITION('-' IN barcode) &lt;&gt; 0
 
 		INTERSECT
 
 		SELECT REGEXP_REPLACE(barcode, 'GMC-{0,1}(\d+)', '\1') AS id, '' AS desc
 		FROM inventory
-		WHERE active = true AND POSITION('-' IN barcode) = 0
+		WHERE active AND POSITION('-' IN barcode) = 0
 	</sql>
 	<select id="getBarcodeOverlap" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="BarcodeOverlap" />
@@ -228,7 +228,13 @@
 		FROM well
 		WHERE (
 				well_number IS NULL OR LENGTH(TRIM(BOTH FROM well_number)) = 0
-			) AND well_id IN (SELECT DISTINCT well_id FROM inventory_well)
+			) AND well_id IN (
+				SELECT DISTINCT well_id
+				FROM inventory_well AS iw
+				JOIN inventory AS i
+					ON i.inventory_id = iw.inventory_id
+				WHERE active
+			)
 	</sql>
 	<select id="getWellNumberEmpty" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="WellNumberEmpty" />
@@ -257,7 +263,7 @@
 	<sql id="BottomOverTop">
 		SELECT inventory_id AS id, COALESCE(barcode, alt_barcode) AS desc
 		FROM inventory
-		WHERE active = true
+		WHERE active
 			AND interval_top IS NOT NULL
 			AND interval_bottom IS NOT NULL
 			AND interval_bottom &lt; interval_top
@@ -277,7 +283,11 @@
 		WHERE well_id NOT IN (
 			SELECT well_id FROM well_geog
 		) AND well_id IN (
-			SELECT DISTINCT well_id FROM inventory_well
+			SELECT DISTINCT well_id
+			FROM inventory_well AS iw
+			JOIN inventory AS i
+				ON i.inventory_id = iw.inventory_id
+			WHERE i.active
 		)
 	</sql>
 	<select id="getWellNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -293,7 +303,8 @@
 		SELECT borehole_id AS id, name AS desc
 		FROM borehole
 		WHERE borehole_id NOT IN (
-			SELECT borehole_id FROM borehole_geog
+			SELECT borehole_id
+			FROM borehole_geog
 		)
 	</sql>
 	<select id="getBoreholeNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -309,7 +320,8 @@
 		SELECT outcrop_id AS id, name AS desc
 		FROM outcrop
 		WHERE outcrop_id NOT IN (
-			SELECT outcrop_id FROM outcrop_geog
+			SELECT outcrop_id
+			FROM outcrop_geog
 		)
 	</sql>
 	<select id="getOutcropNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -325,7 +337,8 @@
 		SELECT shotpoint_id AS id, shotpoint_number AS desc
 		FROM shotpoint
 		WHERE shotpoint_id NOT IN (
-			SELECT shotpoint_id FROM shotpoint_geog
+			SELECT shotpoint_id
+			FROM shotpoint_geog
 		)
 	</sql>
 	<select id="getShotpointNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -342,7 +355,7 @@
 			COALESCE(iv.barcode, iv.alt_barcode) AS desc
 		FROM inventory_outcrop AS io
 		JOIN inventory AS iv ON iv.inventory_id = io.inventory_id
-		WHERE iv.active = true
+		WHERE iv.active
 			AND (iv.sample_number IS NULL
 			OR LENGTH(TRIM(BOTH FROM iv.sample_number)) = 0)
 	</sql>
@@ -380,7 +393,7 @@
 		FROM inventory_well AS iw
 		JOIN inventory AS iv ON iv.inventory_id = iw.inventory_id
 		JOIN well AS we ON we.well_id = iw.well_id
-		WHERE iv.active = true
+		WHERE iv.active
 			AND iv.interval_bottom IS NOT NULL
 			AND COALESCE(we.measured_depth, we.vertical_depth) IS NOT NULL
 			AND GREATEST(we.measured_depth, we.vertical_depth) &lt; iv.interval_bottom 
@@ -401,7 +414,11 @@
 		SELECT well_id AS id, name AS desc
 		FROM well
 		WHERE well_id NOT IN (
-			SELECT DISTINCT well_id FROM inventory_well
+			SELECT DISTINCT well_id
+			FROM inventory_well AS iw
+			JOIN inventory AS i
+				ON i.inventory_id = iw.inventory_id
+			WHERE i.active
 		)
 	</sql>
 	<select id="getWellWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -422,7 +439,11 @@
 		LEFT OUTER JOIN prospect AS p
 			ON p.prospect_id = b.prospect_id
 		WHERE borehole_id NOT IN (
-			SELECT DISTINCT borehole_id FROM inventory_borehole
+			SELECT DISTINCT borehole_id
+			FROM inventory_borehole AS ib
+			JOIN inventory AS i
+				ON i.inventory_id = ib.inventory_id
+			WHERE i.active
 		)	
 	</sql>
 	<select id="getBoreholeWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -438,7 +459,11 @@
 		SELECT outcrop_id AS id, name AS desc
 		FROM outcrop
 		WHERE outcrop_id NOT IN (
-			SELECT DISTINCT outcrop_id FROM inventory_outcrop
+			SELECT DISTINCT io.outcrop_id
+			FROM inventory_outcrop AS io
+			JOIN inventory AS i
+				ON i.inventory_id = io.inventory_id
+			WHERE i.active
 		)
 	</sql>
 	<select id="getOutcropWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -460,7 +485,11 @@
 		JOIN shotline AS sl
 			ON sl.shotline_id = sp.shotline_id
 		WHERE shotpoint_id NOT IN (
-			SELECT DISTINCT shotpoint_id FROM inventory_shotpoint
+			SELECT DISTINCT iss.shotpoint_id
+			FROM inventory_shotpoint AS iss
+			JOIN inventory AS i
+				ON i.inventory_id = iss.inventory_id
+			WHERE i.active
 		)
 	</sql>
 	<select id="getShotpointWithNoInventory" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -529,6 +558,7 @@
 	<sql id="DuplicateContainers">
 		SELECT path_cache AS id, COUNT(*) AS desc
 		FROM container
+		WHERE active
 		GROUP BY path_cache
 		HAVING COUNT(*) > 1
 	</sql>
@@ -544,7 +574,7 @@
 	<sql id="EmptyInventoryBarcode">
 		SELECT inventory_id AS id, remark AS desc
 		FROM inventory
-		WHERE (
+		WHERE active AND (
 			barcode IS NOT NULL OR alt_barcode IS NOT NULL
 		) AND (
 			LENGTH(TRIM(BOTH FROM barcode)) = 0
@@ -563,7 +593,7 @@
 	<sql id="EmptyContainerBarcode">
 		SELECT container_id AS id, path_cache AS desc
 		FROM container
-		WHERE (
+		WHERE active AND (
 			barcode IS NOT NULL OR alt_barcode IS NOT NULL
 		) AND (
 			LENGTH(TRIM(BOTH FROM barcode)) = 0
@@ -586,6 +616,7 @@
 		FROM inventory AS i
 		JOIN container AS c
 			ON COALESCE(c.barcode, c.alt_barcode) = COALESCE(i.barcode, i.alt_barcode)
+		WHERE i.active AND c.active
 	</sql>
 	<select id="getInventoryContainerBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="InventoryContainerBarcode" />
