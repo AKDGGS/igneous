@@ -31,7 +31,7 @@
 				if the container count is null, because if the container
 				count is null it means we couldn't find a container.
 			-->
-			ABS(COALESCE(agc.cnt, 0) - COALESCE(cc.cnt, agc.cnt, 0)) AS difference
+			ABS((COALESCE(agc.cnt, 0) - COALESCE(ws.wrong_shelf, 0)) - COALESCE(cc.cnt, agc.cnt, 0)) AS difference
 		FROM audit_group AS qag
 		LEFT OUTER JOIN container AS qc
 			ON qag.remark = COALESCE(qc.barcode, qc.alt_barcode)
@@ -69,7 +69,7 @@
 		) AS nm ON nm.audit_group_id = qag.audit_group_id
 		LEFT OUTER JOIN (
 			<!-- Count the number of incorrect container_id's in each group -->
-			SELECT audit_group_id, COUNT(container_id) AS wrong_shelf
+			SELECT audit_group_id, COUNT(*) AS wrong_shelf
 			FROM (
 				SELECT ag.audit_group_id, i.container_id
 				FROM audit_group AS ag
@@ -82,6 +82,7 @@
 					ON a.barcode = COALESCE(i.barcode, i.alt_barcode)
 					AND i.active
 				WHERE c.container_id &lt;&gt; i.container_id
+					OR i.container_id IS NULL
 
 				UNION ALL
 
@@ -97,6 +98,7 @@
 					ON a.barcode = COALESCE(c2.barcode, c2.alt_barcode)
 					AND c2.active
 				WHERE c1.container_id &lt;&gt; c2.parent_container_id
+					OR c2.parent_container_id IS NULL
 			) AS q
 			GROUP BY audit_group_id
 		) AS ws ON ws.audit_group_id = qag.audit_group_id

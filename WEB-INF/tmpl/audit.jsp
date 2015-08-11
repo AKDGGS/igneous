@@ -210,8 +210,13 @@
 									.attr('class', e['container_id'] === container_id ? 'pass' : 'fail')
 								);
 							} else {
-								row.append('<td></td>');
+								row.append(
+									$('<td>&nbsp;</td>').attr(
+										'class', (typeof container_id) === 'undefined' ? 'pass' : 'fail'
+									)
+								);
 							}
+
 
 							row.appendTo(table);
 						});
