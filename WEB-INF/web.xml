@@ -356,6 +356,7 @@
 		<url-pattern>/help</url-pattern>
 	</servlet-mapping>
 
+
 	<servlet>
 		<servlet-name>ContainerLogViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.ContainerLogViewServlet</servlet-class>
@@ -366,8 +367,24 @@
 		<url-pattern>/container_log.html</url-pattern>
 	</servlet-mapping>
 
+
+	<servlet>
+		<servlet-name>InventoryImportServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.InventoryImportServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>InventoryImportServlet</servlet-name>
+		<url-pattern>/inventoryimport.html</url-pattern>
+	</servlet-mapping>
+
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
 	</listener>
 
 	<resource-ref>
