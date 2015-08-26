@@ -503,4 +503,9 @@
 		INSERT INTO inventory (barcode, remark, container_id)
 		VALUES (#{barcode}, #{remark}, #{container.id})
 	</insert>
+
+
+	<insert id="insertStash" parameterType="String">
+		INSERT INTO inventory (stash) VALUES (#{stash}::JSON)
+	</insert>
 </mapper>
