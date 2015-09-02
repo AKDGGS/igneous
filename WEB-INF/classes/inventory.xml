@@ -506,6 +506,6 @@
 
 
 	<insert id="insertStash" parameterType="String">
-		INSERT INTO inventory (stash) VALUES (#{stash}::JSON)
+		INSERT INTO inventory (stash) VALUES (#{stash}::JSONB)
 	</insert>
 </mapper>
