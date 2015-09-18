@@ -577,3 +577,12 @@ img.olTileImage {
 .olPopup { font-family: 'Georgia, serif'; }
 .olPopup .text-small { font-size: 14px; }
 .olPopup .text-smaller { font-size: 12px; }
+
+tr.shotline:nth-child(odd) { background-color: #FFDCDC !important; }
+tr.shotline:nth-child(even) { background-color: #FFEEEE !important; }
+tr.outcrop:nth-child(odd) { background-color: #FFFFCC !important; }
+tr.outcrop:nth-child(even) { background-color: #FFFFE6 !important; }
+tr.borehole:nth-child(odd) { background-color: #E0FFD6 !important; }
+tr.borehole:nth-child(even) { background-color: #F0FFEB !important; }
+tr.well:nth-child(odd) { background-color: #D6EBFF !important; }
+tr.well:nth-child(even) { background-color: #EBF5FF !important; }

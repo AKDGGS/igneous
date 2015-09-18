@@ -507,7 +507,10 @@ $(function(){
 					// Begin related
 					td = document.createElement('td');
 
+					var rowclass = '';
+
 					// Boreholes
+					if('boreholes' in obj){ rowclass = 'borehole'; }
 					for(var j in obj['boreholes']){
 						var borehole = obj['boreholes'][j];
 
@@ -543,6 +546,7 @@ $(function(){
 					}
 
 					// Wells
+					if('wells' in obj){ rowclass = 'well'; }
 					for(var j in obj['wells']){
 						var well = obj['wells'][j];
 
@@ -569,6 +573,7 @@ $(function(){
 					}
 
 					// Outcrops
+					if('outcrops' in obj){ rowclass = 'outcrop'; }
 					for(var j in obj['outcrops']){
 						var outcrop = obj['outcrops'][j];
 
@@ -588,6 +593,7 @@ $(function(){
 					}
 
 					// Shotlines/Shotpoints
+					if('shotlines' in obj){ rowclass = 'shotline'; }
 					if('shotlines' in obj){
 						for(var j in obj['shotlines']){
 							var shotline = obj['shotlines'][j];
@@ -633,6 +639,7 @@ $(function(){
 					}
 
 					tr.appendChild(td);
+					if(rowclass.length > 0){ tr.className = rowclass; }
 					// End Related
 
 					td = document.createElement('td');
@@ -715,24 +722,6 @@ $(function(){
 						td.appendChild(document.createTextNode(
 							obj['collection']['name']
 						));
-					}
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					td.className = 'barcode';
-
-					var barcode = null;
-					if('barcode' in obj){ barcode = obj['barcode']; }
-					else if('altBarcode' in obj){ barcode = obj['altBarcode'] }
-					if(barcode !== null){
-						var img = document.createElement('img');
-						img.height = 20;
-						img.src = 'barcode?c=' + barcode;
-						td.appendChild(img);
-
-						var div = document.createElement('div');
-						div.appendChild(document.createTextNode(barcode));
-						td.appendChild(div);
 					}
 					tr.appendChild(td);
 
