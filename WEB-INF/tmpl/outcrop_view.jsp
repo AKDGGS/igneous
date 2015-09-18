@@ -210,7 +210,7 @@
 		<div id="tab-files" class="hidden"></div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
-		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.7&sensor=false"></script>
 		<script src="${pageContext.request.contextPath}/ol/2.13.1/OpenLayers.js"></script>
 		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 		<script src="${pageContext.request.contextPath}/js/view${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
