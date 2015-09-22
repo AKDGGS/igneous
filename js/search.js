@@ -726,6 +726,15 @@ $(function(){
 					tr.appendChild(td);
 
 					td = document.createElement('td');
+					td.className = 'barcode';
+					if('barcode' in obj){
+						td.appendChild(document.createTextNode(obj['barcode']));
+					} else if('altBarcode' in obj){
+						td.appendChild(document.createTextNode(obj['altBarcode']));
+					}
+					tr.appendChild(td);
+
+					td = document.createElement('td');
 					if('containerPath' in obj){
 						td.appendChild(document.createTextNode(
 							obj['containerPath']

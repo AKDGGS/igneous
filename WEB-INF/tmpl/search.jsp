@@ -12,8 +12,7 @@
 		<title>Alaska Geologic Materials Center</title>
 		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
-			.barcode { min-width: 205px; }
-			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
+			.barcode { white-space: nowrap; }
 			.tbl_container { padding: 0px; margin: 0px; width: 100%; border-collapse: collapse; }
 			.tbl_container td, .tbl_container tr { padding: 0px !important; margin: 0px !important; }
 
@@ -34,8 +33,7 @@
 				* { font-family: 'Georgia, serif'; font-size: 14px; }
 				html, body, table, .container { margin: 0px; }
 				.nowrap { white-space: nowrap; }
-				.noprint, .navbar, .barcode img { display: none; }
-				.barcode div { font-size: 14px; font-weight: normal; margin: 0px; }
+				.noprint, .navbar { display: none; }
 				table { border-collapse: collapse; page-break-inside: auto; }
 				tr { page-break-inside: avoid; page-break-after: auto; }
 				tr:nth-child(odd) { background-color: #eee; }
@@ -170,6 +168,7 @@
 						<th class="al-r">Top /<br>Bottom</th>
 						<th>Keywords</th>
 						<th>Collection</th>
+						<th>Barcode</th>
 						<th>Location</th>
 					</tr>
 				</thead>
