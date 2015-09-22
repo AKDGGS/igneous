@@ -44,4 +44,9 @@
 		WHERE outcrop_id = #{outcrop_id}
 		LIMIT 1
 	</select>
+
+
+	<insert id="insertStash" parameterType="String">
+		INSERT INTO outcrop (name, stash) VALUES ('Unknown', #{stash}::JSONB)
+	</insert>
 </mapper>

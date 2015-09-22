@@ -72,4 +72,9 @@
 		WHERE well_id = #{well_id}
 		LIMIT 1
 	</select>
+
+
+	<insert id="insertStash" parameterType="String">
+		INSERT INTO well (name, stash) VALUES ('Unknown', #{stash}::JSONB)
+	</insert>
 </mapper>

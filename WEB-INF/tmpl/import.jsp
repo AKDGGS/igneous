@@ -36,9 +36,15 @@
 
 		<div class="container">
 			<fieldset>
-				<legend>Inventory Import Tool</legend>
+				<legend>Import Tool</legend>
 
-				<form action="inventoryimport.html" method="POST" enctype="multipart/form-data">
+				<form action="import.html" method="POST" enctype="multipart/form-data">
+					<select name="destination">
+						<option value="borehole">Into Borehole</option>
+						<option selected="selected" value="inventory">Into Inventory</option>
+						<option value="outcrop">Into Outcrop</option>
+						<option value="well">Into Well</option>
+					</select>
 					<input type="file" id="file" name="file">
 					<input type="submit" value="Import">
 				</form>

@@ -369,13 +369,13 @@
 
 
 	<servlet>
-		<servlet-name>InventoryImportServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.page.InventoryImportServlet</servlet-class>
+		<servlet-name>ImportServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.ImportServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>InventoryImportServlet</servlet-name>
-		<url-pattern>/inventoryimport.html</url-pattern>
+		<servlet-name>ImportServlet</servlet-name>
+		<url-pattern>/import.html</url-pattern>
 	</servlet-mapping>
 
 

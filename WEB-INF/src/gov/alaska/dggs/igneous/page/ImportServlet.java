@@ -37,7 +37,7 @@ import flexjson.JSONSerializer;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 
 
-public class InventoryImportServlet extends HttpServlet
+public class ImportServlet extends HttpServlet
 {
 	private static Pattern isnumeric = Pattern.compile("-?\\d+(\\.\\d+)?");
 
@@ -73,10 +73,39 @@ public class InventoryImportServlet extends HttpServlet
 
 				SqlSession sess = IgneousFactory.openSession();
 				int count = 0;
+				String method = null;
 				try {
 					for(FileItem item : items){
-						// Ignore stuff that isn't a file
-						if(item.isFormField()) continue;
+						// Deal with form fields
+						if(item.isFormField()){
+							// Destination is important
+							if("destination".equals(item.getFieldName())){
+								switch(item.getString()){
+									case "inventory":
+										method = "gov.alaska.dggs.igneous.Inventory.insertStash";
+									break;
+
+									case "borehole":
+										method = "gov.alaska.dggs.igneous.Borehole.insertStash";
+									break;
+
+									case "outcrop":
+										method = "gov.alaska.dggs.igneous.Outcrop.insertStash";
+									break;
+
+									case "well":
+										method = "gov.alaska.dggs.igneous.Well.insertStash";
+									break;
+
+									default:
+									 throw new Exception("Invalid destination");
+								}
+							}
+
+							continue;
+						}
+
+						if(method == null) throw new Exception("Unknown destination");
 
 						InputStreamReader isr = new InputStreamReader(item.getInputStream());
 						try {
@@ -108,10 +137,7 @@ public class InventoryImportServlet extends HttpServlet
 								}
 							
 								if(!map.isEmpty()){
-									sess.insert(
-										"gov.alaska.dggs.igneous.Inventory.insertStash",
-										serializer.serialize(map)
-									);
+									sess.insert(method, serializer.serialize(map));
 									count++;
 								}
 							}
@@ -140,7 +166,7 @@ public class InventoryImportServlet extends HttpServlet
 		}
 
 		request.getRequestDispatcher(
-			"/WEB-INF/tmpl/inventory_import.jsp"
+			"/WEB-INF/tmpl/import.jsp"
 		).forward(request, response);
 	}
 }

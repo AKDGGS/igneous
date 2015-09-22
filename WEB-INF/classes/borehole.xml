@@ -96,4 +96,9 @@
 		WHERE borehole_id = #{id}
 		LIMIT 1
 	</select>
+
+
+	<insert id="insertStash" parameterType="String">
+		INSERT INTO borehole (name, stash) VALUES ('Unknown', #{stash}::JSONB)
+	</insert>
 </mapper>
