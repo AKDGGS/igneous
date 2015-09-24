@@ -453,7 +453,7 @@
 			<div id="tab-containerlog" class="hidden">
 				<c:forEach items="${inventory.containerLog}" var="log" varStatus="stat">
 				<div class="container">
-					<span class="loghd"><fmt:formatDate pattern="M/d/yyyy k:mm" value="${log.date}"/></span>, ${log.pathCache}
+					<span class="loghd"><fmt:formatDate pattern="M/d/yyyy k:mm" value="${log.date}"/></span>, ${log.container}
 				</div>
 				</c:forEach>
 			</div>

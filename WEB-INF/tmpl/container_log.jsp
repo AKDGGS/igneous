@@ -64,10 +64,8 @@
 						<td><fmt:formatDate pattern="M/d/yyyy HH:mm:ss" value="${log.log_date}" /></td>
 						<td>${log.src}</td>
 						<td class="barcode">
-							<a href="inventory/${log.inventory_id}">
-								<img height="20" src="barcode?c=${log.barcode}">
-								<div>${log.barcode}</div>
-							</a>
+							
+							<a href="inventory/${log.inventory_id}">${empty log.barcode ? 'NO BARCODE' : log.barcode}</a>
 						</td>
 						<td>${log.dst}</td>
 					</tr>

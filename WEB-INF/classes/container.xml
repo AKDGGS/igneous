@@ -211,19 +211,15 @@
 			COALESCE(i.barcode, i.alt_barcode) AS barcode,
 			icl.log_date,
 			COALESCE((
-				SELECT c.path_cache
-				FROM inventory_container_log AS oicl
-				JOIN container AS c
-					ON c.container_id = oicl.container_id
-				WHERE oicl.log_date &lt; icl.log_date
-					AND oicl.inventory_id = icl.inventory_id
-				ORDER BY oicl.log_date DESC
+				SELECT container
+				FROM inventory_container_log 
+				WHERE log_date &lt; icl.log_date
+					AND inventory_id = inventory_id
+				ORDER BY log_date DESC
 				LIMIT 1
 			), 'Unknown') AS src,
-			c.path_cache AS dst
+			icl.container AS dst
 		FROM inventory_container_log AS icl
-		JOIN container AS c
-			ON c.container_id = icl.container_id
 		JOIN inventory AS i
 			ON i.inventory_id = icl.inventory_id
 		WHERE icl.log_date BETWEEN #{start}::timestamp AND #{end}::timestamp
@@ -231,19 +227,17 @@
 	</select>
 
 
+	<select id="getContainerLogByInventoryID" parameterType="int" resultMap="ContainerLogMap">
+		SELECT inventory_container_log_id, container, log_date
+		FROM inventory_container_log
+		WHERE inventory_id = #{id}
+		ORDER BY log_date DESC
+	</select>
+
+
 	<resultMap id="ContainerLogMap" type="ContainerLog">
 		<id property="id" column="inventory_container_log_id" />
-		<result property="path_cache" column="path_cache" />
+		<result property="container" column="container" />
 		<result property="date" column="log_date" />
 	</resultMap>
-
-
-	<select id="getContainerLogByInventoryID" parameterType="int" resultMap="ContainerLogMap">
-		SELECT icl.inventory_container_log_id, con.path_cache, icl.log_date
-		FROM inventory_container_log AS icl
-		JOIN container AS con
-			ON con.container_id = icl.container_id
-		WHERE icl.inventory_id = #{id}
-		ORDER BY icl.log_date DESC
-	</select>
 </mapper>
