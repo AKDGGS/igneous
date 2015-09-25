@@ -211,7 +211,7 @@
 			COALESCE(i.barcode, i.alt_barcode) AS barcode,
 			icl.log_date,
 			COALESCE((
-				SELECT container
+				SELECT destination
 				FROM inventory_container_log 
 				WHERE log_date &lt; icl.log_date
 					AND inventory_id = inventory_id
@@ -228,7 +228,7 @@
 
 
 	<select id="getContainerLogByInventoryID" parameterType="int" resultMap="ContainerLogMap">
-		SELECT inventory_container_log_id, container, log_date
+		SELECT inventory_container_log_id, destination, log_date
 		FROM inventory_container_log
 		WHERE inventory_id = #{id}
 		ORDER BY log_date DESC
@@ -237,7 +237,7 @@
 
 	<resultMap id="ContainerLogMap" type="ContainerLog">
 		<id property="id" column="inventory_container_log_id" />
-		<result property="container" column="container" />
+		<result property="destination" column="destination" />
 		<result property="date" column="log_date" />
 	</resultMap>
 </mapper>

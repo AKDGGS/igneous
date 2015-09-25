@@ -337,8 +337,18 @@
 			kw.name AS keyword_name,
 			kw.alias AS keyword_alias,
 
-			ST_AsText(ST_Transform(ig.geog::GEOMETRY, 3857)) AS wkt
+			ST_AsText(ST_Transform(ig.geog::GEOMETRY, 3857)) AS wkt,
+
+			qu.inventory_quality_id,
+			qu.check_date AS quality_check_date,
+			qu.username AS quality_username,
+			qu.remark AS quality_remark,
+			array_to_string(qu.issues::text[], ',') AS quality_issues
 		FROM inventory AS iv
+		JOIN inventory_search AS ig
+			ON ig.inventory_id = iv.inventory_id
+		LEFT OUTER JOIN inventory_quality AS qu
+			ON qu.inventory_quality_id = ig.inventory_quality_id
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
@@ -376,8 +386,6 @@
 			ON ikw.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN keyword AS kw
 			ON kw.keyword_id = ikw.keyword_id
-		LEFT OUTER JOIN inventory_search AS ig
-			ON ig.inventory_id = iv.inventory_id
 		WHERE iv.inventory_id IN <foreach item="item" index="index" collection="list" open="(" separator="," close=")">${item}</foreach>
 		ORDER BY idx(<foreach item="item" index="index" open="ARRAY[" separator="," collection="list" close="]">${item}</foreach>, iv.inventory_id), kw.keyword_group_id, LOWER(kw.name)
 	</select>
@@ -467,6 +475,14 @@
 			<id property="id" column="keyword_id" />
 			<result property="name" column="keyword_name" />
 			<result property="alias" column="keyword_alias" />
+		</collection>
+
+		<collection property="qualities" ofType="InventoryQuality">
+			<id property="id" column="inventory_quality_id" />
+			<result property="date" column="quality_check_date" />
+			<result property="username" column="quality_username" />
+			<result property="remark" column="quality_remark" />
+			<result property="issues" column="quality_issues" />
 		</collection>
 	</resultMap>
 

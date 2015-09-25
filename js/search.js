@@ -725,6 +725,7 @@ $(function(){
 					}
 					tr.appendChild(td);
 
+					// Barcode
 					td = document.createElement('td');
 					td.className = 'barcode';
 					if('barcode' in obj){
@@ -734,11 +735,45 @@ $(function(){
 					}
 					tr.appendChild(td);
 
+					// Location
 					td = document.createElement('td');
+					var loc = document.createElement('div');
+					loc.className = 'location';
 					if('containerPath' in obj){
-						td.appendChild(document.createTextNode(
+						loc.appendChild(document.createTextNode(
 							obj['containerPath']
 						));
+					}
+					td.appendChild(loc);
+
+					// Quality
+					if('qualities' in obj && obj['qualities'].length > 0){
+						var quality = obj['qualities'][0];
+						var div = document.createElement('div');
+						div.className = 'quality';
+
+						if('issues' in quality){
+							var issues = quality['issues'].split(',');
+							for(var j in issues){
+								if(j != 0) div.appendChild(document.createTextNode(' '));
+								var span = document.createElement('span');
+								span.title = quality['date'] + ' ' +
+									quality['username'] + "\n" + (
+										'remark' in quality ? quality['remark'] : ''
+									);
+								span.appendChild(document.createTextNode(
+									issues[j].toUpperCase().replace(/_/g, ' ')
+								));
+								div.appendChild(span);
+							}
+						} else {
+							var span = document.createElement('span');
+							span.className = 'good';
+							span.title = quality['date'];
+							span.appendChild(document.createTextNode('GOOD'));
+							div.appendChild(span);
+						}
+						td.appendChild(div);
 					}
 					tr.appendChild(td);
 

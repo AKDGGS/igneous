@@ -56,7 +56,7 @@ public class AddInventoryServlet extends HttpServlet
 			InventoryQuality iq = new InventoryQuality(i);
 			iq.setUsername("gmc_app");
 			iq.setRemark("Added via scanner");
-			iq.setNeedsDetail(true);
+			iq.setIssues("needs_detail");
 
 			sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
 			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");

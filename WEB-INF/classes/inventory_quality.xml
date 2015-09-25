@@ -8,16 +8,7 @@
 			check_date,
 			remark,
 			username,
-			needs_detail,
-			unsorted,
-			radiation_risk,
-			damaged,
-			box_damaged,
-			missing,
-			data_missing,
-			barcode_missing,
-			label_obscured,
-			insufficient_material
+			array_to_string(issues::text[], ',') AS issues
 		FROM inventory_quality
 	</sql>
 
@@ -33,32 +24,17 @@
 		<result property="date" column="check_date" />
 		<result property="remark" column="remark" />
 		<result property="username" column="username" />
-		<result property="needs_detail" column="needs_detail" />
-		<result property="unsorted" column="unsorted" />
-		<result property="radiation" column="radiation_risk" />
-		<result property="damaged" column="damaged" />
-		<result property="box_damaged" column="box_damaged" />
-		<result property="missing" column="missing" />
-		<result property="data_missing" column="data_missing" />
-		<result property="barcode_missing" column="barcode_missing" />
-		<result property="label_obscured" column="label_obscured" />
-		<result property="insufficient_material" column="insufficient_material" />
+		<result property="issues" column="issues" />
 	</resultMap>
 
 
 	<insert id="insert" parameterType="InventoryQuality" useGeneratedKeys="true" keyColumn="inventory_quality_id" keyProperty="id">
 		INSERT INTO inventory_quality (
 			inventory_id, remark, username, check_date,
-			needs_detail, unsorted, radiation_risk,
-			damaged, box_damaged, missing,
-			data_missing, barcode_missing, label_obscured,
-			insufficient_material
+			issues
 		) VALUES (
 			#{inventory.id}, #{remark}, #{username}, #{date},
-			#{needs_detail}, #{unsorted}, #{radiation},
-			#{damaged}, #{box_damaged}, #{missing},
-			#{data_missing}, #{barcode_missing}, #{label_obscured},
-			#{insufficient_material}
+			string_to_array(#{issues}, ',')::issue[]
 		)
 	</insert>
 </mapper>

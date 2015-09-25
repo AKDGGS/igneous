@@ -11,8 +11,8 @@ public class ContainerLog implements Serializable
 	private Integer id;
 	public Integer getID(){ return id; }
 
-	private String container;
-	public String getContainer(){ return container; }
+	private String destination;
+	public String getDestination(){ return destination; }
 
 	private Date date;
 	public Date getDate(){ return date; }

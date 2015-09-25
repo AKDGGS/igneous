@@ -261,7 +261,7 @@
 				<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.outcrops) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
 				<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
 				<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
-				<li><a href="#containerlog">Container Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
+				<li><a href="#containerlog">Move Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
 				<li><a href="#urls">URLs <span class="badge">${fn:length(inventory.URLs)}</span></a></li>
 			</ul>
 
@@ -434,16 +434,10 @@
 				<div class="container">
 					<div class="qualityhd">
 						<fmt:formatDate pattern="M/d/yyyy" value="${quality.date}"/>, ${quality.username}
-						<c:if test="${quality.needsDetail}"><span class="tag tag-danger">NEEDS DETAIL</span></c:if>
-						<c:if test="${quality.unsorted}"><span class="tag tag-danger">UNSORTED</span></c:if>
-						<c:if test="${quality.radiation}"><span class="tag tag-danger">RADIATION RISK</span></c:if>
-						<c:if test="${quality.damaged}"><span class="tag tag-danger">DAMAGED</span></c:if>
-						<c:if test="${quality.boxDamaged}"><span class="tag tag-danger">BOX DAMAGED</span></c:if>
-						<c:if test="${quality.missing}"><span class="tag tag-danger">MISSING</span></c:if>
-						<c:if test="${quality.dataMissing}"><span class="tag tag-danger">DATA MISSING</span></c:if>
-						<c:if test="${quality.labelObscured}"><span class="tag tag-danger">LABEL OBSCURED</span></c:if>
-						<c:if test="${quality.insufficientMaterial}"><span class="tag tag-danger">INSUFFICIENT MATERIAL</span></c:if>
-						<c:if test="${!quality.needsDetail && !quality.unsorted && !quality.radiation && !quality.damaged && !quality.boxDamaged && !quality.missing && !quality.dataMissing && !quality.labelObscured && !quality.insufficientMaterial}"><span class="tag tag-success">GOOD</span></c:if>
+						<c:if test="${!empty quality.issues}">
+							<c:forEach items="${fn:split(quality.issues, ',')}" var="issue"><span class="tag tag-danger">${fn:toUpperCase(fn:replace(issue, '_', ' '))}</span></c:forEach>
+						</c:if>
+						<c:if test="${empty quality.issues}"><span class="tag tag-success">GOOD</span></c:if>
 					</div>
 					<c:if test="${!empty quality.remark}"><pre>${fn:escapeXml(quality.remark)}</pre></c:if>
 				</div>
@@ -453,7 +447,7 @@
 			<div id="tab-containerlog" class="hidden">
 				<c:forEach items="${inventory.containerLog}" var="log" varStatus="stat">
 				<div class="container">
-					<span class="loghd"><fmt:formatDate pattern="M/d/yyyy k:mm" value="${log.date}"/></span>, ${log.container}
+					<span class="loghd"><fmt:formatDate pattern="M/d/yyyy k:mm" value="${log.date}"/></span>, ${log.destination}
 				</div>
 				</c:forEach>
 			</div>

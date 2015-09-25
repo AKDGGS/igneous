@@ -82,6 +82,7 @@ public class SearchServlet extends HttpServlet
 		serializer.include("list.outcrops");
 		serializer.include("list.shotlines");
 		serializer.include("list.shotlines.shotpoints");
+		serializer.include("list.qualities");
 
 		serializer.exclude("list.class");	
 		serializer.exclude("list.keywords.class");
@@ -99,6 +100,7 @@ public class SearchServlet extends HttpServlet
 		serializer.exclude("list.intervalUnit.class");
 		serializer.exclude("list.coreDiameter.class");
 		serializer.exclude("list.coreDiameter.unit.class");
+		serializer.exclude("list.qualities.class");
 
 		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
 		serializer.transform(new ExcludeTransformer(), void.class);
