@@ -126,6 +126,7 @@
 							<c:forEach begin="0" end="1">
 							<select name="sort">
 								<option value="0">Best Match</option>
+								<option value="9">Barcode</option>
 								<option value="10">Borehole</option>
 								<option value="11">Box</option>
 								<option value="1">Collection</option>
