@@ -218,7 +218,7 @@
 				ORDER BY log_date DESC
 				LIMIT 1
 			), 'Unknown') AS src,
-			icl.container AS dst
+			icl.destination AS dst
 		FROM inventory_container_log AS icl
 		JOIN inventory AS i
 			ON i.inventory_id = icl.inventory_id

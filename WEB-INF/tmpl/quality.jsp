@@ -45,8 +45,13 @@
 		<div class="container" style="text-align: right; margin-top: 20px;">
 			<b>Other Tools:</b>
 			[<a href="container_log.html">Move Log</a>]
-			[<a href="quality.html">Quality Assurance</a>]
-			[<a href="audit.html">Audit</a>]
+			[<a href="quality_report.html">Quality Assurance</a>]
+			[<a href="audit_report.html">Audit</a>]
+			<c:if test="${not empty pageContext.request.userPrincipal}">
+				<c:if test="${pageContext.request.isUserInRole('admin')}">
+				[<a href="import.html">Data Importer</a>]
+				</c:if>
+			</c:if>
 		</div>
 
 		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
@@ -65,7 +70,7 @@
 				});
 
 				$.ajax({
-					url: 'quality.json',
+					url: 'quality_report.json',
 					dataType: 'json',
 					success: function(json){
 						$.each(json, function(i,e){
@@ -81,7 +86,7 @@
 							var method = i;
 
 							$.ajax({
-								url: 'quality.json',
+								url: 'quality_report.json',
 								data: {r: i+'Count'},
 								success: function(json){
 									var count = json[0];
@@ -95,7 +100,7 @@
 											$('#detail').empty().append('<img src="${pageContext.request.contextPath}/img/big_loading.gif" />');
 
 											$.ajax({
-												url: 'quality.json',
+												url: 'quality_report.json',
 												data: { r: method },
 												success: function(json){
 													show_detail(json);
