@@ -117,6 +117,17 @@
 
 
 	<servlet>
+		<servlet-name>InventoryEditServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.InventoryEditServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>InventoryEditServlet</servlet-name>
+		<url-pattern>/edit_inventory/*</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
 		<servlet-name>InventoryStashServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.InventoryStashServlet</servlet-class>
 	</servlet>
@@ -419,8 +430,34 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Searching</web-resource-name>
-			<url-pattern>/search.*</url-pattern>
+			<web-resource-name>Searching (JSON)</web-resource-name>
+			<url-pattern>/search.json</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>view</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Searching (PDF)</web-resource-name>
+			<url-pattern>/search.pdf</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>view</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Searching (CSV)</web-resource-name>
+			<url-pattern>/search.csv</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
@@ -437,6 +474,19 @@
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Edit Inventory</web-resource-name>
+			<url-pattern>/edit_inventory/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>edit</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -536,8 +586,8 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Quality Report</web-resource-name>
-			<url-pattern>/quality_report.*</url-pattern>
+			<web-resource-name>Quality Report (HTML)</web-resource-name>
+			<url-pattern>/quality_report.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
@@ -549,8 +599,34 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Audit Report</web-resource-name>
-			<url-pattern>/audit_report.*</url-pattern>
+			<web-resource-name>Quality Report (JSON)</web-resource-name>
+			<url-pattern>/quality_report.json</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>view</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Audit Report (HTML)</web-resource-name>
+			<url-pattern>/audit_report.html</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>view</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Audit Report (JSON)</web-resource-name>
+			<url-pattern>/audit_report.json</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
@@ -579,7 +655,7 @@
 			<url-pattern>/importer.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>view</role-name>
+			<role-name>admin</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>

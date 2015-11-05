@@ -46,7 +46,14 @@
 		<div class="container">
 			<dl>
 				<dt>ID</dt>
-				<dd>${inventory.ID}</dd>
+				<dd>
+					${inventory.ID}
+					<c:if test="${not empty pageContext.request.userPrincipal}">
+						<c:if test="${pageContext.request.isUserInRole('edit')}">
+							[<a href="../edit_inventory/${inventory.ID}">Edit</a>]
+						</c:if>
+					</c:if>
+				</dd>
 			</dl>
 			<c:if test="${!empty inventory.container}">
 			<dl>
@@ -146,6 +153,12 @@
 			<dl>
 				<dt>Lab Number</dt>
 				<dd>${inventory.labNumber}</dd>
+			</dl>
+			</c:if>
+			<c:if test="${!empty inventory.labReportID}">
+			<dl>
+				<dt>Lab Report ID</dt>
+				<dd>${inventory.labReportID}</dd>
 			</dl>
 			</c:if>
 			<c:if test="${!empty inventory.coreNumber}">

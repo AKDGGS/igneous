@@ -109,7 +109,9 @@
 			iv.set_number,
 			iv.split_number,
 			iv.slide_number,
+			iv.slip_number,
 			iv.lab_number,
+			iv.lab_report_id,
 			iv.map_number,
 			iv.description, 
 			iv.remark,
@@ -178,6 +180,7 @@
 		<result property="slide_number" column="slide_number" />
 		<result property="slip_number" column="slip_number" />
 		<result property="lab_number" column="lab_number" />
+		<result property="lab_report_id" column="lab_report_id" />
 		<result property="map_number" column="map_number" />
 		<result property="description" column="description" />
 		<result property="remark" column="remark" />
@@ -524,4 +527,41 @@
 	<insert id="insertStash" parameterType="String">
 		INSERT INTO inventory (stash) VALUES (#{stash}::JSONB)
 	</insert>
+
+	<update id="update" parameterType="Inventory">
+		UPDATE inventory SET
+			dggs_sample_id = #{dggs_sample_id},
+			lab_report_id = #{lab_report_id},
+			sample_number = #{sample_number},
+			sample_number_prefix = #{sample_number_prefix},
+			alt_sample_number = #{alt_sample_number},
+			published_sample_number = #{published_sample_number},
+			published_number_has_suffix = #{published_number_has_suffix},
+			barcode = #{barcode},
+			alt_barcode = #{alt_barcode},
+			state_number = #{state_number},
+			box_number = #{box_number},
+			set_number = #{set_number},
+			split_number = #{split_number},
+			slide_number = #{slide_number},
+			slip_number = #{slip_number},
+			lab_number = #{lab_number},
+			map_number = #{map_number},
+			description = #{description},
+			remark = #{remark},
+			tray = #{tray},
+			interval_top = #{interval_top},
+			interval_bottom = #{interval_bottom},
+			core_number = #{core_number},
+			weight = #{weight},
+			sample_frequency = #{sample_frequency},
+			recovery = #{recovery},
+			can_publish = #{can_publish},
+			radiation_msvh = #{radiation_msvh},
+			received_date = #{received},
+			entered_date = #{entered},
+			modified_user = #{user},
+			active = #{active}
+		WHERE inventory_id = #{id}
+	</update>
 </mapper>
