@@ -179,8 +179,7 @@
 				<dl>
 					<dt>Weight</dt>
 					<dd${!empty err.weight ? ' class="err"' : ''}>
-						<fmt:formatNumber var="weight" value="${inventory.weight}" />
-						<input type="text" name="weight" value="${fn:escapeXml(empty param.weight ? weight : param.weight)}">
+						<input type="text" name="weight" value="${fn:escapeXml(empty param.weight ? inventory.weight : param.weight)}">
 						<c:if test="${!empty inventory.weightUnit}"> ${inventory.weightUnit.abbr}</c:if>
 						<span>${fn:escapeXml(err.weight)}</span>
 					</dd>
@@ -188,8 +187,7 @@
 				<dl>
 					<dt>Interval Top</dt>
 					<dd${!empty err.interval_top ? ' class="err"' : ''}>
-						<fmt:formatNumber var="interval_top" value="${inventory.intervalTop}" />
-						<input type="text" size="8" name="interval_top" value="${fn:escapeXml(empty param.interval_top ? interval_top : param.interval_top)}">
+						<input type="text" size="8" name="interval_top" value="${fn:escapeXml(empty param.interval_top ? inventory.intervalTop : param.interval_top)}">
 						<c:if test="${!empty inventory.intervalUnit}"> ${inventory.intervalUnit.abbr}</c:if>
 						<span>${fn:escapeXml(err.interval_top)}</span>
 					</dd>
@@ -197,8 +195,7 @@
 				<dl>
 					<dt>Interval Bottom</dt>
 					<dd${!empty err.interval_bottom ? ' class="err"' : ''}>
-						<fmt:formatNumber var="interval_bottom" value="${inventory.intervalBottom}" />
-						<input type="text" size="8" name="interval_bottom" value="${fn:escapeXml(empty param.interval_bottom ? interval_bottom : param.interval_bottom)}">
+						<input type="text" size="8" name="interval_bottom" value="${fn:escapeXml(empty param.interval_bottom ? inventory.intervalBottom : param.interval_bottom)}">
 						<c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit.abbr}</c:if>
 						<span>${fn:escapeXml(err.interval_bottom)}</span>
 					</dd>
@@ -239,8 +236,7 @@
 				<dl>
 					<dt>Radiation</dt>
 					<dd${!empty err.radiation_msvh ? ' class="err"' : ''}>
-						<fmt:formatNumber var="radiation_msvh" value="${inventory.radiationMSVH}" />
-						<input type="text" size="5" name="radiation_msvh" value="${fn:escapeXml(empty param.radiation_msvh ? radiation_msvh : param.radiation_msvh)}"> mSv/h
+						<input type="text" size="5" name="radiation_msvh" value="${fn:escapeXml(empty param.radiation_msvh ? inventory.radiationMSVH : param.radiation_msvh)}"> mSv/h
 						<span>${fn:escapeXml(err.radiation_msvh)}</span>
 					</dd>
 				</dl>
