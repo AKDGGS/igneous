@@ -418,7 +418,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Root</web-resource-name>
-			<url-pattern>/</url-pattern>
+			<url-pattern>/search</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
