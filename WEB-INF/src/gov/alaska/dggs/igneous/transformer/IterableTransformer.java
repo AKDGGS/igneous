@@ -20,14 +20,14 @@ public class IterableTransformer extends AbstractTransformer
 			TypeContext typeContext = getContext().peekTypeContext();
 			if(typeContext != null){
 				if(!typeContext.isFirst()) getContext().writeComma();
-				typeContext.setFirst(false);
+				typeContext.increment();
 				getContext().writeName(typeContext.getPropertyName());
 			}
 
 			typeContext = getContext().writeOpenArray();
 			for (Object item : iterable) {
 				if(!typeContext.isFirst()) getContext().writeComma();
-				typeContext.setFirst(false);
+				typeContext.increment();
 				getContext().transform(item);
 			}
 			getContext().writeCloseArray();
