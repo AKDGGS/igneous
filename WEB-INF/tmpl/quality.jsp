@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
-		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<link href="css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			.ok { background-color: green; color: white; }
 			.warning { background-color: yellow; }
@@ -17,7 +17,7 @@
 	<body>
 		<div class="navbar">
 			<div class="navbar-head">
-				<a href="${pageContext.request.contextPath}/">Geologic Materials Center</a>
+				<a href="search">Geologic Materials Center</a>
 			</div>
 
 			<div class="navbar-form">
@@ -54,15 +54,15 @@
 			</c:if>
 		</div>
 
-		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+		<script src="js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){
 				$('#search').click(function(){
-					window.location.href = '${pageContext.request.contextPath}/search#q=' + $('#q').val();
+					window.location.href = 'search#q=' + $('#q').val();
 				});
 
 				$('#help').click(function(){
-					window.location.href = '${pageContext.request.contextPath}/help';
+					window.location.href = 'help';
 				});
 
 				$('#q').keypress(function(e){
@@ -97,7 +97,7 @@
 											.text('PASSED');
 									} else {
 										var link = $('<a href="#">'+count+'</a>').click(function(e){
-											$('#detail').empty().append('<img src="${pageContext.request.contextPath}/img/big_loading.gif" />');
+											$('#detail').empty().append('<img src="img/big_loading.gif" />');
 
 											$.ajax({
 												url: 'quality_report.json',

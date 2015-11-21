@@ -10,7 +10,7 @@
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
-		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<link href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
@@ -37,7 +37,7 @@
 	<body>
 		<div class="navbar">
 			<div class="navbar-head">
-				<a href="${pageContext.request.contextPath}/">Geologic Materials Center</a>
+				<a href="../search">Geologic Materials Center</a>
 			</div>
 
 			<div class="navbar-form">
@@ -209,10 +209,10 @@
 
 		<div id="tab-files" class="hidden"></div>
 
-		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+		<script src="../js/jquery-1.10.2.min.js"></script>
 		<script type="text/javascript" src="https://maps.google.com/maps/api/js?v=3.7&sensor=false"></script>
-		<script src="${pageContext.request.contextPath}/ol/2.13.1/OpenLayers.js"></script>
-		<script src="${pageContext.request.contextPath}/js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
-		<script src="${pageContext.request.contextPath}/js/view${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
+		<script src="../ol/2.13.1/OpenLayers.js"></script>
+		<script src="../js/util${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
+		<script src="../js/view${initParam['dev_mode'] == true ? '' : '-min'}.js"></script>
 	</body>
 </html>

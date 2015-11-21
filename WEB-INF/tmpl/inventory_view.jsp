@@ -10,7 +10,7 @@
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
-		<link href="${pageContext.request.contextPath}/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<link href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			dl { display: table; margin: 8px 4px; }
 			dt, dd { display: table-cell; vertical-align: top; }
@@ -29,7 +29,7 @@
 	<body>
 		<div class="navbar">
 			<div class="navbar-head">
-				<a href="${pageContext.request.contextPath}/">Geologic Materials Center</a>
+				<a href="../search">Geologic Materials Center</a>
 			</div>
 
 			<div class="navbar-form">
@@ -487,11 +487,11 @@
 			</div>
 		</div>
 
-		<script src="${pageContext.request.contextPath}/js/jquery-1.10.2.min.js"></script>
+		<script src="../js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){
 				$('#search').click(function(){
-					window.location.href = '${pageContext.request.contextPath}/search#q=' + $('#q').val();
+					window.location.href = '../search#q=' + $('#q').val();
 				});
 
 				$('#q').keypress(function(e){
