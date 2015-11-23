@@ -286,38 +286,40 @@ public class Inventory implements Serializable
 		}
 	}
 
-	private BigDecimal interval_top;
-	public BigDecimal getIntervalTop(){ return interval_top; }
-	public void setIntervalTop(BigDecimal interval_top){ this.interval_top = interval_top; }
-	public void setIntervalTop(String interval_top) throws Exception
+	private BigDecimal intervalTop;
+	public BigDecimal getIntervalTop(){ return intervalTop; }
+	public void setIntervalTop(BigDecimal intervalTop){ this.intervalTop = intervalTop; }
+	public void setIntervalTop(String intervalTop) throws Exception
 	{
-		if(interval_top == null || interval_top.trim().length() == 0){
-			this.interval_top = null;
+		if(intervalTop == null || intervalTop.trim().length() == 0){
+			this.intervalTop = null;
 		} else {
 			BigDecimal n = null;
-			try { n = new BigDecimal(interval_top); }
+			try { n = new BigDecimal(intervalTop); }
 			catch(Exception ex){ throw new Exception("Invalid number"); }
 			if(n.precision() > 8 || n.scale() > 2){
 				throw new Exception("Number too big (precision>8 or scale>2)");
 			}
-			this.interval_top = n;
+			this.intervalTop = n;
 		}
 	}
 
-	private BigDecimal interval_bottom;
-	public BigDecimal getIntervalBottom(){ return interval_bottom; }
-	public void setIntervalBottom(BigDecimal interval_bottom){ this.interval_bottom = interval_bottom; }
-	public void setIntervalBottom(String interval_bottom) throws Exception {
-		if(interval_bottom == null || interval_bottom.trim().length() == 0){
-			this.interval_bottom = null;
+	private BigDecimal intervalBottom;
+	public BigDecimal getIntervalBottom(){ return intervalBottom; }
+	public void setIntervalBottom(BigDecimal intervalBottom) throws Exception {
+		this.intervalBottom = intervalBottom;
+	}
+	public void setIntervalBottom(String intervalBottom) throws Exception {
+		if(intervalBottom == null || intervalBottom.trim().length() == 0){
+			this.intervalBottom = null;
 		} else {
 			BigDecimal n = null;
-			try { n = new BigDecimal(interval_bottom); }
+			try { n = new BigDecimal(intervalBottom); }
 			catch(Exception ex){ throw new Exception("Invalid number"); }
 			if(n.precision() > 8 || n.scale() > 2){
 				throw new Exception("Number too big (precision>8 or scale>2)");
 			}
-			this.interval_bottom = n;
+			this.intervalBottom = n;
 		}
 	}
 

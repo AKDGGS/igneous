@@ -53,8 +53,8 @@
 		<result property="core_number" column="core_number" />
 		<result property="state_number" column="state_number" />
 		<result property="description" column="description" />
-		<result property="interval_top" column="interval_top" />
-		<result property="interval_bottom" column="interval_bottom" />
+		<result property="intervalTop" column="interval_top" />
+		<result property="intervalBottom" column="interval_bottom" />
 		<result property="remark" column="remark" />
 		<result property="container_path" column="container_path" />
 		<result property="bin" column="bin" />
@@ -185,8 +185,8 @@
 		<result property="description" column="description" />
 		<result property="remark" column="remark" />
 		<result property="tray" column="tray" />
-		<result property="interval_top" column="interval_top" />
-		<result property="interval_bottom" column="interval_bottom" />
+		<result property="intervalTop" column="interval_top" />
+		<result property="intervalBottom" column="interval_bottom" />
 		<result property="core_number" column="core_number" />
 		<result property="weight" column="weight" />
 		<result property="sample_frequency" column="sample_frequency" />
@@ -404,8 +404,8 @@
 		<result property="set_number" column="set_number" />
 		<result property="core_number" column="core_number" />
 		<result property="state_number" column="state_number" />
-		<result property="interval_top" column="interval_top" />
-		<result property="interval_bottom" column="interval_bottom" />
+		<result property="intervalTop" column="interval_top" />
+		<result property="intervalBottom" column="interval_bottom" />
 		<result property="wkt" column="wkt" />
 
 		<association property="interval_unit" javaType="Unit">
@@ -550,8 +550,8 @@
 			description = #{description},
 			remark = #{remark},
 			tray = #{tray},
-			interval_top = #{interval_top},
-			interval_bottom = #{interval_bottom},
+			interval_top = #{intervalTop},
+			interval_bottom = #{intervalBottom},
 			core_number = #{core_number},
 			weight = #{weight},
 			sample_frequency = #{sample_frequency},
