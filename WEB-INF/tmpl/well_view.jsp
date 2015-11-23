@@ -10,7 +10,7 @@
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
-		<link href=",,/css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<link href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
 		<style>
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
