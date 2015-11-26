@@ -58,7 +58,7 @@
 			<c:if test="${!empty inventory.container}">
 			<dl>
 				<dt>Location</dt>
-				<dd><a href="../container/${inventory.container.ID}">${inventory.container.pathCache}</a></dd>
+				<dd>${inventory.container.pathCache}</dd>
 			</dl>
 			</c:if>
 			<c:if test="${!empty inventory.DGGSSampleID}">
