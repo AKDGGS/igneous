@@ -110,7 +110,7 @@ public class MoveServlet extends HttpServlet
 						InventoryQuality iq = new InventoryQuality(i);
 						iq.setUsername("gmc_app");
 						iq.setRemark("Added via autogeneration");
-						iq.setIssues("needs_detail");
+						iq.setIssues(new String[]{"needs_detail"});
 
 						sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
 						if(iq.getID() == null){

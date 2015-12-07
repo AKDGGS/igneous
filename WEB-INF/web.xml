@@ -25,7 +25,7 @@
 			Always include the trailing slash!
 		</description>
 		<param-name>app_url</param-name>
-		<param-value>http://146.63.145.77/igneous/</param-value>
+		<param-value>https://mars.dnr.state.ak.us/igneous/</param-value>
 	</context-param>
 
 	<context-param>

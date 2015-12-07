@@ -24,7 +24,9 @@
 		<result property="date" column="check_date" />
 		<result property="remark" column="remark" />
 		<result property="username" column="username" />
+		<!--
 		<result property="issues" column="issues" />
+		-->
 	</resultMap>
 
 

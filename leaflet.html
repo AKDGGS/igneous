@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Leaflet-based search</title>
+		<link rel="stylesheet" href="leaflet/leaflet.css">
+		<link rel="stylesheet" href="leaflet/leaflet.draw.css">
+		<link rel="stylesheet" href="leaflet/leaflet.mouseposition.css">
+		<style>
+			body { font-family: 'Georgia, serif'; }
+			a { color: #428bca; text-decoration: none; }
+			a:hover, a:focus { color: #2a6496; text-decoration: underline; }
+			#map { height: 450px; }
+			.leaflet-marker-shadow { display: none; }
+			.spacer { font-size: 22px; padding: 0px 2px; }
+			div.warning, div.error {
+				margin: 8px 0;
+				padding: 8px 16px;
+				text-align: center;
+				border-radius: 4px;
+			}
+			div.warning { background-color: #ff9; }
+			div.error { background-color: #f88; }
+			ul.kw { margin: 0; padding: 0; }
+			ul.kw li { display: inline; }
+			ul.kw li:before { content: ", "; }
+			ul.kw li:first-child:before { content: ""; }
+			table.results { border-collapse: collapse; }
+			table.results td, table.results th { margin: 0; padding: 4px; }
+			table.results { width: 100%; margin: auto; }
+			table.results td { vertical-align: top; font-size: 16px; }
+			table.results th { white-space: nowrap; vertical-align: bottom; text-align: left; font-size: 13px; }
+			table.results tbody tr:nth-child(odd) { background-color: #f9f9f9; }
+			table.results tr.shotline:nth-child(odd) { background-color: #ffdcdc !important; }
+			table.results tr.shotline:nth-child(even) { background-color: #ffeeee !important; }
+			table.results tr.outcrop:nth-child(odd) { background-color: #ffffcc !important; }
+			table.results tr.outcrop:nth-child(even) { background-color: #ffffe6 !important; }
+			table.results tr.borehole:nth-child(odd) { background-color: #e0ffd6 !important; }
+			table.results tr.borehole:nth-child(even) { background-color: #f0ffeb !important; }
+			table.results tr.well:nth-child(odd) { background-color: #d6ebff !important; }
+			table.results tr.well:nth-child(even) { background-color: #ebf5ff !important; }
+			td.barcode { white-space: nowrap; }
+			td.quality span {
+				font-size: 12px !important;
+				display: inline-block;
+				padding: 0 5px;
+				margin: 2px 4px 0px 0px;
+				white-space: nowrap;
+				background-color: red;
+				color: #fff;
+				border-radius: 4px;
+				text-transform: uppercase;
+			}
+			#controls {
+				white-space: nowrap;
+				display: none;
+				text-align: right;
+				margin: 8px 0;
+				background-color: #d9edf7; 
+				color: #3a87ad;
+				padding: 4px;
+				border-radius: 4px;
+				border: 1px solid #bce8f1;;
+			}
+		</style>
+		<script src="leaflet/leaflet.js"></script>
+		<script src="leaflet/leaflet.draw.js"></script>
+		<script src="leaflet/leaflet.mouseposition.js"></script>
+		<script src="js/mustache-2.2.0.min.js"></script>
+		<script>
+			var map, features, aoi;
+
+			var SearchParameters = {
+				SEARCH_FIELDS: ['q'],
+				CONTROL_FIELDS: ['start', 'max', 'sort', 'dir'],
+
+				encode: function(){
+					var params = this.encodeFields(this.SEARCH_FIELDS);
+
+					// Encode the AOI, if it exists
+					if(aoi.getLayers().length > 0){
+						if(params.length > 0) params += '&';
+						params += 'aoi=' + encodeURIComponent(
+							JSON.stringify(aoi.getLayers()[0].toGeoJSON().geometry)
+						);
+					}
+
+					// Only encode the control fields if there's
+					// actual search parameters in there
+					if(params.length > 0){
+						params += '&' + this.encodeFields(this.CONTROL_FIELDS);
+					}
+
+					return params;
+				},
+
+				encodeFields: function(fields){
+					var params = '';
+					for(var i = 0; i < fields.length; i++){
+						var name = fields[i];
+						var els = document.getElementsByName(fields[i]);
+						for(var j = 0; j < els.length; j++){
+							var el = els[j];
+							switch(el.tagName){
+								case 'INPUT':
+									if(el.value.trim().length > 0){
+										if(params.length > 0) params += '&';
+										params += name + '=' + encodeURIComponent(
+											el.value.trim()
+										);
+									}
+								break;
+
+								case 'SELECT':
+									for(var k = 0; k < el.options.length; k++){
+										var opt = el.options[k];
+										if(opt.selected){
+											if(params.length > 0) params += '&';
+											params += name + '=' +
+												encodeURIComponent(opt.value);
+										}	
+									}
+								break;
+							}
+						}
+					}
+					return params;
+				},
+
+				decode: function(params){
+					if(params.length < 1) return;
+
+					var cnt = {};
+
+					var kvs = params.split('&');
+					for(var i = 0; i < kvs.length; i++){
+						var idx = kvs[i].indexOf('=');
+						var k = kvs[i].substring(0, idx);
+						var v = decodeURIComponent(kvs[i].substring(idx + 1));
+
+						if(k === 'aoi'){
+							aoi.addData(JSON.parse(v));
+							continue;
+						}
+
+						var els = document.getElementsByName(k);
+
+						// If there's more than one element, keep
+						// a count so we can set each.
+						if(els.length == 1 || !(k in cnt)) cnt[k] = 0;
+						else cnt[k]++;
+
+						var el = els[cnt[k]];
+
+						switch(el.tagName){
+							case 'INPUT': el.value = v; break;
+						
+							case 'SELECT':
+								for(var j = 0; j < el.options.length; j++){
+									if(el.options[j].value === v){
+										el.options[j].selected = true;
+										break;
+									}
+								}
+							break;
+						}
+					}
+				}
+			};
+
+			function init()
+			{
+				// IE8 fix -- support trim()
+				if(typeof String.prototype.trim !== 'function') {
+					String.prototype.trim = function() {
+						return this.replace(/^\s+|\s+$/g, ''); 
+					}
+				}
+
+				features = L.geoJson(null, {
+					pointToLayer: function (f, ll) {
+						return L.circleMarker(ll);
+					},
+					coordsToLatLngInvert: function(c){
+						var ll = new L.LatLng(c[1], c[0], c[2]);
+						if(ll.lng >= 0) ll.lng -= 360;
+						else ll.lng += 360;
+
+						return ll;
+					},
+					style: {
+						color: "#2E70FF",
+						opacity: 1,
+						weight: 2,
+						radius: 6,
+						fill: false
+					}
+				});
+				features.on('layeradd', function(e){
+					if('coordsToLatLng' in e.target.options){
+						delete e.target.options.coordsToLatLng;
+					} else {
+						e.target.options.coordsToLatLng =
+							e.target.options.coordsToLatLngInvert;
+
+						e.target.addData(e.layer.toGeoJSON());
+					}
+				});
+
+				aoi = L.geoJson(null, {
+					coordsToLatLngInvert: function(c){
+						var ll = new L.LatLng(c[1], c[0], c[2]);
+						if(ll.lng >= 0) ll.lng -= 360;
+						else ll.lng += 360;
+
+						return ll;
+					},
+					style: {
+						color: '#f00',
+						opacity: 1,
+						weight: 2,
+						radius: 6,
+						fill: false,
+						clickable: false
+					}
+				});
+				aoi.on('layeradd', function(e){
+					if('coordsToLatLng' in e.target.options){
+						delete e.target.options.coordsToLatLng;
+					} else {
+						e.target.options.coordsToLatLng =
+							e.target.options.coordsToLatLngInvert;
+
+						e.target.addData(e.layer.toGeoJSON());
+					}
+				});
+
+				var baselayers = {
+					'Open Street Maps': new L.TileLayer(
+						'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+						{ minZoom: 3, maxZoom: 16 }
+					),
+					'MapQuest Open Aerial': new L.TileLayer(
+						'http://otile4.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
+						{ minZoom: 3, maxZoom: 11 }
+					),
+					'GINA Satellite': new L.TileLayer(
+						'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
+						{ minZoom: 3, mazZoom: 15 }
+					),
+					'GINA Topographic': new L.TileLayer(
+						'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
+						{ minZoom: 3, maxZoom: 12 }
+					)
+				};
+
+				var overlays = {
+					'Quadrangles': new L.TileLayer(
+						'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
+						{ minZoom: 3, maxZoom: 16 }
+					)
+				};
+
+				map = L.map('map', {
+					attributionControl: false,
+					zoomControl: false,
+					worldCopyJump: true,
+					layers: [ baselayers['Open Street Maps'] ]
+				});
+
+				map.addLayer(features);
+				map.addLayer(aoi);
+
+				// Add zoom control
+				map.addControl(L.control.zoom({ position: 'topleft' }));
+				// Add mouse position control
+				map.addControl(L.control.mousePosition({ emptyString: 'Unknown', numDigits: 3 }));
+				// Add layer control
+				map.addControl(L.control.layers(
+					baselayers, overlays, { position: 'bottomleft' }
+				));
+
+				// Modify the button text
+				L.drawLocal.draw.toolbar.buttons.rectangle = 'Draw an area of interest';
+				L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Click and draw to draw an area of interest';
+
+				// Initialize drawing control
+				map.addControl(
+					new L.Control.Draw({
+						position: 'topleft',
+						draw: {
+							polygon: false,
+							polyline: false,
+							marker: false,
+							circle: false,
+							rectangle: {
+								metric: true,
+								shapeOptions: {
+									color: '#f00',
+									opacity: 1,
+									weight: 2,
+									radius: 6,
+									fill: false,
+									clickable: false
+								}
+							}
+						},
+						edit: {
+							featureGroup: aoi,
+							edit: false,
+							remove: false
+						}
+					})
+				);
+
+				// When drawing starts, empty out the
+				// old drawing
+				map.on('draw:drawstart', function(e){
+					aoi.clearLayers();
+				});
+
+				// When you draw, add it to the aoi
+				// and the anti-aoi
+				map.on('draw:created', function(e){
+					aoi.addLayer(e.layer);
+				});
+				
+				// Search when drawing ends
+				map.on('draw:drawstop', function(e){
+					search();
+				});
+
+				// Start in Fairbanks
+				map.setView([64.843611, -147.723056], 3);
+
+				document.getElementById('btn-search').onclick = search;
+
+				document.getElementById('q').onkeydown = function(e){
+					e =	e || window.event;
+					if(e.keyCode === 13){
+						search();
+						if(e.preventDefault) e.preventDefault();
+						return false;
+					}
+				};
+
+				document.getElementById('max').onchange = search;
+
+				document.getElementById('btn-next').onclick = function(){
+					var st = document.getElementById('start');
+					var mx = document.getElementById('max');
+					st.value = Number(st.value) +
+						Number(mx.options[mx.selectedIndex].value);
+					search(true);
+				};
+
+				document.getElementById('btn-prev').onclick = function(){
+					var st = document.getElementById('start');
+					var mx = document.getElementById('max');
+					st.value = (Number(st.value) -
+						Number(mx.options[mx.selectedIndex].value));
+					search(true);
+				};
+
+				var sorts = document.getElementsByName('sort');
+				for(var i=0; i < sorts.length; i++){
+					sorts[i].onchange = search;
+				}
+
+				var dirs = document.getElementsByName('dir');
+				for(var i=0; i < dirs.length; i++){
+					dirs[i].onchange = search;
+				}
+
+				document.getElementById('q').focus();
+
+				if(window.location.hash.length > 1){
+					SearchParameters.decode(window.location.hash.substring(1));
+					search(true);
+				}
+			}
+
+
+			function search(clean)
+			{
+				if(clean !== true) document.getElementById('start').value = 0;
+
+				var params = SearchParameters.encode();
+
+				window.location.hash = params;
+
+				if(params.length == 0){
+					features.clearLayers();
+
+					document.getElementById('controls').style.display = 'none';
+					document.getElementById('list').innerHTML =  '';
+					return;
+				}
+
+				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
+
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState === 4){
+						// Clear out all the features
+						features.clearLayers();
+
+						// Setup the PDF/CSV links
+						var pdf = document.getElementById('pdf');
+						if(pdf) pdf.href = 'search.pdf?' + params;
+						var csv = document.getElementById('csv');
+						if(csv) csv.href = 'search.csv?' + params;
+
+
+						// If the search json returns an error
+						if(xhr.status !== 200){
+							document.getElementById('controls').style.display = 'none';
+							document.getElementById('list').innerHTML = 
+								'<div class="error">Error: ' + xhr.responseText + '</div>';
+							return;
+
+						} else {
+							var obj = JSON.parse(xhr.responseText);
+
+							// If there's no results, hide the controls and show
+							// a warning.
+							if(!('list' in obj)){
+								document.getElementById('controls').style.display = 'none';
+								document.getElementById('list').innerHTML = 
+									'<div class="warning">No results found.</div>';
+								return;
+							}
+
+							var start = Number(document.getElementById('start').value);
+
+							// Disable previous button, if necessary
+							document.getElementById('btn-prev').disabled =
+								(start === 0 ? true : false);
+
+							// Disable next button if necessary
+							document.getElementById('btn-next').disabled = 
+								((start + obj['list'].length) >= obj['found'] ? true : false);
+
+							// Update display on number of items/current items displayed
+							document.getElementById('pages').innerHTML = 
+								(start + 1) + ' - ' + (obj['list'].length + start) + 
+								' of ' + obj['found'];
+
+							// Iterate over the geoJSON in the results
+							// and populate the map
+							for(var i = 0; i < obj['list'].length; i++){
+								var o = obj['list'][i];
+								if('geoJSON' in o){
+									features.addData(o['geoJSON']);
+								}
+							}
+
+							// Show the controls and update the results table
+							document.getElementById('controls').style.display = 'block';
+							document.getElementById('list').innerHTML = Mustache.render(
+								document.getElementById('tmpl-table').innerHTML,
+								obj
+							);
+						}
+					}
+				}
+				xhr.open('POST', 'search.json', true);
+				xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xhr.send(params);
+			}
+		</script>
+	</head>
+	<body onload="init()">
+		<div>
+			<input type="text" id="q" name="q" size="40">
+			<button id="btn-search">Search</button>
+		</div>
+		<br>
+		<div id="map"></div>
+		<div id="controls">
+			<input type="hidden" name="start" id="start" value="0" />
+
+			<div>
+				<label for="max">Showing</label>
+				<select name="max" id="max">
+					<option value="10">10</option>
+					<option value="25" selected="selected">25</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+					<option value="250">250</option>
+					<option value="500">500</option>
+					<option value="1000">1000</option>
+				</select>
+
+				<span class="spacer">|</span>
+
+				<button id="btn-prev">Previous Page</button>
+				Displaying <span id="pages"></span>
+				<button id="btn-next">Next Page</button>
+			</div>
+
+			<div>
+				<a id="pdf" href="#">PDF</a> / <a id="csv" href="#">CSV</a>
+
+				<span class="spacer">|</span>
+
+				<label for="sort">Sort by</label>
+				<select name="sort">
+					<option value="0" selected="selected">Best Match</option>
+					<option value="9">Barcode</option>
+					<option value="10">Borehole</option>
+					<option value="11">Box</option>
+					<option value="1">Collection</option>
+					<option value="2">Core Number</option>
+					<option value="14">Keywords</option>
+					<option value="3">Location</option>
+					<option value="12">Prospect</option>
+					<option value="13">Sample</option>
+					<option value="4">Set Number</option>
+					<option value="5">Top</option>
+					<option value="6">Bottom</option>
+					<option value="7">Well Name</option>
+					<option value="8">Well Number</option>
+				</select>
+				<select name="dir">
+					<option value="0" selected="selected">Asc</option>
+					<option value="1">Desc</option>
+				</select>
+				<select name="sort">
+					<option value="0" selected="selected">Best Match</option>
+					<option value="9">Barcode</option>
+					<option value="10">Borehole</option>
+					<option value="11">Box</option>
+					<option value="1">Collection</option>
+					<option value="2">Core Number</option>
+					<option value="14">Keywords</option>
+					<option value="3">Location</option>
+					<option value="12">Prospect</option>
+					<option value="13">Sample</option>
+					<option value="4">Set Number</option>
+					<option value="5">Top</option>
+					<option value="6">Bottom</option>
+					<option value="7">Well Name</option>
+					<option value="8">Well Number</option>
+				</select>
+				<select name="dir">
+					<option value="0" selected="selected">Asc</option>
+					<option value="1">Desc</option>
+				</select>
+			</div>
+		</div>
+		<div id="list"></div>
+		<script id="tmpl-table" type="x-tmpl-mustache">
+			<table class="results">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Related</th>
+						<th>Sample</th>
+						<th>Box /<br>Set</th>
+						<th>Core No /<br>Diameter</th>
+						<th>Top /<br>Bottom</th>
+						<th>Keywords</th>
+						<th>Collection</th>
+						<th>Barcode</th>
+						<Th>Location /<br>Quality</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#list}}
+					<tr class="{{#boreholes.0}}borehole {{/boreholes.0}}{{#wells.0}}well {{/wells.0}}{{#outcrops.0}}outcrop {{/outcrops.0}}{{#shotlines.0}}shotline {{/shotlines.0}}">
+						<td><a href="inventory/{{ID}}">{{ID}}</a></td>
+						<td>
+							{{#boreholes}}
+							<div>
+								{{#prospect}}
+								Prospect: <a href="prospect/{{ID}}">{{name}}</a><br>
+								{{/prospect}}
+								Borehole: <a href="borehole/{{ID}}">{{name}}</a>
+							</div>
+							{{/boreholes}}
+							{{#wells}}
+							<div>
+								Well: <a href="well/{{ID}}">{{name}}{{#wellNumber}} - {{wellNumber}}{{/wellNumber}}</a>
+								{{#APINumber}}<div>API: {{APINumber}}</div>{{/APINumber}}
+							</div>
+							{{/wells}}
+							{{#outcrops}}
+							<div>
+								Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+							</div>
+							{{/outcrops}}
+						</td>
+						<td>{{sampleNumber}}</td>
+						<td>
+							{{boxNumber}}
+							{{#setNumber}}<br>{{setNumber}}{{/setNumber}}
+						</td>
+						<td>
+							{{coreNumber}}
+							{{#coreDiameter}}<br>{{name}}{{^name}}{{diameter}} {{unit.abbr}}{{/name}}{{/coreDiameter}}
+						</td>
+						<td>
+							{{#intervalTop}}{{intervalTop}} {{intervalUnit.abbr}}{{/intervalTop}}
+							{{#intervalBottom}}<br>{{intervalBottom}} {{intervalUnit.abbr}}{{/intervalBottom}}
+						</td>
+						<td>
+							<ul class="kw">{{#keywords}}<li>{{name}}</li>{{/keywords}}</ul>
+						</td>
+						<td>{{collection.name}}</td>
+						<td class="barcode">
+							{{barcode}}{{^barcode}}{{altBarcode}}{{/barcode}}
+						</td>
+						<td class="quality">
+							{{containerPath}}
+							{{#qualities}}<div>{{#issues}}<span>{{.}}</span>{{/issues}}</div>{{/qualities}}
+						</td>
+					</tr>
+					{{/list}}
+				</tbody>
+			</table>
+		</script>
+	</body>
+</html>

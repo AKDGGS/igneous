@@ -34,9 +34,9 @@ public class InventoryQuality implements Serializable
 	public void setUsername(String username){ this.username = username; }
 
 
-	private String issues;
-	public String getIssues(){ return issues; }
-	public void setIssues(String issues){ this.issues = issues; }
+	private String[] issues;
+	public String[] getIssues(){ return issues; }
+	public void setIssues(String[] issues){ this.issues = issues; }
 
 
 	public InventoryQuality(Inventory i)
