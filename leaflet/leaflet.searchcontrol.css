@@ -1,0 +1,82 @@
+.search-container {
+	z-index: 1001;
+}
+.search-input, .search-menu-button, .search-submit-button, .search-menu-image {
+	margin: 0; padding: 0; border: none;
+	display: inline; vertical-align: middle;
+	box-sizing: content-box;
+	align-items: stretch;
+}
+.search-input-container {
+	white-space: nowrap;
+	padding: 0; margin: 0;
+	background-color: #fff;
+	display: inline-block;
+	height: 30px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3), 0px 4px 15px -5px transparent;
+	border: 1px solid #428bca;
+}
+.search-input:focus {
+	/* Fixes Safari's ugly highlighting */
+	outline-width: 0;
+}
+.search-input {
+	padding: 0 2px;
+	height: 20px;
+	font-size: 14px;
+	width: 375px;
+	font-family: Georgia, serif;
+}
+.search-menu-image {
+	height: 24px; width: 24px;
+}
+
+.search-menu-button, .search-submit-button {
+	height: 30px; cursor: pointer;
+}
+.search-menu-button {
+	width: 30px; background-color: #fff; border-radius: 5px 0 0 5px;
+}
+.search-submit-button {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	width: 60px; color: #fff;
+	background-color: #428bca;
+}
+.search-submit-button:hover, .search-submit-button:active, .search-submit- button:focus {
+	background-color: #3f85c1;
+}
+.search-advanced-container {
+	margin: 4px 0 0 0;
+	padding: 4px 8px;
+	border: 1px solid #ccc;
+	border-radius: 0 0 5px 5px;
+	box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3), 0px 4px 15px -5px transparent;
+	background-color: #fff;
+	display: none;
+}
+.search-advanced-container div {
+	margin: 4px 0;
+}
+.search-advanced-container label {
+	vertical-align: top;
+	display: inline-block;
+	padding: 0 4px;
+	width: 100px;
+	text-align: left;
+}
+.search-advanced-container select {
+	max-width: 280px;
+}
+/* Fuck Firefox's default button CSS */
+.search-container button::-moz-focus-inner {
+	padding: 0;
+	border: 0;
+}
+/* And chrome's default button CSS */
+.search-container button:focus {
+	outline: none;
+	box-shadow: none;
+	border-color: transparent;
+}
