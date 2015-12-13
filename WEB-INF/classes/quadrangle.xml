@@ -6,7 +6,7 @@
 <mapper namespace="gov.alaska.dggs.igneous.Quadrangle">
 	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="QuadrangleMap">
 		SELECT qr.quadrangle_id, qr.name,
-			ST_AsText(ST_Simplify(ST_Transform(geog::GEOMETRY, 3857), 5000)) AS wkt
+			ST_AsGeoJson(ST_Simplify(geog::GEOMETRY, 0.001)::GEOGRAPHY, 3) AS geojson
 		FROM quadrangle AS qr
 		WHERE qr.scale = 250000
 		ORDER BY name
@@ -76,5 +76,6 @@
 		<result property="abbr" column="abbr" />
 		<result property="alt_abbr" column="alt_abbr" />
 		<result property="scale" column="scale" />
+		<result property="geojson" column="geojson" />
 	</resultMap>
 </mapper>

@@ -26,6 +26,8 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.MiningDistrict;
 import gov.alaska.dggs.ETagUtil;
 
+import gov.alaska.dggs.igneous.transformer.RawTransformer;
+
 
 public class MiningDistrictServlet extends HttpServlet
 {
@@ -33,6 +35,7 @@ public class MiningDistrictServlet extends HttpServlet
 	static { 
 		serializer = new JSONSerializer();
 		serializer.exclude("class");
+		//serializer.transform(new RawTransformer(), "geoJSON");
 	}
 
 

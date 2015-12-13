@@ -11,7 +11,7 @@
 			body { font-family: 'Georgia, serif'; }
 			a { color: #428bca; text-decoration: none; }
 			a:hover, a:focus { color: #2a6496; text-decoration: underline; }
-			#map { height: 450px; min-width: 800px; }
+			#map { height: 450px; min-width: 700px; }
 			.leaflet-marker-shadow { display: none; }
 			.spacer { font-size: 22px; padding: 0px 2px; }
 			div.warning, div.error {
@@ -29,7 +29,7 @@
 			table.results { border-collapse: collapse; }
 			table.results td, table.results th { margin: 0; padding: 4px; }
 			table.results { width: 100%; margin: auto; }
-			table.results td { vertical-align: top; font-size: 16px; }
+			table.results td { vertical-align: top; font-size: 16px; border-top: 1px solid #ddd; }
 			table.results th { white-space: nowrap; vertical-align: bottom; text-align: left; font-size: 13px; }
 			table.results tbody tr:nth-child(odd) { background-color: #f9f9f9; }
 			table.results tr.shotline:nth-child(odd) { background-color: #ffdcdc !important; }
@@ -41,12 +41,13 @@
 			table.results tr.well:nth-child(odd) { background-color: #d6ebff !important; }
 			table.results tr.well:nth-child(even) { background-color: #ebf5ff !important; }
 			td.barcode { white-space: nowrap; }
+			td.quality { white-space: nowrap; }
+			td.quality div { white-space: normal; }
 			td.quality span {
 				font-size: 12px !important;
 				display: inline-block;
 				padding: 0 5px;
 				margin: 2px 4px 0px 0px;
-				white-space: nowrap;
 				background-color: red;
 				color: #fff;
 				border-radius: 4px;
@@ -63,6 +64,19 @@
 				border-radius: 4px;
 				border: 1px solid #bce8f1;;
 			}
+			#advancedcontrols {
+				max-height: 375px;
+				overflow-y: scroll;
+			}
+			#advancedcontrols label {
+				display: block;
+				font-weight: bold;
+				padding: 0;
+			}
+			#advancedcontrols select {
+				margin: 0 0 8px 0;
+				min-width: 375px;
+			}
 		</style>
 		<script src="leaflet/leaflet.js"></script>
 		<script src="leaflet/leaflet.draw.js"></script>
@@ -70,11 +84,14 @@
 		<script src="leaflet/leaflet.searchcontrol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script>
-			var map, features, aoi;
+			var map, features, aoi, miningdistrict;
 
 
 			var SearchParameters = {
-				SEARCH_FIELDS: ['q'],
+				SEARCH_FIELDS: [
+					'q', 'keyword_id', 'collection_id', 'prospect_id',
+					'mining_district_id', 'quadrangle_id'
+				],
 				CONTROL_FIELDS: ['start', 'max', 'sort', 'dir'],
 
 				encode: function(){
@@ -150,7 +167,8 @@
 
 						// If there's more than one element, keep
 						// a count so we can set each.
-						if(els.length == 1 || !(k in cnt)) cnt[k] = 0;
+						if(els.length == 0) continue;
+						else if(els.length == 1 || !(k in cnt)) cnt[k] = 0;
 						else cnt[k]++;
 
 						var el = els[cnt[k]];
@@ -170,6 +188,40 @@
 					}
 				}
 			};
+
+
+			function mirroredLayer(style){
+				// All the wierd stuff attached to this layer
+				// is so that a second, mirrored feature will
+				// be added automatically when any feature is
+				// added to this layer. This makes it so that
+				// the feature shows up when the view crosses
+				// the dateline.
+				var layer = L.geoJson(null, {
+					pointToLayer: function (f, ll) {
+						return L.circleMarker(ll);
+					},
+					coordsToLatLngInvert: function(c){
+						var ll = new L.LatLng(c[1], c[0], c[2]);
+						if(ll.lng >= 0) ll.lng -= 360;
+						else ll.lng += 360;
+
+						return ll;
+					},
+					style: style
+				});
+				layer.on('layeradd', function(e){
+					if('coordsToLatLng' in e.target.options){
+						delete e.target.options.coordsToLatLng;
+					} else {
+						e.target.options.coordsToLatLng =
+							e.target.options.coordsToLatLngInvert;
+
+						e.target.addData(e.layer.toGeoJSON());
+					}
+				});
+				return layer;
+			}
 
 
 			function search(clean)
@@ -200,7 +252,6 @@
 						if(pdf) pdf.href = 'search.pdf?' + params;
 						var csv = document.getElementById('csv');
 						if(csv) csv.href = 'search.csv?' + params;
-
 
 						// If the search json returns an error
 						if(xhr.status !== 200){
@@ -260,6 +311,57 @@
 			}
 
 
+			function queueRequests(obj)
+			{
+				// Reset object run
+				obj.finished = 0;
+				obj.data = {};
+
+				for(var i = 0; i < obj.requests.length; i++){
+					queueRequest(obj.requests[i], obj);
+				}
+			}
+
+
+			function queueRequest(url, obj)
+			{
+				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState === 4){
+						if(xhr.status === 200){
+							var n = url.slice(0, -5);
+							obj.data[n] = JSON.parse(xhr.responseText);
+						}
+
+						obj.finished++;
+						if(obj.finished === obj.requests.length){
+							obj.complete();
+						}
+					}
+				};
+				xhr.open('GET', url, true);
+				xhr.send();
+			}
+
+
+			function handlegeojson(ele)
+			{
+				var el = ele === undefined ? this : ele;
+				if('layer' in el){
+					el.layer.clearLayers();
+					for(var i = 0; i < el.options.length; i++){
+						var opt = el.options[i];
+						if(opt.selected){
+							var attr = opt.getAttribute("data-geojson");
+							if(attr != null && attr.length > 0){
+								el.layer.addData(JSON.parse(attr));
+							}
+						}
+					}
+				}
+			}
+
+
 			function init()
 			{
 				// IE8 fix -- support trim()
@@ -269,68 +371,21 @@
 					}
 				}
 
-				// All the wierd stuff attached to this layer
-				// is so that a second, mirroed feature will
-				// be added automatically when any feature is
-				// added to this layer. This makes it so that
-				// the feature shows up when the view crosses
-				// the dateline.
-				features = L.geoJson(null, {
-					pointToLayer: function (f, ll) {
-						return L.circleMarker(ll);
-					},
-					coordsToLatLngInvert: function(c){
-						var ll = new L.LatLng(c[1], c[0], c[2]);
-						if(ll.lng >= 0) ll.lng -= 360;
-						else ll.lng += 360;
-
-						return ll;
-					},
-					style: {
-						color: "#2E70FF",
-						opacity: 1,
-						weight: 2,
-						radius: 6,
-						fill: false
-					}
-				});
-				features.on('layeradd', function(e){
-					if('coordsToLatLng' in e.target.options){
-						delete e.target.options.coordsToLatLng;
-					} else {
-						e.target.options.coordsToLatLng =
-							e.target.options.coordsToLatLngInvert;
-
-						e.target.addData(e.layer.toGeoJSON());
-					}
+				features = mirroredLayer({
+					color: "#2E70FF",
+					opacity: 1,
+					weight: 2,
+					radius: 6,
+					fill: false
 				});
 
-				aoi = L.geoJson(null, {
-					coordsToLatLngInvert: function(c){
-						var ll = new L.LatLng(c[1], c[0], c[2]);
-						if(ll.lng >= 0) ll.lng -= 360;
-						else ll.lng += 360;
-
-						return ll;
-					},
-					style: {
-						color: '#f00',
-						opacity: 1,
-						weight: 2,
-						radius: 6,
-						fill: false,
-						clickable: false
-					}
-				});
-				aoi.on('layeradd', function(e){
-					if('coordsToLatLng' in e.target.options){
-						delete e.target.options.coordsToLatLng;
-					} else {
-						e.target.options.coordsToLatLng =
-							e.target.options.coordsToLatLngInvert;
-
-						e.target.addData(e.layer.toGeoJSON());
-					}
+				aoi = mirroredLayer({
+					color: '#f00',
+					opacity: 1,
+					weight: 2,
+					radius: 6,
+					fill: false,
+					clickable: false
 				});
 
 				var baselayers = {
@@ -419,18 +474,6 @@
 					})
 				);
 
-				// Add search control
-				var searchctl = L.control.searchControl({
-					position: 'topright',
-					onSubmit: function(e){
-						search(false);
-
-						//if('preventDefault' in e) e.preventDefault();
-						return false;
-					}
-				});
-				map.addControl(searchctl);
-
 				// When drawing starts, empty out the
 				// old drawing
 				map.on('draw:drawstart', function(e){
@@ -446,6 +489,86 @@
 				// Search when drawing ends
 				map.on('draw:drawstop', function(e){
 					search();
+				});
+
+				// Add search control
+				var searchctl = L.control.searchControl({
+					position: 'topright',
+					menubutton: true,
+					onSubmit: function(evt){
+						search(false);
+
+						var e = evt === undefined ? window.event : evt;	
+						if('preventDefault' in e) e.preventDefault();
+						return false;
+					},
+					onMenuButton: function(){
+						var adv = document.getElementById('advancedcontrols');
+						if(adv != null){
+							if(adv.style.display === 'block') adv.style.display = 'none';
+							else adv.style.display = 'block';
+						}
+					}
+				});
+				map.addControl(searchctl);
+
+				// Add the advanced controls
+				var advanced = L.DomUtil.create(
+					'div', 'search-advanced-container', searchctl.getContainer()
+				);
+				advanced.id = 'advancedcontrols';
+
+				queueRequests({
+					requests: [
+						'mining_district.json', 'keyword.json',
+						'collection.json', 'prospect.json',
+						'quadrangle.json'
+					],
+					complete: function(){
+						advanced.innerHTML = Mustache.render(
+							document.getElementById('tmpl-advanced').innerHTML,
+							this.data
+						);
+						
+						// Setup the preview for mining district
+						var md_el = document.getElementById('mining_district_id');
+						md_el.layer = mirroredLayer({
+							color: '#f00',
+							opacity: 1,
+							weight: 2,
+							radius: 6,
+							fill: false,
+							clickable: false
+						});
+						map.addLayer(md_el.layer);
+						md_el.onchange = function(){
+							handlegeojson(this);
+							search();
+						}
+
+						// Setup the preview for quadrangles
+						var q_el = document.getElementById('quadrangle_id');
+						q_el.layer = mirroredLayer({
+							color: '#f00',
+							opacity: 1,
+							weight: 2,
+							radius: 6,
+							fill: false,
+							clickable: false
+						});
+						map.addLayer(q_el.layer);
+						q_el.onchange = function(){
+							handlegeojson(this);
+							search();
+						}
+
+						if(window.location.hash.length > 1){
+							SearchParameters.decode(window.location.hash.substring(1));
+							handlegeojson(md_el);
+							handlegeojson(q_el);
+							search(true);
+						}
+					}
 				});
 
 				// Start in Fairbanks
@@ -464,8 +587,8 @@
 				document.getElementById('btn-prev').onclick = function(){
 					var st = document.getElementById('start');
 					var mx = document.getElementById('max');
-					st.value = (Number(st.value) -
-						Number(mx.options[mx.selectedIndex].value));
+					st.value = Math.max(0, (Number(st.value) -
+						Number(mx.options[mx.selectedIndex].value)));
 					search(true);
 				};
 
@@ -480,11 +603,6 @@
 				}
 
 				document.getElementById('q').focus();
-
-				if(window.location.hash.length > 1){
-					SearchParameters.decode(window.location.hash.substring(1));
-					search(true);
-				}
 			}
 		</script>
 	</head>
@@ -632,6 +750,48 @@
 					{{/list}}
 				</tbody>
 			</table>
+		</script>
+		<script id="tmpl-advanced" type="x-tmpl-mustache">
+			<div>
+				<label for="mining_district_id">Mining District</label>
+				<select id="mining_district_id" name="mining_district_id" size="5" multiple="multiple">
+				{{#mining_district}}
+					<option data-geojson="{{geoJSON}}" value="{{ID}}">{{name}}</option>
+				{{/mining_district}}
+				</select>
+			</div>
+			<div>
+				<label for="keyword_id">Keywords</label>
+				<select id="keyword_id" name="keyword_id" size="5" multiple="multiple" onchange="search()">
+				{{#keyword}}
+					<option value="{{ID}}">{{name}}</option>
+				{{/keyword}}
+				</select>
+			</div>
+			<div>
+				<label for="quadrangle_id">Quadrangle</label>
+				<select id="quadrangle_id" name="quadrangle_id" size="5" multiple="multiple">
+				{{#quadrangle}}
+					<option data-geojson="{{geoJSON}}" value="{{ID}}">{{name}}</option>
+				{{/quadrangle}}
+				</select>
+			</div>
+			<div>
+				<label for="prospect_id">Prospect</label>
+				<select id="prospect_id" name="prospect_id" size="5" multiple="multiple" onchange="search()">
+				{{#prospect}}
+					<option value="{{ID}}">{{name}}</option>
+				{{/prospect}}
+				</select>
+			</div>
+			<div>
+				<label for="collection_id">Collection</label>
+				<select id="collection_id" name="collection_id" size="5" multiple="multiple" onchange="search()">
+				{{#collection}}
+					<option value="{{ID}}">{{name}}</option>
+				{{/collection}}
+				</select>
+			</div>
 		</script>
 	</body>
 </html>
