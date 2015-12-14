@@ -84,13 +84,13 @@
 		<script src="leaflet/leaflet.searchcontrol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script>
-			var map, features, aoi, miningdistrict;
-
+			var map, features, aoi, searchok = true;
 
 			var SearchParameters = {
 				SEARCH_FIELDS: [
 					'q', 'keyword_id', 'collection_id', 'prospect_id',
-					'mining_district_id', 'quadrangle_id'
+					'mining_district_id', 'quadrangle_id', 'top',
+					'bottom'
 				],
 				CONTROL_FIELDS: ['start', 'max', 'sort', 'dir'],
 
@@ -226,6 +226,9 @@
 
 			function search(clean)
 			{
+				if(!searchok) return;
+
+				searchok = false;
 				if(clean !== true) document.getElementById('start').value = 0;
 
 				var params = SearchParameters.encode();
@@ -239,11 +242,11 @@
 					document.getElementById('list').innerHTML =  '';
 					return;
 				}
-
+				
 				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
-
 				xhr.onreadystatechange = function() {
 					if(xhr.readyState === 4){
+						searchok = true;
 						// Clear out all the features
 						features.clearLayers();
 
@@ -450,10 +453,8 @@
 					new L.Control.Draw({
 						position: 'topleft',
 						draw: {
-							polygon: false,
-							polyline: false,
-							marker: false,
-							circle: false,
+							polygon: false, polyline: false,
+							marker: false, circle: false,
 							rectangle: {
 								metric: true,
 								shapeOptions: {
@@ -529,7 +530,19 @@
 							document.getElementById('tmpl-advanced').innerHTML,
 							this.data
 						);
-						
+
+						// Top/Bottom key submit
+						var top = document.getElementById('top');
+						var bottom = document.getElementById('bottom');
+						top.onkeydown = bottom.onkeydown = function(evt){
+							var e = evt === undefined ? window.event : evt;	
+							if(e.keyCode === 13){
+								search();
+								if('preventDefault' in e) e.preventDefault();
+								return false;
+							}
+						};
+
 						// Setup the preview for mining district
 						var md_el = document.getElementById('mining_district_id');
 						md_el.layer = mirroredLayer({
@@ -562,6 +575,8 @@
 							search();
 						}
 
+						// After all the resources have loaded, do the hashed
+						// search, if there is one.
 						if(window.location.hash.length > 1){
 							SearchParameters.decode(window.location.hash.substring(1));
 							handlegeojson(md_el);
@@ -791,6 +806,11 @@
 					<option value="{{ID}}">{{name}}</option>
 				{{/collection}}
 				</select>
+			</div>
+			<div>
+				<label for="top">Interval</label>
+				Top: <input type="text" name="top" id="top" size="5">
+				Bottom: <input type="text" name="bottom" id="bottom" size="5">
 			</div>
 		</script>
 	</body>
