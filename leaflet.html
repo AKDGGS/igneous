@@ -2,11 +2,12 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="IE=edge" >
 		<title>Leaflet-based search</title>
-		<link rel="stylesheet" href="leaflet/leaflet.css">
-		<link rel="stylesheet" href="leaflet/leaflet.draw.css">
-		<link rel="stylesheet" href="leaflet/leaflet.mouseposition.css">
-		<link rel="stylesheet" href="leaflet/leaflet.searchcontrol.css">
+		<link rel="stylesheet" href="leaflet/leaflet.css" />
+		<link rel="stylesheet" href="leaflet/leaflet.draw.css" />
+		<link rel="stylesheet" href="leaflet/leaflet.mouseposition.css" />
+		<link rel="stylesheet" href="leaflet/leaflet.searchcontrol.css" />
 		<style>
 			body { font-family: 'Georgia, serif'; }
 			a { color: #428bca; text-decoration: none; }
@@ -346,7 +347,6 @@
 				xhr.send();
 			}
 
-
 			function handlegeojson(ele)
 			{
 				var el = ele === undefined ? this : ele;
@@ -357,7 +357,8 @@
 						if(opt.selected){
 							var attr = opt.getAttribute("data-geojson");
 							if(attr != null && attr.length > 0){
-								el.layer.addData(JSON.parse(attr));
+								var json = JSON.parse(attr);
+								el.layer.addData(json);
 							}
 						}
 					}
