@@ -6,7 +6,9 @@
 <mapper namespace="gov.alaska.dggs.igneous.MiningDistrict">
 	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="MiningDistrictMap">
 		SELECT mining_district_id, name,
-			ST_AsGeoJson(ST_Simplify(geog::GEOMETRY, 0.001)::GEOGRAPHY, 3) AS geojson
+			ST_AsGeoJson(
+				ST_WrapX(ST_Simplify(geog::GEOMETRY, 0.001), 0, 0
+			)::GEOGRAPHY, 3) AS geojson
 		FROM mining_district
 		ORDER BY LOWER(name)
 	</select>

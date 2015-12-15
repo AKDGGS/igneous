@@ -228,8 +228,8 @@
 			function search(clean)
 			{
 				if(!searchok) return;
-
 				searchok = false;
+
 				if(clean !== true) document.getElementById('start').value = 0;
 
 				var params = SearchParameters.encode();
@@ -241,6 +241,7 @@
 
 					document.getElementById('controls').style.display = 'none';
 					document.getElementById('list').innerHTML =  '';
+					searchok = true;
 					return;
 				}
 				
@@ -248,6 +249,7 @@
 				xhr.onreadystatechange = function() {
 					if(xhr.readyState === 4){
 						searchok = true;
+
 						// Clear out all the features
 						features.clearLayers();
 
@@ -299,6 +301,7 @@
 									features.addData(o['geoJSON']);
 								}
 							}
+							features.bringToBack();
 
 							// Show the controls and update the results table
 							document.getElementById('controls').style.display = 'block';
@@ -315,6 +318,10 @@
 			}
 
 
+			// Takes an object containing a list of JSON requests
+			// and makes them, loading all the data into the object
+			// provided, and then finally calling the complete function
+			// of the object when finished
 			function queueRequests(obj)
 			{
 				// Reset object run
@@ -346,6 +353,7 @@
 				xhr.open('GET', url, true);
 				xhr.send();
 			}
+
 
 			function handlegeojson(ele)
 			{
@@ -380,7 +388,8 @@
 					opacity: 1,
 					weight: 2,
 					radius: 6,
-					fill: false
+					fill: false,
+					'z-index': 8
 				});
 
 				aoi = mirroredLayer({
@@ -389,40 +398,41 @@
 					weight: 2,
 					radius: 6,
 					fill: false,
-					clickable: false
+					clickable: false,
+					'z-index': 9
 				});
 
 				var baselayers = {
 					'Open Street Maps': new L.TileLayer(
 						'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 19 }
+						{ minZoom: 3, maxZoom: 19, zIndex: 1 }
 					),
 					'MapQuest Open Aerial': new L.TileLayer(
 						'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 11, subdomains: '1234'  }
+						{ minZoom: 3, maxZoom: 11, subdomains: '1234', zIndex: 2  }
 					),
 					'MapQuest Open OSM': new L.TileLayer(
 						'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 17, subdomains: '1234' }
+						{ minZoom: 3, maxZoom: 17, subdomains: '1234', zIndex: 3 }
 					),
 					'GINA Satellite': new L.TileLayer(
 						'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
-						{ minZoom: 3, mazZoom: 15 }
+						{ minZoom: 3, mazZoom: 15, zIndex: 4 }
 					),
 					'GINA Topographic': new L.TileLayer(
 						'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
-						{ minZoom: 3, maxZoom: 12 }
+						{ minZoom: 3, maxZoom: 12, zINdex: 5 }
 					),
 					'Stamen Watercolor': new L.TileLayer(
 						'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 16, subdomains: 'abcd' }
+						{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 6 }
 					)
 				};
 
 				var overlays = {
 					'Quadrangles': new L.TileLayer(
 						'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
-						{ minZoom: 3, maxZoom: 16 }
+						{ minZoom: 3, maxZoom: 16, zIndex: 7 }
 					)
 				};
 
@@ -442,7 +452,7 @@
 				map.addControl(L.control.mousePosition({ emptyString: 'Unknown', numDigits: 3 }));
 				// Add layer control
 				map.addControl(L.control.layers(
-					baselayers, overlays, { position: 'bottomleft' }
+					baselayers, overlays, { position: 'bottomleft', autoZIndex: false }
 				));
 
 				// Modify the button text
