@@ -68,6 +68,7 @@
 			#advancedcontrols {
 				max-height: 375px;
 				overflow-y: scroll;
+				z-index: 2000;
 			}
 			#advancedcontrols label {
 				display: block;
@@ -83,7 +84,6 @@
 		<script src="leaflet/leaflet.draw.js"></script>
 		<script src="leaflet/leaflet.mouseposition.js"></script>
 		<script src="leaflet/leaflet.searchcontrol.js"></script>
-		<script src="leaflet/leaflet.pip.min.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script>
 			var map, features, aoi, searchok = true;
@@ -226,8 +226,13 @@
 						e.target.options.coordsToLatLng =
 							e.target.options.coordsToLatLngInvert;
 
-						//e.target.addData(e.layer.toGeoJSON());
-						e.target.addData(e.layer.feature.geometry);
+						// If the layer has an identifable feature, use that
+						// otherwise, just break it down to geoJSON
+						if('feature' in e.layer) {
+							e.target.addData(e.layer.feature);
+						} else {
+							e.target.addData(e.layer.toGeoJSON());
+						}
 					}
 				});
 				return layer;
@@ -236,15 +241,20 @@
 
 			function search(clean)
 			{
+				// Only run a search if a search
+				// isn't already running
 				if(!searchok) return;
 				searchok = false;
 
+				// If a search is dirty, restart
+				// at page 0
 				if(clean !== true) document.getElementById('start').value = 0;
 
 				var params = SearchParameters.encode();
-
 				window.location.hash = params;
 
+				// If there's nothing to search by, don't 
+				// search, and hide all the search stuff
 				if(params.length == 0){
 					features.clearLayers();
 
@@ -307,14 +317,17 @@
 							for(var i = 0; i < obj['list'].length; i++){
 								var o = obj['list'][i];
 								if('geoJSON' in o){
-									// Clone the geojson object, allowing the
-									// original reference to be freed
-									var geojson = JSON.parse(JSON.stringify(o['geoJSON']));
-									geojson['properties'] = {
-										'popup': Mustache.render(
-											document.getElementById('tmpl-popup').innerHTML,
-											o
-										)
+									// Clone the geojson object, allowing
+									// the original reference to be freed
+									var geojson = {
+										'type': 'Feature', 
+										'properties': {
+											'popup': Mustache.render(
+												document.getElementById('tmpl-popup').innerHTML,
+												o
+											)
+										},
+										'geometry': JSON.parse(JSON.stringify(o['geoJSON']))
 									};
 									features.addData(geojson);
 								}
@@ -409,12 +422,10 @@
 					fill: true,
 					'z-index': 8
 				});
-				features.on('click', function(e){
-					L.popup()
-						.setLatLng(e.latlng)
-						.setContent(e.layer.feature.geometry.properties.popup)
-						.openOn(map);
-				});
+				// Bind the generated popup
+				features.options.onEachFeature = function(f, l){
+					l.bindPopup(f.properties.popup);
+				};
 
 				aoi = mirroredLayer(null, {
 					color: '#f00',
@@ -514,6 +525,25 @@
 					})
 				);
 
+				// Add the help control
+				var helpcontrol = L.control({ position: 'topleft' });
+				helpcontrol.onAdd = function(m){
+					var container = L.DomUtil.create(
+						'div', 'leaflet-bar leaflet-control leaflet-control-custom'
+					);
+					var a = L.DomUtil.create('a', '', container);
+					a.href = '#';
+					a.title = 'Online help';
+					a.innerHTML = '?';
+					a.onclick = function(){
+						window.location.href = 'help';
+					};
+
+					return container;
+				};
+				map.addControl(helpcontrol);
+
+
 				// When drawing starts, empty out the
 				// old drawing
 				map.on('draw:drawstart', function(e){
@@ -535,6 +565,7 @@
 				var searchctl = L.control.searchControl({
 					position: 'topright',
 					menubutton: true,
+					// Search on submit
 					onSubmit: function(evt){
 						search(false);
 
@@ -542,6 +573,8 @@
 						if('preventDefault' in e) e.preventDefault();
 						return false;
 					},
+					// If the menu button is clicked, show and hide
+					// the advanced controls
 					onMenuButton: function(){
 						var adv = document.getElementById('advancedcontrols');
 						if(adv != null){
