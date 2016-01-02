@@ -17,78 +17,13 @@
 		<link rel="stylesheet" href="leaflet/leaflet.draw.css" />
 		<link rel="stylesheet" href="leaflet/leaflet.mouseposition.css" />
 		<link rel="stylesheet" href="leaflet/leaflet.searchcontrol.css" />
+		<link rel="stylesheet" href="css/search.css" />
 		<style>
 			.apptmpl-container { min-width: 800px !important; }
 			.apptmpl-content { font-family: 'Georgia, serif'; }
 			.apptmpl-content a { color: #428bca; text-decoration: none; }
 			.apptmpl-content a:hover, a:focus { color: #2a6496; text-decoration: underline; }
-			#map { height: 450px; min-width: 700px; }
-			.leaflet-marker-shadow { display: none; }
-			.spacer { font-size: 22px; padding: 0px 2px; }
-			div.warning, div.error {
-				margin: 8px 0;
-				padding: 8px 16px;
-				text-align: center;
-				border-radius: 4px;
-			}
-			div.warning { background-color: #ff9; }
-			div.error { background-color: #f88; }
-			ul.kw { margin: 0; padding: 0; }
-			ul.kw li { display: inline; }
-			ul.kw li:before { content: ", "; }
-			ul.kw li:first-child:before { content: ""; }
-			table.results { border-collapse: collapse; }
-			table.results td, table.results th { margin: 0; padding: 4px; }
-			table.results { width: 100%; margin: auto; }
-			table.results td { vertical-align: top; font-size: 15px; border-top: 1px solid #ddd; }
-			table.results th { white-space: nowrap; vertical-align: bottom; text-align: left; font-size: 13px; }
-			table.results tbody tr:nth-child(odd) { background-color: #f9f9f9; }
-			table.results tr.shotline:nth-child(odd) { background-color: #ffdcdc !important; }
-			table.results tr.shotline:nth-child(even) { background-color: #ffeeee !important; }
-			table.results tr.outcrop:nth-child(odd) { background-color: #ffffcc !important; }
-			table.results tr.outcrop:nth-child(even) { background-color: #ffffe6 !important; }
-			table.results tr.borehole:nth-child(odd) { background-color: #e0ffd6 !important; }
-			table.results tr.borehole:nth-child(even) { background-color: #f0ffeb !important; }
-			table.results tr.well:nth-child(odd) { background-color: #d6ebff !important; }
-			table.results tr.well:nth-child(even) { background-color: #ebf5ff !important; }
-			td.barcode { white-space: nowrap; }
-			td.quality { white-space: nowrap; }
-			td.quality div { white-space: normal; }
-			td.quality span {
-				font-size: 12px !important;
-				display: inline-block;
-				padding: 0 5px;
-				margin: 2px 4px 0px 0px;
-				background-color: red;
-				color: #fff;
-				border-radius: 4px;
-				text-transform: uppercase;
-			}
-			#controls {
-				white-space: nowrap;
-				display: none;
-				text-align: right;
-				margin: 8px 0;
-				background-color: #d9edf7; 
-				color: #3a87ad;
-				padding: 4px;
-				border-radius: 4px;
-				border: 1px solid #bce8f1;;
-			}
-			#advancedcontrols {
-				max-height: 375px;
-				overflow-y: scroll;
-				z-index: 2000;
-			}
-			#advancedcontrols label {
-				display: block;
-				font-weight: bold;
-				padding: 0;
-			}
-			#advancedcontrols select {
-				margin: 0 0 8px 0;
-				min-width: 375px;
-			}
+			#map { height: 450px; }
 		</style>
 		<script src="leaflet/leaflet.js"></script>
 		<script src="leaflet/leaflet.draw.js"></script>
@@ -535,25 +470,6 @@
 					})
 				);
 
-				// Add the help control
-				var helpcontrol = L.control({ position: 'topleft' });
-				helpcontrol.onAdd = function(m){
-					var container = L.DomUtil.create(
-						'div', 'leaflet-bar leaflet-control leaflet-control-custom'
-					);
-					var a = L.DomUtil.create('a', '', container);
-					a.href = '#';
-					a.title = 'Online help';
-					a.innerHTML = '?';
-					a.onclick = function(){
-						window.location.href = 'help';
-					};
-
-					return container;
-				};
-				map.addControl(helpcontrol);
-
-
 				// When drawing starts, empty out the
 				// old drawing
 				map.on('draw:drawstart', function(e){
@@ -721,6 +637,7 @@
 				<a href="import.html">Data Importer</a>
 				</c:if>
 				</c:if>
+				<a href="help">Search Help</a>
 			</div>
 
 			<div class="apptmpl-banner">
