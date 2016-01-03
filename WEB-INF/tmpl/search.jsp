@@ -642,10 +642,10 @@
 				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
 				<span class="apptmpl-goldbar-right"></span>
 
+				<c:if test="${not empty pageContext.request.userPrincipal}">
 				<a href="container_log.html">Move Log</a>
 				<a href="quality_report.html">Quality Assurance</a>
 				<a href="audit_report.html">Audit</a>
-				<c:if test="${not empty pageContext.request.userPrincipal}">
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
 				<a href="import.html">Data Importer</a>
 				</c:if>
