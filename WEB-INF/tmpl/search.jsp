@@ -31,7 +31,8 @@
 		<script src="leaflet/leaflet.searchcontrol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script>
-			var map, features, aoi, searchok = true;
+			var map, features, aoi;
+			var searchok = true;
 
 			var SearchParameters = {
 				SEARCH_FIELDS: [
@@ -368,6 +369,23 @@
 					String.prototype.trim = function() {
 						return this.replace(/^\s+|\s+$/g, ''); 
 					}
+				}
+
+				// If this browser supports hash updates, and
+				// we're not currently searching, go ahead
+				// and search based on the new hash
+				if('onhashchange' in window){
+					window.onhashchange = function(){
+						if(searchok && window.location.hash.length > 1){
+							SearchParameters.decode(window.location.hash.substring(1));
+							var md_el = document.getElementById('mining_district_id');
+							if(md_el !== null) handlegeojson(md_el);
+
+							var q_el = document.getElementById('quadrangle_id');
+							if(q_el !== null) handlegeojson(q_el);
+							search(true);
+						}
+					};
 				}
 
 				features = mirroredLayer(null, function(f){
