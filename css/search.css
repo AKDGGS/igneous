@@ -18,14 +18,15 @@ table.results { width: 100%; margin: auto; }
 table.results td { vertical-align: top; font-size: 15px; border-top: 1px solid #ddd; }
 table.results th { white-space: nowrap; vertical-align: bottom; text-align: left; font-size: 13px; }
 table.results tbody tr:nth-child(odd) { background-color: #f9f9f9; }
+table.results tr.shotline { background-color: #ffeeee !important; }
 table.results tr.shotline:nth-child(odd) { background-color: #ffdcdc !important; }
-table.results tr.shotline:nth-child(even) { background-color: #ffeeee !important; }
+table.results tr.outcrop { background-color: #ffffe6 !important; }
 table.results tr.outcrop:nth-child(odd) { background-color: #ffffcc !important; }
-table.results tr.outcrop:nth-child(even) { background-color: #ffffe6 !important; }
+table.results tr.borehole { background-color: #f0ffeb !important; }
 table.results tr.borehole:nth-child(odd) { background-color: #e0ffd6 !important; }
-table.results tr.borehole:nth-child(even) { background-color: #f0ffeb !important; }
+table.results tr.well { background-color: #ebf5ff !important; }
 table.results tr.well:nth-child(odd) { background-color: #d6ebff !important; }
-table.results tr.well:nth-child(even) { background-color: #ebf5ff !important; }
+
 td.barcode { white-space: nowrap; }
 td.quality { white-space: nowrap; }
 td.quality div { white-space: normal; }

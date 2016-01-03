@@ -265,15 +265,26 @@
 									// Clone the geojson object, allowing
 									// the original reference to be freed
 									var geojson = {
-										'type': 'Feature', 
-										'properties': {
-											'popup': Mustache.render(
+										type: 'Feature', 
+										properties: {
+											popup: Mustache.render(
 												document.getElementById('tmpl-popup').innerHTML,
 												o
-											)
+											),
+											color: '#9f00ff'
 										},
-										'geometry': JSON.parse(JSON.stringify(o['geoJSON']))
+										geometry: JSON.parse(JSON.stringify(o['geoJSON']))
 									};
+									if('boreholes' in o){
+										geojson.properties.color = '#76ff7a';
+									} else if('wells' in o){
+										geojson.properties.color = '#2e70ff';
+									} else if('outcrops' in o){
+										geojson.properties.color = '#fdff00';
+									} else if('shotlines' in o){
+										geojson.properties.color = '#ed2939';
+									}
+
 									features.addData(geojson);
 								}
 							}
@@ -359,13 +370,15 @@
 					}
 				}
 
-				features = mirroredLayer(null, {
-					color: "#2E70FF",
-					opacity: 1,
-					weight: 2,
-					radius: 6,
-					fill: true,
-					'z-index': 8
+				features = mirroredLayer(null, function(f){
+					return {
+						color: f.properties.color,
+						opacity: 1,
+						weight: 2,
+						radius: 6,
+						fill: true,
+						'z-index': 8
+					};
 				});
 				// Bind the generated popup
 				features.options.onEachFeature = function(f, l){
@@ -682,6 +695,7 @@
 						<span class="spacer">|</span>
 
 						<label for="sort">Sort by</label>
+						<c:forEach begin="0" end="1">
 						<select name="sort">
 							<option value="0" selected="selected">Best Match</option>
 							<option value="9">Barcode</option>
@@ -703,27 +717,7 @@
 							<option value="0" selected="selected">Asc</option>
 							<option value="1">Desc</option>
 						</select>
-						<select name="sort">
-							<option value="0" selected="selected">Best Match</option>
-							<option value="9">Barcode</option>
-							<option value="10">Borehole</option>
-							<option value="11">Box</option>
-							<option value="1">Collection</option>
-							<option value="2">Core Number</option>
-							<option value="14">Keywords</option>
-							<option value="3">Location</option>
-							<option value="12">Prospect</option>
-							<option value="13">Sample</option>
-							<option value="4">Set Number</option>
-							<option value="5">Top</option>
-							<option value="6">Bottom</option>
-							<option value="7">Well Name</option>
-							<option value="8">Well Number</option>
-						</select>
-						<select name="dir">
-							<option value="0" selected="selected">Asc</option>
-							<option value="1">Desc</option>
-						</select>
+						</c:forEach>
 					</div>
 				</div>
 				<div id="list"></div>
