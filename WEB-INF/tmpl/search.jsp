@@ -109,7 +109,8 @@
 
 			function decodeParameters(params)
 			{
-				if(params.length < 1) return;
+				var advanced = false;
+				if(params.length < 1) return advanced;
 
 				var cnt = {};
 
@@ -118,6 +119,13 @@
 					var idx = kvs[i].indexOf('=');
 					var k = kvs[i].substring(0, idx);
 					var v = decodeURIComponent(kvs[i].substring(idx + 1));
+
+					// Should the advanced field be expanded?
+					if(v.length > 0 && k !== 'q'){
+						for(var j = 0; j < SEARCH_FIELDS.length; j++){
+							if(k === SEARCH_FIELDS[j]) advanced = true;
+						}
+					}
 
 					if(k === 'aoi'){
 						aoi.addData(JSON.parse(v));
@@ -135,7 +143,9 @@
 					var el = els[cnt[k]];
 
 					switch(el.tagName){
-						case 'INPUT': el.value = v; break;
+						case 'INPUT':
+							el.value = v;
+						break;
 					
 						case 'SELECT':
 							for(var j = 0; j < el.options.length; j++){
@@ -147,6 +157,8 @@
 						break;
 					}
 				}
+
+				return advanced;
 			}
 
 
@@ -305,7 +317,14 @@
 				if('onhashchange' in window){
 					window.onhashchange = function(){
 						if(searchok && window.location.hash.length > 1){
-							decodeParameters(window.location.hash.substring(1));
+							var show = decodeParameters(
+								window.location.hash.substring(1)
+							);
+							if(show){
+								var adv = document.getElementById('advancedcontrols');
+								if(adv != null) adv.style.display = 'block';
+							}
+
 							var md_el = document.getElementById('mining_district_id');
 							if(md_el !== null) handlegeojson(md_el);
 
@@ -539,7 +558,14 @@
 						// After all the resources have loaded, do the hashed
 						// search, if there is one.
 						if(window.location.hash.length > 1){
-							decodeParameters(window.location.hash.substring(1));
+							var show = decodeParameters(
+								window.location.hash.substring(1)
+							);
+							if(show){
+								var adv = document.getElementById('advancedcontrols');
+								if(adv != null) adv.style.display = 'block';
+							}
+
 							handlegeojson(md_el);
 							handlegeojson(q_el);
 							search(true);

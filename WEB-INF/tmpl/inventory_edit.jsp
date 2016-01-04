@@ -40,7 +40,7 @@
 				<a href="../import.html">Data Importer</a>
 				</c:if>
 				</c:if>
-				<a href="help">Search Help</a>
+				<a href="../help">Search Help</a>
 			</div>
 
 			<div class="apptmpl-banner">

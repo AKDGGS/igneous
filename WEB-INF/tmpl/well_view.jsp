@@ -13,7 +13,9 @@
 		<meta charset="utf-8">
 		<meta http-equiv="x-ua-compatible" content="IE=edge" >
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
-		<link href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<link rel="stylesheet" href="../leaflet/leaflet.css">
+		<link rel="stylesheet" href="../leaflet/leaflet.mouseposition.css">
+		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
 		<style>
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
@@ -24,7 +26,7 @@
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
-			#map { width: 100%; height: 300px; background-color: black; margin: 0px; }
+			#map { width: 100%; height: 300px; background-color: black; margin: 0; }
 
 			dd a { white-space: nowrap; }
 			dl { display: table; margin: 8px 4px; }
@@ -51,7 +53,7 @@
 				<a href="../import.html">Data Importer</a>
 				</c:if>
 				</c:if>
-				<a href="help">Search Help</a>
+				<a href="../help">Search Help</a>
 			</div>
 
 			<div class="apptmpl-banner">
@@ -222,7 +224,7 @@
 								<tr>
 									<td colspan="13" style="text-align: right">
 										<input type="hidden" name="well_id" id="well_id" value="${well.ID}">
-										<input type="hidden" name="wkt" id="wkt" value="${wkt}">
+										<input type="hidden" name="geojson" id="geojson" value="${fn:escapeXml(geojson)}">
 										<input type="hidden" name="start" id="start" value="0">
 										<label for="max">Showing</label>
 										<select name="max" id="max">
@@ -311,11 +313,89 @@
 				</div>
 			</div>
 		</div>
+		<script src="../leaflet/leaflet.js"></script>
 		<script src="../js/utility.js"></script>
+		<script src="../leaflet/leaflet.mouseposition.js"></script>
 		<script>
+			var map;
 			function init()
 			{
 				initTabs();
+				
+				var geojson = null;
+				var gj_el = document.getElementById('geojson');
+				if(gj_el != null && gj_el.value.length > 0){
+					geojson = JSON.parse(gj_el.value);
+				}
+
+				var features = mirroredLayer(geojson, {
+					color: '#2e70ff',
+					opacity: 1,
+					weight: 2,
+					radius: 6,
+					fill: true,
+					'z-index': 8
+				});
+
+				var baselayers = {
+					'Open Street Maps': new L.TileLayer(
+						'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+						{ minZoom: 3, maxZoom: 19, zIndex: 1 }
+					),
+					'MapQuest Open Aerial': new L.TileLayer(
+						'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
+						{ minZoom: 3, maxZoom: 11, subdomains: '1234', zIndex: 2  }
+					),
+					'MapQuest Open OSM': new L.TileLayer(
+						'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
+						{ minZoom: 3, maxZoom: 17, subdomains: '1234', zIndex: 3 }
+					),
+					'GINA Satellite': new L.TileLayer(
+						'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
+						{ minZoom: 3, mazZoom: 15, zIndex: 4 }
+					),
+					'GINA Topographic': new L.TileLayer(
+						'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
+						{ minZoom: 3, maxZoom: 12, zINdex: 5 }
+					),
+					'Stamen Watercolor': new L.TileLayer(
+						'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
+						{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 6 }
+					)
+				};
+
+				var overlays = {
+					'Quadrangles': new L.TileLayer(
+						'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
+						{ minZoom: 3, maxZoom: 16, zIndex: 7 }
+					)
+				};
+
+				map = L.map('map', {
+					attributionControl: false,
+					zoomControl: false,
+					worldCopyJump: true,
+					layers: [
+						baselayers['Open Street Maps'],
+						features
+					]
+				});
+
+				// Add zoom control
+				map.addControl(L.control.zoom({ position: 'topleft' }));
+				// Add mouse position control
+				map.addControl(L.control.mousePosition({
+					emptyString: 'Unknown', numDigits: 3
+				}));
+				// Add layer control
+				map.addControl(L.control.layers(
+					baselayers, overlays, {
+						position: 'bottomleft', autoZIndex: false
+					}
+				));
+
+				// Start in Fairbanks
+				map.setView([64.843611, -147.723056], 3);
 			}
 		</script>
 	</body>

@@ -47,8 +47,8 @@ public class WellViewServlet extends HttpServlet
 			request.setAttribute("quadrangles", sess.selectList(
 				"gov.alaska.dggs.igneous.Quadrangle.getByWellID", id
 			));
-			request.setAttribute("wkt", sess.selectOne(
-				"gov.alaska.dggs.igneous.Well.getWKTByID", id
+			request.setAttribute("geojson", sess.selectOne(
+				"gov.alaska.dggs.igneous.Well.getGeoJSONByID", id
 			));
 
 			request.getRequestDispatcher(

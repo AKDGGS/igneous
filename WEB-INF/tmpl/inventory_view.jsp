@@ -13,7 +13,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="x-ua-compatible" content="IE=edge" >
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
-		<link href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
 		<style>
 			dl { display: table; margin: 8px 4px; }
 			dt, dd { display: table-cell; vertical-align: top; }
