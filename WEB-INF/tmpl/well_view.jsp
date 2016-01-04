@@ -75,6 +75,11 @@
 					<div class="half-right">
 						<div id="map"></div>
 					</div>
+					
+					<c:set var="link" value="well:\"${well.name}\"" />
+					<c:if test="${!empty well.wellNumber}">
+					<c:set var="link" value="${link} wellnumber:\"${well.wellNumber}\"" />
+					</c:if>
 
 					<div class="half-left">
 						<dl>
@@ -96,7 +101,7 @@
 						<c:if test="${!empty well.APINumber}">
 						<dl>
 							<dt>API Number</dt>
-							<dd>${well.APINumber}</dd>
+							<dd><a href="../search#q=api:${fn:escapeXml(well.APINumber)}">${well.APINumber}</a></dd>
 						</dl>
 						</c:if>
 						<dl>
@@ -173,14 +178,14 @@
 				</c:forEach>
 
 				<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
-					<li class="active"><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
+					<li class="active"><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
+					<li><a href="#operators">Operators <span class="badge">${fn:length(well.operators)}</span></a></li>
 					<li><a href="#notes">Notes <span class="badge">${fn:length(well.notes)}</span></a></li>
-					<li><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
 					<li><a href="#urls">URLs <span class="badge">${fn:length(well.URLs)}</span></a></li>
 					<li><a href="#files">Files</a></li>
 				</ul>
 
-				<div id="tab-operators">
+				<div id="tab-operators" class="hidden">
 					<c:forEach items="${well.operators}" var="operator">
 						<div class="container">
 						<dl>
@@ -204,14 +209,15 @@
 					</c:forEach>
 				</div>
 
-				<div id="tab-inventory" class="hidden">
+				<div id="tab-inventory">
 					<div class="container" id="keyword_container">
 						<c:if test="${!empty keywords}">
 						<div>
-							<span class="label label-info">Keywords</span>
+							<span class="label label-info">By Keywords</span>
 							<ul class="nav nav-pills" id="keywords">
 							<c:forEach items="${keywords}" var="keyword">
-							<li><a href="#" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
+							<c:set var="kws" value="&keyword_id=${fn:join(fn:split(keyword.ids, ','), '&keyword_id=')}" />
+							<li><a href="../search#q=${fn:escapeXml(link)}${kws}" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
 							</c:forEach>
 							</ul>
 						</div>

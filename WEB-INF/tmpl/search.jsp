@@ -24,6 +24,7 @@
 			.apptmpl-content a { color: #428bca; text-decoration: none; }
 			.apptmpl-content a:hover, a:focus { color: #2a6496; text-decoration: underline; }
 			#map { height: 450px; }
+			#advancedcontrols div { margin: 8px 0; }
 		</style>
 		<script src="leaflet/leaflet.js"></script>
 		<script src="leaflet/leaflet.draw.js"></script>
@@ -162,7 +163,7 @@
 			}
 
 
-			function search(clean)
+			function search(clean, noupdate)
 			{
 				// Only run a search if a search
 				// isn't already running
@@ -174,7 +175,7 @@
 				if(clean !== true) document.getElementById('start').value = 0;
 
 				var params = encodeParameters();
-				window.location.hash = params;
+				if(noupdate !== true) window.location.hash = params;
 
 				// If there's nothing to search by, don't 
 				// search, and hide all the search stuff
@@ -330,7 +331,7 @@
 
 							var q_el = document.getElementById('quadrangle_id');
 							if(q_el !== null) handlegeojson(q_el);
-							search(true);
+							search(true, true);
 						}
 					};
 				}
@@ -568,7 +569,7 @@
 
 							handlegeojson(md_el);
 							handlegeojson(q_el);
-							search(true);
+							search(true, true);
 						}
 					}
 				});
@@ -635,7 +636,8 @@
 				<a href="http://alaska.gov">State of Alaska</a> &gt;
 				<a href="http://dnr.alaska.gov">Natural Resources</a> &gt;
 				<a href="http://dggs.alaska.gov">Geological &amp; Geophysical Surveys</a> &gt;
-				<a href="http://dggs.alaska.gov/gmc">Geologic Materials Center</a>
+				<a href="http://dggs.alaska.gov/gmc">Geologic Materials Center</a> &gt;
+				<a href="search">Inventory</a>
 			</div>
 
 			<div class="apptmpl-content">
