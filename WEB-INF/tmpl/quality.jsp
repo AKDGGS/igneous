@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Alaska Geologic Materials Center</title>
-		<link href="css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center</title>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="IE=edge" >
+		<link rel="stylesheet" href="css/apptmpl.min.css">
 		<style>
 			.ok { background-color: green; color: white; }
 			.warning { background-color: yellow; }
@@ -14,158 +16,157 @@
 			th { text-align: left; }
 		</style>
 	</head>
-	<body>
-		<div class="navbar">
-			<div class="navbar-head">
-				<a href="search">Geologic Materials Center</a>
+	<body onload="init()">
+		<div class="apptmpl-container">
+			<div class="apptmpl-goldbar">
+				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
+				<span class="apptmpl-goldbar-right"></span>
+
+				<c:if test="${not empty pageContext.request.userPrincipal}">
+				<a href="container_log.html">Move Log</a>
+				<a href="quality_report.html">Quality Assurance</a>
+				<a href="audit_report.html">Audit</a>
+				<c:if test="${pageContext.request.isUserInRole('admin')}">
+				<a href="import.html">Data Importer</a>
+				</c:if>
+				</c:if>
+				<a href="help">Search Help</a>
 			</div>
 
-			<div class="navbar-form">
-				<input type="text" id="q" name="q" tabindex="1">
-				<button class="btn btn-primary" id="search">
-					<span class="glyphicon glyphicon-search"></span> Search
-				</button>
-				<button class="btn btn-info" id="help">
-					<span class="glyphicon glyphicon-question-sign"></span>
-				</button>
+			<div class="apptmpl-banner">
+				<a class="apptmpl-banner-logo" href="http://dggs.alaska.gov"></a>
+				<div class="apptmpl-banner-title">Geologic Materials Center Inventory</div>
+				<div class="apptmpl-banner-desc">Alaska Division of Geological &amp; Geophysical Surveys</div>
+			</div>
+
+			<div class="apptmpl-breadcrumb">
+				<a href="http://alaska.gov">State of Alaska</a> &gt;
+				<a href="http://dnr.alaska.gov">Natural Resources</a> &gt;
+				<a href="http://dggs.alaska.gov">Geological &amp; Geophysical Surveys</a> &gt;
+				<a href="http://dggs.alaska.gov/gmc">Geologic Materials Center</a> &gt;
+				<a href="search">Inventory</a>
+			</div>
+
+			<div class="apptmpl-content">
+				<table>
+					<tbody>
+						<tr>
+							<td id="dest"></td>
+							<td id="detail"></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
+		<script src="js/mustache-2.2.0.min.js"></script>
+		<script>
+			function init()
+			{
+				var dest = document.getElementById('dest');
+				if(dest !== null){
+					// Query the list of reports available
+					var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
+					xhr.onreadystatechange = function(){
+						if(xhr.readyState === 4 && xhr.status === 200){
+							var json = JSON.parse(xhr.responseText);
+							for(var i in json){
+								var div = document.createElement('div');
+								div.className = 'result';
+								div.appendChild(document.createTextNode(
+									json[i]['desc'] + ' : '
+								));
 
-		<div class="container">
+								var span = document.createElement('span');
+								span.id = i;
+								span.appendChild(document.createTextNode(
+									'Running ..'
+								));
+								div.appendChild(span);
+								dest.appendChild(div);
+
+								updateReportCount(i, span, json[i]['type']);
+							}
+						}
+					};
+					xhr.open('GET', 'quality_report.json', true);
+					xhr.send();
+				}
+			}
+
+			function updateReportCount(id, el, type)
+			{
+				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState === 4 && xhr.status === 200){
+						while(el.lastChild) el.removeChild(el.lastChild);
+						var json = JSON.parse(xhr.responseText);
+
+						if(json[0] === 0){
+							el.className = 'ok';
+							el.innerHTML = 'PASSED';
+						} else {
+							el.className = type.toLowerCase();
+							el.innerHTML = type.toUpperCase();
+
+							el.parentNode.appendChild(document.createTextNode(' ('));
+							var a = document.createElement('a');
+							a.href = '#' + id;
+							a.innerHTML = json[0];
+							a.onclick = updateDetail;
+							el.parentNode.appendChild(a);
+							el.parentNode.appendChild(document.createTextNode(')'));
+						}
+					}
+				};
+				xhr.open('GET', 'quality_report.json?r=' + id + 'Count', true);
+				xhr.send();
+			}
+
+
+			function updateDetail(evt)
+			{
+				var id = this.href.substring(this.href.indexOf('#') + 1);
+
+				var detail = document.getElementById('detail');
+				while(detail.lastChild) detail.removeChild(detail.lastChild);
+				var img = document.createElement('img');
+				img.src = 'img/big_loading.gif';
+				detail.appendChild(img);
+
+				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState === 4 && xhr.status === 200){
+						detail.innerHTML = Mustache.render(
+							document.getElementById('tmpl-detail').innerHTML,
+							JSON.parse(xhr.responseText)
+						);
+					}
+				};
+				xhr.open('GET', 'quality_report.json?r=' + id, true);
+				xhr.send();
+
+				var e = evt === undefined ? window.event : evt;
+				if('preventDefault' in e) e.preventDefault();
+				return false;
+			}
+		</script>
+		<script id="tmpl-detail" type="x-tmpl-mustache">
 			<table>
-				<tbody>
+				<thead>
 					<tr>
-						<td id="dest"></td>
-						<td id="detail"></td>
+						<th>ID</th>
+						<th>Description</th>
 					</tr>
+				</thead>
+				<tbody>
+					{{#.}}
+					<tr>
+						<td class="nowrap">{{id}}</td>
+						<td>{{desc}}</td>
+					</tr>
+					{{/.}}
 				</tbody>
 			</table>
-		</div>
-
-		<div class="container" style="text-align: right; margin-top: 20px;">
-			<b>Other Tools:</b>
-			[<a href="container_log.html">Move Log</a>]
-			[<a href="quality_report.html">Quality Assurance</a>]
-			[<a href="audit_report.html">Audit</a>]
-			<c:if test="${not empty pageContext.request.userPrincipal}">
-				<c:if test="${pageContext.request.isUserInRole('admin')}">
-				[<a href="import.html">Data Importer</a>]
-				</c:if>
-			</c:if>
-		</div>
-
-		<script src="js/jquery-1.10.2.min.js"></script>
-		<script>
-			$(function(){
-				$('#search').click(function(){
-					window.location.href = 'search#q=' + $('#q').val();
-				});
-
-				$('#help').click(function(){
-					window.location.href = 'help';
-				});
-
-				$('#q').keypress(function(e){
-					if(e.keyCode === 13){ $('#search').click(); }
-				});
-
-				$.ajax({
-					url: 'quality_report.json',
-					dataType: 'json',
-					success: function(json){
-						$.each(json, function(i,e){
-							$('<div class="result">')
-								.attr('id', i)
-								.text(e['desc'] + ' : ')
-								.append('<span> Running .. </span>')
-								.appendTo('#dest');
-						});
-
-						$.each(json, function(i, e){
-							var type = e['type'];
-							var method = i;
-
-							$.ajax({
-								url: 'quality_report.json',
-								data: {r: i+'Count'},
-								success: function(json){
-									var count = json[0];
-									
-									if(count == 0){
-										$('#'+method).find('span')
-											.attr('class', 'ok')
-											.text('PASSED');
-									} else {
-										var link = $('<a href="#">'+count+'</a>').click(function(e){
-											$('#detail').empty().append('<img src="img/big_loading.gif" />');
-
-											$.ajax({
-												url: 'quality_report.json',
-												data: { r: method },
-												success: function(json){
-													show_detail(json);
-												}
-											});
-
-											e.preventDefault();	
-											return false;
-										});
-
-										$('#'+method).find('span')
-											.attr('class', type.toLowerCase())
-											.text(type.toUpperCase())
-											.parent()
-												.append(' (')
-												.append(link)
-												.append(')');
-									}
-								}
-							});
-						});
-					}
-				});
-			});
-
-			function show_detail(json){
-				$('#detail').empty();
-
-				var table = document.createElement('table');
-				var thead = document.createElement('thead');
-				var tr = document.createElement('tr');
-				var th = document.createElement('th');
-				th.appendChild(document.createTextNode('ID'));
-				tr.appendChild(th);
-
-				th = document.createElement('th');
-				th.appendChild(document.createTextNode('Description'));
-				tr.appendChild(th);
-
-				thead.appendChild(tr);
-				table.appendChild(thead);
-
-				var tbody = document.createElement('tbody');
-				for(var i in json){
-					tr = document.createElement('tr');
-
-					var td = document.createElement('td');
-					td.className = 'nowrap';
-					if('desc' in json[i]){
-						td.appendChild(document.createTextNode(json[i]['id']));
-					}
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					if('desc' in json[i]){
-						td.appendChild(document.createTextNode(json[i]['desc']));
-					}
-					tr.appendChild(td);
-
-					tbody.appendChild(tr);
-				}
-				table.appendChild(tbody);
-
-				$('#detail').append(table);
-			}
 		</script>
 	</body>
 </html>

@@ -36,11 +36,11 @@
 				<span class="apptmpl-goldbar-right"></span>
 
 				<c:if test="${not empty pageContext.request.userPrincipal}">
-				<a href="container_log.html">Move Log</a>
-				<a href="quality_report.html">Quality Assurance</a>
-				<a href="audit_report.html">Audit</a>
+				<a href="../container_log.html">Move Log</a>
+				<a href="../quality_report.html">Quality Assurance</a>
+				<a href="../audit_report.html">Audit</a>
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
-				<a href="import.html">Data Importer</a>
+				<a href="../import.html">Data Importer</a>
 				</c:if>
 				</c:if>
 				<a href="help">Search Help</a>
@@ -506,9 +506,11 @@
 				</div>
 			</div>
 		</div>
+		<script src="../js/utility.js"></script>
 		<script>
 			function init()
 			{
+				// Initialize the tabs
 				var tabs = document.getElementById('tabs');
 				if(tabs !== null){
 					var els = tabs.getElementsByTagName('a');
@@ -517,6 +519,7 @@
 					}
 				}
 
+				// If clicked, show the stash
 				var stash = document.getElementById('stash-link');
 				if(stash !== null){
 					stash.onclick = function(evt){
@@ -526,7 +529,7 @@
 							xhr.onreadystatechange = function(){
 								if(xhr.readyState === 4 && xhr.status === 200){
 									var json = JSON.parse(xhr.responseText);
-									var el = parseJSON(json);
+									var el = JSONToElement(json);
 									document.getElementById('stash-dd').appendChild(el);
 									anchor.innerHTML = 'Hide Stash';
 								}
@@ -549,22 +552,29 @@
 			}
 
 
+			// Function called when a tab is clicked
 			function showtab(evt)
 			{
 				var tabs = document.getElementById('tabs');
 				if(tabs !== null){
-					var els = tabs.getElementsByTagName('a');
+					var els = tabs.getElementsByTagName('li');
 					for(var i = 0; i < els.length; i++){
-						var name = els[i].href.substring(els[i].href.indexOf('#') + 1);
+						// Ensure no list item has an active
+						// class attached to it.
+						var li = els[i];
+						li.className = '';
+
+						// The anchor should be the first child.
+						// Find the element associated with this
+						// anchor and hide it.
+						var a = els[i].childNodes[0];
+						var name = a.href.substring(a.href.indexOf('#') + 1);
 						var tab = document.getElementById('tab-' + name);
 						if(tab !== null) tab.style.display = 'none';
 					}
 
-					var els = tabs.getElementsByTagName('li');
-					for(var i = 0; i < els.length; i++){
-						els[i].className = '';
-					}
-
+					// Flag the one that was clicked as active
+					// and show its content
 					this.parentNode.className = 'active';
 					var name = this.href.substring(this.href.indexOf('#') + 1);
 					var tab = document.getElementById('tab-' + name);
@@ -574,67 +584,6 @@
 				var e = evt === undefined ? window.event : evt;	
 				if('preventDefault' in e) e.preventDefault();
 				return false;
-			}
-
-
-			function parseJSON(obj){
-				var type = Object.prototype.toString.call(obj);
-
-				switch(type){
-					case '[object Boolean]':
-						return document.createTextNode(obj.toString());
-
-					case '[object String]':
-						return document.createTextNode(obj);
-
-					case '[object Number]':
-						return document.createTextNode(obj.toString());
-
-					case '[object Null]':
-						return document.createTextNode('(null)');
-
-					case '[object Object]':
-						var tbl = document.createElement('table');
-						var count = 0;
-						for(var i in obj){
-							var tr = document.createElement('tr');
-
-							var th = document.createElement('th');
-							th.appendChild(document.createTextNode(i));
-							tr.appendChild(th);
-
-							var td = document.createElement('td');
-							td.appendChild(parseJSON(obj[i]));
-							tr.appendChild(td);
-
-							tbl.appendChild(tr);
-							count++;
-						}
-						if(count > 0) return tbl;
-						else return document.createTextNode('(Empty Object)');
-
-					case '[object Array]':
-						if(obj.length < 1) return document.createTextNode('(Empty List)');
-
-						var tbl = document.createElement('table');
-						for(var i = obj.length; i--;){
-							var tr = document.createElement('tr');
-
-							var th = document.createElement('th');
-							th.appendChild(document.createTextNode(i));
-							tr.appendChild(th);
-
-							var td = document.createElement('td');
-							td.appendChild(parseJSON(obj[i]));
-							tr.appendChild(td);
-
-							tbl.appendChild(tr);
-						}
-						return tbl;
-
-					default:
-						return document.createTextNode('Unknown - ' + type);
-				}
 			}
 		</script>
 	</body>

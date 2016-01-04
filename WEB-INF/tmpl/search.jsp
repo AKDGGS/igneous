@@ -30,6 +30,7 @@
 		<script src="leaflet/leaflet.mouseposition.js"></script>
 		<script src="leaflet/leaflet.searchcontrol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
+		<script src="js/utility.js"></script>
 		<script>
 			var map, features, aoi;
 			var searchok = true;
@@ -303,43 +304,6 @@
 				xhr.open('POST', 'search.json', true);
 				xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 				xhr.send(params);
-			}
-
-
-			// Takes an object containing a list of JSON requests
-			// and makes them, loading all the data into the object
-			// provided, and then finally calling the complete function
-			// of the object when finished
-			function queueRequests(obj)
-			{
-				// Reset object run
-				obj.finished = 0;
-				obj.data = {};
-
-				for(var i = 0; i < obj.requests.length; i++){
-					queueRequest(obj.requests[i], obj);
-				}
-			}
-
-
-			function queueRequest(url, obj)
-			{
-				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
-				xhr.onreadystatechange = function(){
-					if(xhr.readyState === 4){
-						if(xhr.status === 200){
-							var n = url.slice(0, -5);
-							obj.data[n] = JSON.parse(xhr.responseText);
-						}
-
-						obj.finished++;
-						if(obj.finished === obj.requests.length){
-							obj.complete();
-						}
-					}
-				};
-				xhr.open('GET', url, true);
-				xhr.send();
 			}
 
 
