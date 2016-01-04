@@ -35,154 +35,118 @@
 			var map, features, aoi;
 			var searchok = true;
 
-			var SearchParameters = {
-				SEARCH_FIELDS: [
-					'q', 'keyword_id', 'collection_id', 'prospect_id',
-					'mining_district_id', 'quadrangle_id', 'top',
-					'bottom'
-				],
-				CONTROL_FIELDS: ['start', 'max', 'sort', 'dir'],
+			var SEARCH_FIELDS = [
+				'q', 'keyword_id', 'collection_id', 'prospect_id',
+				'mining_district_id', 'quadrangle_id', 'top',
+				'bottom'
+			];
+			var CONTROL_FIELDS = ['start', 'max', 'sort', 'dir'];
 
-				encode: function(){
-					var params = this.encodeFields(this.SEARCH_FIELDS);
 
-					// Encode the AOI, if it exists
-					if(aoi.getLayers().length > 0){
-						if(params.length > 0) params += '&';
-						var geojson = JSON.stringify(
-							aoi.getLayers()[0].toGeoJSON().geometry
-						);
+			function encodeParameters()
+			{
+				var params = encodeFields(SEARCH_FIELDS);
 
-						// Prune geojson to 4 significant digits
-						geojson = geojson.replace(/\d+\.\d+/g, function(match){
-							return Number(match).toFixed(4);
-						});
+				// Encode the AOI, if it exists
+				if(aoi.getLayers().length > 0){
+					if(params.length > 0) params += '&';
+					var geojson = JSON.stringify(
+						aoi.getLayers()[0].toGeoJSON().geometry
+					);
 
-						params += 'aoi=' + encodeURIComponent(geojson);
-					}
+					// Prune geojson to 4 significant digits
+					geojson = geojson.replace(/\d+\.\d+/g, function(match){
+						return Number(match).toFixed(4);
+					});
 
-					// Only encode the control fields if there's
-					// actual search parameters in there
-					if(params.length > 0){
-						params += '&' + this.encodeFields(this.CONTROL_FIELDS);
-					}
+					params += 'aoi=' + encodeURIComponent(geojson);
+				}
 
-					return params;
-				},
+				// Only encode the control fields if there's
+				// actual search parameters in there
+				if(params.length > 0){
+					params += '&' + encodeFields(CONTROL_FIELDS);
+				}
 
-				encodeFields: function(fields){
-					var params = '';
-					for(var i = 0; i < fields.length; i++){
-						var name = fields[i];
-						var els = document.getElementsByName(fields[i]);
-						for(var j = 0; j < els.length; j++){
-							var el = els[j];
-							switch(el.tagName){
-								case 'INPUT':
-									if(el.value.trim().length > 0){
-										if(params.length > 0) params += '&';
-										params += name + '=' + encodeURIComponent(
-											el.value.trim()
-										);
-									}
-								break;
+				return params;
+			}
 
-								case 'SELECT':
-									for(var k = 0; k < el.options.length; k++){
-										var opt = el.options[k];
-										if(opt.selected){
-											if(params.length > 0) params += '&';
-											params += name + '=' +
-												encodeURIComponent(opt.value);
-										}	
-									}
-								break;
-							}
-						}
-					}
-					return params;
-				},
 
-				decode: function(params){
-					if(params.length < 1) return;
-
-					var cnt = {};
-
-					var kvs = params.split('&');
-					for(var i = 0; i < kvs.length; i++){
-						var idx = kvs[i].indexOf('=');
-						var k = kvs[i].substring(0, idx);
-						var v = decodeURIComponent(kvs[i].substring(idx + 1));
-
-						if(k === 'aoi'){
-							aoi.addData(JSON.parse(v));
-							continue;
-						}
-
-						var els = document.getElementsByName(k);
-
-						// If there's more than one element, keep
-						// a count so we can set each.
-						if(els.length == 0) continue;
-						else if(els.length == 1 || !(k in cnt)) cnt[k] = 0;
-						else cnt[k]++;
-
-						var el = els[cnt[k]];
-
+			function encodeFields(fields)
+			{
+				var params = '';
+				for(var i = 0; i < fields.length; i++){
+					var name = fields[i];
+					var els = document.getElementsByName(fields[i]);
+					for(var j = 0; j < els.length; j++){
+						var el = els[j];
 						switch(el.tagName){
-							case 'INPUT': el.value = v; break;
-						
+							case 'INPUT':
+								if(el.value.trim().length > 0){
+									if(params.length > 0) params += '&';
+									params += name + '=' + encodeURIComponent(
+										el.value.trim()
+									);
+								}
+							break;
+
 							case 'SELECT':
-								for(var j = 0; j < el.options.length; j++){
-									if(el.options[j].value === v){
-										el.options[j].selected = true;
-										break;
-									}
+								for(var k = 0; k < el.options.length; k++){
+									var opt = el.options[k];
+									if(opt.selected){
+										if(params.length > 0) params += '&';
+										params += name + '=' +
+											encodeURIComponent(opt.value);
+									}	
 								}
 							break;
 						}
 					}
 				}
-			};
+				return params;
+			}
 
 
-			function mirroredLayer(data, style){
-				// All the wierd stuff attached to this layer
-				// is so that a second, mirrored feature will
-				// be added automatically when any feature is
-				// added to this layer. This makes it so that
-				// the feature shows up when the view crosses
-				// the dateline.
-				var layer = L.geoJson(data, {
-					pointToLayer: function (f, ll) {
-						return L.circleMarker(ll);
-					},
-					coordsToLatLngInvert: function(c){
-						var ll = new L.LatLng(c[1], c[0], c[2]);
-						if(ll.lng >= 0) ll.lng -= 360;
-						else ll.lng += 360;
+			function decodeParameters(params)
+			{
+				if(params.length < 1) return;
 
-						return ll;
-					},
-					style: style
-				});
-				layer.on('layeradd', function(e){
-					if('coordsToLatLng' in e.target.options){
-						delete e.target.options.coordsToLatLng;
-					} else {
-						e.target.options.coordsToLatLng =
-							e.target.options.coordsToLatLngInvert;
+				var cnt = {};
 
-						// If the layer has an identifable feature, use that
-						// otherwise, just break it down to geoJSON
-						if('feature' in e.layer) {
-							e.target.addData(e.layer.feature);
-						} else {
-							e.target.addData(e.layer.toGeoJSON());
-						}
+				var kvs = params.split('&');
+				for(var i = 0; i < kvs.length; i++){
+					var idx = kvs[i].indexOf('=');
+					var k = kvs[i].substring(0, idx);
+					var v = decodeURIComponent(kvs[i].substring(idx + 1));
+
+					if(k === 'aoi'){
+						aoi.addData(JSON.parse(v));
+						continue;
 					}
-				});
-				return layer;
+
+					var els = document.getElementsByName(k);
+
+					// If there's more than one element, keep
+					// a count so we can set each.
+					if(els.length == 0) continue;
+					else if(els.length == 1 || !(k in cnt)) cnt[k] = 0;
+					else cnt[k]++;
+
+					var el = els[cnt[k]];
+
+					switch(el.tagName){
+						case 'INPUT': el.value = v; break;
+					
+						case 'SELECT':
+							for(var j = 0; j < el.options.length; j++){
+								if(el.options[j].value === v){
+									el.options[j].selected = true;
+									break;
+								}
+							}
+						break;
+					}
+				}
 			}
 
 
@@ -197,7 +161,7 @@
 				// at page 0
 				if(clean !== true) document.getElementById('start').value = 0;
 
-				var params = SearchParameters.encode();
+				var params = encodeParameters();
 				window.location.hash = params;
 
 				// If there's nothing to search by, don't 
@@ -302,7 +266,7 @@
 					}
 				}
 				xhr.open('POST', 'search.json', true);
-				xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.send(params);
 			}
 
@@ -341,7 +305,7 @@
 				if('onhashchange' in window){
 					window.onhashchange = function(){
 						if(searchok && window.location.hash.length > 1){
-							SearchParameters.decode(window.location.hash.substring(1));
+							decodeParameters(window.location.hash.substring(1));
 							var md_el = document.getElementById('mining_district_id');
 							if(md_el !== null) handlegeojson(md_el);
 
@@ -575,7 +539,7 @@
 						// After all the resources have loaded, do the hashed
 						// search, if there is one.
 						if(window.location.hash.length > 1){
-							SearchParameters.decode(window.location.hash.substring(1));
+							decodeParameters(window.location.hash.substring(1));
 							handlegeojson(md_el);
 							handlegeojson(q_el);
 							search(true);

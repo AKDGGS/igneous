@@ -510,14 +510,7 @@
 		<script>
 			function init()
 			{
-				// Initialize the tabs
-				var tabs = document.getElementById('tabs');
-				if(tabs !== null){
-					var els = tabs.getElementsByTagName('a');
-					for(var i = 0; i < els.length; i++){
-						els[i].onclick = showtab;
-					}
-				}
+				initTabs();
 
 				// If clicked, show the stash
 				var stash = document.getElementById('stash-link');
@@ -549,41 +542,6 @@
 						return false;
 					};
 				}
-			}
-
-
-			// Function called when a tab is clicked
-			function showtab(evt)
-			{
-				var tabs = document.getElementById('tabs');
-				if(tabs !== null){
-					var els = tabs.getElementsByTagName('li');
-					for(var i = 0; i < els.length; i++){
-						// Ensure no list item has an active
-						// class attached to it.
-						var li = els[i];
-						li.className = '';
-
-						// The anchor should be the first child.
-						// Find the element associated with this
-						// anchor and hide it.
-						var a = els[i].childNodes[0];
-						var name = a.href.substring(a.href.indexOf('#') + 1);
-						var tab = document.getElementById('tab-' + name);
-						if(tab !== null) tab.style.display = 'none';
-					}
-
-					// Flag the one that was clicked as active
-					// and show its content
-					this.parentNode.className = 'active';
-					var name = this.href.substring(this.href.indexOf('#') + 1);
-					var tab = document.getElementById('tab-' + name);
-					if(tab !== null) tab.style.display = 'block';
-				}
-
-				var e = evt === undefined ? window.event : evt;	
-				if('preventDefault' in e) e.preventDefault();
-				return false;
 			}
 		</script>
 	</body>
