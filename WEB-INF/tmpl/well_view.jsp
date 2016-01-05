@@ -76,11 +76,6 @@
 						<div id="map"></div>
 					</div>
 					
-					<c:set var="link" value="well:\"${well.name}\"" />
-					<c:if test="${!empty well.wellNumber}">
-					<c:set var="link" value="${link} wellnumber:\"${well.wellNumber}\"" />
-					</c:if>
-
 					<div class="half-left">
 						<dl>
 							<dt>Name</dt>
@@ -212,12 +207,16 @@
 				<div id="tab-inventory">
 					<div class="container" id="keyword_container">
 						<c:if test="${!empty keywords}">
+						<c:set var="link" value="well:\"${well.name}\"" />
+						<c:if test="${!empty well.wellNumber}">
+						<c:set var="link" value="${link} wellnumber:\"${well.wellNumber}\"" />
+						</c:if>
 						<div>
 							<span class="label label-info">By Keywords</span>
 							<ul class="nav nav-pills" id="keywords">
 							<c:forEach items="${keywords}" var="keyword">
 							<c:set var="kws" value="&keyword_id=${fn:join(fn:split(keyword.ids, ','), '&keyword_id=')}" />
-							<li><a href="../search#q=${fn:escapeXml(link)}${kws}" data-keyword-id="${keyword.ids}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
+							<li><a href="../search#q=${fn:escapeXml(link)}${kws}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
 							</c:forEach>
 							</ul>
 						</div>
