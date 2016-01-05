@@ -223,76 +223,6 @@
 						</div>
 						</c:if>
 					</div>
-
-					<div id="inventory_container" class="container">
-						<table class="datagrid datagrid-info"> 
-							<thead>
-								<tr>
-									<td colspan="13" style="text-align: right">
-										<input type="hidden" name="well_id" id="well_id" value="${well.ID}">
-										<input type="hidden" name="geojson" id="geojson" value="${fn:escapeXml(geojson)}">
-										<input type="hidden" name="start" id="start" value="0">
-										<label for="max">Showing</label>
-										<select name="max" id="max">
-											<option value="10">10</option>
-											<option value="25" selected="selected">25</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-											<option value="250">250</option>
-											<option value="500">500</option>
-											<option value="1000">1000</option>
-										</select>
-
-										<span class="spacer">|</span>
-
-										<label for="sort">Sort by</label>
-										<select name="sort">
-											<option value="0">Best Match</option>
-											<option value="9">Barcode</option>
-											<option value="10">Borehole</option>
-											<option value="11">Box</option>
-											<option value="1">Collection</option>
-											<option value="2">Core Number</option>
-											<option value="14">Keywords</option>
-											<option value="3">Location</option>
-											<option value="12">Prospect</option>
-											<option value="13">Sample</option>
-											<option value="4">Set Number</option>
-											<option value="5">Top</option>
-											<option value="6">Bottom</option>
-											<option value="7">Well Name</option>
-											<option value="8">Well Number</option>
-										</select>
-
-										<select name="dir">
-											<option value="0">Asc</option>
-											<option value="1">Desc</option>
-										</select>
-
-										<span class="spacer">|</span>
-
-										Displaying <span id="page_start"></span>
-										- <span id="page_end"></span> of
-										<span id="page_found"></span>
-
-										<span class="spacer">|</span>
-
-										<ul class="pagination" id="page_control"></ul>
-									</td>
-								</tr>
-								<tr>
-									<th>ID</th>
-									<th>Box /<br>Set</th>
-									<th>Top /<br>Bottom</th>
-									<th>Keywords</th>
-									<th>Collection</th>
-									<th>Barcode</th>
-									<th>Location</th>
-								</tr>
-							</thead>
-							<tbody id="inventory_body"></tbody>
-						</table>
-					</div>
 				</div>
 
 				<div id="tab-files" class="hidden"></div>
@@ -323,7 +253,6 @@
 		<script src="../js/utility.js"></script>
 		<script src="../leaflet/leaflet.mouseposition.js"></script>
 		<script>
-			var map;
 			function init()
 			{
 				initTabs();
@@ -334,74 +263,7 @@
 					geojson = JSON.parse(gj_el.value);
 				}
 
-				var features = mirroredLayer(geojson, {
-					color: '#2e70ff',
-					opacity: 1,
-					weight: 2,
-					radius: 6,
-					fill: true,
-					'z-index': 8
-				});
-
-				var baselayers = {
-					'Open Street Maps': new L.TileLayer(
-						'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 19, zIndex: 1 }
-					),
-					'MapQuest Open Aerial': new L.TileLayer(
-						'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 11, subdomains: '1234', zIndex: 2  }
-					),
-					'MapQuest Open OSM': new L.TileLayer(
-						'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 17, subdomains: '1234', zIndex: 3 }
-					),
-					'GINA Satellite': new L.TileLayer(
-						'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
-						{ minZoom: 3, mazZoom: 15, zIndex: 4 }
-					),
-					'GINA Topographic': new L.TileLayer(
-						'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
-						{ minZoom: 3, maxZoom: 12, zINdex: 5 }
-					),
-					'Stamen Watercolor': new L.TileLayer(
-						'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
-						{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 6 }
-					)
-				};
-
-				var overlays = {
-					'Quadrangles': new L.TileLayer(
-						'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
-						{ minZoom: 3, maxZoom: 16, zIndex: 7 }
-					)
-				};
-
-				map = L.map('map', {
-					attributionControl: false,
-					zoomControl: false,
-					worldCopyJump: true,
-					layers: [
-						baselayers['Open Street Maps'],
-						features
-					]
-				});
-
-				// Add zoom control
-				map.addControl(L.control.zoom({ position: 'topleft' }));
-				// Add mouse position control
-				map.addControl(L.control.mousePosition({
-					emptyString: 'Unknown', numDigits: 3
-				}));
-				// Add layer control
-				map.addControl(L.control.layers(
-					baselayers, overlays, {
-						position: 'bottomleft', autoZIndex: false
-					}
-				));
-
-				// Start in Fairbanks
-				map.setView([64.843611, -147.723056], 3);
+				initSimpleMap(geojson, '#2e70ff');
 			}
 		</script>
 	</body>

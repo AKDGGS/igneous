@@ -186,3 +186,84 @@ function mirroredLayer(data, style){
 	});
 	return layer;
 }
+
+
+// This function is used on several view pages to initialize
+// a small map containing a single feature
+function initSimpleMap(geojson, featureColor)
+{
+	if(typeof featureColor === 'undefined'){
+		featureColor = '#9f00ff';
+	}
+
+	var features = mirroredLayer(geojson, {
+		color: featureColor,
+		opacity: 1,
+		weight: 2,
+		radius: 6,
+		fill: true,
+		'z-index': 8
+	});
+
+	var baselayers = {
+		'Open Street Maps': new L.TileLayer(
+		'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		{ minZoom: 3, maxZoom: 19, zIndex: 1 }
+		),
+		'MapQuest Open Aerial': new L.TileLayer(
+			'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 11, subdomains: '1234', zIndex: 2  }
+		),
+		'MapQuest Open OSM': new L.TileLayer(
+			'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 17, subdomains: '1234', zIndex: 3 }
+		),
+		'GINA Satellite': new L.TileLayer(
+			'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
+			{ minZoom: 3, mazZoom: 15, zIndex: 4 }
+		),
+		'GINA Topographic': new L.TileLayer(
+			'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
+			{ minZoom: 3, maxZoom: 12, zINdex: 5 }
+		),
+		'Stamen Watercolor': new L.TileLayer(
+			'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 6 }
+		)
+	};
+
+	var overlays = {
+		'Quadrangles': new L.TileLayer(
+			'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
+			{ minZoom: 3, maxZoom: 16, zIndex: 7 }
+		)
+	};
+
+	var map = L.map('map', {
+		attributionControl: false,
+		zoomControl: false,
+		worldCopyJump: true,
+		layers: [
+			baselayers['Open Street Maps'],
+			features
+		]
+	});
+
+	// Add zoom control
+	map.addControl(L.control.zoom({ position: 'topleft' }));
+	// Add mouse position control
+	map.addControl(L.control.mousePosition({
+		emptyString: 'Unknown', numDigits: 3
+	}));
+	// Add layer control
+	map.addControl(L.control.layers(
+		baselayers, overlays, {
+			position: 'bottomleft', autoZIndex: false
+		}
+	));
+
+	// Start in Fairbanks
+	map.setView([64.843611, -147.723056], 3);
+
+	return map;
+}
