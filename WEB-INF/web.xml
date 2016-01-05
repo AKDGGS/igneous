@@ -389,6 +389,25 @@
 		<url-pattern>/import.html</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>LogoutServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.LogoutServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>LogoutServlet</servlet-name>
+		<url-pattern>/logout/</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>LoginRedirectServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.LoginRedirectServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>LoginRedirectServlet</servlet-name>
+		<url-pattern>/login/</url-pattern>
+	</servlet-mapping>
 
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
@@ -417,60 +436,8 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>Root</web-resource-name>
-			<url-pattern>/search</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Searching (JSON)</web-resource-name>
-			<url-pattern>/search.json</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Searching (PDF)</web-resource-name>
-			<url-pattern>/search.pdf</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Searching (CSV)</web-resource-name>
-			<url-pattern>/search.csv</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Inventory</web-resource-name>
-			<url-pattern>/inventory/*</url-pattern>
+			<web-resource-name>Login Redirect</web-resource-name>
+			<url-pattern>/login/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
@@ -497,71 +464,6 @@
 		<web-resource-collection>
 			<web-resource-name>Stash</web-resource-name>
 			<url-pattern>/stash.json</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Wells</web-resource-name>
-			<url-pattern>/well/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Boreholes</web-resource-name>
-			<url-pattern>/borehole/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Prospects</web-resource-name>
-			<url-pattern>/prospect/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Outcrops</web-resource-name>
-			<url-pattern>/outcrop/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Shotlines</web-resource-name>
-			<url-pattern>/shotline/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
@@ -663,7 +565,11 @@
 	</security-constraint>
 
 	<login-config>
-		<auth-method>BASIC</auth-method>
+		<auth-method>FORM</auth-method>
 		<realm-name>IgneousUserDatabase</realm-name>
+		<form-login-config>
+			<form-login-page>/WEB-INF/tmpl/login.jsp</form-login-page>
+			<form-error-page>/WEB-INF/tmpl/login.jsp?error=t</form-error-page>
+		</form-login-config>
 	</login-config>
 </web-app>
