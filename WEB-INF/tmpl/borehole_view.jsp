@@ -49,6 +49,10 @@
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
 				<a href="../import.html">Data Importer</a>
 				</c:if>
+				<a href="../logout/">Logout</a>
+				</c:if>
+				<c:if test="${empty pageContext.request.userPrincipal}">
+				<a href="../login/">Login</a>
 				</c:if>
 				<a href="../help">Search Help</a>
 			</div>
@@ -144,9 +148,11 @@
 				<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
 					<li class="active"><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
 					<li><a href="#organizations">Organizations <span class="badge">${fn:length(borehole.organizations)}</span></a></li>
-					<li><a href="#notes">Notes <span class="badge">${fn:length(borehole.notes)}</span></a></li>
 					<li><a href="#urls">URLs <span class="badge">${fn:length(borehole.URLs)}</span></a></li>
+					<c:if test="${not empty pageContext.request.userPrincipal}">
+					<li><a href="#notes">Notes <span class="badge">${fn:length(borehole.notes)}</span></a></li>
 					<li><a href="#files">Files</a></li>
+					</c:if>
 				</ul>
 
 				<div id="tab-organizations" class="hidden">
@@ -160,15 +166,6 @@
 							<dt>Organization Type</dt>
 							<dd>${organization.type.name}</dd>
 						</dl>
-					</div>
-					</c:forEach>
-				</div>
-
-				<div id="tab-notes" class="hidden">
-					<c:forEach items="${borehole.notes}" var="note" varStatus="stat">
-					<div class="container">
-						<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
-						<pre>${fn:escapeXml(note.note)}</pre>
 					</div>
 					</c:forEach>
 				</div>
@@ -193,8 +190,6 @@
 					</div>
 				</div>
 
-				<div id="tab-files" class="hidden"></div>
-
 				<div id="tab-urls" class="hidden">
 					<c:forEach items="${borehole.URLs}" var="url" varStatus="stat">
 					<div class="container">
@@ -215,6 +210,19 @@
 					</div>
 					</c:forEach>
 				</div>
+
+				<c:if test="${not empty pageContext.request.userPrincipal}">
+				<div id="tab-notes" class="hidden">
+					<c:forEach items="${borehole.notes}" var="note" varStatus="stat">
+					<div class="container">
+						<div class="notehd"><fmt:formatDate pattern="M/d/yyyy" value="${note.date}"/>, ${note.type.name} (${note.username}, ${note.isPublic ? 'public' : 'private'})</div>
+						<pre>${fn:escapeXml(note.note)}</pre>
+					</div>
+					</c:forEach>
+				</div>
+
+				<div id="tab-files" class="hidden"></div>
+				</c:if>
 			</div>
 		</div>
 		<script src="../leaflet/leaflet.js"></script>

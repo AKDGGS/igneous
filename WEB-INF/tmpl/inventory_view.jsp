@@ -42,8 +42,12 @@
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
 				<a href="../import.html">Data Importer</a>
 				</c:if>
+				<a href="../logout/">Logout</a>
 				</c:if>
-				<a href="help">Search Help</a>
+				<c:if test="${empty pageContext.request.userPrincipal}">
+				<a href="../login/">Login</a>
+				</c:if>
+				<a href="../help">Search Help</a>
 			</div>
 
 			<div class="apptmpl-banner">
@@ -73,12 +77,27 @@
 							</c:if>
 						</dd>
 					</dl>
+					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<c:if test="${!empty inventory.container}">
 					<dl>
 						<dt>Location</dt>
 						<dd>${inventory.container.pathCache}</dd>
 					</dl>
 					</c:if>
+					<c:if test="${!empty inventory.barcode}">
+					<dl>
+						<dt>Barcode</dt>
+						<dd>${inventory.barcode}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty inventory.altBarcode}">
+					<dl>
+						<dt>Alt. Barcode</dt>
+						<dd>${inventory.altBarcode}</dd>
+					</dl>
+					</c:if>
+					</c:if>
+
 					<c:if test="${!empty inventory.DGGSSampleID}">
 					<dl>
 						<dt>DGGS Sample ID</dt>
@@ -111,18 +130,6 @@
 					<dl>
 						<dt>Published No. Suffix</dt>
 						<dd><span title="${inventory.publishedNumberHasSuffix ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.publishedNumberHasSuffix ? 'ok' : 'remove'}"></span></dd>
-					</dl>
-					</c:if>
-					<c:if test="${!empty inventory.barcode}">
-					<dl>
-						<dt>Barcode</dt>
-						<dd>${inventory.barcode}</dd>
-					</dl>
-					</c:if>
-					<c:if test="${!empty inventory.altBarcode}">
-					<dl>
-						<dt>Alt. Barcode</dt>
-						<dd>${inventory.altBarcode}</dd>
 					</dl>
 					</c:if>
 					<c:if test="${!empty inventory.collection}">
@@ -251,6 +258,8 @@
 						<dd><c:forEach items="${inventory.keywords}" var="keyword" varStatus="stat">${stat.count gt 1 ? ", " : ""} <a href="../search#keyword_id=${keyword.ID}">${keyword.name}</a></c:forEach></dd>
 					</dl>
 					</c:if>
+
+					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<c:if test="${!empty inventory.received}">
 					<dl>
 						<dt>Received Date</dt>
@@ -287,13 +296,16 @@
 						<dt><a id="stash-link" href="#">Show Stash</a></dt>
 						<dd id="stash-dd"></dd>
 					</dl>
-
+					</c:if>
+					
 					<ul id="tabs" class="nav nav-tabs" style="width: 100%">
 						<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.outcrops) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
+						<li><a href="#urls">URLs <span class="badge">${fn:length(inventory.URLs)}</span></a></li>
+						<c:if test="${not empty pageContext.request.userPrincipal}">
 						<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
 						<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
 						<li><a href="#containerlog">Move Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
-						<li><a href="#urls">URLs <span class="badge">${fn:length(inventory.URLs)}</span></a></li>
+						</c:if>
 					</ul>
 
 					<div id="tab-related">
@@ -451,6 +463,28 @@
 						</c:forEach>
 					</div>
 
+					<div id="tab-urls" class="hidden">
+						<c:forEach items="${inventory.URLs}" var="url" varStatus="stat">
+						<div class="container">
+							<dl>
+								<dt>URL Description</dt>
+								<dd>${url.description}</dd>
+							</dl>
+							<c:if test="${!empty url.type}">
+							<dl>
+								<dt>URL Type</dt>
+								<dd>${url.type.name}</dd>
+							</dl>
+							</c:if>
+							<dl>
+								<dt>URL</dt>
+								<dd><a href="${url.URL}">${url.URL}</a></dd>
+							</dl>
+						</div>
+						</c:forEach>
+					</div>
+
+					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<div id="tab-notes" class="hidden">
 						<c:forEach items="${inventory.notes}" var="note" varStatus="stat">
 						<div class="container">
@@ -482,27 +516,7 @@
 						</div>
 						</c:forEach>
 					</div>
-
-					<div id="tab-urls" class="hidden">
-						<c:forEach items="${inventory.URLs}" var="url" varStatus="stat">
-						<div class="container">
-							<dl>
-								<dt>URL Description</dt>
-								<dd>${url.description}</dd>
-							</dl>
-							<c:if test="${!empty url.type}">
-							<dl>
-								<dt>URL Type</dt>
-								<dd>${url.type.name}</dd>
-							</dl>
-							</c:if>
-							<dl>
-								<dt>URL</dt>
-								<dd><a href="${url.URL}">${url.URL}</a></dd>
-							</dl>
-						</div>
-						</c:forEach>
-					</div>
+					</c:if>
 				</div>
 			</div>
 		</div>
@@ -511,7 +525,7 @@
 			function init()
 			{
 				initTabs();
-
+				<c:if test="${not empty pageContext.request.userPrincipal}">
 				// If clicked, show the stash
 				var stash = document.getElementById('stash-link');
 				if(stash !== null){
@@ -542,6 +556,7 @@
 						return false;
 					};
 				}
+				</c:if>
 			}
 		</script>
 	</body>

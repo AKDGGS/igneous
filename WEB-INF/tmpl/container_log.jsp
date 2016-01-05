@@ -33,6 +33,10 @@
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
 				<a href="import.html">Data Importer</a>
 				</c:if>
+				<a href="logout/">Logout</a>
+				</c:if>
+				<c:if test="${empty pageContext.request.userPrincipal}">
+				<a href="login/">Login</a>
 				</c:if>
 				<a href="help">Search Help</a>
 			</div>

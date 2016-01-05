@@ -166,8 +166,10 @@
 						<th>Top /<br>Bottom</th>
 						<th>Keywords</th>
 						<th>Collection</th>
+						<c:if test="${not empty pageContext.request.userPrincipal}">
 						<th>Barcode</th>
 						<Th>Location /<br>Quality</th>
+						</c:if>
 					</tr>
 				</thead>
 				<tbody>
@@ -219,6 +221,7 @@
 							<ul class="kw">{{#keywords}}<li>{{name}}</li>{{/keywords}}</ul>
 						</td>
 						<td>{{collection.name}}</td>
+						<c:if test="${not empty pageContext.request.userPrincipal}">
 						<td class="barcode">
 							{{barcode}}{{^barcode}}{{altBarcode}}{{/barcode}}
 						</td>
@@ -226,6 +229,7 @@
 							{{containerPath}}
 							{{#qualities}}<div>{{#issues}}<span>{{.}}</span>{{/issues}}</div>{{/qualities}}
 						</td>
+						</c:if>
 					</tr>
 					{{/list}}
 				</tbody>

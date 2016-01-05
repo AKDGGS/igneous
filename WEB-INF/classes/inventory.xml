@@ -289,7 +289,9 @@
 
 	<select id="getSearchResults" resultSetType="FORWARD_ONLY" resultMap="SearchMap">
 		SELECT iv.inventory_id, iv.sample_number,
+			<if test="authenticated == true">
 			iv.barcode, iv.alt_barcode,
+			</if>
 			iv.box_number, iv.set_number,
 			iv.core_number, iv.state_number,
 			iv.interval_top, iv.interval_bottom,
@@ -309,7 +311,9 @@
 			cdun.name AS core_diameter_unit_name,
 			cdun.abbr AS core_diameter_unit_abbr,
 
+			<if test="authenticated == true">
 			co.path_cache AS container_path,
+			</if>
 
 			bh.borehole_id,
 			bh.name AS borehole_name,
@@ -340,26 +344,33 @@
 			kw.name AS keyword_name,
 			kw.alias AS keyword_alias,
 
-			ST_AsGeoJSON(ig.geog, 5, 0) AS geojson,
 
+			<if test="authenticated == true">
 			qu.inventory_quality_id,
 			qu.check_date AS quality_check_date,
 			qu.username AS quality_username,
 			qu.remark AS quality_remark,
-			qu.issues::text[] AS quality_issues
+			qu.issues::text[] AS quality_issues,
+			</if>
+
+			ST_AsGeoJSON(ig.geog, 5, 0) AS geojson
 		FROM inventory AS iv
 		JOIN inventory_search AS ig
 			ON ig.inventory_id = iv.inventory_id
+		<if test="authenticated == true">
 		LEFT OUTER JOIN inventory_quality AS qu
 			ON qu.inventory_quality_id = ig.inventory_quality_id
+		</if>
 		LEFT OUTER JOIN collection AS cl
 			ON cl.collection_id = iv.collection_id
 		LEFT OUTER JOIN unit AS iun
 			ON iun.unit_id = iv.interval_unit_id
 		LEFT OUTER JOIN project AS pr
 			ON pr.project_id = iv.project_id
+		<if test="authenticated == true">
 		LEFT OUTER JOIN container AS co
 			ON co.container_id = iv.container_id
+		</if>
 		LEFT OUTER JOIN inventory_borehole AS ibh
 			ON ibh.inventory_id = iv.inventory_id
 		LEFT OUTER JOIN borehole AS bh

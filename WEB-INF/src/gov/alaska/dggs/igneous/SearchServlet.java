@@ -149,6 +149,13 @@ public class SearchServlet extends HttpServlet
 			params = new HashMap<String, Object>();
 		}
 
+		// Don't show can't publish stuff if the
+		// user isn't logged in.
+		if(request.getUserPrincipal() == null){
+			if(query.length() > 0){ query.append(" AND "); }
+			query.append("can_publish");
+		}
+
 		// Handle spatial queries
 		String aoi = request.getParameter("aoi");
 		if(aoi != null && aoi.trim().length() > 0){
@@ -574,6 +581,7 @@ public class SearchServlet extends HttpServlet
 			// If it's JSON, limit the number of results
 			HashMap<String, Object> params = buildParameters(request, isjson);
 
+
 			if(!params.isEmpty()){
 				//System.out.println("q: " + params.get("_query"));
 				List<Integer> list = sess.selectList(
@@ -583,8 +591,14 @@ public class SearchServlet extends HttpServlet
 
 				if(!list.isEmpty()){
 					json.put("found", found);
+
+					HashMap<String, Object> filter = new HashMap<String,Object>();
+					filter.put("list", list);
+					// If the user is authenticated, let the query know
+					filter.put("authenticated", (request.getUserPrincipal() != null));
+
 					List<Inventory> items = sess.selectList(
-						"gov.alaska.dggs.igneous.Inventory.getSearchResults", list
+						"gov.alaska.dggs.igneous.Inventory.getSearchResults", filter
 					);
 					json.put("list", items);
 				}

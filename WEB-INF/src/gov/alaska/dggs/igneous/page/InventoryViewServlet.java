@@ -39,6 +39,14 @@ public class InventoryViewServlet extends HttpServlet
 			);
 			if(iv == null){ throw new Exception("ID not found."); }
 
+			// Hide inactive and unpublished inventory
+			// from unauthenticated users
+			if(request.getUserPrincipal() == null){
+				if(!iv.getCanPublish() || !iv.getActive()){
+					throw new Exception("ID not found."); 
+				}
+			}
+
 			request.setAttribute("inventory", iv);
 			request.getRequestDispatcher(
 				"/WEB-INF/tmpl/inventory_view.jsp"

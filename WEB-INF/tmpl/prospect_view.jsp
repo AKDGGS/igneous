@@ -49,6 +49,10 @@
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
 				<a href="../import.html">Data Importer</a>
 				</c:if>
+				<a href="../logout/">Logout</a>
+				</c:if>
+				<c:if test="${empty pageContext.request.userPrincipal}">
+				<a href="../login/">Login</a>
 				</c:if>
 				<a href="../help">Search Help</a>
 			</div>
@@ -119,7 +123,9 @@
 
 				<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
 					<li class="active"><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
+					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<li><a href="#files">Files</a></li>
+					</c:if>
 				</ul>
 
 				<div id="tab-inventory">
@@ -137,10 +143,11 @@
 						</div>
 						</c:if>
 					</div>
-
-					<div id="tab-files" class="hidden">
-					</div>
 				</div>
+
+				<c:if test="${not empty pageContext.request.userPrincipal}">
+				<div id="tab-files" class="hidden"></div>
+				</c:if>
 			</div>
 		</div>
 		<script src="../leaflet/leaflet.js"></script>
