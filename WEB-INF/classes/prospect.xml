@@ -30,10 +30,15 @@
 		SELECT k.keyword_id, k.name AS keyword,
 			COUNT(*) AS count
 		FROM borehole AS b
-		JOIN inventory_borehole AS ib ON ib.borehole_id = b.borehole_id
-		JOIN inventory_keyword AS ik ON ik.inventory_id = ib.inventory_id
+		JOIN inventory_borehole AS ib
+			ON ib.borehole_id = b.borehole_id
+		JOIN inventory_keyword AS ik
+			ON ik.inventory_id = ib.inventory_id
+		JOIN inventory AS i
+			ON i.inventory_id = ik.inventory_id
 		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
 		WHERE b.prospect_id = #{prospect_id}
+			AND i.active
 			AND k.keyword_id IN (
 				SELECT keyword_id
 				FROM keyword
@@ -50,12 +55,16 @@
 	</select>
 
 
-	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
-		SELECT ST_AsText(ST_Transform(bg.geog::GEOMETRY, 3857)) AS wkt
-		FROM borehole AS bh
-		JOIN borehole_geog AS bg
-			ON bh.borehole_id = bg.borehole_id
-		WHERE bh.prospect_id = #{id}
-		LIMIT 1
+	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
+		SELECT
+			ST_AsGeoJSON(ST_Collect(geog::GEOMETRY)::GEOGRAPHY, 5, 0) AS geojson
+		FROM (
+			SELECT DISTINCT ON (ST_AsBinary(geog))
+				geog
+			FROM borehole AS bh
+			JOIN borehole_geog AS bg
+				ON bh.borehole_id = bg.borehole_id
+			WHERE bh.prospect_id = #{prospect_id}
+		) AS q
 	</select>
 </mapper>

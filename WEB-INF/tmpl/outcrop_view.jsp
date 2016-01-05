@@ -17,9 +17,6 @@
 		<link rel="stylesheet" href="../leaflet/leaflet.mouseposition.css">
 		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
 		<style>
-			.barcode { min-width: 205px; }
-			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
-			#inventory_container { display: none; }
 			#keyword_container a { margin: 2px 0px 0px 2px; }
 			#keyword_container .active { box-shadow: none !important; background-color: transparent !important; }
 

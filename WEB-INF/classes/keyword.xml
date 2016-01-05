@@ -64,9 +64,12 @@
 			FROM inventory_well AS iw
 			JOIN inventory_keyword AS ik
 				ON ik.inventory_id = iw.inventory_id
+			JOIN inventory AS i
+				ON i.inventory_id = ik.inventory_id
 			JOIN keyword AS k
 				ON k.keyword_id = ik.keyword_id
 			WHERE iw.well_id = #{id}
+				AND i.active
 			GROUP BY iw.inventory_id
 		) AS q2
 		GROUP BY keywords, ids
@@ -86,9 +89,12 @@
 				ON b.borehole_id = ib.borehole_id
 			JOIN inventory_keyword AS ik
 				ON ik.inventory_id = ib.inventory_id
+			JOIN inventory AS i
+				ON i.inventory_id = ik.inventory_id
 			JOIN keyword AS k
 				ON k.keyword_id = ik.keyword_id
 			WHERE b.prospect_id = #{id}
+				AND i.active
 			GROUP BY ib.inventory_id
 		) AS q2
 		GROUP BY keywords, ids
@@ -106,9 +112,12 @@
 			FROM inventory_borehole AS ib
 			JOIN inventory_keyword AS ik
 				ON ik.inventory_id = ib.inventory_id
+			JOIN inventory AS i
+				ON i.inventory_id = ik.inventory_id
 			JOIN keyword AS k
 				ON k.keyword_id = ik.keyword_id
 			WHERE ib.borehole_id = #{id}
+				AND i.active
 			GROUP BY ib.inventory_id
 		) AS q2
 		GROUP BY keywords, ids
@@ -126,9 +135,12 @@
 			FROM inventory_outcrop AS io
 			JOIN inventory_keyword AS ik
 				ON ik.inventory_id = io.inventory_id
+			JOIN inventory AS i
+				ON i.inventory_id = ik.inventory_id
 			JOIN keyword AS k
 				ON k.keyword_id = ik.keyword_id
 			WHERE io.outcrop_id = #{id}
+				AND i.active
 			GROUP BY io.inventory_id
 		) AS q2
 		GROUP BY keywords, ids
@@ -152,9 +164,12 @@
 			FROM inventory_shotline AS isl
 			JOIN inventory_keyword AS ik
 				ON ik.inventory_id = isl.inventory_id
+			JOIN inventory AS i
+				ON i.inventory_id = ik.inventory_id
 			JOIN keyword AS k
 				ON k.keyword_id = ik.keyword_id
 			WHERE isl.shotline_id = #{id}
+				AND i.active
 			GROUP BY isl.inventory_id
 		) AS q2
 		GROUP BY keywords, ids
