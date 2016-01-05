@@ -76,6 +76,8 @@
 						<div id="map"></div>
 					</div>
 					
+					<input type="hidden" name="geojson" id="geojson" value="${fn:escapeXml(geojson)}">
+					
 					<div class="half-left">
 						<dl>
 							<dt>Name</dt>

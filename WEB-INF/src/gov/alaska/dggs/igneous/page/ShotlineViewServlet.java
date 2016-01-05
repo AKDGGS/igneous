@@ -47,8 +47,8 @@ public class ShotlineViewServlet extends HttpServlet
 			request.setAttribute("quadrangles", sess.selectList(
 				"gov.alaska.dggs.igneous.Quadrangle.getByShotlineID", id
 			));
-			request.setAttribute("wkt", sess.selectOne(
-				"gov.alaska.dggs.igneous.Shotline.getWKTByID", id
+			request.setAttribute("geojson", sess.selectOne(
+				"gov.alaska.dggs.igneous.Shotline.getGeoJSONByID", id
 			));
 
 			request.getRequestDispatcher(

@@ -75,6 +75,8 @@
 					<div id="map"></div>
 				</div>
 
+				<input type="hidden" name="geojson" id="geojson" value="${fn:escapeXml(geojson)}">
+
 				<div class="half-left">
 					<dl>
 						<dt>Outcrop Name</dt>
@@ -177,7 +179,7 @@
 					geojson = JSON.parse(gj_el.value);
 				}
 
-				initSimpleMap(geojson, '#2e70ff');
+				initSimpleMap(geojson, '#fdff00');
 			}
 		</script>
 	</body>
