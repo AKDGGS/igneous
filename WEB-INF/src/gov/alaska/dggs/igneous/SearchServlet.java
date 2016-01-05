@@ -64,6 +64,7 @@ import gov.alaska.dggs.igneous.model.Keyword;
 import gov.alaska.dggs.igneous.model.CoreDiameter;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.igneous.transformer.IterableTransformer;
+import gov.alaska.dggs.igneous.transformer.RawTransformer;
 
 
 public class SearchServlet extends HttpServlet
@@ -83,28 +84,15 @@ public class SearchServlet extends HttpServlet
 		serializer.include("list.shotlines");
 		serializer.include("list.shotlines.shotpoints");
 		serializer.include("list.qualities");
+		serializer.include("list.qualities.issues");
 
-		serializer.exclude("list.class");	
-		serializer.exclude("list.keywords.class");
-		serializer.exclude("list.keywords.code");
-		serializer.exclude("list.keywords.description");
-		serializer.exclude("list.keywords.group");
-		serializer.exclude("list.collection.class");
-		serializer.exclude("list.project.class");
-		serializer.exclude("list.boreholes.class");
-		serializer.exclude("list.boreholes.prospect.class");
-		serializer.exclude("list.wells.class");	
-		serializer.exclude("list.outcrops.class");	
-		serializer.exclude("list.shotlines.class");	
-		serializer.exclude("list.shotlines.shotpoints.class");	
-		serializer.exclude("list.intervalUnit.class");
-		serializer.exclude("list.coreDiameter.class");
-		serializer.exclude("list.coreDiameter.unit.class");
-		serializer.exclude("list.qualities.class");
+		
+		serializer.exclude("*.class");	
 
 		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
 		serializer.transform(new ExcludeTransformer(), void.class);
 		serializer.transform(new IterableTransformer(), Iterable.class);
+		serializer.transform(new RawTransformer(), "list.geoJSON");
 	}
 
 	private static final Properties FIELDS;
@@ -162,13 +150,13 @@ public class SearchServlet extends HttpServlet
 		}
 
 		// Handle spatial queries
-		String wkt = request.getParameter("wkt");
-		if(wkt != null && wkt.trim().length() > 0){
+		String aoi = request.getParameter("aoi");
+		if(aoi != null && aoi.trim().length() > 0){
 			if(query.length() > 0){ query.append(" AND "); }
 			query.append(
-				"ST_Intersects(geog, ST_Transform(ST_GeomFromText(#{wkt}, 3857), 4326))"
+				"ST_Intersects(geog, ST_SetSRID(ST_GeomFromGeoJSON(#{aoi}), 4326))"
 			);
-			params.put("wkt", wkt);
+			params.put("aoi", aoi);
 		}
 
 		// Handle top/bottom range queries

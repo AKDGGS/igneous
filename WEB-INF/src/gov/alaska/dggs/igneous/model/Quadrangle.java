@@ -26,6 +26,6 @@ public class Quadrangle implements Serializable
 	public Long getScale(){ return scale; }
 
 	// This is a wrapper for the "geog" field
-	private String wkt;
-	public String getWKT(){ return wkt; }
+	private String geojson;
+	public String getGeoJSON(){ return geojson; }
 }

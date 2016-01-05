@@ -503,8 +503,8 @@ public class Inventory implements Serializable
 	private String container_path;
 	public String getContainerPath(){ return container_path; }
 
-	private String wkt;
-	public String getWKT(){ return wkt; }
+	private String geojson;
+	public String getGeoJSON(){ return geojson; }
 
 	private String bin;
 	public String getBin(){ return bin; }

@@ -66,8 +66,8 @@
 	</resultMap>
 
 
-	<select id="getWKTByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
-		SELECT ST_AsText(ST_Transform(geog::GEOMETRY, 3857)) AS wkt
+	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
+		SELECT ST_AsGeoJSON(geog, 5, 0) AS geojson
 		FROM well_geog
 		WHERE well_id = #{well_id}
 		LIMIT 1

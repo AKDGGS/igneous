@@ -50,8 +50,8 @@ public class ProspectViewServlet extends HttpServlet
 			request.setAttribute("quadrangles", sess.selectList(
 				"gov.alaska.dggs.igneous.Quadrangle.getByProspectID", id
 			));
-			request.setAttribute("wkt", sess.selectOne(
-				"gov.alaska.dggs.igneous.Prospect.getWKTByID", id
+			request.setAttribute("geojson", sess.selectOne(
+				"gov.alaska.dggs.igneous.Prospect.getGeoJSONByID", id
 			));
 
 			request.getRequestDispatcher(

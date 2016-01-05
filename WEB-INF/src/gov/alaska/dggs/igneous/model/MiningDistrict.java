@@ -8,10 +8,11 @@ public class MiningDistrict implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	private int id;
-	private String name;
-	private String wkt;
-
 	public int getID(){ return id; }
+
+	private String name;
 	public String getName(){ return name; }
-	public String getWKT(){ return wkt; }
+
+	private String geojson;
+	public String getGeoJSON(){ return geojson; }
 }

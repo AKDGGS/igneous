@@ -47,8 +47,8 @@ public class BoreholeViewServlet extends HttpServlet
 			request.setAttribute("quadrangles", sess.selectList(
 				"gov.alaska.dggs.igneous.Quadrangle.getByBoreholeID", id
 			));
-			request.setAttribute("wkt", sess.selectOne(
-				"gov.alaska.dggs.igneous.Borehole.getWKTByID", id
+			request.setAttribute("geojson", sess.selectOne(
+				"gov.alaska.dggs.igneous.Borehole.getGeoJSONByID", id
 			));
 
 			request.getRequestDispatcher(

@@ -340,13 +340,13 @@
 			kw.name AS keyword_name,
 			kw.alias AS keyword_alias,
 
-			ST_AsText(ST_Transform(ig.geog::GEOMETRY, 3857)) AS wkt,
+			ST_AsGeoJSON(ig.geog, 5, 0) AS geojson,
 
 			qu.inventory_quality_id,
 			qu.check_date AS quality_check_date,
 			qu.username AS quality_username,
 			qu.remark AS quality_remark,
-			array_to_string(qu.issues::text[], ',') AS quality_issues
+			qu.issues::text[] AS quality_issues
 		FROM inventory AS iv
 		JOIN inventory_search AS ig
 			ON ig.inventory_id = iv.inventory_id
@@ -406,7 +406,7 @@
 		<result property="state_number" column="state_number" />
 		<result property="intervalTop" column="interval_top" />
 		<result property="intervalBottom" column="interval_bottom" />
-		<result property="wkt" column="wkt" />
+		<result property="geojson" column="geojson" />
 
 		<association property="interval_unit" javaType="Unit">
 			<id property="id" column="interval_unit_id" />
@@ -485,7 +485,8 @@
 			<result property="date" column="quality_check_date" />
 			<result property="username" column="quality_username" />
 			<result property="remark" column="quality_remark" />
-			<result property="issues" column="quality_issues" />
+			<result property="issues" column="quality_issues"
+				typeHandler="org.apache.ibatis.type.ArrayTypeHandler" />
 		</collection>
 	</resultMap>
 
