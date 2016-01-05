@@ -155,7 +155,7 @@ function showTab(evt)
 // This makes it so that the feature shows up
 // when the view crosses the dateline.
 function mirroredLayer(data, style){
-	var layer = L.geoJson(data, {
+	var layer = L.geoJson(null, {
 		pointToLayer: function (f, ll) {
 			return L.circleMarker(ll);
 		},
@@ -184,6 +184,8 @@ function mirroredLayer(data, style){
 			}
 		}
 	});
+
+	if(data != null) layer.addData(data);
 	return layer;
 }
 
