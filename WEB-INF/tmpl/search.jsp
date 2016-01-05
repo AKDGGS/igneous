@@ -707,7 +707,7 @@
 			{{#boreholes}}
 			<div>
 				{{#prospect}}
-				Prospect: <a href="prospect/{{ID}}">{{name}}</a><br>
+				<div>Prospect: <a href="prospect/{{ID}}">{{name}}</a></div>
 				{{/prospect}}
 				Borehole: <a href="borehole/{{ID}}">{{name}}</a>
 			</div>
@@ -723,6 +723,13 @@
 				Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
 			</div>
 			{{/outcrops}}
+			{{#shotlines}}
+			<div>
+				Shotline: <a href="shotline/{{ID}}">{{name}}</a>
+				{{#shotlineMax}}<div>Shotpoints: {{shotlineMin}} - {{shotlineMax}}</div>{{/shotlineMax}}
+				{{#project}}<div>Project: {{name}}</div>{{/project}}
+			</div>
+			{{/shotlines}}
 			<ul class="kw">{{#keywords}}<li>{{name}}</li>{{/keywords}}</ul>
 		</script>
 		<script id="tmpl-table" type="x-tmpl-mustache">
@@ -749,7 +756,7 @@
 							{{#boreholes}}
 							<div>
 								{{#prospect}}
-								Prospect: <a href="prospect/{{ID}}">{{name}}</a><br>
+								<div>Prospect: <a href="prospect/{{ID}}">{{name}}</a></div>
 								{{/prospect}}
 								Borehole: <a href="borehole/{{ID}}">{{name}}</a>
 							</div>
@@ -765,6 +772,13 @@
 								Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
 							</div>
 							{{/outcrops}}
+							{{#shotlines}}
+							<div>
+								Shotline: <a href="shotline/{{ID}}">{{name}}</a>
+								{{#shotlineMax}}<div>Shotpoints: {{shotlineMin}} - {{shotlineMax}}</div>{{/shotlineMax}}
+								{{#project}}<div>Project: {{name}}</div>{{/project}}
+							</div>
+							{{/shotlines}}
 						</td>
 						<td>{{sampleNumber}}</td>
 						<td>
