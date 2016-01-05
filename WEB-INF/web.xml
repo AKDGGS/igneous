@@ -409,6 +409,10 @@
 		<url-pattern>/login/</url-pattern>
 	</servlet-mapping>
 
+	<session-config>
+		<session-timeout>-1</session-timeout>
+	</session-config>
+
 	<listener>
 		<listener-class>gov.alaska.dggs.igneous.IgneousFactory</listener-class>
 	</listener>
