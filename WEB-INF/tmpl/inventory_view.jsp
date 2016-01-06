@@ -313,7 +313,7 @@
 						<div class="container">
 							<dl>
 								<dt>Publication Title</dt>
-								<dd><a href="../publication/${publication.ID}">${publication.title}</a></dd>
+								<dd>${publication.title}</dd>
 							</dl>
 							<c:if test="${!empty publication.year}">
 							<dl>
