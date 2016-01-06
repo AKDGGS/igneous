@@ -312,7 +312,7 @@ function init()
 			opacity: 1,
 			weight: 2,
 			radius: 6,
-			fill: true,
+			fill: false,
 			'z-index': 8
 		};
 	});
