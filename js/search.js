@@ -270,6 +270,11 @@ function handlegeojson(ele)
 
 function init()
 {
+	// Disable bfcache (firefox compatibility)
+	if('onunload' in window){
+		window.onunload = function(){};
+	}
+
 	// IE8 fix -- support trim()
 	if(typeof String.prototype.trim !== 'function') {
 		String.prototype.trim = function() {
