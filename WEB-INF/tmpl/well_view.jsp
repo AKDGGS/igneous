@@ -22,6 +22,7 @@
 			#inventory_container { display: none; }
 			#keyword_container a { margin: 2px 0px 0px 2px; }
 			#keyword_container .active { box-shadow: none !important; background-color: transparent !important; }
+			#keywords li { display: block; }
 
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
