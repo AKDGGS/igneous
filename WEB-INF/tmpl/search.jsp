@@ -264,7 +264,7 @@
 				<label for="collection_id">Collection</label>
 				<select id="collection_id" name="collection_id" size="5" multiple="multiple" onchange="search()">
 				{{#collection}}
-					<option value="{{ID}}">{{name}}</option>
+					<option value="{{ID}}">{{name}}{{#organization}} ({{name}}){{/organization}}</option>
 				{{/collection}}
 				</select>
 			</div>
