@@ -218,7 +218,7 @@
 							{{#intervalBottom}}<br>{{intervalBottom}} {{intervalUnit.abbr}}{{/intervalBottom}}
 						</td>
 						<td>
-							<ul class="kw">{{#keywords}}<li>{{name}}</li>{{/keywords}}</ul>
+							<ul class="kw">{{#keywords}}<li>{{alias}}{{^alias}}{{name}}{{/alias}}</li>{{/keywords}}</ul>
 						</td>
 						<td>{{collection.name}}</td>
 						<c:if test="${not empty pageContext.request.userPrincipal}">
@@ -253,7 +253,7 @@
 				<label for="keyword_id">Keywords</label>
 				<select id="keyword_id" name="keyword_id" size="5" multiple="multiple" onchange="search()">
 				{{#keyword}}
-					<option value="{{ID}}">{{name}}</option>
+					<option value="{{ID}}">{{name}}{{#alias}} ({{alias}}){{/alias}}</option>
 				{{/keyword}}
 				</select>
 			</div>
