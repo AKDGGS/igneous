@@ -160,7 +160,7 @@
 					<tr>
 						<th>ID</th>
 						<th>Related</th>
-						<th>Sample</th>
+						<th>Sample /<br>Slide</th>
 						<th>Box /<br>Set</th>
 						<th>Core No /<br>Diameter</th>
 						<th>Top /<br>Bottom</th>
@@ -204,7 +204,10 @@
 							</div>
 							{{/shotlines}}
 						</td>
-						<td>{{sampleNumber}}</td>
+						<td>
+							{{sampleNumber}}
+							{{#slideNumber}}<br>{{slideNumber}}{{/slideNumber}}
+						</td>
 						<td>
 							{{boxNumber}}
 							{{#setNumber}}<br>{{setNumber}}{{/setNumber}}

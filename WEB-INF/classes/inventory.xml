@@ -294,6 +294,7 @@
 			</if>
 			iv.box_number, iv.set_number,
 			iv.core_number, iv.state_number,
+			iv.slide_number,
 			iv.interval_top, iv.interval_bottom,
 			iun.unit_id AS interval_unit_id,
 			iun.name AS interval_unit_name,
@@ -413,6 +414,7 @@
 		<result property="container_path" column="container_path" />
 		<result property="box_number" column="box_number" />
 		<result property="set_number" column="set_number" />
+		<result property="slide_number" column="slide_number" />
 		<result property="core_number" column="core_number" />
 		<result property="state_number" column="state_number" />
 		<result property="intervalTop" column="interval_top" />
