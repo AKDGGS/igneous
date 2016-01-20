@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -40,6 +40,9 @@ public class QualityServlet extends HttpServlet
 		);
 		addReport(reports, "critical", "getMissingMetadataNoBLM",
 			"Inventory without well, borehole, outcrop, shotpoint or publication (excluding BLM)"
+		);
+		addReport(reports, "critical", "getInventoryWithNoKeywords",
+			"Inventory without any assigned keywords"
 		);
 		addReport(reports, "critical", "getSeparatedBarcodes",
 			"Barcodes that span multiple containers (excludes MSLIDEs)"

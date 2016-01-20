@@ -237,11 +237,11 @@
 		</script>
 		<script id="tmpl-advanced" type="x-tmpl-mustache">
 			<div>
-				<label for="keyword_id">Keywords</label>
-				<select id="keyword_id" name="keyword_id" size="5" multiple="multiple" onchange="search()">
-				{{#keyword}}
+				<label for="prospect_id">Prospect</label>
+				<select id="prospect_id" name="prospect_id" size="5" multiple="multiple" onchange="search()">
+				{{#prospect}}
 					<option value="{{ID}}">{{name}}</option>
-				{{/keyword}}
+				{{/prospect}}
 				</select>
 			</div>
 			<div>
@@ -250,19 +250,19 @@
 				Bottom: <input type="text" name="bottom" id="bottom" size="5">
 			</div>
 			<div>
+				<label for="keyword_id">Keywords</label>
+				<select id="keyword_id" name="keyword_id" size="5" multiple="multiple" onchange="search()">
+				{{#keyword}}
+					<option value="{{ID}}">{{name}}</option>
+				{{/keyword}}
+				</select>
+			</div>
+			<div>
 				<label for="collection_id">Collection</label>
 				<select id="collection_id" name="collection_id" size="5" multiple="multiple" onchange="search()">
 				{{#collection}}
 					<option value="{{ID}}">{{name}}</option>
 				{{/collection}}
-				</select>
-			</div>
-			<div>
-				<label for="prospect_id">Prospect</label>
-				<select id="prospect_id" name="prospect_id" size="5" multiple="multiple" onchange="search()">
-				{{#prospect}}
-					<option value="{{ID}}">{{name}}</option>
-				{{/prospect}}
 				</select>
 			</div>
 			<div>

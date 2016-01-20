@@ -227,7 +227,7 @@
 
 	<servlet>
 		<servlet-name>QualityServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.QualityServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.QualityServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -238,7 +238,7 @@
 
 	<servlet>
 		<servlet-name>QualityPageServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.QualityPageServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.page.QualityServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

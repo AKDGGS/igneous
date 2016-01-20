@@ -626,4 +626,27 @@
 		FROM (<include refid="InventoryContainerBarcode" />) AS q
 	</select>
 
+
+	<sql id="InventoryWithNoKeywords">
+		SELECT inventory_id AS id,
+			COALESCE(co.name || ' ', '')  ||
+			COALESCE(c.path_cache, '') AS desc
+		FROM inventory AS i
+		LEFT OUTER JOIN container AS c
+			ON c.container_id = i.container_id
+		LEFT OUTER JOIN collection AS co
+			ON co.collection_id = i.collection_id
+		WHERE inventory_id NOT IN (
+			SELECT DISTINCT inventory_id
+			FROM inventory_keyword
+		)
+	</sql>
+	<select id="getInventoryWithNoKeywords" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="InventoryWithNoKeywords" />
+	</select>
+	<select id="getInventoryWithNoKeywordsCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="InventoryWithNoKeywords" />) AS q
+	</select>
+
 </mapper>
