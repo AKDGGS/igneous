@@ -671,30 +671,56 @@ public class SearchServlet extends HttpServlet
 				out, CsvPreference.EXCEL_PREFERENCE
 			);
 
-			CellProcessor processors[] = new CellProcessor[]{
-				new NotNull(),  // ID
-				new Optional(new StrReplace("(\r\n|\n|\r)", ";")), // Related
-				new Optional(), // Sample
-				new Optional(), // Box
-				new Optional(), // Set
-				new Optional(), // Core Number
-				new Optional(), // Core Diameter
-				new Optional(), // Core Diameter Units
-				new Optional(), // Top
-				new Optional(), // Bottom
-				new Optional(), // Top/Bottom Units
-				new Optional(), // Keywords
-				new Optional(), // Collection
-				new Optional(), // Barcode
-				new Optional()  // Location
-			};
+			CellProcessor processors[] = null;
+			String header[] = null;
 
-			String header[] = new String[]{
-				"id", "Related", "Sample", "Box", "Set", "Core Number",
-				"Core Diameter", "Core Diameter Units", 
-				"Top", "Bottom", "Top/Bottom Units",
-				"Keywords", "Collection", "Barcode", "Location"
-			};
+			if(request.getUserPrincipal() != null){
+				processors = new CellProcessor[]{
+					new NotNull(),  // ID
+					new Optional(new StrReplace("(\r\n|\n|\r)", ";")), // Related
+					new Optional(), // Sample
+					new Optional(), // Box
+					new Optional(), // Set
+					new Optional(), // Core Number
+					new Optional(), // Core Diameter
+					new Optional(), // Core Diameter Units
+					new Optional(), // Top
+					new Optional(), // Bottom
+					new Optional(), // Top/Bottom Units
+					new Optional(), // Keywords
+					new Optional(), // Collection
+					new Optional(), // Barcode
+					new Optional()  // Location
+				};
+				header = new String[]{
+					"id", "Related", "Sample", "Box", "Set", "Core Number",
+					"Core Diameter", "Core Diameter Units", 
+					"Top", "Bottom", "Top/Bottom Units",
+					"Keywords", "Collection", "Barcode", "Location"
+				};
+			} else {
+				processors = new CellProcessor[]{
+					new NotNull(),  // ID
+					new Optional(new StrReplace("(\r\n|\n|\r)", ";")), // Related
+					new Optional(), // Sample
+					new Optional(), // Box
+					new Optional(), // Set
+					new Optional(), // Core Number
+					new Optional(), // Core Diameter
+					new Optional(), // Core Diameter Units
+					new Optional(), // Top
+					new Optional(), // Bottom
+					new Optional(), // Top/Bottom Units
+					new Optional(), // Keywords
+					new Optional()  // Collection
+				};
+				header = new String[]{
+					"id", "Related", "Sample", "Box", "Set", "Core Number",
+					"Core Diameter", "Core Diameter Units", 
+					"Top", "Bottom", "Top/Bottom Units",
+					"Keywords", "Collection"
+				};
+			}
 
 			writer.writeHeader(header);
 
@@ -851,15 +877,17 @@ public class SearchServlet extends HttpServlet
 						row.put("Collection", item.getCollection().getName());
 					}
 
-					// Begin "Barcode"
-					String barcode = item.getBarcode();
-					if(barcode == null) barcode = item.getAltBarcode();
-					if(barcode != null) row.put("Barcode", barcode);
-					// End "Barcode"
+					if(request.getUserPrincipal() != null){
+						// Begin "Barcode"
+						String barcode = item.getBarcode();
+						if(barcode == null) barcode = item.getAltBarcode();
+						if(barcode != null) row.put("Barcode", barcode);
+						// End "Barcode"
 
-					// "Location"
-					if(item.getContainerPath() != null){
-						row.put("Location", item.getContainerPath());
+						// "Location"
+						if(item.getContainerPath() != null){
+							row.put("Location", item.getContainerPath());
+						}
 					}
 
 					writer.write(row, header, processors);
@@ -982,19 +1010,35 @@ public class SearchServlet extends HttpServlet
 
 				NumberFormat nformat = NumberFormat.getInstance();
 
-				Table table = new Table(9);
+				Table table = new Table(
+					request.getUserPrincipal() != null ? 9 : 7
+				);
 				table.setWidth(100); // Table's percentage width
-				table.setWidths(new float[]{ // Cells percentage widths
-					18, // Related
-					10, // Sample
-					7, // Box/Set
-					8, // Core No/Diameter
-					7, // Top/Bottom
-					14, // Keywords
-					9, // Collection
-					13, // Barcode
-					14  // Location
-				});
+
+				if(request.getUserPrincipal() != null){
+					table.setWidths(new float[]{ // Cells percentage widths
+						18,// Related
+						10,// Sample
+						7, // Box/Set
+						8, // Core No/Diameter
+						7, // Top/Bottom
+						14,// Keywords
+						9, // Collection
+						13,// Barcode
+						14 // Location
+					});
+				} else {
+					table.setWidths(new float[]{ // Cells percentage widths
+						18,// Related
+						10,// Sample
+						7, // Box/Set
+						8, // Core No/Diameter
+						7, // Top/Bottom
+						14,// Keywords
+						9  // Collection
+					});
+				}
+
 				table.setBorder(Rectangle.NO_BORDER);
 				table.setPadding(1);
 				table.setSpacing(0);
@@ -1017,8 +1061,10 @@ public class SearchServlet extends HttpServlet
 				table.addCell(new Paragraph(leading, "Top /\nBottom", hfont));
 				table.addCell(new Paragraph(leading, "Keywords", hfont));
 				table.addCell(new Paragraph(leading, "Collection", hfont));
-				table.addCell(new Paragraph(leading, "Barcode", hfont));
-				table.addCell(new Paragraph(leading, "Location", hfont));
+				if(request.getUserPrincipal() != null){
+					table.addCell(new Paragraph(leading, "Barcode", hfont));
+					table.addCell(new Paragraph(leading, "Location", hfont));
+				}
 				table.endHeaders();
 
 				cell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -1203,19 +1249,21 @@ public class SearchServlet extends HttpServlet
 					// End "Collection"
 
 
-					// Begin "Barcode"
-					String barcode = item.getBarcode();
-					if(barcode == null){ barcode = item.getAltBarcode(); }
-					if(barcode == null){ barcode = ""; }
-					table.addCell(new Paragraph(leading, barcode, bfont));
-					// End "Barcode"
+					if(request.getUserPrincipal() != null){
+						// Begin "Barcode"
+						String barcode = item.getBarcode();
+						if(barcode == null){ barcode = item.getAltBarcode(); }
+						if(barcode == null){ barcode = ""; }
+						table.addCell(new Paragraph(leading, barcode, bfont));
+						// End "Barcode"
 
 
-					// Begin "Location"
-					String location = item.getContainerPath();
-					if(location == null){ location = ""; }
-					table.addCell(new Paragraph(leading, location, bfont));
-					// End "Location"
+						// Begin "Location"
+						String location = item.getContainerPath();
+						if(location == null){ location = ""; }
+						table.addCell(new Paragraph(leading, location, bfont));
+						// End "Location"
+					}
 				}
 				doc.add(table);
 			} else {
