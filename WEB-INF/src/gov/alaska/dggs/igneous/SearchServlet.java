@@ -679,6 +679,7 @@ public class SearchServlet extends HttpServlet
 					new NotNull(),  // ID
 					new Optional(new StrReplace("(\r\n|\n|\r)", ";")), // Related
 					new Optional(), // Sample
+					new Optional(), // Slide
 					new Optional(), // Box
 					new Optional(), // Set
 					new Optional(), // Core Number
@@ -693,7 +694,8 @@ public class SearchServlet extends HttpServlet
 					new Optional()  // Location
 				};
 				header = new String[]{
-					"id", "Related", "Sample", "Box", "Set", "Core Number",
+					"id", "Related", "Sample", "Slide",
+					"Box", "Set", "Core Number",
 					"Core Diameter", "Core Diameter Units", 
 					"Top", "Bottom", "Top/Bottom Units",
 					"Keywords", "Collection", "Barcode", "Location"
@@ -703,6 +705,7 @@ public class SearchServlet extends HttpServlet
 					new NotNull(),  // ID
 					new Optional(new StrReplace("(\r\n|\n|\r)", ";")), // Related
 					new Optional(), // Sample
+					new Optional(), // Slide
 					new Optional(), // Box
 					new Optional(), // Set
 					new Optional(), // Core Number
@@ -715,7 +718,8 @@ public class SearchServlet extends HttpServlet
 					new Optional()  // Collection
 				};
 				header = new String[]{
-					"id", "Related", "Sample", "Box", "Set", "Core Number",
+					"id", "Related", "Sample", "Slide", 
+					"Box", "Set", "Core Number",
 					"Core Diameter", "Core Diameter Units", 
 					"Top", "Bottom", "Top/Bottom Units",
 					"Keywords", "Collection"
@@ -811,6 +815,11 @@ public class SearchServlet extends HttpServlet
 					// "Sample"
 					if(item.getSampleNumber() != null){
 						row.put("Sample", item.getSampleNumber());
+					}
+
+					// "Slide"
+					if(item.getSlideNumber() != null){
+						row.put("Slide", item.getSlideNumber());
 					}
 
 					// "Box"
@@ -1018,7 +1027,7 @@ public class SearchServlet extends HttpServlet
 				if(request.getUserPrincipal() != null){
 					table.setWidths(new float[]{ // Cells percentage widths
 						18,// Related
-						10,// Sample
+						10,// Sample/Slide
 						7, // Box/Set
 						8, // Core No/Diameter
 						7, // Top/Bottom
@@ -1030,7 +1039,7 @@ public class SearchServlet extends HttpServlet
 				} else {
 					table.setWidths(new float[]{ // Cells percentage widths
 						18,// Related
-						10,// Sample
+						10,// Sample/Slide
 						7, // Box/Set
 						8, // Core No/Diameter
 						7, // Top/Bottom
@@ -1055,7 +1064,7 @@ public class SearchServlet extends HttpServlet
 				table.setDefaultCell(cell);
 
 				table.addCell(new Paragraph(leading, "Related", hfont));
-				table.addCell(new Paragraph(leading, "Sample", hfont));
+				table.addCell(new Paragraph(leading, "Sample /\nSlide", hfont));
 				table.addCell(new Paragraph(leading, "Box /\nSet", hfont));
 				table.addCell(new Paragraph(leading, "Core No /\nDiameter", hfont));
 				table.addCell(new Paragraph(leading, "Top /\nBottom", hfont));
@@ -1174,6 +1183,10 @@ public class SearchServlet extends HttpServlet
 					StringBuilder sample = new StringBuilder();
 					if(item.getSampleNumber() != null){
 						sample.append(item.getSampleNumber());
+					}
+					if(item.getSlideNumber() != null){
+						sample.append("\n");
+						sample.append(item.getSlideNumber());
 					}
 					table.addCell(new Paragraph(leading, sample.toString(), bfont));
 					// End "Sample"
