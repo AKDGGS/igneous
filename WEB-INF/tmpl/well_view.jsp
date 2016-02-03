@@ -28,6 +28,7 @@
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
 			#map { width: 100%; height: 300px; background-color: black; margin: 0; }
+			#lonlat { display: none; }
 
 			dd a { white-space: nowrap; }
 			dl { display: table; margin: 8px 4px; }
@@ -162,6 +163,10 @@
 							<dd>${well.completionStatus}</dd>
 						</dl>
 						</c:if>
+						<dl id="lonlat">
+							<dt>Lon/Lat</dt>
+							<dd></dt>
+						</dl>
 						<c:if test="${!empty quadrangles}">
 						<dl>
 							<dt>Quadrangle</dt>
@@ -271,6 +276,18 @@
 				var gj_el = document.getElementById('geojson');
 				if(gj_el != null && gj_el.value.length > 0){
 					geojson = JSON.parse(gj_el.value);
+
+					if(geojson['type'] === 'Point'){
+						var ll = document.getElementById('lonlat');
+						if(ll !== null){
+							ll.style.display = 'table';
+							var dd = ll.getElementsByTagName('dd');
+							if(dd.length > 0){
+								dd[0].innerHTML = geojson['coordinates'][0] +
+									', ' + geojson['coordinates'][1];
+							}
+						}
+					}
 				}
 
 				initSimpleMap(geojson, '#2e70ff');

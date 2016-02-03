@@ -150,6 +150,10 @@
 							<td>Sample Number (string)</td>
 						</tr>
 						<tr>
+							<td>slide</td>
+							<td>Slide Number (string)</td>
+						</tr>
+						<tr>
 							<td>core</td>
 							<td>Core Number (string)</td>
 						</tr>

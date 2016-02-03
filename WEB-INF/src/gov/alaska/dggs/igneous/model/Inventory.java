@@ -506,6 +506,12 @@ public class Inventory implements Serializable
 	private String geojson;
 	public String getGeoJSON(){ return geojson; }
 
+	private BigDecimal longitude;
+	public BigDecimal getLongitude(){ return longitude; }
+
+	private BigDecimal latitude;
+	public BigDecimal getLatitude(){ return latitude; }
+
 	private String bin;
 	public String getBin(){ return bin; }
 }

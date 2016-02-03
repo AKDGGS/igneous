@@ -102,6 +102,7 @@ public class SearchServlet extends HttpServlet
 		FIELDS.setProperty("bottom", "numeric");
 
 		FIELDS.setProperty("sample", "simple");
+		FIELDS.setProperty("slide", "simple");
 		FIELDS.setProperty("core", "simple");
 		FIELDS.setProperty("set", "simple");
 		FIELDS.setProperty("box", "simple");
@@ -691,14 +692,17 @@ public class SearchServlet extends HttpServlet
 					new Optional(), // Keywords
 					new Optional(), // Collection
 					new Optional(), // Barcode
-					new Optional()  // Location
+					new Optional(), // Location
+					new Optional(), // Longitude
+					new Optional()  // Latitude
 				};
 				header = new String[]{
 					"id", "Related", "Sample", "Slide",
 					"Box", "Set", "Core Number",
 					"Core Diameter", "Core Diameter Units", 
 					"Top", "Bottom", "Top/Bottom Units",
-					"Keywords", "Collection", "Barcode", "Location"
+					"Keywords", "Collection", "Barcode", "Location",
+					"Longitude", "Latitude"
 				};
 			} else {
 				processors = new CellProcessor[]{
@@ -715,14 +719,17 @@ public class SearchServlet extends HttpServlet
 					new Optional(), // Bottom
 					new Optional(), // Top/Bottom Units
 					new Optional(), // Keywords
-					new Optional()  // Collection
+					new Optional(), // Collection
+					new Optional(), // Longitude
+					new Optional()  // Latitude
 				};
 				header = new String[]{
 					"id", "Related", "Sample", "Slide", 
 					"Box", "Set", "Core Number",
 					"Core Diameter", "Core Diameter Units", 
 					"Top", "Bottom", "Top/Bottom Units",
-					"Keywords", "Collection"
+					"Keywords", "Collection",
+					"Longitude", "Latitude"
 				};
 			}
 
@@ -897,6 +904,16 @@ public class SearchServlet extends HttpServlet
 						if(item.getContainerPath() != null){
 							row.put("Location", item.getContainerPath());
 						}
+					}
+
+					// Latitude
+					if(item.getLatitude() != null){
+						row.put("Latitude", item.getLatitude());
+					}
+
+					// Longitude
+					if(item.getLongitude() != null){
+						row.put("Longitude", item.getLongitude());
 					}
 
 					writer.write(row, header, processors);

@@ -354,7 +354,9 @@
 			qu.issues::text[] AS quality_issues,
 			</if>
 
-			ST_AsGeoJSON(ig.geog, 5, 0) AS geojson
+			ST_AsGeoJSON(ig.geog, 5, 0) AS geojson,
+			longitude,
+			latitude
 		FROM inventory AS iv
 		JOIN inventory_search AS ig
 			ON ig.inventory_id = iv.inventory_id
@@ -420,6 +422,8 @@
 		<result property="intervalTop" column="interval_top" />
 		<result property="intervalBottom" column="interval_bottom" />
 		<result property="geojson" column="geojson" />
+		<result property="longitude" column="longitude" />
+		<result property="latitude" column="latitude" />
 
 		<association property="interval_unit" javaType="Unit">
 			<id property="id" column="interval_unit_id" />
