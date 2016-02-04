@@ -500,7 +500,7 @@
 							<div class="qualityhd">
 								<fmt:formatDate pattern="M/d/yyyy" value="${quality.date}"/>, ${quality.username}
 								<c:if test="${!empty quality.issues}">
-									<c:forEach items="${fn:split(quality.issues, ',')}" var="issue"><span class="tag tag-danger">${fn:toUpperCase(fn:replace(issue, '_', ' '))}</span></c:forEach>
+									<c:forEach items="${quality.issues}" var="issue"><span class="tag tag-danger">${fn:toUpperCase(fn:replace(issue, '_', ' '))}</span></c:forEach>
 								</c:if>
 								<c:if test="${empty quality.issues}"><span class="tag tag-success">GOOD</span></c:if>
 							</div>

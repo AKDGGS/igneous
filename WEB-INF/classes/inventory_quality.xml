@@ -8,7 +8,7 @@
 			check_date,
 			remark,
 			username,
-			array_to_string(issues::text[], ',') AS issues
+			issues::text[] AS issues
 		FROM inventory_quality
 	</sql>
 
@@ -24,9 +24,7 @@
 		<result property="date" column="check_date" />
 		<result property="remark" column="remark" />
 		<result property="username" column="username" />
-		<!--
-		<result property="issues" column="issues" />
-		-->
+		<result property="issues" column="issues" typeHandler="org.apache.ibatis.type.ArrayTypeHandler" />
 	</resultMap>
 
 
@@ -36,7 +34,7 @@
 			issues
 		) VALUES (
 			#{inventory.id}, #{remark}, #{username}, #{date},
-			string_to_array(#{issues}, ',')::issue[]
+			<foreach collection="issues" item="i" open="ARRAY[" separator="," close="]::issue[]">#{i}</foreach>
 		)
 	</insert>
 </mapper>
