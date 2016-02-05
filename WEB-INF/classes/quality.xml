@@ -101,6 +101,50 @@
 	</select>
 
 
+	<sql id="InventoryInvalidBarcode">
+		SELECT inventory_id AS id,
+			('alt_barcode: ' || alt_barcode) AS desc
+		FROM inventory
+		WHERE alt_barcode !~* '^[a-z\-\d+]+$'
+
+		UNION ALL
+
+		SELECT inventory_id AS id,
+			('barcode: ' || barcode) AS desc
+		FROM inventory
+		WHERE barcode !~* '^[a-z\-\d+]+$'
+	</sql>
+	<select id="getInventoryInvalidBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="InventoryInvalidBarcode" />
+	</select>
+	<select id="getInventoryInvalidBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="InventoryInvalidBarcode" />) AS q
+	</select>
+
+
+	<sql id="ContainerInvalidBarcode">
+		SELECT container_id AS id,
+			('alt_barcode: ' || alt_barcode) AS desc
+		FROM container
+		WHERE alt_barcode !~* '^[a-z\-\d+]+$'
+
+		UNION ALL
+
+		SELECT container_id AS id,
+			('barcode: ' || barcode) AS desc
+		FROM container
+		WHERE barcode !~* '^[a-z\-\d+]+$'
+	</sql>
+	<select id="getContainerInvalidBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="ContainerInvalidBarcode" />
+	</select>
+	<select id="getContainerInvalidBarcodeCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="ContainerInvalidBarcode" />) AS q
+	</select>
+
+
 	<sql id="MissingMetadata">
 		SELECT iv.inventory_id AS id, 
 			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
@@ -257,6 +301,23 @@
 	<select id="getAPIBadLengthCount" resultSetType="FORWARD_ONLY" resultType="int">
 		SELECT COUNT(*)
 		FROM (<include refid="APIBadLength" />) AS q
+	</select>
+
+
+	<sql id="APIDuplicate">
+		SELECT api_number AS id,
+			STRING_AGG(well_id::TEXT, ',') AS desc
+		FROM well
+		WHERE api_number IS NOT NULL
+		GROUP BY api_number
+		HAVING COUNT(*) > 1
+	</sql>
+	<select id="getAPIDuplicate" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="APIDuplicate" />
+	</select>
+	<select id="getAPIDuplicateCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="APIDuplicate" />) AS q
 	</select>
 
 
@@ -649,4 +710,63 @@
 		FROM (<include refid="InventoryWithNoKeywords" />) AS q
 	</select>
 
+
+	<sql id="OrphanedPoints">
+		SELECT point_id AS id,
+			description AS desc
+		FROM point
+		WHERE point_id NOT IN (
+			SELECT point_id
+			FROM borehole_point
+		) AND point_id NOT IN (
+			SELECT point_id
+			FROM outcrop_point
+		) AND point_id NOT IN (
+			SELECT point_id
+			FROM shotpoint_point
+		) AND point_id NOT IN (
+			SELECT point_id
+			FROM well_point
+		)
+	</sql>
+	<select id="getOrphanedPoints" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="OrphanedPoints" />
+	</select>
+	<select id="getOrphanedPointsCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OrphanedPoints" />) AS q
+	</select>
+
+
+	<sql id="OrphanedNotes">
+		SELECT note_id AS id,
+			(username || ', ' || note_date) AS desc
+		FROM note
+		WHERE note_id NOT IN (
+			SELECT note_id
+			FROM borehole_note
+		) AND note_id NOT IN (
+			SELECT note_id
+			FROM inventory_note
+		) AND note_id NOT IN (
+			SELECT note_id
+			FROM outcrop_note
+		) AND note_id NOT IN (
+			SELECT note_id
+			FROM publication_note
+		) AND note_id NOT IN (
+			SELECT note_id
+			FROM shotline_note
+		) AND note_id NOT IN (
+			SELECT note_id
+			FROM well_note
+		)
+	</sql>
+	<select id="getOrphanedNotes" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="OrphanedNotes" />
+	</select>
+	<select id="getOrphanedNotesCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OrphanedNotes" />) AS q
+	</select>
 </mapper>

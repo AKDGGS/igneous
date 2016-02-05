@@ -56,6 +56,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "critical", "getAPIBadLength",
 			"Wells with an API number that is not exactly 14 characters"
 		);
+		addReport(reports, "critical", "getAPIDuplicate",
+			"Wells that share the same API number"
+		);
 		addReport(reports, "critical", "getMissingBarcode",
 			"Inventory has no barcode or alternate barcode"
 		);
@@ -116,8 +119,20 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getEmptyContainerBarcode",
 			"Container barcodes that are blank but not null"
 		);
+		addReport(reports, "warning", "getInventoryInvalidBarcode",
+			"Inventory with barcodes that contain invalid characters"
+		);
+		addReport(reports, "warning", "getContainerInvalidBarcode",
+			"Containers with barcodes that contain invalid characters"
+		);
 		addReport(reports, "warning", "getInventoryContainerBarcode",
 			"Duplicate barcodes between container and inventory"
+		);
+		addReport(reports, "warning", "getOrphanedPoints",
+			"Points not referenced in other tables"
+		);
+		addReport(reports, "warning", "getOrphanedNotes",
+			"Notes not referenced in other tables"
 		);
 	}
 
