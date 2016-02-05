@@ -67,6 +67,10 @@
 				<div id="controls">
 					<input type="hidden" name="start" id="start" value="0" />
 					<div>
+						<button id="btn-reset">Reset</button>
+
+						<span class="spacer">|</span>
+
 						<label for="max">Showing</label>
 						<select name="max" id="max">
 							<option value="10">10</option>

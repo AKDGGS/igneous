@@ -575,5 +575,10 @@ function init()
 		dirs[i].onchange = search;
 	}
 
+	document.getElementById('btn-reset').onclick = function(){
+		window.location.hash = '';
+		window.location.reload(false);
+	}
+
 	document.getElementById('q').focus();
 }
