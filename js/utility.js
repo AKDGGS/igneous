@@ -241,6 +241,9 @@ function initSimpleMap(geojson, featureColor)
 		)
 	};
 
+	var map_el = document.getElementById('map');
+	if(map_el != null) map_el.style.display = 'block';
+
 	var map = L.map('map', {
 		attributionControl: false,
 		zoomControl: false,

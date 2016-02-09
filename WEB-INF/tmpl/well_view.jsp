@@ -27,7 +27,7 @@
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
-			#map { width: 100%; height: 300px; background-color: black; margin: 0; }
+			#map { width: 100%; height: 300px; display: none; background-color: black; margin: 0; }
 			#lonlat { display: none; }
 
 			dd a { white-space: nowrap; }
@@ -288,9 +288,8 @@
 							}
 						}
 					}
+					initSimpleMap(geojson, '#2e70ff');
 				}
-
-				initSimpleMap(geojson, '#2e70ff');
 			}
 		</script>
 	</body>

@@ -24,7 +24,7 @@
 			.half-left { width: 50%; }
 			.half-right { width: 50%; float: right; margin: 0px 0px 0px auto; }
 
-			#map { width: 100%; height: 300px; background-color: black; margin: 0px; }
+			#map { width: 100%; height: 300px; display: none; background-color: black; margin: 0px; }
 
 			dd a { white-space: nowrap; }
 			dl { display: table; margin: 8px 4px; }
@@ -37,7 +37,7 @@
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 		</style>
 	</head>
-	<body>
+	<body onload="init()">
 		<div class="apptmpl-container">
 			<div class="apptmpl-goldbar">
 				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
@@ -211,9 +211,8 @@
 				var gj_el = document.getElementById('geojson');
 				if(gj_el != null && gj_el.value.length > 0){
 					geojson = JSON.parse(gj_el.value);
+					initSimpleMap(geojson, '#ed2939');
 				}
-
-				initSimpleMap(geojson, '#ed2939');
 			}
 		</script>
 	</body>
