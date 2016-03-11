@@ -222,11 +222,13 @@
 						<dd>${inventory.remark}</dd>
 					</dl>
 					</c:if>
+					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<c:if test="${!empty inventory.tray}">
 					<dl>
 						<dt>Tray</dt>
 						<dd>${inventory.tray}</dd>
 					</dl>
+					</c:if>
 					</c:if>
 					<c:if test="${!empty inventory.weight}">
 					<dl>
