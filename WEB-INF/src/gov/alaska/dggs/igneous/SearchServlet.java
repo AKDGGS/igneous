@@ -597,6 +597,10 @@ public class SearchServlet extends HttpServlet
 					filter.put("list", list);
 					// If the user is authenticated, let the query know
 					filter.put("authenticated", (request.getUserPrincipal() != null));
+					// Toggle the expanded query, if it's CSV
+					if(request.getServletPath().endsWith("csv")){ 
+						filter.put("expand", true);
+					}
 
 					List<Inventory> items = sess.selectList(
 						"gov.alaska.dggs.igneous.Inventory.getSearchResults", filter
@@ -694,7 +698,10 @@ public class SearchServlet extends HttpServlet
 					new Optional(), // Barcode
 					new Optional(), // Location
 					new Optional(), // Longitude
-					new Optional()  // Latitude
+					new Optional(), // Latitude
+					new Optional(), // Datum
+					new Optional(), // Description
+					new Optional()  // Remarks
 				};
 				header = new String[]{
 					"id", "Related", "Sample", "Slide",
@@ -702,7 +709,8 @@ public class SearchServlet extends HttpServlet
 					"Core Diameter", "Core Diameter Units", 
 					"Top", "Bottom", "Top/Bottom Units",
 					"Keywords", "Collection", "Barcode", "Location",
-					"Longitude", "Latitude"
+					"Longitude", "Latitude",
+					"Datum", "Description", "Remarks"
 				};
 			} else {
 				processors = new CellProcessor[]{
@@ -721,7 +729,10 @@ public class SearchServlet extends HttpServlet
 					new Optional(), // Keywords
 					new Optional(), // Collection
 					new Optional(), // Longitude
-					new Optional()  // Latitude
+					new Optional(), // Latitude
+					new Optional(), // Datum
+					new Optional(), // Description
+					new Optional()  // Remarks
 				};
 				header = new String[]{
 					"id", "Related", "Sample", "Slide", 
@@ -729,7 +740,8 @@ public class SearchServlet extends HttpServlet
 					"Core Diameter", "Core Diameter Units", 
 					"Top", "Bottom", "Top/Bottom Units",
 					"Keywords", "Collection",
-					"Longitude", "Latitude"
+					"Longitude", "Latitude",
+					"Datum", "Description", "Remarks"
 				};
 			}
 
@@ -914,6 +926,21 @@ public class SearchServlet extends HttpServlet
 					// Longitude
 					if(item.getLongitude() != null){
 						row.put("Longitude", item.getLongitude());
+					}
+
+					// Datum
+					if(item.getLongitude() != null || item.getLatitude() != null){
+						row.put("Datum", "WGS84");
+					}
+
+					// Description
+					if(item.getDescription() != null){
+						row.put("Description", item.getDescription());
+					}
+
+					// Remarks
+					if(item.getRemark() != null){
+						row.put("Remarks", item.getRemark());
 					}
 
 					writer.write(row, header, processors);

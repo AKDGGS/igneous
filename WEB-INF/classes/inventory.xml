@@ -345,6 +345,10 @@
 			kw.name AS keyword_name,
 			kw.alias AS keyword_alias,
 
+			<if test="expand == true">
+			iv.description,
+			iv.remark,
+			</if>
 
 			<if test="authenticated == true">
 			qu.inventory_quality_id,
@@ -411,6 +415,8 @@
 	<resultMap id="SearchMap" type="Inventory">
 		<id property="id" column="inventory_id" />
 		<result property="sample_number" column="sample_number" />
+		<result property="description" column="description" />
+		<result property="remark" column="remark" />
 		<result property="barcode" column="barcode" />
 		<result property="alt_barcode" column="alt_barcode" />
 		<result property="container_path" column="container_path" />
