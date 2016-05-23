@@ -610,6 +610,17 @@ public class SearchServlet extends HttpServlet
 			}
 
 			if(isjson){
+				StringBuilder pm = new StringBuilder();
+				for(Map.Entry<String,String[]> entry : request.getParameterMap().entrySet()){
+					for(String value : entry.getValue()){
+						if(pm.length() > 0) pm.append("&");
+						pm.append(entry.getKey() + "=" + value);
+					}
+				}
+				System.out.println(
+					"igneous - " + request.getRemoteAddr() +
+					" - " + pm.toString()
+				);
 				respondJSON(request, response, json);
 			} else if(request.getServletPath().endsWith("csv")){ 
 				respondCSV(request, response, json);
