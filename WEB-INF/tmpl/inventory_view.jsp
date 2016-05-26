@@ -28,7 +28,9 @@
 			#stash-dd table th, #stash-dd table td { border: 1px solid #bbb; padding: 4px 8px; }
 			#stash-dd table tr:nth-child(odd){ background-color: #eee; }
 
-			#filelist a { display: inline-block; text-align: center; font-size: 12px; width: 52px; }
+			#filelist { display: flex; flex-wrap: wrap; }
+			#filelist a { display: inline-block; margin: 4px; 8px; flex-basis: 75px; text-align: center; font-size: 12px; }
+			#filelist a img { border: none; }
 
 			.nav-tabs > li > a { padding: 8px 16px; }
 		</style>
