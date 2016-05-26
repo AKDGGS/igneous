@@ -27,6 +27,10 @@
 			#stash-dd table th { text-align: left; }
 			#stash-dd table th, #stash-dd table td { border: 1px solid #bbb; padding: 4px 8px; }
 			#stash-dd table tr:nth-child(odd){ background-color: #eee; }
+
+			#filelist a { display: inline-block; text-align: center; font-size: 12px; width: 52px; }
+
+			.nav-tabs > li > a { padding: 8px 16px; }
 		</style>
 	</head>
 	<body onload="init()">
@@ -303,10 +307,11 @@
 					<ul id="tabs" class="nav nav-tabs" style="width: 100%">
 						<li class="active"><a href="#related">Related <span class="badge">${fn:length(inventory.wells) + fn:length(inventory.outcrops) + fn:length(inventory.boreholes) + fn:length(inventory.shotlines) + fn:length(inventory.publications)}</span></a></li>
 						<li><a href="#urls">URLs <span class="badge">${fn:length(inventory.URLs)}</span></a></li>
+						<li><a href="#files">Files <span class="badge">${fn:length(inventory.files)}</span></a></li>
 						<c:if test="${not empty pageContext.request.userPrincipal}">
 						<li><a href="#notes">Notes <span class="badge">${fn:length(inventory.notes)}</span></a></li>
-						<li><a href="#qualities">Quality Checks <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
-						<li><a href="#containerlog">Move Log <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
+						<li><a href="#qualities">QA <span class="badge">${fn:length(inventory.qualities)}</span></a></li>
+						<li><a href="#containerlog">Tracking <span class="badge">${fn:length(inventory.containerLog)}</span></a></li>
 						</c:if>
 					</ul>
 
@@ -484,6 +489,43 @@
 							</dl>
 						</div>
 						</c:forEach>
+					</div>
+
+					<div id="tab-files" class="hidden">
+						<div id="filelist">
+						<c:forEach items="${inventory.files}" var="file">
+							<a href="../file/${file.ID}" title="${empty file.description ? file.filename : file.description} (${file.sizeString})">
+								<img src="../img/icons/${file.simpleType}.png"><br>${file.filename}
+							</a>
+						</c:forEach>
+						</div>
+
+						<c:if test="${pageContext.request.isUserInRole('edit')}">
+						<form action="../upload" method="POST" enctype="multipart/form-data">
+							<input type="hidden" name="inventory_id" value="${inventory.ID}">
+							<fieldset id="uploadcontainer">
+								<legend>Upload File(s)</legend>
+
+								<table>
+									<tr>
+										<td>Description:</td>
+										<td style="text-align: right">
+											<input type="text" name="description" size="35">
+										</td>
+									</tr>
+									<tr>
+										<td>
+											Select files:
+										</td>
+										<td style="text-align: right">
+											<input type="file" id="fileselect" name="files" multiple="multiple">
+											<input type="submit" id="filesubmit" value="Upload">
+										</td>
+									</tr>
+								</table>
+							</fieldset>
+						</form>
+						</c:if>
 					</div>
 
 					<c:if test="${not empty pageContext.request.userPrincipal}">

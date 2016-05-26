@@ -389,6 +389,18 @@
 		<url-pattern>/import.html</url-pattern>
 	</servlet-mapping>
 
+
+	<servlet>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.FileUploadServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<url-pattern>/upload</url-pattern>
+	</servlet-mapping>
+
+
 	<servlet>
 		<servlet-name>LogoutServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.LogoutServlet</servlet-class>
@@ -398,6 +410,7 @@
 		<servlet-name>LogoutServlet</servlet-name>
 		<url-pattern>/logout/</url-pattern>
 	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>LoginRedirectServlet</servlet-name>
@@ -409,8 +422,9 @@
 		<url-pattern>/login/</url-pattern>
 	</servlet-mapping>
 
+
 	<session-config>
-		<session-timeout>-1</session-timeout>
+		<session-timeout>1440</session-timeout>
 	</session-config>
 
 	<listener>
@@ -468,19 +482,6 @@
 		<web-resource-collection>
 			<web-resource-name>Stash</web-resource-name>
 			<url-pattern>/stash.json</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>view</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
-
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Files</web-resource-name>
-			<url-pattern>/file/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>view</role-name>
@@ -562,6 +563,19 @@
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>admin</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>uploader</web-resource-name>
+			<url-pattern>/upload</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>edit</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
