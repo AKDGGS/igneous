@@ -501,6 +501,8 @@
 						</div>
 
 						<c:if test="${pageContext.request.isUserInRole('edit')}">
+						<br>
+
 						<form action="../upload" method="POST" enctype="multipart/form-data">
 							<input type="hidden" name="inventory_id" value="${inventory.ID}">
 							<fieldset id="uploadcontainer">
