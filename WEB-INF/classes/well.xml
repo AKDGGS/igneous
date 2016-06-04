@@ -63,6 +63,8 @@
 			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByWellID" />
 		<collection property="urls" column="well_id"
 			ofType="URL" select="gov.alaska.dggs.igneous.URL.getByWellID" />
+		<collection property="files" column="well_id"
+			ofType="File" select="gov.alaska.dggs.igneous.File.getByWellID" />
 	</resultMap>
 
 

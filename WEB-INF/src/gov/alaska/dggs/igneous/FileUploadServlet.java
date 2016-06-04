@@ -72,6 +72,11 @@ public class FileUploadServlet extends HttpServlet
 							id = Integer.valueOf(item.getString());
 							op = "inventory";
 						break;
+
+						case "well_id":
+							id = Integer.valueOf(item.getString());
+							op = "well";
+						break;
 					}
 				}
 			}
