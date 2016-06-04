@@ -90,56 +90,56 @@ public class FileUploadServlet extends HttpServlet
 			try {
 				ps = conn.prepareStatement(
 					"INSERT INTO file (" +
-						"description, mimetype, size, filename, content" +
+						"description, mimetype, size, filename, " +
+						"content, content_md5" +
 					") VALUES (" +
-						"?, ?, ?, ?, ?" +
-					") ON CONFLICT DO NOTHING",
+						"?, ?, ?, ?, ?, ?" +
+					")",
 					new String[]{"file_id"}	
 				);
 
 				// Second pass, insert files
 				for(FileItem item : items){
 					if(!item.isFormField()){
-						ps.clearParameters();
+						String hash = ETagUtil.md5(item.get());
+						Integer file_id = getFileIDByMD5(conn, hash);
 
-						if(description == null){
-							ps.setNull(1, Types.VARCHAR);
-						} else {
-							ps.setString(1, description);
-						}
+						if(file_id == null){
+							ps.clearParameters();
 
-						if(item.getContentType() == null){
-							ps.setNull(2, Types.VARCHAR);
-						} else {
-							ps.setString(2, item.getContentType());
-						}
-
-						ps.setInt(3, (int)item.getSize());
-						ps.setString(4, item.getName());
-						ps.setBytes(5, item.get());
-
-						ps.execute();
-
-						ResultSet rs = ps.getGeneratedKeys();
-						try {
-							Integer file_id = null;
-							if(rs.next()){
-								file_id = rs.getInt(1);
+							if(description == null){
+								ps.setNull(1, Types.VARCHAR);
 							} else {
-								file_id = getFileIDByMD5(
-									conn, ETagUtil.md5(item.get())
-								);
+								ps.setString(1, description);
 							}
 
-							if(file_id == null){
-								throw new Exception("Cannot acquire file_id");
+							if(item.getContentType() == null){
+								ps.setNull(2, Types.VARCHAR);
+							} else {
+								ps.setString(2, item.getContentType());
 							}
 
-							insertLink(conn, op, id, file_id);
-						} finally {
-							try { rs.close(); }
-							catch(Exception exe){ }
+							ps.setInt(3, (int)item.getSize());
+							ps.setString(4, item.getName());
+							ps.setBytes(5, item.get());
+							ps.setString(6, hash);
+
+							ps.execute();
+
+							ResultSet rs = ps.getGeneratedKeys();
+							try {
+								if(rs.next()) file_id = rs.getInt(1);
+							} finally {
+								try { rs.close(); }
+								catch(Exception exe){ }
+							}
 						}
+
+						if(file_id == null){
+							throw new Exception("Cannot acquire file_id");
+						}
+
+						insertLink(conn, op, id, file_id);
 					}
 				}
 
