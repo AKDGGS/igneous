@@ -25,6 +25,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
+import gov.alaska.dggs.ETagUtil;
 
 
 public class FileUploadServlet extends HttpServlet
@@ -92,7 +93,7 @@ public class FileUploadServlet extends HttpServlet
 						"description, mimetype, size, filename, content" +
 					") VALUES (" +
 						"?, ?, ?, ?, ?" +
-					")",
+					") ON CONFLICT DO NOTHING",
 					new String[]{"file_id"}	
 				);
 
@@ -121,11 +122,20 @@ public class FileUploadServlet extends HttpServlet
 
 						ResultSet rs = ps.getGeneratedKeys();
 						try {
-							if(!rs.next()){
-								throw new Exception("Cannot acquire generated ID");
+							Integer file_id = null;
+							if(rs.next()){
+								file_id = rs.getInt(1);
+							} else {
+								file_id = getFileIDByMD5(
+									conn, ETagUtil.md5(item.get())
+								);
 							}
 
-							insertLink(conn, op, id, rs.getInt(1));
+							if(file_id == null){
+								throw new Exception("Cannot acquire file_id");
+							}
+
+							insertLink(conn, op, id, file_id);
 						} finally {
 							try { rs.close(); }
 							catch(Exception exe){ }
@@ -172,5 +182,28 @@ public class FileUploadServlet extends HttpServlet
 			try { ps.close(); }
 			catch(Exception exe){ }
 		}
+	}
+
+	private Integer getFileIDByMD5(Connection conn, String hash) throws Exception
+	{
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement(
+				"SELECT file_id FROM file " +
+				"WHERE content_md5 = ?"
+			);
+			ps.setString(1, hash);
+			rs = ps.executeQuery();
+			if(rs.next()) return rs.getInt(1);
+			return null;
+		} finally {
+			try { rs.close(); }
+			catch(Exception exe){ }
+
+			try { ps.close(); }
+			catch(Exception exe){ }
+		}
+
 	}
 }

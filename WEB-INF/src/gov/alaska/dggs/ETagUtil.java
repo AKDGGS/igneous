@@ -12,6 +12,12 @@ public class ETagUtil {
 
 	public static String tag(byte[] input)
 	{
+		return md5(input);
+	}
+
+
+	public static String md5(byte[] input)
+	{
 		StringBuilder sb = new StringBuilder(16);
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
