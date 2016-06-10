@@ -1,9 +1,13 @@
-<!DOCTYPE html>
+<%@
+	page trimDirectiveWhitespaces="true"
+%><%@
+	taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
+%><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center</title>
 		<meta charset="utf-8">
-		<meta http-equiv="x-ua-compatible" content="IE=edge" >
+		<meta http-equiv="x-ua-compatible" content="IE=edge">
 		<link rel="stylesheet" href="css/apptmpl.min.css">
 		<style>
 			h2 { margin: 0; }
