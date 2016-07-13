@@ -87,6 +87,8 @@
 			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByBoreholeID" />
 		<collection property="urls" column="borehole_id"
 			ofType="URL" select="gov.alaska.dggs.igneous.URL.getByBoreholeID" />
+		<collection property="files" column="borehole_id"
+			ofType="File" select="gov.alaska.dggs.igneous.File.getByBoreholeID" />
 	</resultMap>
 
 

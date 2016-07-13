@@ -73,7 +73,6 @@
 			</div>
 
 			<div class="apptmpl-content">
-
 				<div class="half-right">
 					<div id="map"></div>
 				</div>

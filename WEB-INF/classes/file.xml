@@ -41,6 +41,17 @@
 	</select>
 
 
+	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="FileMap">
+		<include refid="getBy" />
+		FROM borehole_file AS bf
+		JOIN file AS f
+			ON f.file_id = bf.file_id
+		LEFT OUTER JOIN file_type AS ft
+			ON ft.file_type_id = f.file_type_id
+		WHERE bf.borehole_id = #{borehole_id}
+	</select>
+
+
 	<resultMap id="FileMap" type="File">
 		<id property="id" column="file_id" />
 		<result property="description" column="description" />

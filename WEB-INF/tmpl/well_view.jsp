@@ -83,104 +83,102 @@
 			</div>
 
 			<div class="apptmpl-content">
-				<div class="container">
-					<div class="half-right">
-						<div id="map"></div>
-					</div>
-					
-					<input type="hidden" name="geojson" id="geojson" value="${fn:escapeXml(geojson)}">
-					
-					<div class="half-left">
-						<dl>
-							<dt>Name</dt>
-							<dd>${well.name}</dd>
-						</dl>
-						<c:if test="${!empty well.altNames}">
-						<dl>
-							<dt>Alternative Name(s)</dt>
-							<dd>${well.altNames}</dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.wellNumber}">
-						<dl>
-							<dt>Well Number</dt>
-							<dd>${well.wellNumber}</dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.APINumber}">
-						<dl>
-							<dt>API Number</dt>
-							<dd><a href="../search#q=api:${fn:escapeXml(well.APINumber)}">${well.APINumber}</a></dd>
-						</dl>
-						</c:if>
-						<dl>
-							<dt>Onshore</dt>
-							<dd><span title="${well.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${well.onshore ? 'ok' : 'remove'}"></span></dd>
-						</dl>
-						<dl>
-							<dt>Federal</dt>
-							<dd><span title="${well.federal ? 'true' : 'false'}" class="glyphicon glyphicon-${well.federal ? 'ok' : 'remove'}"></span></dd>
-						</dl>
-						<c:if test="${!empty well.spudDate}">
-						<dl>
-							<dt>Spud Date</dt>
-							<dd><fmt:formatDate pattern="M/d/yyyy" value="${well.spudDate}"/></dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.completionDate}">
-						<dl>
-							<dt>Completion Date</dt>
-							<dd><fmt:formatDate pattern="M/d/yyyy" value="${well.completionDate}"/></dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.measuredDepth}">
-						<dl>
-							<dt>Measured Depth</dt>
-							<dd><fmt:formatNumber value="${well.measuredDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.verticalDepth}">
-						<dl>
-							<dt>Vertical Depth</dt>
-							<dd><fmt:formatNumber value="${well.verticalDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.elevation}">
-						<dl>
-							<dt>Elevation</dt>
-							<dd><fmt:formatNumber value="${well.elevation}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.elevationKB}">
-						<dl>
-							<dt>Kelly Bushing Elevation</dt>
-							<dd><fmt:formatNumber value="${well.elevationKB}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.permitStatus}">
-						<dl>
-							<dt>Permit Status</dt>
-							<dd>${well.permitStatus}</dd>
-						</dl>
-						</c:if>
-						<c:if test="${!empty well.completionStatus}">
-						<dl>
-							<dt>Completion Status</dt>
-							<dd>${well.completionStatus}</dd>
-						</dl>
-						</c:if>
-						<dl id="lonlat">
-							<dt>Lon/Lat</dt>
-							<dd></dt>
-						</dl>
-						<c:if test="${!empty quadrangles}">
-						<dl>
-							<dt>Quadrangle</dt>
-							<dd><c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">${stat.count gt 1 ? ", " : ""}<a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a></c:forEach>
-							</dd>
-						</dl>
-						</c:if>
-					</div>
+				<div class="half-right">
+					<div id="map"></div>
+				</div>
+				
+				<input type="hidden" name="geojson" id="geojson" value="${fn:escapeXml(geojson)}">
+				
+				<div class="half-left">
+					<dl>
+						<dt>Name</dt>
+						<dd>${well.name}</dd>
+					</dl>
+					<c:if test="${!empty well.altNames}">
+					<dl>
+						<dt>Alternative Name(s)</dt>
+						<dd>${well.altNames}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.wellNumber}">
+					<dl>
+						<dt>Well Number</dt>
+						<dd>${well.wellNumber}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.APINumber}">
+					<dl>
+						<dt>API Number</dt>
+						<dd><a href="../search#q=api:${fn:escapeXml(well.APINumber)}">${well.APINumber}</a></dd>
+					</dl>
+					</c:if>
+					<dl>
+						<dt>Onshore</dt>
+						<dd><span title="${well.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${well.onshore ? 'ok' : 'remove'}"></span></dd>
+					</dl>
+					<dl>
+						<dt>Federal</dt>
+						<dd><span title="${well.federal ? 'true' : 'false'}" class="glyphicon glyphicon-${well.federal ? 'ok' : 'remove'}"></span></dd>
+					</dl>
+					<c:if test="${!empty well.spudDate}">
+					<dl>
+						<dt>Spud Date</dt>
+						<dd><fmt:formatDate pattern="M/d/yyyy" value="${well.spudDate}"/></dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.completionDate}">
+					<dl>
+						<dt>Completion Date</dt>
+						<dd><fmt:formatDate pattern="M/d/yyyy" value="${well.completionDate}"/></dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.measuredDepth}">
+					<dl>
+						<dt>Measured Depth</dt>
+						<dd><fmt:formatNumber value="${well.measuredDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.verticalDepth}">
+					<dl>
+						<dt>Vertical Depth</dt>
+						<dd><fmt:formatNumber value="${well.verticalDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.elevation}">
+					<dl>
+						<dt>Elevation</dt>
+						<dd><fmt:formatNumber value="${well.elevation}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.elevationKB}">
+					<dl>
+						<dt>Kelly Bushing Elevation</dt>
+						<dd><fmt:formatNumber value="${well.elevationKB}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.permitStatus}">
+					<dl>
+						<dt>Permit Status</dt>
+						<dd>${well.permitStatus}</dd>
+					</dl>
+					</c:if>
+					<c:if test="${!empty well.completionStatus}">
+					<dl>
+						<dt>Completion Status</dt>
+						<dd>${well.completionStatus}</dd>
+					</dl>
+					</c:if>
+					<dl id="lonlat">
+						<dt>Lon/Lat</dt>
+						<dd></dt>
+					</dl>
+					<c:if test="${!empty quadrangles}">
+					<dl>
+						<dt>Quadrangle</dt>
+						<dd><c:forEach items="${quadrangles}" var="quadrangle" varStatus="stat">${stat.count gt 1 ? ", " : ""}<a href="../search#quadrangle_id=${quadrangle.ID}">${quadrangle.name}</a></c:forEach>
+						</dd>
+					</dl>
+					</c:if>
 				</div>
 
 				<div style="clear:both"></div>

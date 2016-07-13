@@ -52,4 +52,7 @@ public class Borehole implements Serializable
 
 	private List<URL> urls;
 	public List<URL> getURLs(){ return urls; }
+
+	private List<File> files;
+	public List<File> getFiles(){ return files; }
 }
