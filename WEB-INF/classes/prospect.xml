@@ -23,6 +23,9 @@
 		<result property="name" column="name" />
 		<result property="alt_names" column="alt_names" />
 		<result property="ardf" column="ardf_number" />
+
+		<collection property="files" column="prospect_id"
+			ofType="File" select="gov.alaska.dggs.igneous.File.getByProspectID" />
 	</resultMap>
 
 

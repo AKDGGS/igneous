@@ -35,6 +35,12 @@
 			pre { margin: 0px; }
 			.notehd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
+
+			#filelist { display: flex; flex-wrap: wrap; }
+			#filelist a { display: inline-block; margin: 4px; 8px; flex-basis: 75px; text-align: center; font-size: 12px; }
+			#filelist a img { border: none; }
+
+			.nav-tabs > li > a { padding: 8px 16px; }
 		</style>
 	</head>
 	<body onload="init()">
@@ -123,9 +129,7 @@
 
 				<ul id="tabs" class="nav nav-tabs" style="width: 100%; margin-top: 15px">
 					<li class="active"><a href="#inventory">Inventory <span class="badge">${inventory_count}</span></a></li>
-					<c:if test="${not empty pageContext.request.userPrincipal}">
-					<li><a href="#files">Files</a></li>
-					</c:if>
+					<li><a href="#files">Files <span class="badge">${fn:length(prospect.files)}</span></a></li>
 				</ul>
 
 				<div id="tab-inventory">
@@ -145,9 +149,45 @@
 					</div>
 				</div>
 
-				<c:if test="${not empty pageContext.request.userPrincipal}">
-				<div id="tab-files" class="hidden"></div>
-				</c:if>
+				<div id="tab-files" class="hidden">
+					<div id="filelist">
+					<c:forEach items="${prospect.files}" var="file">
+						<a href="../file/${file.ID}" title="${empty file.description ? file.filename : file.description} (${file.sizeString})">
+							<img src="../img/icons/${file.simpleType}.png"><br>${file.filename}
+						</a>
+					</c:forEach>
+					</div>
+
+					<c:if test="${pageContext.request.isUserInRole('edit')}">
+					<br>
+
+					<form action="../upload" method="POST" enctype="multipart/form-data">
+						<input type="hidden" name="prospect_id" value="${prospect.ID}">
+						<fieldset id="uploadcontainer">
+							<legend>Upload File(s)</legend>
+
+							<table>
+								<tr>
+									<td>Description:</td>
+									<td style="text-align: right">
+										<input type="text" name="description" size="35">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										Select files:
+									</td>
+									<td style="text-align: right">
+										<input type="file" id="fileselect" name="files" multiple="multiple">
+										<input type="submit" id="filesubmit" value="Upload">
+									</td>
+								</tr>
+							</table>
+						</fieldset>
+					</form>
+					</c:if>
+				</div>
+
 			</div>
 		</div>
 		<script src="../leaflet/leaflet.js"></script>

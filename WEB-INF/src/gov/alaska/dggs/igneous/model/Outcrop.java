@@ -30,4 +30,7 @@ public class Outcrop implements Serializable
 
 	private List<Organization> organizations;
 	public List<Organization> getOrganizations(){ return organizations; }
+
+	private List<File> files;
+	public List<File> getFiles(){ return files; }
 }

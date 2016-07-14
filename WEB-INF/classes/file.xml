@@ -52,6 +52,28 @@
 	</select>
 
 
+	<select id="getByOutcropID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="FileMap">
+		<include refid="getBy" />
+		FROM outcrop_file AS of
+		JOIN file AS f
+			ON f.file_id = of.file_id
+		LEFT OUTER JOIN file_type AS ft
+			ON ft.file_type_id = f.file_type_id
+		WHERE of.outcrop_id = #{outcrop_id}
+	</select>
+
+
+	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="FileMap">
+		<include refid="getBy" />
+		FROM prospect_file AS pf
+		JOIN file AS f
+			ON f.file_id = pf.file_id
+		LEFT OUTER JOIN file_type AS ft
+			ON ft.file_type_id = f.file_type_id
+		WHERE pf.prospect_id = #{prospect_id}
+	</select>
+
+
 	<resultMap id="FileMap" type="File">
 		<id property="id" column="file_id" />
 		<result property="description" column="description" />

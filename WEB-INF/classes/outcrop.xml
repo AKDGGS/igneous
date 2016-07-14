@@ -35,6 +35,8 @@
 			ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByOutcropID" />
 		<collection property="notes" column="outcrop_id"
 			ofType="Note" select="gov.alaska.dggs.igneous.Note.getByOutcropID" />
+		<collection property="files" column="outcrop_id"
+			ofType="File" select="gov.alaska.dggs.igneous.File.getByOutcropID" />
 	</resultMap>
 
 

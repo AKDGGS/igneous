@@ -1,6 +1,7 @@
 package gov.alaska.dggs.igneous.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 public class Prospect implements Serializable
@@ -18,4 +19,7 @@ public class Prospect implements Serializable
 
 	private String ardf;
 	public String getARDF(){ return ardf; }
+
+	private List<File> files;
+	public List<File> getFiles(){ return files; }
 }
