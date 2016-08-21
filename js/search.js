@@ -336,32 +336,44 @@ function init()
 			'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 			{ minZoom: 3, maxZoom: 19, zIndex: 1 }
 		),
-		'MapQuest Open Aerial': new L.TileLayer(
-			'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 11, subdomains: '1234', zIndex: 2  }
+		'OpenTopoMap': new L.TileLayer(
+			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 17, zIndex: 2  }
 		),
-		'MapQuest Open OSM': new L.TileLayer(
-			'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 17, subdomains: '1234', zIndex: 3 }
+		'ESRI Imagery': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 19, zIndex: 3 }
+		),
+		'ESRI Topographic': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 19, zIndex: 4 }
+		),
+		'ESRI Shaded Relief': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 13, zIndex: 5 }
+		),
+		'ESRI DeLorme': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 11, zIndex: 6 }
 		),
 		'GINA Satellite': new L.TileLayer(
 			'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
-			{ minZoom: 3, mazZoom: 15, zIndex: 4 }
+			{ minZoom: 3, mazZoom: 15, zIndex: 7 }
 		),
 		'GINA Topographic': new L.TileLayer(
 			'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 12, zINdex: 5 }
+			{ minZoom: 3, maxZoom: 12, zIndex: 8 }
 		),
 		'Stamen Watercolor': new L.TileLayer(
 			'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 6 }
+			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 9 }
 		)
 	};
 
 	var overlays = {
 		'Quadrangles': new L.TileLayer(
 			'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 16, zIndex: 7 }
+			{ minZoom: 3, maxZoom: 16, zIndex: 10 }
 		)
 	};
 
