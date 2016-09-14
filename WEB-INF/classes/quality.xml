@@ -105,14 +105,17 @@
 		SELECT inventory_id AS id,
 			('alt_barcode: ' || alt_barcode) AS desc
 		FROM inventory
-		WHERE alt_barcode !~* '^[a-z\-\d+]+$'
+		WHERE alt_barcode !~* '^[a-z \-\d+]+$'
+			AND active
+
 
 		UNION ALL
 
 		SELECT inventory_id AS id,
 			('barcode: ' || barcode) AS desc
 		FROM inventory
-		WHERE barcode !~* '^[a-z\-\d+]+$'
+		WHERE barcode !~* '^[a-z \-\d+]+$'
+			AND active
 	</sql>
 	<select id="getInventoryInvalidBarcode" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="InventoryInvalidBarcode" />
@@ -695,9 +698,10 @@
 		FROM inventory AS i
 		LEFT OUTER JOIN container AS c
 			ON c.container_id = i.container_id
+			AND c.active
 		LEFT OUTER JOIN collection AS co
 			ON co.collection_id = i.collection_id
-		WHERE inventory_id NOT IN (
+		WHERE i.active AND inventory_id NOT IN (
 			SELECT DISTINCT inventory_id
 			FROM inventory_keyword
 		)
@@ -769,4 +773,41 @@
 		SELECT COUNT(*)
 		FROM (<include refid="OrphanedNotes" />) AS q
 	</select>
+
+	<sql id="OrphanedFiles">
+		SELECT file_id AS id,
+			filename AS desc
+		FROM file
+		WHERE file_id NOT IN (
+			SELECT file_id
+			FROM borehole_file
+		) AND file_id NOT IN (
+			SELECT file_id
+			FROM inventory_file
+		) AND file_id NOT IN (
+			SELECT file_id
+			FROM outcrop_file
+		) AND file_id NOT IN (
+			SELECT file_id
+			FROM container_file
+		) AND file_id NOT IN (
+			SELECT file_id
+			FROM prospect_file
+		) AND file_id NOT IN (
+			SELECT file_id
+			FROM sample_file
+		) AND file_id NOT IN (
+			SELECT file_id
+			FROM well_file
+		)
+	</sql>
+	<select id="getOrphanedFiles" resultSetType="FORWARD_ONLY" resultType="Map">
+		<include refid="OrphanedFiles" />
+	</select>
+	<select id="getOrphanedFilesCount" resultSetType="FORWARD_ONLY" resultType="int">
+		SELECT COUNT(*)
+		FROM (<include refid="OrphanedFiles" />) AS q
+	</select>
+
+
 </mapper>

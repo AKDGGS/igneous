@@ -134,6 +134,9 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getOrphanedNotes",
 			"Notes not referenced in other tables"
 		);
+		addReport(reports, "warning", "getOrphanedFiles",
+			"Files not referenced in other tables"
+		);
 	}
 
 
