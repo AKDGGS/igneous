@@ -397,10 +397,15 @@ function init()
 
 	// Add zoom control
 	map.addControl(L.control.zoom({ position: 'topleft' }));
+
 	// Add mouse position control
 	map.addControl(L.control.mousePosition({
 		emptyString: 'Unknown', numDigits: 3
 	}));
+
+	// Add scale bar
+	map.addControl(L.control.scale({ position: 'bottomleft' }));
+
 	// Add layer control
 	map.addControl(L.control.layers(
 		baselayers, overlays, {
