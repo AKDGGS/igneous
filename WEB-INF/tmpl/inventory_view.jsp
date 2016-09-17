@@ -263,7 +263,7 @@
 					<c:if test="${!empty inventory.keywords}">
 					<dl>
 						<dt>Keywords</dt>
-						<dd><c:forEach items="${inventory.keywords}" var="keyword" varStatus="stat">${stat.count gt 1 ? ", " : ""} <a href="../search#keyword_id=${keyword.ID}">${keyword.name}</a></c:forEach></dd>
+						<dd><c:forEach items="${inventory.keywords}" var="keyword" varStatus="stat">${stat.count gt 1 ? ", " : ""} <a href="../search#keyword=${keyword}">${keyword}</a></c:forEach></dd>
 					</dl>
 					</c:if>
 

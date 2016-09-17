@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -20,7 +20,6 @@ import flexjson.JSONSerializer;
 import org.apache.ibatis.session.SqlSession;
 
 import gov.alaska.dggs.igneous.IgneousFactory;
-import gov.alaska.dggs.igneous.model.Keyword;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.ETagUtil;
 
@@ -30,9 +29,6 @@ public class KeywordServlet extends HttpServlet
 	private static JSONSerializer serializer;
 	static {
 		serializer = new JSONSerializer();
-
-		serializer.include("group");
-		serializer.exclude("group.class");
 		serializer.exclude("class");
 
 		serializer.transform(new ExcludeTransformer(), void.class);
@@ -50,7 +46,7 @@ public class KeywordServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List<Keyword> keywords = sess.selectList(
+			List<String> keywords = sess.selectList(
 				"gov.alaska.dggs.igneous.Keyword.getList"
 			);
 			
@@ -58,8 +54,7 @@ public class KeywordServlet extends HttpServlet
 			GZIPOutputStream gos = null;
 			ByteArrayOutputStream baos = null;
 			try { 
-				// Keywords are slightly less than 10k uncompressed,
-				// but I'll leave a little room to grow
+				// 20k seems like a safe number
 				baos = new ByteArrayOutputStream(20480);
 
 				// If GZIP is supported by the requesting browser, use it.

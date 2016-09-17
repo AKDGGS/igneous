@@ -460,11 +460,12 @@ public class Inventory implements Serializable
 		this.active = Boolean.valueOf(active);
 	}
 
+	private String[] keywords;
+	public String[] getKeywords(){ return keywords; }
+	public void setKeywords(String[] keywords){ this.keywords = keywords; }
+
 
 	// Many-to-many object links
-	private List<Keyword> keywords;
-	public List<Keyword> getKeywords(){ return keywords; }
-
 	private List<Borehole> boreholes;
 	public List<Borehole> getBoreholes(){ return boreholes; }
 

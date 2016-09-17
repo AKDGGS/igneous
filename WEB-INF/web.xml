@@ -326,7 +326,7 @@
 
 	<servlet>
 		<servlet-name>KeywordServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.KeywordServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.KeywordServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

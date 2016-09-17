@@ -165,21 +165,18 @@
 
 
 	<select id="getKeywordSummary" parameterType="Map" resultType="String">
-		SELECT STRING_AGG(name, ', ' ORDER BY keyword_group_id, name) AS keywords
-		FROM keyword
-		WHERE keyword_id IN (
-			SELECT DISTINCT ik.keyword_id
-			FROM inventory AS iv
-			JOIN inventory_keyword AS ik
-				ON iv.inventory_id = ik.inventory_id
-			WHERE iv.active AND (
-				COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
+		SELECT STRING_AGG(k.keyword::text, ', ')
+		FROM (
+			SELECT DISTINCT UNNEST(i.keywords) AS keyword
+			FROM inventory AS i
+			WHERE i.active AND (
+				COALESCE(i.barcode, i.alt_barcode) = #{barcode}
 				<if test="container_id != null">
-				OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
+				OR i.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
 				</if>
 			)
-		)
-		LIMIT 1
+			ORDER BY keyword
+		) AS k
 	</select>
 
 

@@ -29,35 +29,6 @@
 	</resultMap>
 
 
-	<select id="getInventorySummary" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
-		SELECT k.keyword_id, k.name AS keyword,
-			COUNT(*) AS count
-		FROM borehole AS b
-		JOIN inventory_borehole AS ib
-			ON ib.borehole_id = b.borehole_id
-		JOIN inventory_keyword AS ik
-			ON ik.inventory_id = ib.inventory_id
-		JOIN inventory AS i
-			ON i.inventory_id = ik.inventory_id
-		JOIN keyword AS k ON k.keyword_id = ik.keyword_id
-		WHERE b.prospect_id = #{prospect_id}
-			AND i.active
-			AND k.keyword_id IN (
-				SELECT keyword_id
-				FROM keyword
-				WHERE name = 'residues'
-					OR keyword_group_id IN (
-						SELECT keyword_group_id
-						FROM keyword_group
-						WHERE name = 'source' OR
-							name = 'material'
-					)
-			)
-		GROUP BY k.keyword_id, k.name
-		ORDER BY k.name
-	</select>
-
-
 	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
 		SELECT
 			ST_AsGeoJSON(ST_Collect(geog::GEOMETRY)::GEOGRAPHY, 5, 0) AS geojson

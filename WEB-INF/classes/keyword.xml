@@ -4,181 +4,109 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="gov.alaska.dggs.igneous.Keyword">
-	<sql id="getBy">
-		SELECT kw.keyword_id, kw.name, kw.alias, kw.description,
-			kg.keyword_group_id, kg.name AS keyword_group_name
-		FROM keyword AS kw
-		JOIN keyword_group AS kg
-			ON kg.keyword_group_id = kw.keyword_group_id
-	</sql>
-
-
-	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="KeywordMap">
-		<include refid="getBy" />
-		ORDER BY kw.name
+	<select id="getList" resultSetType="FORWARD_ONLY" resultType="String">
+		SELECT UNNEST(ENUM_RANGE(null::keyword))::TEXT AS keyword
+		ORDER BY keyword
 	</select>
-
-
-	<select id="getByName" resultSetType="FORWARD_ONLY" parameterType="String" resultMap="KeywordMap">
-		<include refid="getBy" />
-		WHERE kw.name = #{name}
-		LIMIT 1
-	</select>
-
-
-	<select id="getByID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="KeywordMap">
-		<include refid="getBy" />
-		WHERE kw.keyword_id = #{id}
-		LIMIT 1
-	</select>
-
-
-	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="KeywordMap">
-		<include refid="getBy" />
-		JOIN inventory_keyword AS ik
-			ON ik.keyword_id = kw.keyword_id
-		WHERE ik.inventory_id = #{id}
-	</select>
-
-
-	<resultMap id="KeywordMap" type="Keyword">
-		<id property="id" column="keyword_id" />
-		<result property="name" column="name" />
-		<result property="alias" column="alias" />
-		<result property="description" column="description" />
-
-		<association property="group" javaType="KeywordGroup">
-			<id property="id" column="keyword_group_id" />
-			<result property="name" column="keyword_group_name" />
-		</association>
-	</resultMap>
-
 
 	<select id="getGroupsByWellID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
-		SELECT ids, keywords, COUNT(*) AS count
+		SELECT ARRAY_TO_STRING(keywords, ',') AS keywords,
+			COUNT(q2.inventory_id) AS count
 		FROM (
-			SELECT
-				iw.inventory_id,
-				STRING_AGG(k.keyword_id::varchar, ',' ORDER BY k.keyword_group_id, LOWER(k.name)) AS ids,
-				STRING_AGG(k.name, ' > ' ORDER BY k.keyword_group_id, LOWER(k.name)) AS keywords
-			FROM inventory_well AS iw
-			JOIN inventory_keyword AS ik
-				ON ik.inventory_id = iw.inventory_id
-			JOIN inventory AS i
-				ON i.inventory_id = ik.inventory_id
-			JOIN keyword AS k
-				ON k.keyword_id = ik.keyword_id
-			WHERE iw.well_id = #{id}
-				AND i.active
-			GROUP BY iw.inventory_id
+			SELECT q1.inventory_id,
+				ARRAY_AGG(q1.keyword ORDER BY q1.keyword) AS keywords
+			FROM ( 
+				SELECT i.inventory_id, UNNEST(i.keywords) AS keyword
+				FROM inventory_well AS iw
+				JOIN inventory AS i
+					ON i.inventory_id = iw.inventory_id
+				WHERE i.active AND iw.well_id = #{id}
+			) AS q1
+			GROUP BY q1.inventory_id
 		) AS q2
-		GROUP BY keywords, ids
-		ORDER BY keywords
+		GROUP BY q2.keywords
+		ORDER BY q2.keywords
 	</select>
 
 
 	<select id="getGroupsByProspectID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
-		SELECT ids, keywords, COUNT(*) AS count
+		SELECT ARRAY_TO_STRING(keywords, ',') AS keywords,
+			COUNT(q2.inventory_id) AS count
 		FROM (
-			SELECT
-				ib.inventory_id,
-				STRING_AGG(k.keyword_id::varchar, ',' ORDER BY k.keyword_group_id, LOWER(k.name)) AS ids,
-				STRING_AGG(k.name, ' > ' ORDER BY k.keyword_group_id, LOWER(k.name)) AS keywords
-			FROM inventory_borehole AS ib
-			JOIN borehole AS b
-				ON b.borehole_id = ib.borehole_id
-			JOIN inventory_keyword AS ik
-				ON ik.inventory_id = ib.inventory_id
-			JOIN inventory AS i
-				ON i.inventory_id = ik.inventory_id
-			JOIN keyword AS k
-				ON k.keyword_id = ik.keyword_id
-			WHERE b.prospect_id = #{id}
-				AND i.active
-			GROUP BY ib.inventory_id
+			SELECT q1.inventory_id,
+				ARRAY_AGG(q1.keyword ORDER BY q1.keyword) AS keywords
+			FROM ( 
+				SELECT i.inventory_id, UNNEST(i.keywords) AS keyword
+				FROM inventory_borehole AS ib
+				JOIN borehole AS b
+					ON b.borehole_id = ib.borehole_id
+				JOIN inventory AS i
+					ON i.inventory_id = ib.inventory_id
+				WHERE i.active AND b.prospect_id = #{id}
+			) AS q1
+			GROUP BY q1.inventory_id
 		) AS q2
-		GROUP BY keywords, ids
-		ORDER BY keywords
+		GROUP BY q2.keywords
+		ORDER BY q2.keywords
 	</select>
 
 
 	<select id="getGroupsByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
-		SELECT ids, keywords, COUNT(*) AS count
+		SELECT ARRAY_TO_STRING(keywords, ',') AS keywords,
+			COUNT(q2.inventory_id) AS count
 		FROM (
-			SELECT
-				ib.inventory_id,
-				STRING_AGG(k.keyword_id::varchar, ',' ORDER BY k.keyword_group_id, LOWER(k.name)) AS ids,
-				STRING_AGG(k.name, ' > ' ORDER BY k.keyword_group_id, LOWER(k.name)) AS keywords
-			FROM inventory_borehole AS ib
-			JOIN inventory_keyword AS ik
-				ON ik.inventory_id = ib.inventory_id
-			JOIN inventory AS i
-				ON i.inventory_id = ik.inventory_id
-			JOIN keyword AS k
-				ON k.keyword_id = ik.keyword_id
-			WHERE ib.borehole_id = #{id}
-				AND i.active
-			GROUP BY ib.inventory_id
+			SELECT q1.inventory_id,
+				ARRAY_AGG(q1.keyword ORDER BY q1.keyword) AS keywords
+			FROM ( 
+				SELECT i.inventory_id, UNNEST(i.keywords) AS keyword
+				FROM inventory_borehole AS ib
+				JOIN inventory AS i
+					ON i.inventory_id = ib.inventory_id
+				WHERE i.active AND ib.borehole_id = #{id}
+			) AS q1
+			GROUP BY q1.inventory_id
 		) AS q2
-		GROUP BY keywords, ids
-		ORDER BY keywords
+		GROUP BY q2.keywords
+		ORDER BY q2.keywords
 	</select>
 
 
 	<select id="getGroupsByOutcropID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
-		SELECT ids, keywords, COUNT(*) AS count
+		SELECT ARRAY_TO_STRING(keywords, ',') AS keywords,
+			COUNT(q2.inventory_id) AS count
 		FROM (
-			SELECT
-				io.inventory_id,
-				STRING_AGG(k.keyword_id::varchar, ',' ORDER BY k.keyword_group_id, LOWER(k.name)) AS ids,
-				STRING_AGG(k.name, ' > ' ORDER BY k.keyword_group_id, LOWER(k.name)) AS keywords
-			FROM inventory_outcrop AS io
-			JOIN inventory_keyword AS ik
-				ON ik.inventory_id = io.inventory_id
-			JOIN inventory AS i
-				ON i.inventory_id = ik.inventory_id
-			JOIN keyword AS k
-				ON k.keyword_id = ik.keyword_id
-			WHERE io.outcrop_id = #{id}
-				AND i.active
-			GROUP BY io.inventory_id
+			SELECT q1.inventory_id,
+				ARRAY_AGG(q1.keyword ORDER BY q1.keyword) AS keywords
+			FROM ( 
+				SELECT i.inventory_id, UNNEST(i.keywords) AS keyword
+				FROM inventory_outcrop AS io
+				JOIN inventory AS i
+					ON i.inventory_id = io.inventory_id
+				WHERE i.active AND io.outcrop_id = #{id}
+			) AS q1
+			GROUP BY q1.inventory_id
 		) AS q2
-		GROUP BY keywords, ids
-		ORDER BY keywords
+		GROUP BY q2.keywords
+		ORDER BY q2.keywords
 	</select>
 
 
 	<select id="getGroupsByShotlineID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
-		SELECT ids, keywords, COUNT(*) AS count
+		SELECT ARRAY_TO_STRING(keywords, ',') AS keywords,
+			COUNT(q2.inventory_id) AS count
 		FROM (
-			SELECT
-				isl.inventory_id,
-				STRING_AGG(
-					k.keyword_id::varchar, ',' ORDER BY k.keyword_group_id,
-					LOWER(k.name)
-				) AS ids,
-				STRING_AGG(
-					k.name, ' > ' ORDER BY k.keyword_group_id,
-					LOWER(k.name)
-				) AS keywords
-			FROM inventory_shotline AS isl
-			JOIN inventory_keyword AS ik
-				ON ik.inventory_id = isl.inventory_id
-			JOIN inventory AS i
-				ON i.inventory_id = ik.inventory_id
-			JOIN keyword AS k
-				ON k.keyword_id = ik.keyword_id
-			WHERE isl.shotline_id = #{id}
-				AND i.active
-			GROUP BY isl.inventory_id
+			SELECT q1.inventory_id,
+				ARRAY_AGG(q1.keyword ORDER BY q1.keyword) AS keywords
+			FROM ( 
+				SELECT i.inventory_id, UNNEST(i.keywords) AS keyword
+				FROM inventory_shotline AS isl
+				JOIN inventory AS i
+					ON i.inventory_id = isl.inventory_id
+				WHERE i.active AND isl.shotline_id = #{id}
+			) AS q1
+			GROUP BY q1.inventory_id
 		) AS q2
-		GROUP BY keywords, ids
-		ORDER BY keywords
+		GROUP BY q2.keywords
+		ORDER BY q2.keywords
 	</select>
-
-
-	<insert id="addToInventory" parameterType="Map">
-		INSERT INTO inventory_keyword (inventory_id, keyword_id)
-		VALUES (#{inventory.id}, #{keyword.id})
-	</insert>
 </mapper>

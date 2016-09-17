@@ -156,7 +156,7 @@
 				{{#project}}<div>Project: {{name}}</div>{{/project}}
 			</div>
 			{{/shotlines}}
-			<ul class="kw">{{#keywords}}<li>{{name}}</li>{{/keywords}}</ul>
+			<ul class="kw">{{#keywords}}<li>{{.}}</li>{{/keywords}}</ul>
 		</script>
 		<script id="tmpl-table" type="x-tmpl-mustache">
 			<table class="results">
@@ -225,7 +225,7 @@
 							{{#intervalBottom}}<br>{{intervalBottom}} {{intervalUnit.abbr}}{{/intervalBottom}}
 						</td>
 						<td>
-							<ul class="kw">{{#keywords}}<li>{{alias}}{{^alias}}{{name}}{{/alias}}</li>{{/keywords}}</ul>
+							<ul class="kw">{{#keywords}}<li>{{.}}</li>{{/keywords}}</ul>
 						</td>
 						<td>{{collection.name}}</td>
 						<c:if test="${not empty pageContext.request.userPrincipal}">
@@ -257,11 +257,9 @@
 				Bottom: <input type="text" name="bottom" id="bottom" size="5">
 			</div>
 			<div>
-				<label for="keyword_id">Keywords</label>
-				<select id="keyword_id" name="keyword_id" size="5" multiple="multiple" onchange="search()">
-				{{#keyword}}
-					<option value="{{ID}}">{{name}}{{#alias}} ({{alias}}){{/alias}}</option>
-				{{/keyword}}
+				<label for="keyword">Keywords</label>
+				<select id="keyword" name="keyword" size="5" multiple="multiple" onchange="search()">
+				{{#keyword}}<option value="{{.}}">{{.}}</option>{{/keyword}}
 				</select>
 			</div>
 			<div>

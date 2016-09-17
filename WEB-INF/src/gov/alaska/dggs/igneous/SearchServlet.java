@@ -60,7 +60,6 @@ import gov.alaska.dggs.igneous.model.Shotline;
 import gov.alaska.dggs.igneous.model.Outcrop;
 import gov.alaska.dggs.igneous.model.Borehole;
 import gov.alaska.dggs.igneous.model.Prospect;
-import gov.alaska.dggs.igneous.model.Keyword;
 import gov.alaska.dggs.igneous.model.CoreDiameter;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.igneous.transformer.IterableTransformer;
@@ -197,47 +196,17 @@ public class SearchServlet extends HttpServlet
 			}
 		}
 
-		// Handle keyword_id query - Keywords are cached in an
-		// array of integers in the materialized view
-		// inventory_search because there are so many keywords
-		// that this is the fastest approach as an average. Joins
-		// are faster assuming smaller numbers of keywords, but
-		// get significantly more expensive as keywords are added
-		String[] keywords = request.getParameterValues("keyword_id");
+		// Handle keyword query
+		String[] keywords = request.getParameterValues("keyword");
 		if(keywords != null){
-			// This segment handles cases where a bunch of 
-			// individual keyword_ids are provided. These are then
-			// grouped together and queried as a whole. Inventory 
-			// must than have all the keyword_ids present to be shown
-			if(isIntegerArray(keywords)){
-				if(query.length() > 0) query.append(" AND ");
-				query.append("SORT(ARRAY[");
-				for(int i = 0; i < keywords.length; i++){
-					if(i > 0) query.append(",");
-					query.append(keywords[i]);
-				}
-				query.append("]) <@ keyword_ids");
-
-			// This segment handles cases where we're being provided
-			// groups of comma-separated keyword_ids. Inventory
-			// must match one of any of the distinct groups.
-			} else {
-				if(query.length() > 0) query.append(" AND ");
-				query.append("(");
-				for(int i = 0; i < keywords.length; i++){
-					if(i > 0) query.append(" OR ");
-					String keyword_ids[] = keywords[i].split(",");
-					if(isIntegerArray(keyword_ids)){
-						query.append("SORT(ARRAY[");
-						for(int x = 0; x < keyword_ids.length; x++){
-							if(x > 0) query.append(",");
-							query.append(keyword_ids[x]);
-						}
-						query.append("]) = keyword_ids");
-					}
-				}
-				query.append(")");
+			if(query.length() > 0) query.append(" AND ");
+			query.append("ARRAY[");
+			for(int i = 0; i < keywords.length; i++){
+				if(i > 0) query.append(",");
+				query.append("#{keyword" + i + "}");
+				params.put("keyword" + i, keywords[i]);
 			}
+			query.append("]::keyword[] <@ keywords");
 		}
 
 		// Handle borehole_ids -
@@ -907,9 +876,9 @@ public class SearchServlet extends HttpServlet
 
 					// Begin "Keywords"
 					StringBuilder keywords = new StringBuilder();
-					for(Keyword keyword : item.getKeywords()){
+					for(String keyword : item.getKeywords()){
 						if(keywords.length() > 0) keywords.append(", ");
-						keywords.append(keyword.getName());
+						keywords.append(keyword);
 					}
 					if(keywords.length() > 0){
 						row.put("Keywords", keywords.toString());
@@ -1142,10 +1111,9 @@ public class SearchServlet extends HttpServlet
 				for(Inventory item : items){
 					// Render keywords first, as we may be adding a row for it
 					StringBuilder keywords = new StringBuilder();
-					for(Keyword keyword : item.getKeywords()){
+					for(String keyword : item.getKeywords()){
 						if(keywords.length() > 0) keywords.append(", ");
-
-						keywords.append(keyword.getName());
+						keywords.append(keyword);
 					}
 
 					if(sortkeyword && !lastkeyword.equals(keywords.toString())){

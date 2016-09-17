@@ -2,7 +2,7 @@ var map, features, aoi;
 var searchok = true;
 
 var SEARCH_FIELDS = [
-	'q', 'keyword_id', 'collection_id', 'prospect_id',
+	'q', 'keyword', 'collection_id', 'prospect_id',
 	'mining_district_id', 'quadrangle_id', 'top',
 	'bottom'
 ];

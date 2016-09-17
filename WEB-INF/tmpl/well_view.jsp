@@ -224,8 +224,8 @@
 							<span class="label label-info">By Keywords</span>
 							<ul class="nav nav-pills" id="keywords">
 							<c:forEach items="${keywords}" var="keyword">
-							<c:set var="kws" value="&keyword_id=${fn:join(fn:split(keyword.ids, ','), '&keyword_id=')}" />
-							<li><a href="../search#q=${fn:escapeXml(link)}${kws}">${keyword.keywords} <span class="badge">${keyword.count}</span></a></li>
+							<c:set var="kws" value="&keyword=${fn:join(fn:split(keyword.keywords, ','), '&keyword=')}" />
+							<li><a href="../search#q=${fn:escapeXml(link)}${kws}">${fn:join(fn:split(keyword.keywords, ','), ' > ')} <span class="badge">${keyword.count}</span></a></li>
 							</c:forEach>
 							</ul>
 						</div>

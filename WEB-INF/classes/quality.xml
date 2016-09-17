@@ -22,60 +22,6 @@
 		The queries listed here must corrospond to the reported listed
 		in QualityServlet.java found in the source directory.
 	-->
-	<sql id="MissingBranch">
-		SELECT iv.inventory_id AS id,
-			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
-		FROM inventory AS iv
-		LEFT OUTER JOIN container AS co
-			ON co.container_id = iv.container_id
-		WHERE iv.active AND iv.inventory_id NOT IN (
-			SELECT DISTINCT inventory_id
-			FROM inventory_keyword AS ik
-			JOIN keyword AS k
-				ON ik.keyword_id = k.keyword_id
-			WHERE k.keyword_group_id = (
-				SELECT keyword_group_id
-				FROM keyword_group
-				WHERE name = 'branch'
-			)
-		)
-	</sql>
-	<select id="getMissingBranch" resultSetType="FORWARD_ONLY" resultType="Map">
-		<include refid="MissingBranch" />
-	</select>
-	<select id="getMissingBranchCount" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT COUNT(*)
-		FROM (<include refid="MissingBranch" />) AS q
-	</select>
-
-
-	<sql id="MissingType">
-		SELECT iv.inventory_id AS id,
-			COALESCE(iv.barcode, iv.alt_barcode, '') || ' ' || COALESCE(co.path_cache, '') AS desc
-		FROM inventory AS iv
-		LEFT OUTER JOIN container AS co
-			ON co.container_id = iv.container_id
-		WHERE iv.active AND iv.inventory_id NOT IN (
-			SELECT DISTINCT inventory_id
-			FROM inventory_keyword AS ik
-			JOIN keyword AS k
-				ON ik.keyword_id = k.keyword_id
-			WHERE k.keyword_group_id = (
-				SELECT keyword_group_id
-				FROM keyword_group
-				WHERE name = 'type'
-			)
-		)
-	</sql>
-	<select id="getMissingType" resultSetType="FORWARD_ONLY" resultType="Map">
-		<include refid="MissingType" />
-	</select>
-	<select id="getMissingTypeCount" resultSetType="FORWARD_ONLY" resultType="int">
-		SELECT COUNT(*)
-		FROM (<include refid="MissingType" />) AS q
-	</select>
-
-
 	<sql id="SeparatedBarcodes">
 		SELECT barcode AS id,
 			STRING_AGG(path_cache, ', ') AS desc
@@ -701,10 +647,7 @@
 			AND c.active
 		LEFT OUTER JOIN collection AS co
 			ON co.collection_id = i.collection_id
-		WHERE i.active AND inventory_id NOT IN (
-			SELECT DISTINCT inventory_id
-			FROM inventory_keyword
-		)
+		WHERE i.active AND i.keywords IS NULL
 	</sql>
 	<select id="getInventoryWithNoKeywords" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="InventoryWithNoKeywords" />

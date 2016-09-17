@@ -68,12 +68,6 @@ public class QualityServlet extends HttpServlet
 		addReport(reports, "warning", "getMissingContainer",
 			"Inventory without a container"
 		);
-		addReport(reports, "warning", "getMissingType",
-			"Inventory missing a keyword for \"type\""
-		);
-		addReport(reports, "warning", "getMissingBranch",
-			"Inventory missing a keyword for \"branch\""
-		);
 		addReport(reports, "warning", "getBottomOverTop",
 			"Inventory interval bottom less than interval top"
 		);

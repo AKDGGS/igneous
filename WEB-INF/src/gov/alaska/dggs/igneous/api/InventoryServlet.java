@@ -52,8 +52,6 @@ public class InventoryServlet extends HttpServlet
 		serializer.exclude("collection.class");
 		serializer.exclude("coreDiameter.class");
 		serializer.exclude("coreDiameter.unit.class");
-		serializer.exclude("keywords.class");
-		serializer.exclude("keywords.group.class");
 		serializer.exclude("wells.class");
 		serializer.exclude("wells.unit.class");
 		serializer.exclude("wells.operators.class");

@@ -9,8 +9,6 @@
 		<typeAlias alias="InventoryQuality" type="gov.alaska.dggs.igneous.model.InventoryQuality" />
 		<typeAlias alias="Borehole" type="gov.alaska.dggs.igneous.model.Borehole" />
 		<typeAlias alias="Prospect" type="gov.alaska.dggs.igneous.model.Prospect" />
-		<typeAlias alias="Keyword" type="gov.alaska.dggs.igneous.model.Keyword" />
-		<typeAlias alias="KeywordGroup" type="gov.alaska.dggs.igneous.model.KeywordGroup" />
 		<typeAlias alias="iCollection" type="gov.alaska.dggs.igneous.model.Collection" />
 		<typeAlias alias="Unit" type="gov.alaska.dggs.igneous.model.Unit" />
 		<typeAlias alias="CoreDiameter" type="gov.alaska.dggs.igneous.model.CoreDiameter" />
