@@ -313,7 +313,7 @@ function init()
 			weight: 2,
 			radius: 6,
 			fill: false,
-			'z-index': 8
+			'z-index': 20
 		};
 	});
 	// Bind the generated popup
@@ -328,7 +328,7 @@ function init()
 		radius: 6,
 		fill: false,
 		clickable: false,
-		'z-index': 9
+		'z-index': 20
 	});
 
 	var baselayers = {
@@ -379,9 +379,18 @@ function init()
 	};
 
 	var overlays = {
+		'PLSS': new L.tileLayer.wms(
+			'http://www.geocommunicator.gov/arcgis/services/PLSS/MapServer/WMSServer',
+			{
+				'layers': '1,2,3,4,5,6,7,8,9,10,11,12,13',
+				transparent: true,
+				format: 'image/png',
+				minZoom: 3, maxZoom: 16, zIndex: 12
+			}
+		),
 		'Quadrangles': new L.TileLayer(
 			'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 16, zIndex: 12 }
+			{ minZoom: 3, maxZoom: 16, zIndex: 13 }
 		)
 	};
 
@@ -400,7 +409,7 @@ function init()
 
 	// Add mouse position control
 	map.addControl(L.control.mousePosition({
-		emptyString: 'Unknown', numDigits: 3
+		emptyString: 'Unknown', numDigits: 4
 	}));
 
 	// Add scale bar
