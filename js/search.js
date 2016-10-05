@@ -379,7 +379,7 @@ function init()
 	};
 
 	var overlays = {
-		'PLSS': new L.tileLayer.wms(
+		'PLSS (BLM)': new L.tileLayer.wms(
 			'http://www.geocommunicator.gov/arcgis/services/PLSS/MapServer/WMSServer',
 			{
 				'layers': '1,2,3,4,5,6,7,8,9,10,11,12,13',
