@@ -21,8 +21,8 @@
 		<style>
 			.apptmpl-container { min-width: 800px !important; }
 			.apptmpl-content { font-family: 'Georgia, serif'; }
-			.apptmpl-content a { color: #428bca; text-decoration: none; }
-			.apptmpl-content a:hover, a:focus { color: #2a6496; text-decoration: underline; }
+			#list a, #controls a { color: #428bca; text-decoration: none; }
+			#list a:hover, #list a:focus, #controls a:hover, #controls a:focus { color: #2a6496; text-decoration: underline; }
 			#map { height: 450px; }
 			#advancedcontrols div { margin: 8px 0; }
 		</style>
