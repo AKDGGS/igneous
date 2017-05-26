@@ -290,7 +290,7 @@ function initSimpleMap(geojson, featureColor)
 	// Add layer control
 	map.addControl(L.control.layers(
 		baselayers, overlays, {
-			position: 'bottomleft', autoZIndex: false
+			position: 'bottomright', autoZIndex: false
 		}
 	));
 
