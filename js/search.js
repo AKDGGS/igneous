@@ -342,7 +342,7 @@ function init()
 		),
 		'OpenTopoMap': new L.TileLayer(
 			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 17, zIndex: 3  }
+			{ minZoom: 3, maxZoom: 17, zIndex: 3 }
 		),
 		'ESRI Imagery': new L.TileLayer(
 			'//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
@@ -364,33 +364,31 @@ function init()
 			'//server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
 			{ minZoom: 3, maxZoom: 16, zIndex: 8 }
 		),
-		'GINA Satellite': new L.TileLayer(
-			'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
-			{ minZoom: 3, mazZoom: 15, zIndex: 9 }
-		),
-		'GINA Topographic': new L.TileLayer(
-			'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 12, zIndex: 10 }
-		),
 		'Stamen Watercolor': new L.TileLayer(
 			'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
 			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 11 }
 		)
 	};
 
+
 	var overlays = {
 		'PLSS (BLM)': new L.tileLayer.wms(
-			'http://www.geocommunicator.gov/arcgis/services/PLSS/MapServer/WMSServer',
+			'http://maps.dggs.alaska.gov/arcgis/services/apps/plss/MapServer/WMSServer',
 			{
-				'layers': '1,2,3,4,5,6,7,8,9,10,11,12,13',
+				layers: '1,2,3',
 				transparent: true,
 				format: 'image/png',
 				minZoom: 3, maxZoom: 16, zIndex: 12
 			}
 		),
-		'Quadrangles': new L.TileLayer(
-			'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 16, zIndex: 13 }
+		'Quadrangles': new L.tileLayer.wms(
+			'http://maps.dggs.alaska.gov/arcgis/services/apps/Quad_Boundaries/MapServer/WMSServer',
+			{
+				layers: '1,2,3',
+				transparent: true,
+				format: 'image/png',
+				minZoom: 3, maxZoom: 16, zIndex: 12
+			}
 		)
 	};
 
@@ -398,7 +396,7 @@ function init()
 		attributionControl: false,
 		zoomControl: false,
 		worldCopyJump: true,
-		layers: [ baselayers['Open Street Maps Monochrome'] ]
+		layers: [ baselayers['Open Street Maps'] ]
 	});
 
 	map.addLayer(features);

@@ -208,36 +208,63 @@ function initSimpleMap(geojson, featureColor)
 	});
 
 	var baselayers = {
+		'Open Street Maps Monochrome': L.tileLayer(
+			'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 18, zIndex: 1 }
+		),
 		'Open Street Maps': new L.TileLayer(
-		'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-		{ minZoom: 3, maxZoom: 19, zIndex: 1 }
+			'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 19, zIndex: 2 }
 		),
-		'MapQuest Open Aerial': new L.TileLayer(
-			'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 11, subdomains: '1234', zIndex: 2  }
+		'OpenTopoMap': new L.TileLayer(
+			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+			{ minZoom: 3, maxZoom: 17, zIndex: 3 }
 		),
-		'MapQuest Open OSM': new L.TileLayer(
-			'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 17, subdomains: '1234', zIndex: 3 }
+		'ESRI Imagery': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 19, zIndex: 4 }
 		),
-		'GINA Satellite': new L.TileLayer(
-			'http://tiles.gina.alaska.edu/tilesrv/bdl/tile/{x}/{y}/{z}',
-			{ minZoom: 3, mazZoom: 15, zIndex: 4 }
+		'ESRI Topographic': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 19, zIndex: 5 }
 		),
-		'GINA Topographic': new L.TileLayer(
-			'http://tiles.gina.alaska.edu/tilesrv/drg/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 12, zINdex: 5 }
+		'ESRI Shaded Relief': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 13, zIndex: 6 }
+		),
+		'ESRI DeLorme': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 11, zIndex: 7 }
+		),
+		'ESRI National Geographic': new L.TileLayer(
+			'//server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+			{ minZoom: 3, maxZoom: 16, zIndex: 8 }
 		),
 		'Stamen Watercolor': new L.TileLayer(
 			'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 6 }
+			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 11 }
 		)
 	};
 
+
 	var overlays = {
-		'Quadrangles': new L.TileLayer(
-			'http://tiles.gina.alaska.edu/tilesrv/quad_google/tile/{x}/{y}/{z}',
-			{ minZoom: 3, maxZoom: 16, zIndex: 7 }
+		'PLSS (BLM)': new L.tileLayer.wms(
+			'http://maps.dggs.alaska.gov/arcgis/services/apps/plss/MapServer/WMSServer',
+			{
+				layers: '1,2,3',
+				transparent: true,
+				format: 'image/png',
+				minZoom: 3, maxZoom: 16, zIndex: 12
+			}
+		),
+		'Quadrangles': new L.tileLayer.wms(
+			'http://maps.dggs.alaska.gov/arcgis/services/apps/Quad_Boundaries/MapServer/WMSServer',
+			{
+				layers: '1,2,3',
+				transparent: true,
+				format: 'image/png',
+				minZoom: 3, maxZoom: 16, zIndex: 12
+			}
 		)
 	};
 
