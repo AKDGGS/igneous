@@ -65,7 +65,7 @@
 			<div class="apptmpl-content">
 				<div id="map"></div>
 				<div id="controls">
-					<input type="hidden" name="start" id="start" value="0" />
+					<input type="hidden" name="page" id="page" value="0" />
 					<div>
 						<button id="btn-reset">Reset</button>
 
@@ -97,25 +97,29 @@
 						<label for="sort">Sort by</label>
 						<c:forEach begin="0" end="1">
 						<select name="sort">
-							<option value="0" selected="selected">Best Match</option>
-							<option value="9">Barcode</option>
-							<option value="10">Borehole</option>
-							<option value="11">Box</option>
-							<option value="1">Collection</option>
-							<option value="2">Core Number</option>
-							<option value="14">Keywords</option>
-							<option value="3">Location</option>
-							<option value="12">Prospect</option>
-							<option value="13">Sample</option>
-							<option value="4">Set Number</option>
-							<option value="5">Top</option>
-							<option value="6">Bottom</option>
-							<option value="7">Well Name</option>
-							<option value="8">Well Number</option>
+							<option value="score" selected="selected">Best Match</option>
+							<c:if test="${not empty pageContext.request.userPrincipal}">
+							<option value="display_barcode">Barcode</option>
+							</c:if>
+							<option value="sort_borehole">Borehole</option>
+							<option value="box">Box</option>
+							<option value="collection">Collection</option>
+							<option value="core">Core Number</option>
+							<option value="sort_keyword">Keywords</option>
+							<c:if test="${not empty pageContext.request.userPrincipal}">
+							<option value="location">Location</option>
+							</c:if>
+							<option value="sort_prospect">Prospect</option>
+							<option value="sample">Sample</option>
+							<option value="set">Set Number</option>
+							<option value="top">Top</option>
+							<option value="bottom">Bottom</option>
+							<option value="sort_well">Well Name</option>
+							<option value="sort_wellnumber">Well Number</option>
 						</select>
 						<select name="dir">
-							<option value="0" selected="selected">Asc</option>
-							<option value="1">Desc</option>
+							<option value="asc" selected="selected">Asc</option>
+							<option value="desc">Desc</option>
 						</select>
 						</c:forEach>
 					</div>
@@ -125,122 +129,134 @@
 		</div>
 		<script id="tmpl-popup" type="x-tmpl-mustache">
 			<div>
-				<a href="inventory/{{ID}}">{{ID}}</a>
-				{{#containerPath}} - {{containerPath}}{{/containerPath}}<br>
-				{{#intervalTop}}{{intervalTop}} {{intervalUnit.abbr}}{{/intervalTop}}
-				{{#intervalBottom}}{{#intervalTop}} - {{/intervalTop}}{{intervalBottom}} {{intervalUnit.abbr}}{{/intervalBottom}}
+				<a href="inventory/{{id}}">{{id}}</a>
+				{{#location}} - {{location}}<br>{{/location}}
+				{{#top}}{{top}} {{unit}}{{/top}}
+				{{#bottom}}{{#top}} - {{/top}}{{bottom}} {{unit}}{{/bottom}}
 			</div>
 			{{#boreholes}}
 			<div>
 				{{#prospect}}
-				<div>Prospect: <a href="prospect/{{ID}}">{{name}}</a></div>
+				<div>Prospect: <a href="prospect/{{id}}">{{name}}</a></div>
 				{{/prospect}}
-				Borehole: <a href="borehole/{{ID}}">{{name}}</a>
+				Borehole: <a href="borehole/{{id}}">{{name}}</a>
 			</div>
 			{{/boreholes}}
 			{{#wells}}
 			<div>
-				Well: <a href="well/{{ID}}">{{name}}{{#wellNumber}} - {{wellNumber}}{{/wellNumber}}</a>
-				{{#APINumber}}<div>API: {{APINumber}}</div>{{/APINumber}}
+				Well: <a href="well/{{id}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+				{{#api}}<div>API: {{api}}</div>{{/api}}
 			</div>
 			{{/wells}}
 			{{#outcrops}}
 			<div>
-				Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+				Outcrop: <a href="outcrop/{{id}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
 			</div>
 			{{/outcrops}}
 			{{#shotlines}}
 			<div>
-				Shotline: <a href="shotline/{{ID}}">{{name}}</a>
-				{{#shotlineMax}}<div>Shotpoints: {{shotlineMin}} - {{shotlineMax}}</div>{{/shotlineMax}}
-				{{#project}}<div>Project: {{name}}</div>{{/project}}
+				Shotline: <a href="shotline/{{id}}">{{name}}</a>
+				{{#max}}<div>Shotpoints: {{min}} - {{max}}</div>{{/max}}
 			</div>
 			{{/shotlines}}
-			<ul class="kw">{{#keywords}}<li>{{.}}</li>{{/keywords}}</ul>
+			{{#project}}<div>Project: {{project}}</div>{{/project}}
+			<ul class="kw">{{#keyword}}<li>{{.}}</li>{{/keyword}}</ul>
 		</script>
 		<script id="tmpl-table" type="x-tmpl-mustache">
-			<table class="results">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Related</th>
-						<th>Sample /<br>Slide</th>
-						<th>Box /<br>Set</th>
-						<th>Core No /<br>Diameter</th>
-						<th>Top /<br>Bottom</th>
-						<th>Keywords</th>
-						<th>Collection</th>
-						<c:if test="${not empty pageContext.request.userPrincipal}">
-						<th>Barcode</th>
-						<Th>Location /<br>Quality</th>
-						</c:if>
-					</tr>
-				</thead>
-				<tbody>
-					{{#list}}
-					<tr class="{{#boreholes.0}}borehole {{/boreholes.0}}{{#wells.0}}well {{/wells.0}}{{#outcrops.0}}outcrop {{/outcrops.0}}{{#shotlines.0}}shotline {{/shotlines.0}}">
-						<td><a href="inventory/{{ID}}">{{ID}}</a></td>
-						<td>
-							{{#boreholes}}
-							<div>
-								{{#prospect}}
-								<div>Prospect: <a href="prospect/{{ID}}">{{name}}</a></div>
-								{{/prospect}}
-								Borehole: <a href="borehole/{{ID}}">{{name}}</a>
-							</div>
-							{{/boreholes}}
-							{{#wells}}
-							<div>
-								Well: <a href="well/{{ID}}">{{name}}{{#wellNumber}} - {{wellNumber}}{{/wellNumber}}</a>
-								{{#APINumber}}<div>API: {{APINumber}}</div>{{/APINumber}}
-							</div>
-							{{/wells}}
-							{{#outcrops}}
-							<div>
-								Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
-							</div>
-							{{/outcrops}}
-							{{#shotlines}}
-							<div>
-								Shotline: <a href="shotline/{{ID}}">{{name}}</a>
-								{{#shotlineMax}}<div>Shotpoints: {{shotlineMin}} - {{shotlineMax}}</div>{{/shotlineMax}}
-								{{#project}}<div>Project: {{name}}</div>{{/project}}
-							</div>
-							{{/shotlines}}
-						</td>
-						<td>
-							{{sampleNumber}}
-							{{#slideNumber}}<br>{{slideNumber}}{{/slideNumber}}
-						</td>
-						<td>
-							{{boxNumber}}
-							{{#setNumber}}<br>{{setNumber}}{{/setNumber}}
-						</td>
-						<td>
-							{{coreNumber}}
-							{{#coreDiameter}}<br>{{name}}{{^name}}{{diameter}} {{unit.abbr}}{{/name}}{{/coreDiameter}}
-						</td>
-						<td>
-							{{#intervalTop}}{{intervalTop}} {{intervalUnit.abbr}}{{/intervalTop}}
-							{{#intervalBottom}}<br>{{intervalBottom}} {{intervalUnit.abbr}}{{/intervalBottom}}
-						</td>
-						<td>
-							<ul class="kw">{{#keywords}}<li>{{.}}</li>{{/keywords}}</ul>
-						</td>
-						<td>{{collection.name}}</td>
-						<c:if test="${not empty pageContext.request.userPrincipal}">
-						<td class="barcode">
-							{{barcode}}{{^barcode}}{{altBarcode}}{{/barcode}}
-						</td>
-						<td class="quality">
-							{{containerPath}}
-							{{#qualities}}<div>{{#issues}}<span>{{.}}</span>{{/issues}}</div>{{/qualities}}
-						</td>
-						</c:if>
-					</tr>
-					{{/list}}
-				</tbody>
-			</table>
+			{{^error}}
+				{{#docs.0}}
+					<table class="results">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Related</th>
+								<th>Sample /<br>Slide</th>
+								<th>Box /<br>Set</th>
+								<th>Core No /<br>Diameter</th>
+								<th>Top /<br>Bottom</th>
+								<th>Keywords</th>
+								<th>Collection</th>
+								<c:if test="${not empty pageContext.request.userPrincipal}">
+								<th>Barcode</th>
+								<Th>Location /<br>Quality</th>
+								</c:if>
+							</tr>
+						</thead>
+						<tbody>
+							{{#docs}}
+							<tr class="{{#boreholes.0}}borehole {{/boreholes.0}}{{#wells.0}}well {{/wells.0}}{{#outcrops.0}}outcrop {{/outcrops.0}}{{#shotlines.0}}shotline {{/shotlines.0}}">
+								<td><a href="inventory/{{id}}">{{id}}</a></td>
+								<td>
+									{{#boreholes}}
+									<div>
+										{{#prospect}}
+										<div>Prospect: <a href="prospect/{{id}}">{{name}}</a></div>
+										{{/prospect}}
+										Borehole: <a href="borehole/{{id}}">{{name}}</a>
+									</div>
+									{{/boreholes}}
+									{{#wells}}
+									<div>
+										Well: <a href="well/{{id}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+										{{#api}}<div>API: {{api}}</div>{{/api}}
+									</div>
+									{{/wells}}
+									{{#outcrops}}
+									<div>
+										Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+									</div>
+									{{/outcrops}}
+									{{#shotlines}}
+									<div>
+										Shotline: <a href="shotline/{{id}}">{{name}}</a>
+										{{#max}}<div>Shotpoints: {{min}} - {{max}}</div>{{/max}}
+									</div>
+									{{/shotlines}}
+									{{#project}}<div>Project: {{project}}</div>{{/project}}
+								</td>
+								<td>
+									{{sample}}
+									{{#slide}}<br>{{slide}}{{/slide}}
+								</td>
+								<td>
+									{{box}}
+									{{#set}}<br>{{set}}{{/set}}
+								</td>
+								<td>
+									{{core}}
+									{{#core_diameter}}<br>{{core_diameter_name}}{{^core_diameter_name}}{{core_diameter}} {{core_diameter_unit}}{{/core_diameter_name}}{{/core_diameter}}
+								</td>
+								<td>
+									{{#top}}{{top}} {{unit}}{{/top}}
+									{{#bottom}}<br>{{bottom}} {{unit}}{{/bottom}}
+								</td>
+								<td>
+									<ul class="kw">{{#keyword}}<li>{{.}}</li>{{/keyword}}</ul>
+								</td>
+								<td>{{collection}}</td>
+								<c:if test="${not empty pageContext.request.userPrincipal}">
+								<td class="barcode">
+									{{display_barcode}}
+								</td>
+								<td class="quality">
+									{{location}}
+									{{#issue.0}}<div>{{#issue}}<span>{{.}}</span>{{/issue}}</div>{{/issue.0}}
+								</td>
+								</c:if>
+							</tr>
+							{{/docs}}
+						</tbody>
+					</table>
+				{{/docs.0}}
+
+				{{^docs}}
+					<div class="warning">No results found.</div>
+				{{/docs}}
+			{{/error}}
+
+			{{#error}}
+				<div class="error">Error: {{msg}}</div>
+			{{/error}}
 		</script>
 		<script id="tmpl-advanced" type="x-tmpl-mustache">
 			<div>

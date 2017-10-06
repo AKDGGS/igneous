@@ -6,7 +6,7 @@ var SEARCH_FIELDS = [
 	'mining_district_id', 'quadrangle_id', 'top',
 	'bottom'
 ];
-var CONTROL_FIELDS = ['start', 'max', 'sort', 'dir'];
+var CONTROL_FIELDS = ['page', 'max', 'sort', 'dir'];
 
 
 function encodeParameters()
@@ -137,7 +137,7 @@ function search(clean, noupdate)
 
 	// If a search is dirty, restart
 	// at page 0
-	if(clean !== true) document.getElementById('start').value = 0;
+	if(clean !== true) document.getElementById('page').value = 0;
 
 	var params = encodeParameters();
 	if(noupdate !== true) window.location.hash = params;
@@ -152,7 +152,7 @@ function search(clean, noupdate)
 		searchok = true;
 		return;
 	}
-	
+
 	var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState === 4){
@@ -160,33 +160,21 @@ function search(clean, noupdate)
 
 			// Clear out all the features
 			features.clearLayers();
+		
+			var obj = (xhr.status === 200 ?
+				JSON.parse(xhr.responseText) :
+				{'error': { 'msg': xhr.responseText } }
+			);
 
-			// Setup the PDF/CSV links
-			var pdf = document.getElementById('pdf');
-			if(pdf) pdf.href = 'search.pdf?' + params;
-			var csv = document.getElementById('csv');
-			if(csv) csv.href = 'search.csv?' + params;
+			if(xhr.status === 200 && 'docs' in obj && obj['docs'].length > 0){
+				// Setup the PDF/CSV links
+				var pdf = document.getElementById('pdf');
+				if(pdf) pdf.href = 'search.pdf?' + params;
+				var csv = document.getElementById('csv');
+				if(csv) csv.href = 'search.csv?' + params;
 
-			// If the search json returns an error
-			if(xhr.status !== 200){
-				document.getElementById('controls').style.display = 'none';
-				document.getElementById('list').innerHTML = 
-					'<div class="error">Error: ' + xhr.responseText + '</div>';
-				return;
-
-			} else {
-				var obj = JSON.parse(xhr.responseText);
-
-				// If there's no results, hide the controls and show
-				// a warning.
-				if(!('list' in obj)){
-					document.getElementById('controls').style.display = 'none';
-					document.getElementById('list').innerHTML = 
-						'<div class="warning">No results found.</div>';
-					return;
-				}
-
-				var start = Number(document.getElementById('start').value);
+				var start = obj['start'];
+				var found = obj['numFound'];
 
 				// Disable previous button, if necessary
 				document.getElementById('btn-prev').disabled =
@@ -194,18 +182,18 @@ function search(clean, noupdate)
 
 				// Disable next button if necessary
 				document.getElementById('btn-next').disabled = 
-					((start + obj['list'].length) >= obj['found'] ? true : false);
+					((start + obj['docs'].length) >= found ? true : false);
 
 				// Update display on number of items/current items displayed
 				document.getElementById('pages').innerHTML = 
-					(start + 1) + ' - ' + (obj['list'].length + start) + 
-					' of ' + obj['found'];
+					(start + 1) + ' - ' + (obj['docs'].length + start) + 
+					' of ' + found;
 
 				// Iterate over the geoJSON in the results
 				// and populate the map
-				for(var i = 0; i < obj['list'].length; i++){
-					var o = obj['list'][i];
-					if('geoJSON' in o){
+				for(var i = 0; i < obj['docs'].length; i++){
+					var o = obj['docs'][i];
+					if('geojson' in o){
 						// Clone the geojson object, allowing
 						// the original reference to be freed
 						var geojson = {
@@ -217,7 +205,7 @@ function search(clean, noupdate)
 								),
 								color: '#9f00ff'
 							},
-							geometry: JSON.parse(JSON.stringify(o['geoJSON']))
+							geometry: JSON.parse(JSON.stringify(o['geojson']))
 						};
 						if('boreholes' in o){
 							geojson.properties.color = '#76ff7a';
@@ -234,13 +222,17 @@ function search(clean, noupdate)
 				}
 				features.bringToBack();
 
-				// Show the controls and update the results table
+				// Show the controls
 				document.getElementById('controls').style.display = 'block';
-				document.getElementById('list').innerHTML = Mustache.render(
-					document.getElementById('tmpl-table').innerHTML,
-					obj
-				);
+			} else {
+				// Hide the controls
+				document.getElementById('controls').style.display = 'none';
 			}
+
+			document.getElementById('list').innerHTML = Mustache.render(
+				document.getElementById('tmpl-table').innerHTML, obj
+			);
+
 		}
 	}
 	xhr.open('POST', 'search.json', true);
@@ -582,18 +574,14 @@ function init()
 	document.getElementById('max').onchange = search;
 
 	document.getElementById('btn-next').onclick = function(){
-		var st = document.getElementById('start');
-		var mx = document.getElementById('max');
-		st.value = Number(st.value) +
-			Number(mx.options[mx.selectedIndex].value);
+		var pg = document.getElementById('page');
+		pg.value = Number(pg.value) + 1;
 		search(true);
 	};
 
 	document.getElementById('btn-prev').onclick = function(){
-		var st = document.getElementById('start');
-		var mx = document.getElementById('max');
-		st.value = Math.max(0, (Number(st.value) -
-			Number(mx.options[mx.selectedIndex].value)));
+		var pg = document.getElementById('page');
+		pg.value = Math.max(0, Number(pg.value) - 1);
 		search(true);
 	};
 

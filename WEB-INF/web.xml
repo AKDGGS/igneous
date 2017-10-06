@@ -49,6 +49,15 @@
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>SearchServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.SearchServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SearchServlet</servlet-name>
+		<url-pattern>/search.json</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>BoreholeViewServlet</servlet-name>
@@ -135,27 +144,6 @@
 	<servlet-mapping>
 		<servlet-name>InventoryStashServlet</servlet-name>
 		<url-pattern>/stash.json</url-pattern>
-	</servlet-mapping>
-
-
-	<servlet>
-		<servlet-name>SearchServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.SearchServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/search.json</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/search.pdf</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/search.csv</url-pattern>
 	</servlet-mapping>
 
 
