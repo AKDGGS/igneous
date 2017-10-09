@@ -118,8 +118,14 @@ public class SearchServletPDF extends HttpServlet
 				
 				String last_keyword = "";
 				boolean sort_keyword = false;
-				if(request.getParameterValues("keyword") != null){
-					sort_keyword = true;
+				String sorts[] = request.getParameterValues("sort");
+				if(sorts != null){
+					for(int i = 0; i < sorts.length; i++){
+						if("sort_keyword".equals(sorts[i])){
+							sort_keyword = true;
+							break;
+						}
+					}
 				}
 
 				Document d = new Document(PageSize.A4, 15, 15, 10, 10);
@@ -292,6 +298,10 @@ public class SearchServletPDF extends HttpServlet
 						if(nf != null && nf.isNumber()){
 							double pd = Math.max(Math.ceil((nf.asInteger() / PAGE_SIZE) + 1), 1);
 							pages = Double.valueOf(pd).intValue();
+
+							// Artifially limit total number of results
+							// (since it has to render in memory)
+							if(pages > 20) pages = 20;
 						}
 					}
 
@@ -316,12 +326,14 @@ public class SearchServletPDF extends HttpServlet
 
 							Cell kwcell = new Cell(kwparagraph);
 							kwcell.setBackgroundColor(Color.WHITE);
-							kwcell.setColspan(9);
+							kwcell.setColspan((request.getUserPrincipal() != null ? 9 : 7));
 							table.addCell(kwcell);
-						} last_keyword = keywords.toString();
+							last_keyword = keywords.toString();
+							zebra = false;
+						} else {
+							zebra = !zebra;
+						}
 
-						// Zebra striping magic
-						zebra = !zebra;
 						cell.setBackgroundColor(zebra ? oddzebra : evenzebra);
 	
 						// BEGIN - Related
@@ -466,6 +478,7 @@ public class SearchServletPDF extends HttpServlet
 							}
 						}
 						if(doc.at("bottom") != null && doc.at("bottom").isNumber()){
+							tobo.append("\n");
 							tobo.append(nformat.format(
 								doc.at("bottom").asDouble()
 							));
