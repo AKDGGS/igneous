@@ -73,6 +73,17 @@
 
 
 	<servlet>
+		<servlet-name>SearchServletPDF</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.SearchServletPDF</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SearchServletPDF</servlet-name>
+		<url-pattern>/search.pdf</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
 		<servlet-name>BoreholeViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.BoreholeViewServlet</servlet-class>
 	</servlet>

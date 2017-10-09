@@ -96,6 +96,8 @@ public class SearchServlet extends HttpServlet
 		OutputStreamWriter out = null;
 		GZIPOutputStream gos = null;
 		try { 
+			response.setContentType("application/json");
+
 			// If GZIP is supported by the requesting browser, use it.
 			String encoding = request.getHeader("Accept-Encoding");
 			if(encoding != null && encoding.contains("gzip")){
@@ -106,7 +108,6 @@ public class SearchServlet extends HttpServlet
 				out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 			}
 
-			response.setContentType("application/json");
 			out.write(json.toString());
 		} finally {
 			if(out != null){ out.close(); }

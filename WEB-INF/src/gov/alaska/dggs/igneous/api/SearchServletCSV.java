@@ -88,7 +88,10 @@ public class SearchServletCSV extends HttpServlet
 
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
+			CsvListWriter writer = null;
 			try { 
+				response.setContentType("text/csv");
+
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
 				if(encoding != null && encoding.contains("gzip")){
@@ -98,15 +101,12 @@ public class SearchServletCSV extends HttpServlet
 				} else {
 					out = new OutputStreamWriter(response.getOutputStream(), "utf-8");
 				}
-
-				response.setContentType("text/csv");
-
-				CsvListWriter writer = new CsvListWriter(
+				writer = new CsvListWriter(
 					out, CsvPreference.EXCEL_PREFERENCE
 				);
+
 				CellProcessor processors[] = null;
 				String header[] = null;
-
 				if(request.getUserPrincipal() != null){
 					processors = new CellProcessor[]{
 						new NotNull(),  // ID
@@ -291,7 +291,8 @@ public class SearchServletCSV extends HttpServlet
 
 						// Related - project
 						if(doc.at("project") != null){
-							related.append("\nProject: ");
+							if(related.length() > 0) related.append("\n");
+							related.append("Project: ");
 							related.append(doc.at("project").getValue());
 						}
 
@@ -414,8 +415,9 @@ public class SearchServletCSV extends HttpServlet
 					writer.flush();
 				}
 			} finally {
-				if(out != null){ out.close(); }
-				if(gos != null){ gos.close(); }
+				if(writer != null) writer.close();
+				if(out != null) out.close();
+				if(gos != null) gos.close();
 			}
 		} catch(Exception ex){
 			if(!"java.io.IOException: Broken pipe".equals(ex.getMessage())){
