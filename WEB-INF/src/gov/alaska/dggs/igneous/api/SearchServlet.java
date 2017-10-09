@@ -116,7 +116,7 @@ public class SearchServlet extends HttpServlet
 
 
 	// Builds up query parameters based on a provide servlet request
-	public void buildParameters(SolrQuery query, HttpServletRequest request) throws Exception
+	public static void buildParameters(SolrQuery query, HttpServletRequest request) throws Exception
 	{
 		String q = request.getParameter("q");
 		if(q != null && q.trim().length() > 0){
@@ -261,7 +261,7 @@ public class SearchServlet extends HttpServlet
 	// contains anything besides integers. It's used to santize input
 	// directly from connecting clients, when they send ID numbers
 	// for filtering
-	public boolean isIntegerArray(String[] arr){
+	public static boolean isIntegerArray(String[] arr){
 		if(arr != null && arr.length > 0){
 			try {
 				for(String el : arr){ Integer.valueOf(el); }
