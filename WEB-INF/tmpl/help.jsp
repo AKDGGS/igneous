@@ -237,26 +237,6 @@
 							<td>notetype</td>
 							<td>Type of notes attached to inventory (string)</td>
 						</tr>
-						<tr>
-							<td>publicationtitle</td>
-							<td>Title of publication attached to inventory (string)</td>
-						</tr>
-						<tr>
-							<td>publicationdescription</td>
-							<td>Description of publication attached to inventory (string)</td>
-						</tr>
-						<tr>
-							<td>publicationnumber</td>
-							<td>Number from publication attached to inventory (string)</td>
-						</tr>
-						<tr>
-							<td>publicationseries</td>
-							<td>Series from publication attached to inventory (string)</td>
-						</tr>
-						<tr>
-							<td>everything</td>
-							<td>All fields (string) (implicit)</td>
-						</tr>
 					</tbody>
 				</table>
 			</div>
