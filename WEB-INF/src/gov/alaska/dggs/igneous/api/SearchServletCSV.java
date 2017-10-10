@@ -377,12 +377,12 @@ public class SearchServletCSV extends HttpServlet
 							// Barcode
 							if(doc.at("display_barcode") != null){
 								row.add(doc.at("display_barcode").getValue());
-							} row.add(null);
+							} else row.add(null);
 
 							// Location
 							if(doc.at("location") != null){
 								row.add(doc.at("location").getValue());
-							} row.add(null);
+							} else row.add(null);
 						}
 
 						// Latitude

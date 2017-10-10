@@ -165,88 +165,92 @@
 		<script id="tmpl-table" type="x-tmpl-mustache">
 			{{^error}}
 				{{#docs.0}}
-					<table class="results">
-						<thead>
-							<tr>
-								<th>ID</th>
-								<th>Related</th>
-								<th>Sample /<br>Slide</th>
-								<th>Box /<br>Set</th>
-								<th>Core No /<br>Diameter</th>
-								<th>Top /<br>Bottom</th>
-								<th>Keywords</th>
-								<th>Collection</th>
-								<c:if test="${not empty pageContext.request.userPrincipal}">
-								<th>Barcode</th>
-								<Th>Location /<br>Quality</th>
-								</c:if>
-							</tr>
-						</thead>
-						<tbody>
-							{{#docs}}
-							<tr class="{{#boreholes.0}}borehole {{/boreholes.0}}{{#wells.0}}well {{/wells.0}}{{#outcrops.0}}outcrop {{/outcrops.0}}{{#shotlines.0}}shotline {{/shotlines.0}}">
-								<td><a href="inventory/{{id}}">{{id}}</a></td>
-								<td>
-									{{#boreholes}}
-									<div>
-										{{#prospect}}
-										<div>Prospect: <a href="prospect/{{id}}">{{name}}</a></div>
-										{{/prospect}}
-										Borehole: <a href="borehole/{{id}}">{{name}}</a>
-									</div>
-									{{/boreholes}}
-									{{#wells}}
-									<div>
-										Well: <a href="well/{{id}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
-										{{#api}}<div>API: {{api}}</div>{{/api}}
-									</div>
-									{{/wells}}
-									{{#outcrops}}
-									<div>
-										Outcrop: <a href="outcrop/{{ID}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
-									</div>
-									{{/outcrops}}
-									{{#shotlines}}
-									<div>
-										Shotline: <a href="shotline/{{id}}">{{name}}</a>
-										{{#max}}<div>Shotpoints: {{min}} - {{max}}</div>{{/max}}
-									</div>
-									{{/shotlines}}
-									{{#project}}<div>Project: {{project}}</div>{{/project}}
-								</td>
-								<td>
-									{{sample}}
-									{{#slide}}<br>{{slide}}{{/slide}}
-								</td>
-								<td>
-									{{box}}
-									{{#set}}<br>{{set}}{{/set}}
-								</td>
-								<td>
-									{{core}}
-									{{#core_diameter}}<br>{{core_diameter_name}}{{^core_diameter_name}}{{core_diameter}} {{core_diameter_unit}}{{/core_diameter_name}}{{/core_diameter}}
-								</td>
-								<td>
-									{{#top}}{{top}} {{unit}}{{/top}}
-									{{#bottom}}<br>{{bottom}} {{unit}}{{/bottom}}
-								</td>
-								<td>
-									<ul class="kw">{{#keyword}}<li>{{.}}</li>{{/keyword}}</ul>
-								</td>
-								<td>{{collection}}</td>
-								<c:if test="${not empty pageContext.request.userPrincipal}">
-								<td class="barcode">
-									{{display_barcode}}
-								</td>
-								<td class="quality">
-									{{location}}
-									{{#issue.0}}<div>{{#issue}}<span>{{.}}</span>{{/issue}}</div>{{/issue.0}}
-								</td>
-								</c:if>
-							</tr>
-							{{/docs}}
-						</tbody>
-					</table>
+				<table class="results">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Related</th>
+							<th>Sample /<br>Slide</th>
+							<th>Box /<br>Set</th>
+							<th>Core No /<br>Diameter</th>
+							<th>Top /<br>Bottom</th>
+							<th>Keywords</th>
+							<th>Collection</th>
+							<c:if test="${not empty pageContext.request.userPrincipal}">
+							<th>Barcode</th>
+							<Th>Location /<br>Quality</th>
+							</c:if>
+						</tr>
+					</thead>
+					<tbody>
+				{{/docs.0}}
+				{{#docs}}
+						<tr class="{{#boreholes.0}}borehole {{/boreholes.0}}{{#wells.0}}well {{/wells.0}}{{#outcrops.0}}outcrop {{/outcrops.0}}{{#shotlines.0}}shotline {{/shotlines.0}}">
+							<td><a href="inventory/{{id}}">{{id}}</a></td>
+							<td>
+								{{#boreholes}}
+								<div>
+									{{#prospect}}
+									<div>Prospect: <a href="prospect/{{id}}">{{name}}</a></div>
+									{{/prospect}}
+									Borehole: <a href="borehole/{{id}}">{{name}}</a>
+								</div>
+								{{/boreholes}}
+								{{#wells}}
+								<div>
+									Well: <a href="well/{{id}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+									{{#api}}<div>API: {{api}}</div>{{/api}}
+								</div>
+								{{/wells}}
+								{{#outcrops}}
+								<div>
+									Outcrop: <a href="outcrop/{{id}}">{{name}}{{#number}} - {{number}}{{/number}}</a>
+								</div>
+								{{/outcrops}}
+								{{#shotlines}}
+								<div>
+									Shotline: <a href="shotline/{{id}}">{{name}}</a>
+									{{#max}}<div>Shotpoints: {{min}} - {{max}}</div>{{/max}}
+								</div>
+								{{/shotlines}}
+								{{#project}}
+								<div>Project: {{project}}</div>
+								{{/project}}
+							</td>
+							<td>
+								{{sample}}
+								{{#slide}}<br>{{slide}}{{/slide}}
+							</td>
+							<td>
+								{{box}}
+								{{#set}}<br>{{set}}{{/set}}
+							</td>
+							<td>
+								{{core}}
+								{{#core_diameter}}<br>{{core_diameter_name}}{{^core_diameter_name}}{{core_diameter}} {{core_diameter_unit}}{{/core_diameter_name}}{{/core_diameter}}
+							</td>
+							<td>
+								{{#top}}{{top}} {{unit}}{{/top}}
+								{{#bottom}}<br>{{bottom}} {{unit}}{{/bottom}}
+							</td>
+							<td>
+								<ul class="kw">{{#keyword}}<li>{{.}}</li>{{/keyword}}</ul>
+							</td>
+							<td>{{collection}}</td>
+							<c:if test="${not empty pageContext.request.userPrincipal}">
+							<td class="barcode">
+								{{display_barcode}}
+							</td>
+							<td class="quality">
+								{{location}}
+								{{#issue.0}}<div>{{#issue}}<span>{{.}}</span>{{/issue}}</div>{{/issue.0}}
+							</td>
+							</c:if>
+						</tr>
+				{{/docs}}
+				{{#docs.0}}
+					</tbody>
+				</table>
 				{{/docs.0}}
 
 				{{^docs}}
