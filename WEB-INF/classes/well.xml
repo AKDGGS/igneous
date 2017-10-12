@@ -69,9 +69,22 @@
 
 
 	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
-		SELECT ST_AsGeoJSON(geog, 5, 0) AS geojson
-		FROM well_geog
-		WHERE well_id = #{well_id}
+		SELECT ST_AsGeoJSON(q.geog, 5, 0) AS geojson
+		FROM (
+			SELECT wpo.well_id, po.geog
+			FROM point AS po
+			JOIN well_point AS wpo
+				ON wpo.point_id = po.point_id
+									
+			UNION ALL
+
+			SELECT wpl.well_id, pl.geog
+			FROM place AS pl
+			JOIN well_place AS wpl
+				ON wpl.place_id = pl.place_id
+			WHERE pl.geog IS NOT NULL
+		) AS q
+		WHERE q.well_id = #{well_id}
 		LIMIT 1
 	</select>
 

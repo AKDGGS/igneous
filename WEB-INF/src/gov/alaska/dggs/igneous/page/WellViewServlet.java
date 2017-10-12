@@ -44,12 +44,15 @@ public class WellViewServlet extends HttpServlet
 			request.setAttribute("keywords", sess.selectList(
 				"gov.alaska.dggs.igneous.Keyword.getGroupsByWellID", id
 			));
-			request.setAttribute("quadrangles", sess.selectList(
-				"gov.alaska.dggs.igneous.Quadrangle.getByWellID", id
-			));
-			request.setAttribute("geojson", sess.selectOne(
+			String geojson = sess.selectOne(
 				"gov.alaska.dggs.igneous.Well.getGeoJSONByID", id
-			));
+			);
+			if(geojson != null){
+				request.setAttribute("geojson", geojson);
+				request.setAttribute("quadrangles", sess.selectList(
+					"gov.alaska.dggs.igneous.Quadrangle.getByGeoJSON", geojson
+				));
+			}
 
 			request.getRequestDispatcher(
 				"/WEB-INF/tmpl/well_view.jsp"

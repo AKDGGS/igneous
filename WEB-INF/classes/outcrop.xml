@@ -41,9 +41,38 @@
 
 
 	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
-		SELECT ST_AsGeoJSON(geog, 5, 0) AS geojson
-		FROM outcrop_geog
-		WHERE outcrop_id = #{outcrop_id}
+		SELECT ST_AsGeoJSON(q.geog, 5, 0) AS geojson
+		FROM (
+			SELECT op.outcrop_id, po.geog
+			FROM outcrop_point AS op
+			JOIN point AS po
+				ON po.point_id = op.point_id
+
+			UNION ALL
+
+			SELECT op.outcrop_id, pl.geog
+			FROM outcrop_place AS op
+			JOIN place AS pl
+				ON pl.place_id = op.place_id
+			WHERE pl.geog IS NOT NULL
+
+			UNION ALL
+
+			SELECT op.outcrop_id, pl.geog
+			FROM outcrop_plss AS op
+			JOIN plss AS pl
+				ON pl.plss_id = op.plss_id
+			WHERE pl.geog IS NOT NULL
+
+			UNION ALL
+
+			SELECT oq.outcrop_id, qu.geog
+			FROM outcrop_quadrangle AS oq
+			JOIN quadrangle AS qu
+				ON qu.quadrangle_id = oq.quadrangle_id
+			WHERE qu.geog IS NOT NULL
+		) AS q
+		WHERE q.outcrop_id = #{outcrop_id}
 		LIMIT 1
 	</select>
 

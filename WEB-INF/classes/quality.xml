@@ -288,17 +288,19 @@
 
 
 	<sql id="WellNoSpatial">
-		SELECT well_id AS id, name AS desc
+		SELECT well_id, name AS desc
 		FROM well
 		WHERE well_id NOT IN (
-			SELECT well_id FROM well_geog
-		) AND well_id IN (
-			SELECT DISTINCT well_id
-			FROM inventory_well AS iw
-			JOIN inventory AS i
-				ON i.inventory_id = iw.inventory_id
-			WHERE i.active
+			SELECT well_id
+			FROM well_point
+		) AND well_id NOT IN (
+			SELECT well_id
+			FROM well_place AS wp
+			JOIN place AS pl
+				ON pl.place_id = wp.place_id
+			WHERE pl.geog IS NOT NULL
 		)
+		ORDER BY well_id
 	</sql>
 	<select id="getWellNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
 		<include refid="WellNoSpatial" />
@@ -314,7 +316,7 @@
 		FROM borehole
 		WHERE borehole_id NOT IN (
 			SELECT borehole_id
-			FROM borehole_geog
+			FROM borehole_point
 		)
 	</sql>
 	<select id="getBoreholeNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -331,7 +333,25 @@
 		FROM outcrop
 		WHERE outcrop_id NOT IN (
 			SELECT outcrop_id
-			FROM outcrop_geog
+			FROM outcrop_point
+		) AND outcrop_id NOT IN (
+			SELECT op.outcrop_id
+			FROM outcrop_place AS op
+			JOIN place AS pl
+				ON pl.place_id = op.place_id
+			WHERE pl.geog IS NOT NULL
+		) AND outcrop_id NOT IN (
+			SELECT op.outcrop_id
+			FROM outcrop_plss AS op
+			JOIN plss AS pl
+				ON pl.plss_id = op.plss_id
+			WHERE pl.geog IS NOT NULL
+		) AND outcrop_id NOT IN (
+			SELECT oq.outcrop_id
+			FROM outcrop_quadrangle AS oq
+			JOIN quadrangle AS qu
+				ON qu.quadrangle_id = oq.quadrangle_id
+			WHERE qu.geog IS NOT NULL
 		)
 	</sql>
 	<select id="getOutcropNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">
@@ -348,7 +368,7 @@
 		FROM shotpoint
 		WHERE shotpoint_id NOT IN (
 			SELECT shotpoint_id
-			FROM shotpoint_geog
+			FROM shotpoint_point
 		)
 	</sql>
 	<select id="getShotpointNoSpatial" resultSetType="FORWARD_ONLY" resultType="Map">

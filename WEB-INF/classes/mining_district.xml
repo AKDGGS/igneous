@@ -6,31 +6,17 @@
 <mapper namespace="gov.alaska.dggs.igneous.MiningDistrict">
 	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="MiningDistrictMap">
 		SELECT mining_district_id, name,
-			ST_AsGeoJson(
-				ST_Simplify(geog::GEOMETRY, 0.001)::GEOGRAPHY, 3
-			) AS geojson
+			ST_AsGeoJson(geog, 5, 0) AS geojson
 		FROM mining_district
 		ORDER BY LOWER(name)
 	</select>
 
 
-	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="MiningDistrictMap">
-		SELECT DISTINCT md.mining_district_id, md.name
-		FROM borehole AS bh
-		JOIN borehole_geog AS bg
-			ON bg.borehole_id = bh.borehole_id
-		JOIN mining_district AS md
-			ON ST_Intersects(md.geog, bg.geog)
-		WHERE bh.prospect_id = #{prospect_id}
-	</select>
-
-
-	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="long" resultMap="MiningDistrictMap">
-		SELECT DISTINCT md.mining_district_id, md.name
-		FROM borehole_geog AS bg
-		JOIN mining_district AS md
-			ON ST_Intersects(md.geog, bg.geog)
-		WHERE bg.borehole_id = #{borehole_id}
+	<select id="getByGeoJSON" resultSetType="FORWARD_ONLY" parameterType="String" resultMap="MiningDistrictMap">
+		SELECT mining_district_id, name,
+			ST_AsGeoJson(geog, 5, 0) AS geojson
+		FROM mining_district
+		WHERE ST_Intersects(geog, ST_GeomFromGeoJSON(#{geojson}))
 	</select>
 
 

@@ -93,9 +93,11 @@
 
 
 	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
-		SELECT ST_AsGeoJSON(geog, 5, 0) AS geojson
-		FROM borehole_geog
-		WHERE borehole_id = #{borehole_id}
+		SELECT ST_AsGeoJSON(p.geog::GEOMETRY, 5, 0) AS geojson
+		FROM borehole_point AS bp
+		JOIN point AS p
+			ON p.point_id = bp.point_id
+		WHERE bp.borehole_id = #{borehole_id}
 		LIMIT 1
 	</select>
 

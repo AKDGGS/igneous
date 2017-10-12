@@ -9,6 +9,7 @@
 		ORDER BY keyword
 	</select>
 
+
 	<select id="getGroupsByWellID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="HashMap">
 		SELECT ARRAY_TO_STRING(keywords, ',') AS keywords,
 			COUNT(q2.inventory_id) AS count
@@ -97,12 +98,14 @@
 		FROM (
 			SELECT q1.inventory_id,
 				ARRAY_AGG(q1.keyword ORDER BY q1.keyword) AS keywords
-			FROM ( 
-				SELECT i.inventory_id, UNNEST(i.keywords) AS keyword
-				FROM inventory_shotline AS isl
-				JOIN inventory AS i
-					ON i.inventory_id = isl.inventory_id
-				WHERE i.active AND isl.shotline_id = #{id}
+			FROM (
+				SELECT DISTINCT i.inventory_id, UNNEST(i.keywords) AS keyword
+				FROM inventory AS i
+				JOIN inventory_shotpoint AS isp
+					ON isp.inventory_id = i.inventory_id
+				JOIN shotpoint AS sp
+					ON sp.shotpoint_id = isp.shotpoint_id
+				WHERE i.active AND sp.shotline_id = #{shotline_id}
 			) AS q1
 			GROUP BY q1.inventory_id
 		) AS q2

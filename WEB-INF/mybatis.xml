@@ -64,6 +64,5 @@
 		<mapper resource="inventory_quality.xml" />
 		<mapper resource="organization.xml" />
 		<mapper resource="collection.xml" />
-		<mapper class="gov.alaska.dggs.igneous.SearchMapper" />
 	</mappers>
 </configuration>

@@ -54,9 +54,17 @@
 
 
 	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
-		SELECT ST_AsGeoJSON(geog, 5, 0) AS geojson
-		FROM shotline_geog
-		WHERE shotline_id = #{shotline_id}
-		LIMIT 1
+		SELECT ST_AsGeoJSON(
+			ST_Makeline(
+				p.geog::GEOMETRY ORDER BY sp.shotpoint_number DESC
+			), 5, 0
+		) AS geojson
+		FROM shotpoint AS sp
+		JOIN shotpoint_point AS spp
+			ON spp.shotpoint_id = sp.shotpoint_id
+		JOIN point AS p
+			ON p.point_id = spp.point_id
+		WHERE sp.shotline_id = #{shotline_id}
+		GROUP BY sp.shotline_id
 	</select>
 </mapper>

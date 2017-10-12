@@ -44,12 +44,15 @@ public class ShotlineViewServlet extends HttpServlet
 			request.setAttribute("keywords", sess.selectList(
 				"gov.alaska.dggs.igneous.Keyword.getGroupsByShotlineID", id
 			));
-			request.setAttribute("quadrangles", sess.selectList(
-				"gov.alaska.dggs.igneous.Quadrangle.getByShotlineID", id
-			));
-			request.setAttribute("geojson", sess.selectOne(
+			String geojson = sess.selectOne(
 				"gov.alaska.dggs.igneous.Shotline.getGeoJSONByID", id
-			));
+			);
+			if(geojson != null){
+				request.setAttribute("geojson", geojson);
+				request.setAttribute("quadrangles", sess.selectList(
+					"gov.alaska.dggs.igneous.Quadrangle.getByGeoJSON", geojson
+				));
+			}
 
 			request.getRequestDispatcher(
 				"/WEB-INF/tmpl/shotline_view.jsp"

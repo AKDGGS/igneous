@@ -118,6 +118,13 @@
 						</dd>
 					</dl>
 					</c:if>
+					<c:if test="${!empty miningdistricts}">
+					<dl>
+						<dt>Mining District</dt>
+						<dd><c:forEach items="${miningdistricts}" var="miningdistrict" varStatus="stat">${stat.count gt 1 ? ", " : ""}<a href="../search#mining_district_id=${miningdistrict.ID}">${miningdistrict.name}</a></c:forEach>
+						</dd>
+					</dl>
+					</c:if>
 				</div>
 
 				<div style="clear:both"></div>

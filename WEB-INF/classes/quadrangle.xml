@@ -6,66 +6,20 @@
 <mapper namespace="gov.alaska.dggs.igneous.Quadrangle">
 	<select id="getList" resultSetType="FORWARD_ONLY" resultMap="QuadrangleMap">
 		SELECT qr.quadrangle_id, qr.name,
-			ST_AsGeoJson(ST_Simplify(geog::GEOMETRY, 0.001)::GEOGRAPHY, 3) AS geojson
+			ST_AsGeoJson(qr.geog, 5, 0) AS geojson
 		FROM quadrangle AS qr
 		WHERE qr.scale = 250000
 		ORDER BY name
 	</select>
 
 
-	<sql id="getBy">
-		SELECT DISTINCT qr.quadrangle_id, qr.name, qr.alt_name,
-			qr.abbr, qr.alt_abbr, qr.scale
-		FROM quadrangle AS qr
-		JOIN quadrangle_geog AS qg
-			ON qg.quadrangle_id = qr.quadrangle_id
-	</sql>
-
-
-	<select id="getByProspectID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="QuadrangleMap">
-		<include refid="getBy" />
-		JOIN borehole_geog AS bg
-			ON ST_intersects(bg.geog, qg.geog)
-		JOIN borehole AS bh
-			ON bh.borehole_id = bg.borehole_id
-		WHERE bh.prospect_id = #{prospect_id}
-			AND qr.scale = 250000
-	</select>
-
-
-	<select id="getByBoreholeID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="QuadrangleMap">
-		<include refid="getBy" />
-		JOIN borehole_geog AS bg
-			ON ST_intersects(bg.geog, qg.geog)
-		WHERE bg.borehole_id = #{borehole_id}
-			AND qr.scale = 250000
-	</select>
-
-
-	<select id="getByWellID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="QuadrangleMap">
-		<include refid="getBy" />
-		JOIN well_geog AS wg
-			ON ST_Intersects(wg.geog, qg.geog)
-		WHERE wg.well_id = #{well_id}
-			AND qr.scale = 250000
-	</select>
-
-
-	<select id="getByOutcropID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="QuadrangleMap">
-		<include refid="getBy" />
-		JOIN outcrop_geog AS og
-			ON ST_Intersects(og.geog, qg.geog)
-		WHERE og.outcrop_id = #{outcrop_id}
-			AND qr.scale = 250000
-	</select>
-
-
-	<select id="getByShotlineID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="QuadrangleMap">
-		<include refid="getBy" />
-		JOIN shotline_geog AS sg
-			ON ST_Intersects(sg.geog, qg.geog)
-		WHERE sg.shotline_id = #{shotline_id}
-			AND qr.scale = 250000
+	<select id="getByGeoJSON" resultSetType="FORWARD_ONLY" parameterType="String" resultMap="QuadrangleMap">
+		SELECT quadrangle_id, name, alt_name,
+			abbr, alt_abbr, scale,
+			ST_AsGeoJson(geog, 5, 0) AS geojson
+		FROM quadrangle
+		WHERE scale = 250000
+			AND ST_Intersects(geog, ST_GeomFromGeoJSON(#{geojson}))
 	</select>
 
 
