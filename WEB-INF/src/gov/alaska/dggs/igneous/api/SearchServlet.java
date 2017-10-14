@@ -152,7 +152,7 @@ public class SearchServlet extends HttpServlet
 				BigDecimal bd_bottom = new BigDecimal(bottom);
 
 				query.setFilter("top","[" + bd_top.toString() + " TO *]");
-				query.setFilter("bottom", "[* TO " + bd_bottom.toString());
+				query.setFilter("bottom", "[* TO " + bd_bottom.toString() + "]");
 			} catch(Exception ex){
 				throw new Exception("Invalid Interval");
 			}
