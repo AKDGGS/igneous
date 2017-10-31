@@ -240,7 +240,7 @@ public class SearchServletCSV extends HttpServlet
 								
 								Json prospect = borehole.at("prospect");
 								if(prospect != null){
-									related.append("Propsect: ");
+									related.append("Prospect: ");
 									related.append(prospect.at("name").getValue());
 									related.append("\n");
 								}
