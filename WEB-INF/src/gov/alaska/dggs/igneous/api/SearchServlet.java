@@ -63,6 +63,7 @@ public class SearchServlet extends HttpServlet
 				"id, bottom, top, sample, slide, core," +
 				"core_diameter, core_diameter_name, core_diameter_unit," +
 				"set, box, unit, collection, project, keyword," +
+				"description, " +
 				"wells:[json], boreholes:[json]," +
 				"shotlines:[json], outcrops:[json]," +
 				"geojson:[geo f=geog w=GeoJSON]" +
@@ -84,7 +85,20 @@ public class SearchServlet extends HttpServlet
 			}
 
 			json = query.execute();
+			Json docs = json.at("docs");
+			if(docs != null && docs.isArray()){
+				for(Json j : docs.asJsonList()){
+					Json jdesc = j.at("description");
+					if(jdesc != null && jdesc.isString()){
+						String desc = jdesc.asString();
+						if(desc.length() > 50){
+							j.set("description", (desc.substring(0, 46) + " ..."));
+						}
+					}
+				}
+			}
 		} catch(Exception ex){
+			ex.printStackTrace();
 			json = Json.object(
 				"error", Json.object(
 					"msg", ex.getMessage(), "code", 400

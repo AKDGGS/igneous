@@ -213,6 +213,17 @@
 									{{#max}}<div>Shotpoints: {{min}} - {{max}}</div>{{/max}}
 								</div>
 								{{/shotlines}}
+								{{^boreholes.0}}
+								{{^wells.0}}
+								{{^outcrops.0}}
+								{{^shotlines.0}}
+								{{#description}}
+								<div>Description: {{description}}</div>
+								{{/description}}
+								{{/shotlines.0}}
+								{{/outcrops.0}}
+								{{/wells.0}}
+								{{/boreholes.0}}
 								{{#project}}
 								<div>Project: {{project}}</div>
 								{{/project}}
