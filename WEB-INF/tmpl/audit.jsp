@@ -6,7 +6,9 @@
 <html lang="en">
 	<head>
 		<title>Alaska Geologic Materials Center</title>
-		<link href="css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" rel="stylesheet" media="screen">
+		<meta http-equiv="x-ua-compatible" content="IE=edge" >
+		<link rel="stylesheet" href="css/apptmpl.min.css">
+		<link rel="stylesheet" href="css/view.css" media="screen">
 		<style>
 			.pass { background-color: #B2FFB2; }
 			.fail { background-color: #FF8080; }
@@ -23,58 +25,62 @@
 		</style>
 	</head>
 	<body>
-		<div class="navbar">
-			<div class="navbar-head">
-				<a href="search">Geologic Materials Center</a>
-			</div>
+		<div class="apptmpl-container">
+			<div class="apptmpl-goldbar">
+				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
+				<span class="apptmpl-goldbar-right"></span>
 
-			<div class="navbar-form">
-				<input type="text" id="q" name="q" tabindex="1">
-				<button class="btn btn-primary" id="search">
-					<span class="glyphicon glyphicon-search"></span> Search
-				</button>
-				<button class="btn btn-info" id="help">
-					<span class="glyphicon glyphicon-question-sign"></span>
-				</button>
-			</div>
-		</div>
-
-		<div class="container">
-			<h3>Audit Log</h3>
-
-			<label for="start">Start Date: </label>
-			<input type="text" id="start" name="start" size="20" tabindex="2" value="1/1/10 00:00:00" />
-
-			<label for="end">End Date: </label>
-			<input type="text" id="end" name="end" size="20" tabindex="3" value="1/1/20 23:59:59" />
-
-			<button class="btn btn-primary" id="query">
-				<span class="glyphicon glyphicon-book"></span> Query
-			</button>
-
-			<br/>
-
-			<label for="hide_passed">Hide passed:</label>
-			<input type="checkbox" id="hide_passed" name="hide_passed" value="true" />
-
-			<label for="path">Location Filter:</label>
-			<input type="text" id="path" name="path" size="35" value="" />
-
-			<div id="dest"></div>
-		</div>
-
-		<div class="container" style="text-align: right; margin-top: 20px;">
-			<b>Other Tools:</b>
-			[<a href="container_log.html">Move Log</a>]
-			[<a href="quality_report.html">Quality Assurance</a>]
-			[<a href="audit_report.html">Audit</a>]
-			<c:if test="${not empty pageContext.request.userPrincipal}">
+				<c:if test="${not empty pageContext.request.userPrincipal}">
+				<a href="../container_log.html">Move Log</a>
+				<a href="../quality_report.html">Quality Assurance</a>
+				<a href="../audit_report.html">Audit</a>
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
-				[<a href="import.html">Data Importer</a>]
+				<a href="../import.html">Data Importer</a>
 				</c:if>
-			</c:if>
-		</div>
+				<a href="../logout/">Logout</a>
+				</c:if>
+				<c:if test="${empty pageContext.request.userPrincipal}">
+				<a href="https://${pageContext.request.serverName}${pageContext.request.contextPath}/login/">Login</a>
+				</c:if>
+				<a href="../help">Search Help</a>
+			</div>
 
+			<div class="apptmpl-banner">
+				<a class="apptmpl-banner-logo" href="http://dggs.alaska.gov"></a>
+				<div class="apptmpl-banner-title">Geologic Materials Center Inventory</div>
+				<div class="apptmpl-banner-desc">Alaska Division of Geological &amp; Geophysical Surveys</div>
+			</div>
+
+			<div class="apptmpl-breadcrumb">
+				<a href="http://alaska.gov">State of Alaska</a> &gt;
+				<a href="http://dnr.alaska.gov">Natural Resources</a> &gt;
+				<a href="http://dggs.alaska.gov">Geological &amp; Geophysical Surveys</a> &gt;
+				<a href="http://dggs.alaska.gov/gmc">Geologic Materials Center</a> &gt;
+				<a href="../search">Inventory</a>
+			</div>
+
+			<div class="apptmpl-content">
+				<h3>Audit Log</h3>
+
+				<label for="start">Start Date: </label>
+				<input type="text" id="start" name="start" size="20" tabindex="2" value="1/1/10 00:00:00" />
+
+				<label for="end">End Date: </label>
+				<input type="text" id="end" name="end" size="20" tabindex="3" value="1/1/20 23:59:59" />
+
+				<button class="btn btn-primary" id="query"> Query </button>
+
+				<br/>
+
+				<label for="hide_passed">Hide passed:</label>
+				<input type="checkbox" id="hide_passed" name="hide_passed" value="true" />
+
+				<label for="path">Location Filter:</label>
+				<input type="text" id="path" name="path" size="35" value="" />
+
+				<div id="dest"></div>
+			</div>
+		</div>
 		<script src="js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){

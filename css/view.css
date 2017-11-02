@@ -1,0 +1,71 @@
+.container { margin: 4px 8px; }
+
+.label {
+	font-weight: bold; text-align: center; white-space: nowrap;
+	background-color: #999; border-radius: 3px;
+	color: #fff;
+	padding: 4px 8px;
+	display: inline-block;
+}
+.label-info { background-color: #5bc0de; }
+.label-primary { background-color: #428bca; }
+.label-success { background-color: #5cb85c; }
+.label-warning { background-color: #f0ad4e; }
+.label-danger { background-color: #d9534f; }
+
+a { color: #428bca; text-decoration: none; }
+a:hover, a:focus { color: #2a6496; text-decoration: underline; }
+
+.nav, .nav > li { display: inline; padding: 0px; }
+.nav > li { margin: 2px 8px; }
+.nav > li > a > .badge { 
+	font-size: 70%;
+	background-color: #999;
+	color: #fff;
+	border-radius: 10px;
+	padding: 3px 7px;
+	margin-left: 3px;
+	display: inline-block;
+}
+
+.nav-tabs { display: table; }
+.nav-tabs > li {
+	display: table-cell;
+	border-bottom: 1px solid #ddd;
+	border-radius: 4px 4px 0 0;
+}
+.nav-tabs > li.active {
+	border: 1px solid #ddd;
+	border-bottom: none;
+	box-shadow: none;
+	background-color: #fff;
+}
+.nav-tabs > li > a {
+	padding: 8px 32px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.nav-tabs > li > a:hover { background-color: #eee; }
+.nav-tabs > li.active > a:hover {
+	background-color: #fff;
+	color: #428bca;
+	cursor: default;
+}
+
+.nav-pills > li > a {
+	background-color: #fff;
+	padding: 4px 8px;
+	text-decoration: none;
+	border-radius: 5px;
+	white-space: nowrap;
+	display: inline-block;
+}
+.nav-pills a:hover { background-color: #eee; }
+
+.nav-pills > li.active > a { color: #fff; background-color: #428bca; }
+.nav-pills > li.active > a > .badge { color: #428bca; background-color: #fff; }
+
+.nowrap { white-space: nowrap; }
+.hidden { display: none; }

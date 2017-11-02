@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
 		<link rel="stylesheet" href="../leaflet/leaflet.css">
 		<link rel="stylesheet" href="../leaflet/leaflet.mouseposition.css">
-		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
+		<link rel="stylesheet" href="../css/view.css" media="screen">
 		<style>
 			.barcode { min-width: 205px; }
 			.barcode div { margin-left: 5px; font-size: 11px; font-weight: bold; }
@@ -114,11 +114,11 @@
 					</c:if>
 					<dl>
 						<dt>Onshore</dt>
-						<dd><span title="${well.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${well.onshore ? 'ok' : 'remove'}"></span></dd>
+						<dd>${well.onshore ? 'Yes' : 'No'}</dd>
 					</dl>
 					<dl>
 						<dt>Federal</dt>
-						<dd><span title="${well.federal ? 'true' : 'false'}" class="glyphicon glyphicon-${well.federal ? 'ok' : 'remove'}"></span></dd>
+						<dd>${well.federal ? 'Yes' : 'No'}</dd>
 					</dl>
 					<c:if test="${!empty well.spudDate}">
 					<dl>

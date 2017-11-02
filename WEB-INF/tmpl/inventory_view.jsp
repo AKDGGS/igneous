@@ -13,7 +13,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="x-ua-compatible" content="IE=edge" >
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
-		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
+		<link rel="stylesheet" href="../css/view.css" media="screen">
 		<style>
 			dl { display: table; margin: 8px 4px; }
 			dt, dd { display: table-cell; vertical-align: top; }
@@ -135,7 +135,7 @@
 					</dl>
 					<dl>
 						<dt>Published No. Suffix</dt>
-						<dd><span title="${inventory.publishedNumberHasSuffix ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.publishedNumberHasSuffix ? 'ok' : 'remove'}"></span></dd>
+						<dd>${inventory.publishedNumberHasSuffix ? 'Yes' : 'No'}</dd>
 					</dl>
 					</c:if>
 					<c:if test="${!empty inventory.collection}">
@@ -294,11 +294,11 @@
 					</c:if>
 					<dl>
 						<dt>Publish</dt>
-						<dd><span title="${inventory.canPublish ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.canPublish ? 'ok' : 'remove'}"></span></dd>
+						<dd>${inventory.canPublish ? 'Yes' : 'No'}</dd>
 					</dl>
 					<dl>
 						<dt>Active</dt>
-						<dd><span title="${inventory.active ? 'true' : 'false'}" class="glyphicon glyphicon-${inventory.active ? 'ok' : 'remove'}"></span></dd>
+						<dd>${inventory.active ? 'Yes' : 'No'}</dd>
 					</dl>
 					<dl>
 						<dt><a id="stash-link" href="#">Show Stash</a></dt>
@@ -356,7 +356,7 @@
 							</c:if>
 							<dl>
 								<dt>Publication Publish</dt>
-								<dd><span title="${publication.canPublish ? 'true' : 'false'}" class="glyphicon glyphicon-${publication.canPublish ? 'ok' : 'remove'}"></span></dd>
+								<dd>${publication.canPublish ? 'Yes' : 'No'}</dd>
 							</dl>
 						</div>
 						</c:forEach>

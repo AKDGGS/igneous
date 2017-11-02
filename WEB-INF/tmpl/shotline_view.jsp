@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
 		<link rel="stylesheet" href="../leaflet/leaflet.css">
 		<link rel="stylesheet" href="../leaflet/leaflet.mouseposition.css">
-		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
+		<link rel="stylesheet" href="../css/view.css" media="screen">
 		<style>
 			#keyword_container a { margin: 2px 0px 0px 2px; }
 			#keyword_container .active { box-shadow: none !important; background-color: transparent !important; }
@@ -143,7 +143,7 @@
 					<li><a href="#urls">URLs <span class="badge">${fn:length(shotline.URLs)}</span></a></li>
 					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<li><a href="#notes">Notes <span class="badge">${fn:length(shotline.notes)}</span></a></li>
-					<li><a href="#files">Files</a></li>
+					<!-- <li><a href="#files">Files</a></li> -->
 					</c:if>
 				</ul>
 

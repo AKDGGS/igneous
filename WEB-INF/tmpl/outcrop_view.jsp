@@ -15,7 +15,7 @@
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
 		<link rel="stylesheet" href="../leaflet/leaflet.css">
 		<link rel="stylesheet" href="../leaflet/leaflet.mouseposition.css">
-		<link rel="stylesheet" href="../css/noose${initParam['dev_mode'] == true ? '' : '-min'}.css" media="screen">
+		<link rel="stylesheet" href="../css/view.css" media="screen">
 		<style>
 			#keyword_container a { margin: 2px 0px 0px 2px; }
 			#keyword_container .active { box-shadow: none !important; background-color: transparent !important; }
@@ -105,7 +105,7 @@
 					</c:if>
 					<dl>
 						<dt>Onshore</dt>
-						<dd><span title="${outcrop.onshore ? 'true' : 'false'}" class="glyphicon glyphicon-${outcrop.onshore ? 'ok' : 'remove'}"></span></dd>
+						<dd>${outcrop.onshore ? 'Yes' : 'No'}</dd>
 					</dl>
 					<dl id="lonlat">
 						<dt>Lon/Lat</dt>

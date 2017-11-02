@@ -297,9 +297,7 @@
 					<dl>
 						<dt>&nbsp;</dt>
 						<dd>
-							<button class="btn btn-primary" id="save">
-								<span class="glyphicon glyphicon-save"></span> Save
-							</button>
+							<button class="btn btn-primary" id="save"> Save </button>
 						</dd>
 					</dl>
 				</form>
