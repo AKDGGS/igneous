@@ -141,9 +141,11 @@ public class SolrQuery
 					case 1:
 						if(params.length() > 0) params.append("&");
 						params.append("fq=");
-						params.append(URLEncoder.encode(key, "UTF-8"));
-						if(key.charAt(key.length() - 1) != '}'){
-							params.append(":");
+						if(key != null){
+							params.append(URLEncoder.encode(key, "UTF-8"));
+							if(key.charAt(key.length() - 1) != '}'){
+								params.append(":");
+							}
 						}
 						params.append(
 							URLEncoder.encode(
@@ -154,14 +156,19 @@ public class SolrQuery
 					default:
 						if(params.length() > 0) params.append("&");
 						params.append("fq=");
-						params.append(URLEncoder.encode(key, "UTF-8"));
-						params.append(":(");
+						if(key != null){
+							params.append(URLEncoder.encode(key, "UTF-8"));
+							params.append(URLEncoder.encode(":", "UTF-8"));
+						}
+						params.append(URLEncoder.encode("(", "UTF-8"));
 						int count = 0;
 						for(String value : e.getValue()){
-							if(count++ > 0) params.append(" OR ");
+							if(count++ > 0){
+								params.append(URLEncoder.encode(") OR (", "UTF-8"));
+							}
 							params.append(URLEncoder.encode(value, "UTF-8"));
 						}
-						params.append(")");
+						params.append(URLEncoder.encode(")", "UTF-8"));
 				}
 			}
 			

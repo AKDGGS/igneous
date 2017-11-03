@@ -31,18 +31,18 @@
 				<span class="apptmpl-goldbar-right"></span>
 
 				<c:if test="${not empty pageContext.request.userPrincipal}">
-				<a href="../container_log.html">Move Log</a>
-				<a href="../quality_report.html">Quality Assurance</a>
-				<a href="../audit_report.html">Audit</a>
+				<a href="container_log.html">Move Log</a>
+				<a href="quality_report.html">Quality Assurance</a>
+				<a href="audit_report.html">Audit</a>
 				<c:if test="${pageContext.request.isUserInRole('admin')}">
-				<a href="../import.html">Data Importer</a>
+				<a href="import.html">Data Importer</a>
 				</c:if>
-				<a href="../logout/">Logout</a>
+				<a href="logout/">Logout</a>
 				</c:if>
 				<c:if test="${empty pageContext.request.userPrincipal}">
 				<a href="https://${pageContext.request.serverName}${pageContext.request.contextPath}/login/">Login</a>
 				</c:if>
-				<a href="../help">Search Help</a>
+				<a href="help">Search Help</a>
 			</div>
 
 			<div class="apptmpl-banner">
@@ -84,17 +84,29 @@
 		<script src="js/jquery-1.10.2.min.js"></script>
 		<script>
 			$(function(){
-				$('#search').click(function(){
-					window.location.href = 'search#q=' + $('#q').val();
-				});
+				var btn_search = document.getElementById('search');
+				if(btn_search){
+					btn_search.onclick = function(){
+						window.location.href = 'search#q=' + $('#q').val();
+					};
+				}
 
-				$('#help').click(function(){
-					window.location.href = 'help';
-				});
+				var iq = document.getElementById('q');
+				if(iq){
+					iq.onkeypress = function(e){
+						if(e.keyCode === 13){
+							var search = document.getElementById('search');
+							if(search) search.click();
+						}
+					};
+				}
 
-				$('#q').keypress(function(e){
-					if(e.keyCode === 13){ $('#search').click(); }
-				});
+				var startendfunc = function(e){
+					if(e.keyCode === 13){
+						var query = document.getElementById('query');
+						if(query) query.click();
+					}
+				};
 
 				$('#start, #end').keypress(function(e){
 					if(e.keyCode === 13){ $('#query').click(); }

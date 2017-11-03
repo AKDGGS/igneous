@@ -91,8 +91,8 @@ public class SearchServlet extends HttpServlet
 					Json jdesc = j.at("description");
 					if(jdesc != null && jdesc.isString()){
 						String desc = jdesc.asString();
-						if(desc.length() > 50){
-							j.set("description", (desc.substring(0, 46) + " ..."));
+						if(desc.length() > 150){
+							j.set("description", (desc.substring(0, 146) + " ..."));
 						}
 					}
 				}
@@ -165,8 +165,24 @@ public class SearchServlet extends HttpServlet
 				BigDecimal bd_top = new BigDecimal(top);
 				BigDecimal bd_bottom = new BigDecimal(bottom);
 
-				query.setFilter("top","[" + bd_top.toString() + " TO *]");
-				query.setFilter("bottom", "[* TO " + bd_bottom.toString() + "]");
+				query.addFilter(null,
+					"top:[* TO " + bd_top.toString() + "]" +
+					" AND " +
+					"bottom:[" + bd_bottom.toString() + " TO *]"
+				);
+				query.addFilter(null,
+					"top:[" + bd_top.toString() + " TO *]" +
+					" AND " +
+					"bottom:[* TO " + bd_bottom.toString() + "]"
+				);
+				query.addFilter(null, 
+					"top:[" + bd_top.toString() +
+					" TO " + bd_bottom.toString() + "]"
+				);
+				query.addFilter(null, 
+					"bottom:[" + bd_top.toString() +
+					" TO " + bd_bottom.toString() + "]"
+				);
 			} catch(Exception ex){
 				throw new Exception("Invalid Interval");
 			}
