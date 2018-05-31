@@ -3,11 +3,9 @@
 		type="javax.sql.DataSource" />
 	<ResourceLink name="igneous/solr-url" global="igneous-dev/solr-url"
 		type="java.lang.String" />
-	<!--
-	<ResourceLink name="igneous/solr-user" global="igneous/solr-user"
+	<ResourceLink name="igneous/solr-user" global="igneous-dev/solr-user"
 		type="java.lang.String" />
-	<ResourceLink name="igneous/solr-pass" global="igneous/solr-pass"
+	<ResourceLink name="igneous/solr-pass" global="igneous-dev/solr-pass"
 		type="java.lang.String" />
-	-->
 </Context>
 
