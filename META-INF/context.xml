@@ -1,11 +1,11 @@
 <Context>
-	<ResourceLink name="jdbc/igneous" global="jdbc/igneousdev"
+	<ResourceLink name="jdbc/igneous" global="jdbc/igneous"
 		type="javax.sql.DataSource" />
-	<ResourceLink name="igneous/solr-url" global="igneous-dev/solr-url"
+	<ResourceLink name="igneous/solr-url" global="igneous/solr-url"
 		type="java.lang.String" />
-	<ResourceLink name="igneous/solr-user" global="igneous-dev/solr-user"
+	<ResourceLink name="igneous/solr-user" global="igneous/solr-user"
 		type="java.lang.String" />
-	<ResourceLink name="igneous/solr-pass" global="igneous-dev/solr-pass"
+	<ResourceLink name="igneous/solr-pass" global="igneous/solr-pass"
 		type="java.lang.String" />
 </Context>
 

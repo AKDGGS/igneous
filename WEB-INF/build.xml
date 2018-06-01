@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <project name="igneous" default="compile">
 	<!-- Change me as needed -->
-	<property name="catalina.home" value="/opt/tomcat" />
-
+	<property name="catalina.home" value="/usr/share/tomcat" />
 
 	<target name="clean">
 		<delete>
@@ -11,7 +10,6 @@
 			<fileset dir="../css" includes="*-min.css" />
 		</delete>
 	</target>
-
 
 	<target name="compile">
 		<mkdir dir="classes" />
@@ -23,5 +21,4 @@
 			</classpath>
 		</javac>
 	</target>
-
 </project>
