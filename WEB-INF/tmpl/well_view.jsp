@@ -216,10 +216,7 @@
 				<div id="tab-inventory">
 					<div class="container" id="keyword_container">
 						<c:if test="${!empty keywords}">
-						<c:set var="link" value="well:\"${well.name}\"" />
-						<c:if test="${!empty well.wellNumber}">
-						<c:set var="link" value="${link} wellnumber:\"${well.wellNumber}\"" />
-						</c:if>
+						<c:set var="link" value="well_id:${well.ID}" />
 						<div>
 							<span class="label label-info">By Keywords</span>
 							<ul class="nav nav-pills" id="keywords">

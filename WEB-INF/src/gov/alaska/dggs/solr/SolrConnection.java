@@ -22,8 +22,8 @@ public class SolrConnection
 	public SolrConnection(String url)
 	{
 		this.url = url;
-		connect_timeout = 1000;
-		read_timeout = 500;
+		connect_timeout = 2000;
+		read_timeout = 1000;
 		content_type = null;
 		authorization = null;
 	}
