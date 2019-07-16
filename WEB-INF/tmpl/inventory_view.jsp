@@ -45,9 +45,7 @@
 				<a href="../container_log.html">Move Log</a>
 				<a href="../quality_report.html">Quality Assurance</a>
 				<a href="../audit_report.html">Audit</a>
-				<c:if test="${pageContext.request.isUserInRole('admin')}">
 				<a href="../import.html">Data Importer</a>
-				</c:if>
 				<a href="../logout/">Logout</a>
 				</c:if>
 				<c:if test="${empty pageContext.request.userPrincipal}">
