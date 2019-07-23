@@ -75,9 +75,7 @@
 						<dd>
 							${inventory.ID}
 							<c:if test="${not empty pageContext.request.userPrincipal}">
-								<c:if test="${pageContext.request.isUserInRole('edit')}">
-									[<a href="../edit_inventory/${inventory.ID}">Edit</a>]
-								</c:if>
+								[<a href="../edit_inventory/${inventory.ID}">Edit</a>]
 							</c:if>
 						</dd>
 					</dl>
@@ -500,7 +498,7 @@
 						</c:forEach>
 						</div>
 
-						<c:if test="${pageContext.request.isUserInRole('edit')}">
+						<c:if test="${not empty pageContext.request.userPrincipal}">
 						<br>
 
 						<form action="../upload" method="POST" enctype="multipart/form-data">

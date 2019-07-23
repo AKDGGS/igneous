@@ -258,7 +258,7 @@
 					</c:forEach>
 					</div>
 
-					<c:if test="${pageContext.request.isUserInRole('edit')}">
+					<c:if test="${not empty pageContext.request.userPrincipal}">
 					<br>
 
 					<form action="../upload" method="POST" enctype="multipart/form-data">
