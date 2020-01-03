@@ -75,11 +75,9 @@ public class NationalDigitalCatalogXMLServlet extends HttpServlet
 				writer.writeEndElement();
 
 				writer.writeStartElement("dataType");
-				for(String keyword : row.get("keywords").toString().split(", ")){
-					writer.writeStartElement("type");
-					writer.writeCharacters(keyword);
-					writer.writeEndElement();
-				}
+				writer.writeCharacters(
+					row.get("keywords").toString().replaceAll(", ", ",")
+				);
 				writer.writeEndElement();
 
 				writer.writeStartElement("supplementalInformation");

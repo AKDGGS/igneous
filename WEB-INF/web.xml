@@ -45,7 +45,7 @@
 			XML feed.
 		</description>
 		<param-name>collectionid</param-name>
-		<param-value>55ce5b1ee4b01487cbfc7104</param-value>
+		<param-value>5dfa8192e4b0cdded73d55e0</param-value>
 	</context-param>
 
 	<servlet>
