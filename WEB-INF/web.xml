@@ -609,8 +609,8 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>fossil files</web-resource-name>
-			<url-pattern>/.fslckout</url-pattern>
+			<web-resource-name>git files</web-resource-name>
+			<url-pattern>/.git/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint><role-name>nobody</role-name></auth-constraint>
 	</security-constraint>
