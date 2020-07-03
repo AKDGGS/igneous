@@ -51,6 +51,14 @@
 			UNION ALL
 
 			SELECT op.outcrop_id, pl.geog
+			FROM outcrop_plss AS op
+			JOIN plss AS pl
+				ON pl.plss_id = op.plss_id
+			WHERE pl.geog IS NOT NULL
+
+			UNION ALL
+
+			SELECT op.outcrop_id, pl.geog
 			FROM outcrop_place AS op
 			JOIN place AS pl
 				ON pl.place_id = op.place_id
@@ -58,11 +66,11 @@
 
 			UNION ALL
 
-			SELECT op.outcrop_id, pl.geog
-			FROM outcrop_plss AS op
-			JOIN plss AS pl
-				ON pl.plss_id = op.plss_id
-			WHERE pl.geog IS NOT NULL
+			SELECT ocr.outcrop_id, re.geog
+			FROM outcrop_region AS ocr
+			JOIN region AS re
+				ON re.region_id = ocr.region_id
+			WHERE re.geog IS NOT NULL
 
 			UNION ALL
 

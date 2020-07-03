@@ -83,6 +83,14 @@
 			JOIN well_place AS wpl
 				ON wpl.place_id = pl.place_id
 			WHERE pl.geog IS NOT NULL
+
+			UNION ALL
+
+			SELECT wr.well_id, re.geog
+			FROM region AS re
+			JOIN well_region AS wr
+				ON wr.region_id = re.region_id
+			WHERE re.geog IS NOT NULL
 		) AS q
 		WHERE q.well_id = #{well_id}
 		LIMIT 1

@@ -55,16 +55,22 @@
 
 	<select id="getGeoJSONByID" resultSetType="FORWARD_ONLY" parameterType="int" resultType="String">
 		SELECT ST_AsGeoJSON(
-			ST_Makeline(
+			CASE WHEN ST_NumPoints(geom) > 1 THEN
+				ST_Simplify(geom,0.0001)
+			ELSE ST_PointN(geom, 1)
+			END
+		, 5, 0) AS geog
+		FROM (
+			SELECT ST_Makeline(
 				p.geog::GEOMETRY ORDER BY sp.shotpoint_number DESC
-			), 5, 0
-		) AS geojson
-		FROM shotpoint AS sp
-		JOIN shotpoint_point AS spp
-			ON spp.shotpoint_id = sp.shotpoint_id
-		JOIN point AS p
-			ON p.point_id = spp.point_id
-		WHERE sp.shotline_id = #{shotline_id}
-		GROUP BY sp.shotline_id
+			) AS geom
+			FROM shotpoint AS sp
+			JOIN shotpoint_point AS spp
+				ON spp.shotpoint_id = sp.shotpoint_id
+			JOIN point AS p
+				ON p.point_id = spp.point_id
+			WHERE sp.shotline_id = #{shotline_id}
+			GROUP BY sp.shotline_id
+		) AS q
 	</select>
 </mapper>
