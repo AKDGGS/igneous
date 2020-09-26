@@ -65,7 +65,7 @@ public class InventoryEditServlet extends HttpServlet
 					try{ 
 						switch(field){
 							case "dggs_sample_id":
-								iv.setDGGSSampleID(param);
+								iv.setDGGSSampleIDString(param);
 							break;
 							case "lab_report_id":
 								iv.setLabReportID(param);
@@ -83,7 +83,7 @@ public class InventoryEditServlet extends HttpServlet
 								iv.setPublishedSampleNumber(param);
 							break;
 							case "published_number_has_suffix":
-								iv.setPublishedNumberHasSuffix(param);
+								iv.setPublishedNumberHasSuffixString(param);
 							break;
 							case "barcode":
 								iv.setBarcode(param);
@@ -107,7 +107,7 @@ public class InventoryEditServlet extends HttpServlet
 								iv.setSlideNumber(param);
 							break;
 							case "slip_number":
-								iv.setSlipNumber(param);
+								iv.setSlipNumberString(param);
 							break;
 							case "lab_number":
 								iv.setLabNumber(param);
@@ -122,19 +122,19 @@ public class InventoryEditServlet extends HttpServlet
 								iv.setRemark(param);
 							break;
 							case "tray":
-								iv.setTray(param);
+								iv.setTrayString(param);
 							break;
 							case "interval_top":
-								iv.setIntervalTop(param);
+								iv.setIntervalTopString(param);
 							break;
 							case "interval_bottom":
-								iv.setIntervalBottom(param);
+								iv.setIntervalBottomString(param);
 							break;
 							case "core_number":
 								iv.setCoreNumber(param);
 							break;
 							case "weight":
-								iv.setWeight(param);
+								iv.setWeightString(param);
 							break;
 							case "sample_frequency":
 								iv.setSampleFrequency(param);
@@ -143,19 +143,19 @@ public class InventoryEditServlet extends HttpServlet
 								iv.setRecovery(param);
 							break;
 							case "can_publish":
-								iv.setCanPublish(param);
+								iv.setCanPublishString(param);
 							break;
 							case "radiation_msvh":
-								iv.setRadiationMSVH(param);
+								iv.setRadiationMSVHString(param);
 							break;
 							case "received":
-								iv.setReceived(param);
+								iv.setReceivedString(param);
 							break;
 							case "entered":
-								iv.setEntered(param);
+								iv.setEnteredString(param);
 							break;
 							case "active":
-								iv.setActive(param);
+								iv.setActiveString(param);
 							break;
 						}
 						dirty = true;

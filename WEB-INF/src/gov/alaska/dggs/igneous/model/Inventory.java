@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Date;
 import java.text.DateFormat;
+import flexjson.JSON;
 
 
 public class Inventory implements Serializable
@@ -31,7 +32,7 @@ public class Inventory implements Serializable
 	private Long dggs_sample_id;
 	public Long getDGGSSampleID(){ return dggs_sample_id; }
 	public void setDGGSSampleID(Long dggs_sample_id){ this.dggs_sample_id = dggs_sample_id; }
-	public void setDGGSSampleID(String dggs_sample_id) throws Exception
+	public void setDGGSSampleIDString(String dggs_sample_id) throws Exception
 	{
 		if(dggs_sample_id == null || dggs_sample_id.trim().length() == 0){
 			this.dggs_sample_id = null;
@@ -112,7 +113,7 @@ public class Inventory implements Serializable
 	private Boolean published_number_has_suffix;
 	public Boolean getPublishedNumberHasSuffix(){ return published_number_has_suffix; }
 	public void setPublishedNumberHasSuffix(Boolean published_number_has_suffix){ this.published_number_has_suffix = published_number_has_suffix; }
-	public void setPublishedNumberHasSuffix(String published_number_has_suffix)
+	public void setPublishedNumberHasSuffixString(String published_number_has_suffix)
 	{
 		this.published_number_has_suffix = Boolean.valueOf(published_number_has_suffix);
 	}
@@ -211,7 +212,7 @@ public class Inventory implements Serializable
 	private Integer slip_number;
 	public Integer getSlipNumber(){ return slip_number; }
 	public void setSlipNumber(Integer slip_number){ this.slip_number = slip_number; }
-	public void setSlipNumber(String slip_number) throws Exception
+	public void setSlipNumberString(String slip_number) throws Exception
 	{
 		if(slip_number == null || slip_number.trim().length() == 0)
 			this.slip_number = null;
@@ -274,7 +275,7 @@ public class Inventory implements Serializable
 	private Integer tray;
 	public Integer getTray(){ return tray; }
 	public void setTray(Integer tray){ this.tray = tray; }
-	public void setTray(String tray) throws Exception
+	public void setTrayString(String tray) throws Exception
 	{
 		if(tray == null || tray.trim().length() == 0)
 			this.tray = null;
@@ -289,7 +290,7 @@ public class Inventory implements Serializable
 	private BigDecimal intervalTop;
 	public BigDecimal getIntervalTop(){ return intervalTop; }
 	public void setIntervalTop(BigDecimal intervalTop){ this.intervalTop = intervalTop; }
-	public void setIntervalTop(String intervalTop) throws Exception
+	public void setIntervalTopString(String intervalTop) throws Exception
 	{
 		if(intervalTop == null || intervalTop.trim().length() == 0){
 			this.intervalTop = null;
@@ -309,7 +310,7 @@ public class Inventory implements Serializable
 	public void setIntervalBottom(BigDecimal intervalBottom) throws Exception {
 		this.intervalBottom = intervalBottom;
 	}
-	public void setIntervalBottom(String intervalBottom) throws Exception {
+	public void setIntervalBottomString(String intervalBottom) throws Exception {
 		if(intervalBottom == null || intervalBottom.trim().length() == 0){
 			this.intervalBottom = null;
 		} else {
@@ -345,7 +346,7 @@ public class Inventory implements Serializable
 	private BigDecimal weight;
 	public BigDecimal getWeight(){ return weight; }
 	public void setWeight(BigDecimal weight){ this.weight = weight; }
-	public void setWeight(String weight) throws Exception {
+	public void setWeightString(String weight) throws Exception {
 		if(weight == null || weight.trim().length() == 0){
 			this.weight = null;
 		} else {
@@ -391,7 +392,7 @@ public class Inventory implements Serializable
 	private Boolean can_publish;
 	public Boolean getCanPublish(){ return can_publish; }
 	public void setCanPublish(Boolean can_publish){ this.can_publish = can_publish; }
-	public void setCanPublish(String can_publish)
+	public void setCanPublishString(String can_publish)
 	{
 		this.can_publish = Boolean.valueOf(can_publish);
 	}
@@ -399,7 +400,7 @@ public class Inventory implements Serializable
 	private BigDecimal radiation_msvh;
 	public BigDecimal getRadiationMSVH(){ return radiation_msvh; }
 	public void setRadiationMSVH(BigDecimal radiation_msvh){ this.radiation_msvh = radiation_msvh; }
-	public void setRadiationMSVH(String radiation_msvh) throws Exception {
+	public void setRadiationMSVHString(String radiation_msvh) throws Exception {
 		if(radiation_msvh == null || radiation_msvh.trim().length() == 0){
 			this.radiation_msvh = null;
 		} else {
@@ -416,7 +417,7 @@ public class Inventory implements Serializable
 	private Date received;
 	public Date getReceived(){ return received; }
 	public void setReceived(Date received){ this.received = received; }
-	public void setReceived(String received) throws Exception
+	public void setReceivedString(String received) throws Exception
 	{
 		if(received == null || received.trim().length() == 0){
 			this.received = null;
@@ -432,7 +433,7 @@ public class Inventory implements Serializable
 	private Date entered;
 	public Date getEntered(){ return entered; }
 	public void setEntered(Date entered){ this.entered = entered; }
-	public void setEntered(String entered) throws Exception
+	public void setEnteredString(String entered) throws Exception
 	{
 		if(entered == null || entered.trim().length() == 0){
 			this.entered = null;
@@ -455,7 +456,7 @@ public class Inventory implements Serializable
 	private Boolean active;
 	public Boolean getActive(){ return active; }
 	public void setActive(Boolean active){ this.active = active; }
-	public void setActive(String active)
+	public void setActiveString(String active)
 	{
 		this.active = Boolean.valueOf(active);
 	}

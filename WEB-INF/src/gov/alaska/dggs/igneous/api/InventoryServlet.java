@@ -46,25 +46,7 @@ public class InventoryServlet extends HttpServlet
 		serializer.include("publications");
 		serializer.include("container");
 
-		serializer.exclude("class");
-		serializer.exclude("container.class");
-		serializer.exclude("intervalUnit.class");
-		serializer.exclude("collection.class");
-		serializer.exclude("coreDiameter.class");
-		serializer.exclude("coreDiameter.unit.class");
-		serializer.exclude("wells.class");
-		serializer.exclude("wells.unit.class");
-		serializer.exclude("wells.operators.class");
-		serializer.exclude("wells.operators.type.class");
-		serializer.exclude("boreholes.class");
-		serializer.exclude("boreholes.measuredDepthUnit.class");
-		serializer.exclude("boreholes.prospect.class");
-		serializer.exclude("outcrops.class");
-		serializer.exclude("shotpoints.class");
-		serializer.exclude("shotpoints.shotline.class");
-		serializer.exclude("files.class");
-		serializer.exclude("files.type.class");
-		serializer.exclude("publications.class");
+		serializer.exclude("*.class");
 		serializer.exclude("WKT");
 
 		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
@@ -77,7 +59,6 @@ public class InventoryServlet extends HttpServlet
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 
 
-	@SuppressWarnings("unchecked")
 	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
@@ -94,7 +75,7 @@ public class InventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List output = null;
+			List<Inventory> output = null;
 
 			if(id != null){
 				output = sess.selectList(
