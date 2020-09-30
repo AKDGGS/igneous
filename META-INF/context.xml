@@ -7,5 +7,8 @@
 		type="java.lang.String" />
 	<ResourceLink name="igneous/solr-pass" global="igneous/solr-pass"
 		type="java.lang.String" />
+	<ResourceLink name="igneous/apikey" global="igneous/apikey"
+		type="java.lang.String" />
+
 </Context>
 
