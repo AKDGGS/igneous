@@ -10,9 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -24,10 +21,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
 import java.util.Arrays;
-import java.util.TimeZone;
-import java.util.Base64;
-
-import java.text.SimpleDateFormat;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
@@ -64,72 +57,24 @@ public class InventoryServlet extends HttpServlet
 		serializer.transform(new IterableTransformer(), Iterable.class);
 	}
 
-	public static boolean CheckAuthHeader(String secret, String auth, long authdate, String payload)
-	{
-		try {
-			if(authdate < 1){ return false; }
-
-			// Is the authdate within 30 seconds of now?
-			long currdate = System.currentTimeMillis();
-			long diff = currdate - authdate;
-			if(diff < -30000 || diff > 30000){ return false; }
-
-			if(auth == null){ return false; }
-			
-			// Right now this only supports BASE64 encoded HMAC-SHA256
-			if(!auth.startsWith("BASE64-HMAC-SHA256 ")){ return false; }
-
-			String remotehmac = auth.substring(19);
-
-			SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
-			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-			String msg = String.format("%s\n%s", 
-				sdf.format(new Date(authdate)),
-				payload
-			);
-
-			Mac mac = Mac.getInstance("HmacSHA256");
-			SecretKeySpec spec = new SecretKeySpec(
-				secret.getBytes("UTF-8"), "HmacSHA256"
-			);
-			mac.init(spec);
-			String localhmac = Base64.getEncoder().encodeToString(
-				mac.doFinal(msg.getBytes("UTF-8"))
-			);
-
-			if(localhmac.equals(remotehmac)){
-				return true;
-			}
-		} catch(Exception ex){
-			// Explicitly do nothing
-		}
-		return false;
-	}
-
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
-
-		boolean auth = false;
 		try {
 			Context initcontext = new InitialContext();
 			String apikey = (String)initcontext.lookup(
 				"java:comp/env/igneous/apikey"
 			);
-			auth = CheckAuthHeader(
+			Auth.CheckHeader(
 				apikey,
 				request.getHeader("Authorization"),
 				request.getDateHeader("Date"),
 				request.getQueryString()
 			);
 		} catch(Exception ex){
-			// Explicitly do nothing
-		}
-		if(auth == false){
 			response.sendError(
 				HttpServletResponse.SC_FORBIDDEN,
-				"Authentication Invalid"
+				ex.getMessage()
 			);
 			return;
 		}
