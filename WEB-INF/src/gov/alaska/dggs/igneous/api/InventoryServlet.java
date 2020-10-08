@@ -48,6 +48,8 @@ public class InventoryServlet extends HttpServlet
 		serializer.include("collections");
 		serializer.include("publications");
 		serializer.include("container");
+		serializer.include("qualities");
+		serializer.include("qualities.issues");
 
 		serializer.exclude("*.class");
 		serializer.exclude("WKT");

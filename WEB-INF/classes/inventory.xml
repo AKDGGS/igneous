@@ -108,6 +108,7 @@
 		<collection property="files" column="inventory_id" ofType="File" select="gov.alaska.dggs.igneous.File.getByInventoryID" />
 		<collection property="publications" column="inventory_id" ofType="Publication" select="gov.alaska.dggs.igneous.Publication.getByInventoryID" />
 		<collection property="shotpoints" column="inventory_id" ofType="Shotpoint" select="gov.alaska.dggs.igneous.Shotpoint.getByInventoryID" />
+		<collection property="qualities" column="inventory_id" ofType="InventoryQuality" select="gov.alaska.dggs.igneous.InventoryQuality.getMostRecentByInventoryID" />
 	</resultMap>
 
 

@@ -18,6 +18,13 @@
 		ORDER BY check_date DESC
 	</select>
 
+	<select id="getMostRecentByInventoryID" parameterType="Integer" resultSetType="FORWARD_ONLY" resultMap="InventoryQualityMap">
+		<include refid="getBy" />
+		WHERE inventory_id = #{inventory_id}
+		ORDER BY check_date DESC
+		LIMIT 1
+	</select>
+
 
 	<resultMap id="InventoryQualityMap" type="InventoryQuality">
 		<id property="id" column="inventory_quality_id" />
