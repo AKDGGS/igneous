@@ -385,14 +385,14 @@ public class SearchServletCSV extends HttpServlet
 							} else row.add(null);
 						}
 
-						// Latitude
-						if(doc.at("latitude") != null){
-							row.add(doc.at("latitude").getValue());
-						} else row.add(null);
-
 						// Longitude
 						if(doc.at("longitude") != null){
 							row.add(doc.at("longitude").getValue());
+						} else row.add(null);
+
+						// Latitude
+						if(doc.at("latitude") != null){
+							row.add(doc.at("latitude").getValue());
 						} else row.add(null);
 
 						// Datum
