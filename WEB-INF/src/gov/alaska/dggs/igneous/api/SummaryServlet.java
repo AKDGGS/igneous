@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -43,26 +46,35 @@ public class SummaryServlet extends HttpServlet
 		serializer.include("collections");
 		serializer.include("containers");
 
-		serializer.exclude("class");
+		serializer.exclude("*.class");
 
 		serializer.transform(new DateTransformer("M/d/yyyy"), Date.class);
 		serializer.transform(new ExcludeTransformer(), void.class);
 		serializer.transform(new IterableTransformer(), Iterable.class);
 	}
 
-
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-
-
-	@SuppressWarnings("unchecked")
-	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
+		try {
+			Context initcontext = new InitialContext();
+			String apikey = (String)initcontext.lookup(
+				"java:comp/env/igneous/apikey"
+			);
+			Auth.CheckHeader(
+				apikey,
+				request.getHeader("Authorization"),
+				request.getDateHeader("Date"),
+				request.getQueryString()
+			);
+		} catch(Exception ex){
+			response.sendError(
+				HttpServletResponse.SC_FORBIDDEN,
+				ex.getMessage()
+			);
+			return;
+		}
 
-		Integer id = null;
-		try { id = Integer.valueOf(request.getParameter("id")); }
-		catch(Exception ex){ }
 		String barcode = request.getParameter("barcode");
 
 		// Aggressively disable cache
@@ -72,16 +84,16 @@ public class SummaryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			HashMap output = new HashMap();
+			HashMap<String,Object> output = new HashMap<String,Object>();
 
-			List<Map> results = sess.selectList(
+			List<Map<String,Object>> results = sess.selectList(
 				"gov.alaska.dggs.igneous.Container.getTotalsByBarcode", barcode
 			);
 
 			if(results.size() > 0){
 				Long count = new Long(0);
-				List<Map> containers = new ArrayList<Map>();
-				List<Integer> ids = new ArrayList<Integer>();
+				ArrayList<Map<String,Object>> containers = new ArrayList<Map<String,Object>>();
+				ArrayList<Integer> ids = new ArrayList<Integer>();
 
 				for(Map result : results){
 					Boolean include = (Boolean)result.get("include");
@@ -92,7 +104,7 @@ public class SummaryServlet extends HttpServlet
 
 					count += total;
 
-					Map container = new HashMap(2);
+					HashMap<String,Object> container = new HashMap<String,Object>(2);
 					container.put("container", name);
 					container.put("total", total);
 					containers.add(container);
@@ -101,7 +113,7 @@ public class SummaryServlet extends HttpServlet
 				output.put("total", count);
 				output.put("containers", containers);
 
-				HashMap params = new HashMap(2);
+				HashMap<String,Object> params = new HashMap<String,Object>(2);
 				if(!ids.isEmpty()) params.put("container_id", ids); 
 				params.put("barcode", barcode);
 
