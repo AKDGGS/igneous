@@ -16,23 +16,23 @@ public class Auth
 
 	public static void CheckHeader(String secret, String auth, long authdate, String payload) throws Exception {
 		if(authdate < 1){
-			throw new Exception("Invalid date");
+			throw new Exception("Authentication failure: invalid date");
 		}
 
 		// Is the authdate within 30 seconds of now?
 		long currdate = System.currentTimeMillis();
 		long diff = Math.abs(currdate - authdate);
 		if(diff > TOLERANCE_MS){
-			throw new Exception("Invalid date range");
+			throw new Exception("Authentication failure: request too old");
 		}
 
 		if(auth == null){
-			throw new Exception("No authentication provided");
+			throw new Exception("Authentication failure: no credentials");
 		}
 			
 		// Right now this only supports BASE64 encoded HMAC-SHA256
 		if(!auth.startsWith("BASE64-HMAC-SHA256 ")){
-			throw new Exception("Unsupported authentication type");
+			throw new Exception("Authentication failure: unsupported type");
 		}
 
 		String remotehmac = auth.substring(19);
@@ -54,7 +54,7 @@ public class Auth
 		);
 
 		if(!localhmac.equals(remotehmac)){
-			throw new Exception("Invalid authentication");
+			throw new Exception("Authentication failure: invalid key");
 		}
 	}
 }

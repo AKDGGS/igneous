@@ -68,10 +68,9 @@ public class SummaryServlet extends HttpServlet
 				request.getQueryString()
 			);
 		} catch(Exception ex){
-			response.sendError(
-				HttpServletResponse.SC_FORBIDDEN,
-				ex.getMessage()
-			);
+			response.setStatus(403);
+			response.setContentType("text/plain");
+			response.getOutputStream().print(ex.getMessage());
 			return;
 		}
 
