@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.naming.InitialContext;
+import javax.naming.Context;
+
 import java.util.List;
 import java.util.HashMap;
 
@@ -24,14 +27,27 @@ import gov.alaska.dggs.igneous.model.Container;
 
 public class MoveServlet extends HttpServlet
 {
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-
-
-	@SuppressWarnings("unchecked")
-	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
+		try {
+			Context initcontext = new InitialContext();
+			String apikey = (String)initcontext.lookup(
+				"java:comp/env/igneous/apikey"
+			);
+			Auth.CheckHeader(
+				apikey,
+				request.getHeader("Authorization"),
+				request.getDateHeader("Date"),
+				request.getQueryString()
+			);
+		} catch(Exception ex){
+			response.setStatus(403);
+			response.setContentType("text/plain");
+			response.getOutputStream().print(ex.getMessage());
+			return;
+		}
+
 		boolean strict = Boolean.parseBoolean(
 			context.getInitParameter("strict_mode")
 		);
@@ -45,18 +61,13 @@ public class MoveServlet extends HttpServlet
 		try {
 			// Destination - the barcode attached to the container
 			// we're moving all this stuff into
-			String dest = request.getParameter("dest");
+			String dest = request.getParameter("d");
 			if(dest == null || (dest = dest.trim()).length() < 1){
 				throw new Exception("Destination barcode cannot be empty.");
 			}
 
-			String barcodes = request.getParameter("barcodes");
-			if(barcodes == null || (barcodes = barcodes.trim()).length() < 1){
-				throw new Exception("List of barcodes to be moved cannot be empty.");
-			}
-
-			String codes[] = barcodes.split(";");
-			if(codes.length < 1){
+			String[] codes = request.getParameterValues("c");
+			if(codes == null || codes.length < 1){
 				throw new Exception("List of barcodes to be moved cannot be empty.");
 			}
 
@@ -75,7 +86,7 @@ public class MoveServlet extends HttpServlet
 
 			Integer container_id = container_ids.get(0);
 			for(String code : codes){
-				HashMap params = new HashMap();
+				HashMap<String,Object> params = new HashMap<String,Object>();
 				params.put("barcode", code);
 				params.put("container_id", container_id);
 
