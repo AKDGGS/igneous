@@ -45,6 +45,7 @@ public class SummaryServlet extends HttpServlet
 		serializer.include("shotpoints");
 		serializer.include("collections");
 		serializer.include("containers");
+		serializer.include("barcodes");
 
 		serializer.exclude("*.class");
 
