@@ -65,7 +65,7 @@ public class AddContainerServlet extends HttpServlet
 
 			String name = request.getParameter("name");
 			if(name == null || (name = name.trim()).length() == 0){
-				throw new Exception("Name cannot be empty.");
+				name = barcode;
 			}
 
 			String remark = request.getParameter("remark");
