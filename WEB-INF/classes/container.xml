@@ -62,143 +62,222 @@
 	</resultMap>
 
 
-	<select id="getTotalsByBarcode" parameterType="String" resultType="Map">
-		(
-			SELECT c.container_id, c.path_cache, true AS include,
-				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
-			FROM container AS c
-			LEFT OUTER JOIN inventory AS iv
-				ON iv.container_id = c.container_id
-			WHERE (iv.active OR iv.active IS NULL)
-				AND c.container_id IN (
-					WITH RECURSIVE r AS (
-					SELECT container_id
+	<select id="getContainerTotals" parameterType="String" resultType="Map">
+		SELECT path_cache AS container, total
+		FROM (
+			SELECT c.container_id, c.path_cache, COUNT(i.inventory_id) AS total
+			FROM inventory AS i
+			JOIN container AS c ON c.container_id = i.container_id
+			WHERE i.active AND i.container_id IN (
+				WITH RECURSIVE t AS (
+					SELECT 0 AS depth, container_id
 					FROM container
-					WHERE COALESCE(barcode, alt_barcode) = #{barcode}
+					WHERE active AND COALESCE(barcode, alt_barcode) = #{barcode}
 
 					UNION ALL
 
-					SELECT co.container_id
-					FROM r
-					JOIN container AS co
-						ON r.container_id = co.parent_container_id
-					) SELECT container_id FROM r
-				)
+					SELECT t.depth + 1 AS depth, c.container_id
+					FROM container AS c
+					JOIN t ON c.parent_container_id = t.container_id
+					WHERE active AND depth &lt;= 25
+				) SELECT container_id FROM t
+			)
 			GROUP BY c.container_id, c.path_cache
-			ORDER BY c.path_cache
-		) UNION (
-			SELECT c.container_id, c.path_cache, false AS include,
+			LIMIT 100
+		) AS q
+		ORDER BY path_cache
+	</select>
+
+
+	<select id="getCollectionTotals" parameterType="String" resultType="Map">
+		SELECT name AS collection, total
+		FROM (
+			SELECT co.collection_id, co.name,
 				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
 			FROM inventory AS iv
-			JOIN container AS c
-				ON c.container_id = iv.container_id
-			WHERE iv.active
-				AND COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
-			GROUP BY c.container_id, c.path_cache
-			ORDER BY c.path_cache
-		)
-	</select>
+			JOIN collection AS co ON co.collection_id = iv.collection_id
+			WHERE iv.active AND iv.container_id IN (
+				WITH RECURSIVE t AS (
+					SELECT 0 AS depth, container_id
+					FROM container
+					WHERE active
+						AND COALESCE(barcode, alt_barcode) = #{barcode}
 
+					UNION ALL
 
-	<select id="getCollectionTotals" parameterType="Map" resultType="Map">
-		SELECT co.name AS collection,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
-		FROM inventory AS iv
-		JOIN collection AS co
-			ON co.collection_id = iv.collection_id
-		WHERE iv.active AND (
-			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
-			<if test="container_id != null">
-			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
-			</if>
-		)
-		GROUP BY co.name
-	</select>
-
-
-	<select id="getWellTotals" parameterType="Map" resultType="Map">
-		SELECT we.name AS well,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
-		FROM container AS co
-		JOIN inventory AS iv
-			ON iv.container_id = co.container_id
-		JOIN inventory_well AS ivw
-			ON ivw.inventory_id = iv.inventory_id
-		JOIN well AS we
-			ON we.well_id = ivw.well_id
-		WHERE iv.active AND (
-			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
-			<if test="container_id != null">
-			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
-			</if>
-		)
-		GROUP BY we.name
-	</select>
-
-
-	<select id="getBoreholeTotals" parameterType="Map" resultType="Map">
-		SELECT 
-			(
-				COALESCE(ps.name, '') ||
-				CASE WHEN ps.name IS NULL THEN '' ELSE ' - ' END ||
-				bh.name
-			) AS borehole,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
-		FROM container AS co
-		JOIN inventory AS iv
-			ON iv.container_id = co.container_id
-		JOIN inventory_borehole AS ivb
-			ON ivb.inventory_id = iv.inventory_id
-		JOIN borehole AS bh
-			ON bh.borehole_id = ivb.borehole_id
-		LEFT OUTER JOIN prospect AS ps
-			ON ps.prospect_id = bh.prospect_id
-		WHERE iv.active AND (
-			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
-			<if test="container_id != null">
-			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
-			</if>
-		)
-		GROUP BY ps.name, bh.name
-		ORDER BY ps.name, bh.name
-	</select>
-
-
-	<select id="getKeywordSummary" parameterType="Map" resultType="String">
-		SELECT STRING_AGG(k.keyword::text, ', ')
-		FROM (
-			SELECT DISTINCT UNNEST(i.keywords) AS keyword
-			FROM inventory AS i
-			WHERE i.active AND (
-				COALESCE(i.barcode, i.alt_barcode) = #{barcode}
-				<if test="container_id != null">
-				OR i.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
-				</if>
+					SELECT t.depth + 1 AS depth, c.container_id
+					FROM container AS c
+					JOIN t ON c.parent_container_id = t.container_id
+					WHERE active AND depth &lt;= 25
+				) SELECT container_id FROM t
 			)
-			ORDER BY keyword
-		) AS k
+			GROUP BY co.collection_id, co.name
+			LIMIT 100
+		) AS q
+		ORDER BY collection
 	</select>
 
 
-	<select id="getShotlineTotals" parameterType="Map" resultType="Map">
-		SELECT sl.name AS shotline,
-			COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
-		FROM container AS co
-		JOIN inventory AS iv
-			ON iv.container_id = co.container_id
-		JOIN inventory_shotpoint AS ivs
-			ON ivs.inventory_id = iv.inventory_id
-		JOIN shotpoint AS sp
-			ON sp.shotpoint_id = ivs.shotpoint_id
-		JOIN shotline AS sl
-			ON sl.shotline_id = sp.shotline_id
-		WHERE iv.active AND (
-			COALESCE(iv.barcode, iv.alt_barcode) = #{barcode}
-			<if test="container_id != null">
-			OR iv.container_id IN <foreach collection="container_id" item="i" open="(" separator="," close=")">${i}</foreach>
-			</if>
+	<select id="getKeywordSummary" parameterType="String" resultType="String">
+		SELECT keyword::text
+		FROM (
+			SELECT DISTINCT UNNEST(keywords) AS keyword
+			FROM inventory
+			WHERE active AND container_id IN (
+				WITH RECURSIVE t AS (
+					SELECT 0 AS depth, container_id
+					FROM container
+					WHERE active
+						AND COALESCE(barcode, alt_barcode) = #{barcode}
+
+					UNION ALL
+
+					SELECT t.depth + 1 AS depth, c.container_id
+					FROM container AS c
+					JOIN t ON c.parent_container_id = t.container_id
+					WHERE active AND depth &lt;= 25
+				) SELECT container_id FROM t
+			)
+			LIMIT 100
+		) AS q
+		ORDER BY keyword::text
+	</select>
+
+
+	<select id="getWellTotals" parameterType="String" resultType="Map">
+		SELECT name AS well, total
+		FROM (
+			SELECT we.well_id, we.name,
+				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
+			FROM container AS co
+			JOIN inventory AS iv ON iv.container_id = co.container_id
+			JOIN inventory_well AS ivw ON ivw.inventory_id = iv.inventory_id
+			JOIN well AS we ON we.well_id = ivw.well_id
+			WHERE iv.active AND iv.container_id IN (
+				WITH RECURSIVE t AS (
+					SELECT 0 AS depth, container_id
+					FROM container
+					WHERE active
+						AND COALESCE(barcode, alt_barcode) = #{barcode}
+
+					UNION ALL
+
+					SELECT t.depth + 1 AS depth, c.container_id
+					FROM container AS c
+					JOIN t ON c.parent_container_id = t.container_id
+					WHERE active AND depth &lt;= 25
+				) SELECT container_id FROM t
+			)
+			GROUP BY we.well_id, we.name
+			LIMIT 100
+		) AS q
+		ORDER BY well
+	</select>
+
+
+	<select id="getBoreholeTotals" parameterType="String" resultType="Map">
+		SELECT prospect, borehole, total
+		FROM (
+			SELECT ps.prospect_id, bh.borehole_id,
+				ps.name AS prospect, bh.name AS borehole,
+				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
+			FROM container AS co
+			JOIN inventory AS iv
+				ON iv.container_id = co.container_id
+			JOIN inventory_borehole AS ivb
+				ON ivb.inventory_id = iv.inventory_id
+			JOIN borehole AS bh
+				ON bh.borehole_id = ivb.borehole_id
+			LEFT OUTER JOIN prospect AS ps
+				ON ps.prospect_id = bh.prospect_id
+			WHERE iv.active AND iv.container_id IN (
+				WITH RECURSIVE t AS (
+					SELECT 0 AS depth, container_id
+					FROM container
+					WHERE active
+						AND COALESCE(barcode, alt_barcode) = #{barcode}
+
+					UNION ALL
+
+					SELECT t.depth + 1 AS depth, c.container_id
+					FROM container AS c
+					JOIN t ON c.parent_container_id = t.container_id
+					WHERE active AND depth &lt;= 25
+				) SELECT container_id FROM t
+			)
+			GROUP BY ps.prospect_id, bh.borehole_id, ps.name, bh.name
+			LIMIT 100
+		) AS q
+		ORDER BY prospect, borehole
+	</select>
+
+
+	<select id="getShotlineTotals" parameterType="String" resultType="Map">
+		SELECT shotline, total
+		FROM (
+			SELECT sl.shotline_id, sl.name AS shotline,
+				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
+			FROM inventory AS iv
+			JOIN inventory_shotpoint AS ivs
+				ON ivs.inventory_id = iv.inventory_id
+			JOIN shotpoint AS sp
+				ON sp.shotpoint_id = ivs.shotpoint_id
+			JOIN shotline AS sl
+				ON sl.shotline_id = sp.shotline_id
+			WHERE iv.active AND iv.container_id IN (
+				WITH RECURSIVE t AS (
+					SELECT 0 AS depth, container_id
+					FROM container
+					WHERE active
+						AND COALESCE(barcode, alt_barcode) = 'SHF-0244'
+
+					UNION ALL
+
+					SELECT t.depth + 1 AS depth, c.container_id
+					FROM container AS c
+					JOIN t ON c.parent_container_id = t.container_id
+					WHERE active AND depth &lt;= 25
+				) SELECT container_id FROM t
+			)
+			GROUP BY sl.shotline_id, sl.name
+			LIMIT 100
+		) AS q
+		ORDER BY shotline
+	</select>
+
+
+	<select id="getChildBarcodes" parameterType="Map" resultType="String">
+		WITH RECURSIVE t AS (
+			SELECT 0 AS depth, container_id,
+				COALESCE(barcode, alt_barcode) AS barcode
+			FROM container 
+			WHERE active
+				AND COALESCE(barcode, alt_barcode) = #{barcode}
+
+			UNION ALL 
+
+			SELECT t.depth + 1 AS depth, c.container_id,
+				COALESCE(c.barcode, c.alt_barcode) AS barcode
+			FROM container AS c
+			JOIN t ON c.parent_container_id = t.container_id
+			WHERE active AND depth &lt;= 25
 		)
-		GROUP BY co.container_id, sl.shotline_id, sl.name
+		SELECT DISTINCT barcode
+		FROM (
+			SELECT COALESCE(i.barcode, i.alt_barcode) AS barcode
+			FROM inventory AS i
+			WHERE active
+				AND COALESCE(i.barcode, i.alt_barcode) IS NOT NULL
+				AND i.container_id IN (SELECT container_id FROM t)
+
+			UNION ALL 
+
+			SELECT barcode
+			FROM t
+			WHERE depth &gt; 0
+		) AS q
+		ORDER BY barcode
+		LIMIT 100
 	</select>
 
 
