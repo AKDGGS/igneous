@@ -33,6 +33,15 @@
 	</select>
 
 
+	<select id="getCountByBarcode" parameterType="String" resultType="Integer">
+		SELECT COUNT(container_id)
+		FROM container
+		WHERE barcode = #{barcode}
+			OR barcode = ('GMC-' || #{barcode})
+			OR alt_barcode = #{barcode} 
+	</select>
+
+
 	<update id="moveContainerByBarcode" parameterType="Map">
 		UPDATE container SET parent_container_id = #{container_id}
 		WHERE barcode = #{barcode}

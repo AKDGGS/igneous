@@ -82,10 +82,19 @@ public class SummaryServlet extends HttpServlet
 		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", 0);
 
-		SqlSession sess = IgneousFactory.openSession();
-		try {
-			HashMap<String,Object> output = new HashMap<String,Object>();
+		try (SqlSession sess = IgneousFactory.openSession()) {
+			int count = sess.selectOne(
+				"gov.alaska.dggs.igneous.Container.getCountByBarcode",
+				barcode
+			);
+			if(count < 1){
+				response.setStatus(501);
+				response.setContentType("text/plain");
+				response.getOutputStream().print("Barcode not found");
+				return;
+			}
 
+			HashMap<String,Object> output = new HashMap<String,Object>();
 			output.put("containers", sess.selectList(
 				"gov.alaska.dggs.igneous.Container.getContainerTotals",
 				barcode
@@ -138,8 +147,6 @@ public class SummaryServlet extends HttpServlet
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
-		} finally {
-			sess.close();	
 		}
 	}
 }
