@@ -56,11 +56,18 @@ public class AddContainerServlet extends HttpServlet
 		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", 0);
 
-		SqlSession sess = IgneousFactory.openSession();
-		try {
+		try(SqlSession sess = IgneousFactory.openSession()) {
 			String barcode = request.getParameter("barcode");
 			if(barcode == null || (barcode = barcode.trim()).length() == 0){
 				throw new Exception("Barcode cannot be empty.");
+			}
+
+			int count = sess.selectOne(
+				"gov.alaska.dggs.igneous.Container.getCountByBarcode",
+				barcode
+			);
+			if(count > 0){
+				throw new Exception("Barcode already exists");
 			}
 
 			String name = request.getParameter("name");
@@ -88,12 +95,9 @@ public class AddContainerServlet extends HttpServlet
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
 		} catch(Exception ex){
-			sess.rollback();
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
-		} finally {
-			sess.close();	
 		}
 	}
 }
