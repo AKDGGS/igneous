@@ -46,6 +46,7 @@ public class SummaryServlet extends HttpServlet
 		serializer.include("collections");
 		serializer.include("containers");
 		serializer.include("barcodes");
+		serializer.include("barcodes_count");
 
 		serializer.exclude("*.class");
 
@@ -121,6 +122,10 @@ public class SummaryServlet extends HttpServlet
 			));
 			output.put("barcodes", sess.selectList(
 				"gov.alaska.dggs.igneous.Container.getChildBarcodes",
+				barcode
+			));
+			output.put("barcodes_count", sess.selectList(
+				"gov.alaska.dggs.igneous.Container.getChildBarcodesCount",
 				barcode
 			));
 
