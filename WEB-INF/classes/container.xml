@@ -71,6 +71,22 @@
 	</resultMap>
 
 
+	<select id="getCountByBarcodeIncInventory" parameterType="String" resultType="Integer">
+		SELECT SUM(count) AS count
+		FROM (
+			SELECT COUNT(container_id) AS count
+			FROM container
+			WHERE COALESCE(barcode, alt_barcode) = #{barcode}
+
+			UNION ALL
+
+			SELECT COUNT(inventory_id) AS count
+			FROM inventory
+			WHERE COALESCE(barcode, alt_barcode) = #{barcode}
+		) AS q
+	</select>
+
+
 	<select id="getContainerTotals" parameterType="String" resultType="Map">
 		SELECT path_cache AS container, total
 		FROM (

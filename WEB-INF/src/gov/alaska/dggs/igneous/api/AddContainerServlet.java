@@ -63,7 +63,7 @@ public class AddContainerServlet extends HttpServlet
 			}
 
 			int count = sess.selectOne(
-				"gov.alaska.dggs.igneous.Container.getCountByBarcode",
+				"gov.alaska.dggs.igneous.Container.getCountByBarcodeIncInventory",
 				barcode
 			);
 			if(count > 0){
