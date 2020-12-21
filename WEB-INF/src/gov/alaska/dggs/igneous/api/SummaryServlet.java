@@ -124,7 +124,7 @@ public class SummaryServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Container.getChildBarcodes",
 				barcode
 			));
-			output.put("barcodes_count", sess.selectList(
+			output.put("barcodes_count", sess.selectOne(
 				"gov.alaska.dggs.igneous.Container.getChildBarcodesCount",
 				barcode
 			));
