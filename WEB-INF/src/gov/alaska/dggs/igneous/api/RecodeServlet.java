@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -28,6 +31,23 @@ public class RecodeServlet extends HttpServlet
 	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
+		try {
+			Context initcontext = new InitialContext();
+			String apikey = (String)initcontext.lookup(
+				"java:comp/env/igneous/apikey"
+			);
+			Auth.CheckHeader(
+				apikey,
+				request.getHeader("Authorization"),
+				request.getDateHeader("Date"),
+				request.getQueryString()
+			);
+		} catch(Exception ex){
+			response.setStatus(403);
+			response.setContentType("text/plain");
+			response.getOutputStream().print(ex.getMessage());
+			return;
+		}
 
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
