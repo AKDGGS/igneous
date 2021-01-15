@@ -50,6 +50,19 @@
 	</update>
 
 
+	<update id="moveContainerByParentBarcode" parameterType="Map">
+		UPDATE container AS c1
+			SET c1.parent_container_id = #{dest}
+		FROM container AS c2
+		WHERE c1.parent_container_id = c2.container_id
+			AND (
+				c2.barcode = #{src}
+				OR c2.barcode = ('GMC-' || #{src})
+				OR c2.alt_barcode = #{src}
+			)
+	</update>
+
+
 	<select id="getContainerTypeByID" parameterType="int" resultMap="ContainerTypeMap">
 		SELECT container_type_id, name
 		FROM container_type

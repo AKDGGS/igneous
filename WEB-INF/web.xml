@@ -322,6 +322,16 @@
 		<url-pattern>/move.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>MoveContentsServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.MoveContentsServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>MoveContentsServlet</servlet-name>
+		<url-pattern>/movecontents.json</url-pattern>
+	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>SummaryServlet</servlet-name>
