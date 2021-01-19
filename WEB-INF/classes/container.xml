@@ -52,7 +52,7 @@
 
 	<update id="moveContainerByParentBarcode" parameterType="Map">
 		UPDATE container AS c1
-			SET c1.parent_container_id = #{dest}
+			SET parent_container_id = #{dest}
 		FROM container AS c2
 		WHERE c1.parent_container_id = c2.container_id
 			AND (

@@ -313,7 +313,7 @@
 
 	<update id="moveInventoryByContainerBarcode" parameterType="Map">
 		UPDATE inventory AS i
-			SET i.container_id = #{dest}
+			SET container_id = #{dest}
 		FROM container AS c
 		WHERE c.container_id = i.container_id
 			AND (
