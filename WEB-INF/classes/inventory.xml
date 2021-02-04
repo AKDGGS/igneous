@@ -283,8 +283,8 @@
 	</resultMap>
 
 
-	<select id="getStashByID" parameterType="String" resultSetType="FORWARD_ONLY" resultType="String">
-		SELECT stash
+	<select id="getStashByID" parameterType="Integer" resultSetType="FORWARD_ONLY" resultType="String">
+		SELECT stash::TEXT
 		FROM inventory
 		WHERE inventory_id = #{inventory_id}
 		LIMIT 1
