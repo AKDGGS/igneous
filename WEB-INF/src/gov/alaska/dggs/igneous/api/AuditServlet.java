@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.naming.InitialContext;
+import javax.naming.Context;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -20,14 +23,27 @@ import gov.alaska.dggs.igneous.model.AuditGroup;
 
 public class AuditServlet extends HttpServlet
 {
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-
-
 	@SuppressWarnings("unchecked")
-	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		ServletContext context = getServletContext();
+		try {
+			Context initcontext = new InitialContext();
+			String apikey = (String)initcontext.lookup(
+				"java:comp/env/igneous/apikey"
+			);
+			Auth.CheckHeader(
+				apikey,
+				request.getHeader("Authorization"),
+				request.getDateHeader("Date"),
+				request.getQueryString()
+			);
+		} catch(Exception ex){
+			response.setStatus(403);
+			response.setContentType("text/plain");
+			response.getOutputStream().print(ex.getMessage());
+			return;
+		}
 
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
@@ -36,15 +52,10 @@ public class AuditServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			String barcodes = request.getParameter("barcodes");
-			if(barcodes == null) throw new Exception("Barcode list cannot be empty.");
-
-			barcodes = barcodes.trim();
-			if(barcodes.length() < 1){
+			String[] codes = request.getParameterValues("c");
+			if(codes == null || codes.length < 1){
 				throw new Exception("Barcode list cannot be empty.");
 			}
-
-			String codes[] = barcodes.split(";");
 
 			String remark = request.getParameter("remark");
 			if(remark != null){
