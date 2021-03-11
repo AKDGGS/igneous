@@ -1,4 +1,4 @@
-package gov.alaska.dggs.igneous;
+package gov.alaska.dggs.igneous.api;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletContext;
@@ -56,7 +56,6 @@ public class AuditReportServlet extends HttpServlet
 		if(audit_group_id == 0 && container_id == 0 && start == null && end == null){
 			throw new ServletException("Invalid request.");
 		}
-
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {

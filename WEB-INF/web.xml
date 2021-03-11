@@ -368,7 +368,7 @@
 
 	<servlet>
 		<servlet-name>AuditReportServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.AuditReportServlet</servlet-class>
+		<servlet-class>gov.alaska.dggs.igneous.api.AuditReportServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -378,12 +378,12 @@
 
 
 	<servlet>
-		<servlet-name>AuditReportPageServlet</servlet-name>
-		<servlet-class>gov.alaska.dggs.igneous.AuditReportPageServlet</servlet-class>
+		<servlet-name>AuditReportViewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.AuditReportViewServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>AuditReportPageServlet</servlet-name>
+		<servlet-name>AuditReportViewServlet</servlet-name>
 		<url-pattern>/audit_report.html</url-pattern>
 	</servlet-mapping>
 
