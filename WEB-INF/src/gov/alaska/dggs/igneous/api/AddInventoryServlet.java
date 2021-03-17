@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import javax.naming.InitialContext;
+import javax.naming.Context;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -19,18 +22,26 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.InventoryQuality;
 
-
 public class AddInventoryServlet extends HttpServlet
 {
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-
-
-	@SuppressWarnings("unchecked")
-	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ServletContext context = getServletContext();
-
+		try {
+			Context initcontext = new InitialContext();
+			String apikey = (String)initcontext.lookup( "java:comp/env/igneous/apikey");
+			Auth.CheckHeader(
+				apikey,
+				request.getHeader("Authorization"),
+				request.getDateHeader("Date"),
+				request.getQueryString()
+			);
+		} catch(Exception ex){
+			response.setStatus(403);
+			response.setContentType("text/plain");
+			response.getOutputStream().print(ex.getMessage());
+			return;
+		}
+		
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
 		response.setHeader("Pragma","no-cache");
@@ -39,28 +50,26 @@ public class AddInventoryServlet extends HttpServlet
 		SqlSession sess = IgneousFactory.openSession();
 		try {
 			String barcode = request.getParameter("barcode");
-			if(barcode == null || (barcode = barcode.trim()).length() == 0){
+			if(barcode == null || (barcode = barcode.trim()).length() == 0){	
 				throw new Exception("Barcode cannot be empty.");
 			}
 
 			String remark = request.getParameter("remark");
 			if(remark != null) remark = remark.trim();
-
 			Inventory i = new Inventory();
 			i.setBarcode(barcode);
 			i.setRemark(remark);
-
+			
 			sess.insert("gov.alaska.dggs.igneous.Inventory.insert", i);
 			if(i.getID() == null) throw new Exception("Inventory insert failed.");
 
 			InventoryQuality iq = new InventoryQuality(i);
 			iq.setUsername("gmc_app");
 			iq.setRemark("Added via scanner");
-			iq.setIssues(new String[]{"needs_detail"});
+			iq.setIssues(new String[]{"needs_inventory"});
 
 			sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
 			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
-
 			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
@@ -70,7 +79,9 @@ public class AddInventoryServlet extends HttpServlet
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
 		} finally {
-			sess.close();	
+			sess.close();
 		}
 	}
 }
+
+

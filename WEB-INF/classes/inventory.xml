@@ -326,12 +326,16 @@
 
 	<insert id="insert" parameterType="Inventory" useGeneratedKeys="true" keyColumn="inventory_id" keyProperty="id">
 		INSERT INTO inventory (
-			barcode, remark, container_id, keywords
+			barcode, remark, container_id
+			<if test="keywords != null">
+			,keywords
+			</if>
 		) VALUES (
-			#{barcode}, #{remark}, #{container.id},
-			<foreach collection="keywords" item="i" open="ARRAY[" separator="," close="]::keyword[]">#{i}</foreach>
+			#{barcode}, #{remark}, #{container.id}
+			<if test="keywords != null">
+			,<foreach collection="keywords" item="i" open="ARRAY[" separator="," close="]::keyword[]">#{i}</foreach>
+			</if>
 		)
-
 	</insert>
 
 
