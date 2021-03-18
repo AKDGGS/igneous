@@ -23,13 +23,9 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 
 public class RecodeServlet extends HttpServlet
 {
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
 
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-	@SuppressWarnings("unchecked")
-	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
 		ServletContext context = getServletContext();
 		try {
 			Context initcontext = new InitialContext();
@@ -125,5 +121,6 @@ public class RecodeServlet extends HttpServlet
 		} finally {
 			sess.close();	
 		}
+
 	}
 }
