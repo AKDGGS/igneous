@@ -41,7 +41,7 @@ public class AddInventoryServlet extends HttpServlet
 			response.getOutputStream().print(ex.getMessage());
 			return;
 		}
-		
+
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
 		response.setHeader("Pragma","no-cache");
@@ -49,27 +49,30 @@ public class AddInventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
+
+			Inventory i = new Inventory();
 			String barcode = request.getParameter("barcode");
-			if(barcode == null || (barcode = barcode.trim()).length() == 0){	
+			if(barcode == null || (barcode = barcode.trim()).length() == 0){
 				throw new Exception("Barcode cannot be empty.");
 			}
-
-			String remark = request.getParameter("remark");
-			if(remark != null) remark = remark.trim();
-			Inventory i = new Inventory();
 			i.setBarcode(barcode);
-			i.setRemark(remark);
-			
+			String remark = request.getParameter("remark");
+			if(remark != null) i.setRemark(remark.trim());
 			sess.insert("gov.alaska.dggs.igneous.Inventory.insert", i);
 			if(i.getID() == null) throw new Exception("Inventory insert failed.");
 
-			InventoryQuality iq = new InventoryQuality(i);
-			iq.setUsername("gmc_app");
-			iq.setRemark("Added via scanner");
-			iq.setIssues(new String[]{"needs_inventory"});
+			String[] issues = request.getParameterValues("i");
+			if(issues != null){
+				InventoryQuality iq = new InventoryQuality(i);
+				iq.setUsername("gmc_app");
+				iq.setRemark("Added via scanner");
+				iq.setIssues(issues);
+				sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
+				if(iq.getID() == null){ 
+					throw new Exception("Inventory quality insert failed.");
+				}
+			}
 
-			sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
-			if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
 			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
@@ -83,5 +86,3 @@ public class AddInventoryServlet extends HttpServlet
 		}
 	}
 }
-
-
