@@ -15,6 +15,7 @@ public class Inventory implements Serializable
 
 	private Integer id;
 	public Integer getID(){ return id; }
+	public void setID(Integer id){ this.id = id; }
 
 	private Integer parent_id;
 	public Integer getParentID(){ return parent_id; }

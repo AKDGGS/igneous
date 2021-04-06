@@ -22,6 +22,11 @@
 			AND ig.geog IS NOT NULL
 	</select>
 
+	<select id="getInventoryIDsByBarcode" parameterType="String" resultType="Integer">
+		SELECT inventory_id
+		FROM inventory
+		WHERE COALESCE(barcode, alt_barcode) = #{barcode}
+	</select>
 
 	<select id="getByBarcode" parameterType="String" resultSetType="FORWARD_ONLY" resultMap="ByBarcodeInventoryMap">
 		SELECT iv.inventory_id, iv.sample_number,
@@ -68,7 +73,6 @@
 		LIMIT 100
 	</select>
 
-
 	<resultMap id="ByBarcodeInventoryMap" type="Inventory">
 		<id property="id" column="inventory_id" />
 		<result property="sample_number" column="sample_number" />
@@ -110,7 +114,6 @@
 		<collection property="shotpoints" column="inventory_id" ofType="Shotpoint" select="gov.alaska.dggs.igneous.Shotpoint.getByInventoryID" />
 		<collection property="qualities" column="inventory_id" ofType="InventoryQuality" select="gov.alaska.dggs.igneous.InventoryQuality.getMostRecentByInventoryID" />
 	</resultMap>
-
 
 	<select id="getByID" parameterType="int" resultSetType="FORWARD_ONLY" resultMap="InventoryMap">
 		SELECT iv.inventory_id,

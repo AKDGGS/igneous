@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
@@ -22,13 +23,17 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.InventoryQuality;
 
-public class AddInventoryServlet extends HttpServlet
+public class AddInventoryQualityServlet extends HttpServlet
 {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		ServletContext context = getServletContext();
+
 		try {
 			Context initcontext = new InitialContext();
-			String apikey = (String)initcontext.lookup( "java:comp/env/igneous/apikey");
+			String apikey = (String)initcontext.lookup(
+				"java:comp/env/igneous/apikey"
+			);
 			Auth.CheckHeader(
 				apikey,
 				request.getHeader("Authorization"),
@@ -42,6 +47,7 @@ public class AddInventoryServlet extends HttpServlet
 			return;
 		}
 
+
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
 		response.setHeader("Pragma","no-cache");
@@ -49,29 +55,40 @@ public class AddInventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-
-			Inventory i = new Inventory();
 			String barcode = request.getParameter("barcode");
 			if(barcode == null || (barcode = barcode.trim()).length() == 0){
 				throw new Exception("Barcode cannot be empty.");
 			}
-			i.setBarcode(barcode);
-			String remark = request.getParameter("remark");
-			if(remark != null) i.setRemark(remark.trim());
-			sess.insert("gov.alaska.dggs.igneous.Inventory.insert", i);
-			if(i.getID() == null) throw new Exception("Inventory insert failed.");
 
-			String[] issues = request.getParameterValues("i");
-			if(issues != null){
+			List<Integer> inventory_ids = sess.selectList(
+				"gov.alaska.dggs.igneous.Inventory.getInventoryIDsByBarcode",
+				barcode
+			);
+			
+			if(inventory_ids == null){
+				throw new Exception("Not found in Inventory");
+			}
+
+			for (Integer inventory_id : inventory_ids){
+				Inventory i = new Inventory();
+				i.setID(inventory_id);
+				
 				InventoryQuality iq = new InventoryQuality(i);
 				iq.setUsername("gmc_app");
-				iq.setRemark("Added via scanner.");
+				String remark = request.getParameter("remark");
+				if(remark != null){
+					iq.setRemark(remark);
+				}else{
+					iq.setRemark("Added via scanner.");
+				}
+				String[] issues = request.getParameterValues("i");
+				
+				if(issues == null) throw new Exception("Issues can't be null.");
 				iq.setIssues(issues);
 				sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
-				if(iq.getID() == null){ 
-					throw new Exception("Inventory quality insert failed.");
-				}
-			}		
+				if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
+			}
+			
 			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");

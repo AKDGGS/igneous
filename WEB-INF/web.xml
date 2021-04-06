@@ -212,7 +212,6 @@
 		<url-pattern>/inventory.json</url-pattern>
 	</servlet-mapping>
 
-
 	<servlet>
 		<servlet-name>BarcodeServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.BarcodeServlet</servlet-class>
@@ -244,7 +243,6 @@
 		<servlet-name>FileDownloadServlet</servlet-name>
 		<url-pattern>/file/*</url-pattern>
 	</servlet-mapping>
-
 
 	<servlet>
 		<servlet-name>QualityServlet</servlet-name>
@@ -301,6 +299,19 @@
 	</servlet-mapping>
 
 
+
+	<servlet>
+		<servlet-name>AddInventoryQualityServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.AddInventoryQualityServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AddInventoryQualityServlet</servlet-name>
+		<url-pattern>/addinventoryquality.json</url-pattern>
+	</servlet-mapping>
+
+
+
 	<servlet>
 		<servlet-name>AddContainerServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.AddContainerServlet</servlet-class>
@@ -310,7 +321,6 @@
 		<servlet-name>AddContainerServlet</servlet-name>
 		<url-pattern>/addcontainer.json</url-pattern>
 	</servlet-mapping>
-
 
 	<servlet>
 		<servlet-name>MoveServlet</servlet-name>

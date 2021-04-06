@@ -37,11 +37,16 @@
 
 	<insert id="insert" parameterType="InventoryQuality" useGeneratedKeys="true" keyColumn="inventory_quality_id" keyProperty="id">
 		INSERT INTO inventory_quality (
-			inventory_id, remark, username, check_date,
-			issues
+			inventory_id, remark, username, check_date
+			<if test = "issues != null">
+			,issues
+			</if>
 		) VALUES (
-			#{inventory.id}, #{remark}, #{username}, #{date},
-			<foreach collection="issues" item="i" open="ARRAY[" separator="," close="]::issue[]">#{i}</foreach>
+			#{inventory.id}, #{remark}, #{username}, #{date}
+			<if test="issues != null">
+			,<foreach collection="issues" item="i" open="ARRAY[" separator="," close="]::issue[]">#{i}</foreach>
+			</if>
 		)
 	</insert>
+
 </mapper>
