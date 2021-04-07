@@ -14,7 +14,8 @@ public class Auth
 	// 15 minute time tolerance
 	private static final int TOLERANCE_MS = 900000;
 
-	public static void CheckHeader(String secret, String auth, long authdate, String payload) throws Exception {
+	public static void CheckHeader(String secret, String auth, long authdate, String payload) throws Exception
+	{
 		if(authdate < 1){
 			throw new Exception("Authentication failure: invalid date");
 		}

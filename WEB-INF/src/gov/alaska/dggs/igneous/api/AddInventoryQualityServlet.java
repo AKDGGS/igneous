@@ -25,8 +25,8 @@ import gov.alaska.dggs.igneous.model.InventoryQuality;
 
 public class AddInventoryQualityServlet extends HttpServlet
 {
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
 		ServletContext context = getServletContext();
 
 		try {
@@ -46,7 +46,6 @@ public class AddInventoryQualityServlet extends HttpServlet
 			response.getOutputStream().print(ex.getMessage());
 			return;
 		}
-
 
 		// Aggressively disable cache
 		response.setHeader("Cache-Control","no-cache");
@@ -78,7 +77,7 @@ public class AddInventoryQualityServlet extends HttpServlet
 				String remark = request.getParameter("remark");
 				if(remark != null){
 					iq.setRemark(remark);
-				}else{
+				} else {
 					iq.setRemark("Added via scanner.");
 				}
 				String[] issues = request.getParameterValues("i");
@@ -86,7 +85,9 @@ public class AddInventoryQualityServlet extends HttpServlet
 				if(issues == null) throw new Exception("Issues can't be null.");
 				iq.setIssues(issues);
 				sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
-				if(iq.getID() == null) throw new Exception("Inventory quality insert failed.");
+				if(iq.getID() == null){
+					throw new Exception("Inventory quality insert failed.");
+				}
 			}
 			
 			sess.commit();
