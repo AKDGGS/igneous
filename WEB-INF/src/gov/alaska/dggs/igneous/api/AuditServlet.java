@@ -54,7 +54,7 @@ public class AuditServlet extends HttpServlet
 		try {
 			String[] codes = request.getParameterValues("c");
 			if(codes == null || codes.length < 1){
-				throw new Exception("Barcode list cannot be empty.");
+				codes = new String[0];
 			}
 
 			String remark = request.getParameter("remark");
@@ -68,16 +68,15 @@ public class AuditServlet extends HttpServlet
 
 			sess.insert("gov.alaska.dggs.igneous.Audit.insertGroup", group);
 			if(group.getID() == 0){ throw new Exception("Audit group insert failed"); }
-
+			
 			for(String code : codes){
 				Audit a = new Audit();
 				a.setGroup(group);
 				a.setBarcode(code);
-
 				sess.insert("gov.alaska.dggs.igneous.Audit.insert", a);
 				if(a.getID() == 0){ throw new Exception("Audit insert failed."); }
 			}
-
+			
 			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
