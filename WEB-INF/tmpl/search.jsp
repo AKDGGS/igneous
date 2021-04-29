@@ -41,7 +41,7 @@
 				<a href="logout/">Logout</a>
 				</c:if>
 				<c:if test="${empty pageContext.request.userPrincipal}">
-				<a href="https://${pageContext.request.serverName}${pageContext.request.contextPath}/login/">Login</a>
+				<a href="login/">Login</a>
 				</c:if>
 				<a href="help">Search Help</a>
 			</div>
