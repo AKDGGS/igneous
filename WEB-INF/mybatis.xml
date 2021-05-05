@@ -31,6 +31,7 @@
 		<typeAlias alias="URLType" type="gov.alaska.dggs.igneous.model.URLType" />
 		<typeAlias alias="Organization" type="gov.alaska.dggs.igneous.model.Organization" />
 		<typeAlias alias="OrganizationType" type="gov.alaska.dggs.igneous.model.OrganizationType" />
+		<typeAlias alias="Token" type="gov.alaska.dggs.igneous.model.Token" />
 	</typeAliases>
 
 	<environments default="development">
@@ -64,5 +65,6 @@
 		<mapper resource="inventory_quality.xml" />
 		<mapper resource="organization.xml" />
 		<mapper resource="collection.xml" />
+		<mapper resource="token.xml" />
 	</mappers>
 </configuration>

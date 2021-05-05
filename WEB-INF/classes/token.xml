@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gov.alaska.dggs.igneous.Token">
+	<select id="getByToken" resultSetType="FORWARD_ONLY" parameterType="String" resultMap="TokenMap">
+		SELECT token_id, token, description
+		FROM token
+		WHERE token = #{token}
+	</select>
+
+	<resultMap id="TokenMap" type="Token">
+		<id property="id" column="token_id" />
+		<result property="token" column="token" />
+		<result property="description" column="description" />
+	</resultMap>
+</mapper>

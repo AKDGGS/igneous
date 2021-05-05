@@ -25,19 +25,8 @@ public class RecodeServlet extends HttpServlet
 {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		ServletContext context = getServletContext();
 		try {
-			Context initcontext = new InitialContext();
-			String apikey = (String)initcontext.lookup(
-				"java:comp/env/igneous/apikey"
-			);
-			Auth.CheckHeader(
-				apikey,
-				request.getHeader("Authorization"),
-				request.getDateHeader("Date"),
-				request.getQueryString()
-			);
+			TokenAuth.Check(request.getHeader("Authorization"));
 		} catch(Exception ex){
 			response.setStatus(403);
 			response.setContentType("text/plain");

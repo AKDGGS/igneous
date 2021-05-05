@@ -23,24 +23,15 @@ import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.InventoryQuality;
 import gov.alaska.dggs.igneous.model.Container;
-
+import gov.alaska.dggs.igneous.model.Token;
 
 public class MoveServlet extends HttpServlet
 {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		ServletContext context = getServletContext();
+		Token token = null;
 		try {
-			Context initcontext = new InitialContext();
-			String apikey = (String)initcontext.lookup(
-				"java:comp/env/igneous/apikey"
-			);
-			Auth.CheckHeader(
-				apikey,
-				request.getHeader("Authorization"),
-				request.getDateHeader("Date"),
-				request.getQueryString()
-			);
+			token = TokenAuth.Check(request.getHeader("Authorization"));
 		} catch(Exception ex){
 			response.setStatus(403);
 			response.setContentType("text/plain");
@@ -48,6 +39,7 @@ public class MoveServlet extends HttpServlet
 			return;
 		}
 
+		ServletContext context = getServletContext();
 		boolean strict = Boolean.parseBoolean(
 			context.getInitParameter("strict_mode")
 		);
@@ -58,7 +50,7 @@ public class MoveServlet extends HttpServlet
 		response.setDateHeader("Expires", 0);
 
 		SqlSession sess = IgneousFactory.openSession();
-		try {
+		try { 
 			// Destination - the barcode attached to the container
 			// we're moving all this stuff into
 			String dest = request.getParameter("d");
@@ -119,7 +111,7 @@ public class MoveServlet extends HttpServlet
 						}
 
 						InventoryQuality iq = new InventoryQuality(i);
-						iq.setUsername("gmc_app");
+						iq.setUsername("token_id " + String.valueOf(token.getID()));
 						iq.setRemark("Added via autogeneration");
 						iq.setIssues(new String[]{"needs_detail"});
 

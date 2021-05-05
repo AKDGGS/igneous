@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import javax.naming.InitialContext;
-import javax.naming.Context;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -21,20 +18,14 @@ import org.apache.ibatis.session.SqlSession;
 import gov.alaska.dggs.igneous.IgneousFactory;
 import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.model.InventoryQuality;
+import gov.alaska.dggs.igneous.model.Token;
 
 public class AddInventoryServlet extends HttpServlet
 {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext context = getServletContext();
+		Token token = null;
 		try {
-			Context initcontext = new InitialContext();
-			String apikey = (String)initcontext.lookup( "java:comp/env/igneous/apikey");
-			Auth.CheckHeader(
-				apikey,
-				request.getHeader("Authorization"),
-				request.getDateHeader("Date"),
-				request.getQueryString()
-			);
+			token = TokenAuth.Check(request.getHeader("Authorization"));
 		} catch(Exception ex){
 			response.setStatus(403);
 			response.setContentType("text/plain");
@@ -49,7 +40,6 @@ public class AddInventoryServlet extends HttpServlet
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-
 			Inventory i = new Inventory();
 			String barcode = request.getParameter("barcode");
 			if(barcode == null || (barcode = barcode.trim()).length() == 0){
@@ -64,7 +54,7 @@ public class AddInventoryServlet extends HttpServlet
 			String[] issues = request.getParameterValues("i");
 			if(issues != null){
 				InventoryQuality iq = new InventoryQuality(i);
-				iq.setUsername("gmc_app");
+				iq.setUsername("token_id " + String.valueOf(token.getID()));
 				iq.setRemark("Added via scanner.");
 				iq.setIssues(issues);
 				sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);

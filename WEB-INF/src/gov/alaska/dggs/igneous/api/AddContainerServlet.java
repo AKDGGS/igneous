@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -32,18 +29,8 @@ public class AddContainerServlet extends HttpServlet
 	@SuppressWarnings("unchecked")
 	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		ServletContext context = getServletContext();
 		try {
-			Context initcontext = new InitialContext();
-			String apikey = (String)initcontext.lookup(
-				"java:comp/env/igneous/apikey"
-			);
-			Auth.CheckHeader(
-				apikey,
-				request.getHeader("Authorization"),
-				request.getDateHeader("Date"),
-				request.getQueryString()
-			);
+			TokenAuth.Check(request.getHeader("Authorization"));
 		} catch(Exception ex){
 			response.setStatus(403);
 			response.setContentType("text/plain");
@@ -56,7 +43,8 @@ public class AddContainerServlet extends HttpServlet
 		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", 0);
 
-		try(SqlSession sess = IgneousFactory.openSession()) {
+		SqlSession sess = IgneousFactory.openSession();
+		try {
 			String barcode = request.getParameter("barcode");
 			if(barcode == null || (barcode = barcode.trim()).length() == 0){
 				throw new Exception("Barcode cannot be empty.");
