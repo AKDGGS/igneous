@@ -185,7 +185,8 @@
 	<select id="getWellTotals" parameterType="String" resultType="Map">
 		SELECT name AS well, total
 		FROM (
-			SELECT we.well_id, we.name,
+			SELECT we.well_id,
+				(we.name || COALESCE(' - ' || we.well_number, '')) AS name,
 				COUNT(DISTINCT COALESCE(iv.barcode, iv.alt_barcode)) AS total
 			FROM container AS co
 			JOIN inventory AS iv ON iv.container_id = co.container_id
