@@ -443,6 +443,15 @@
 		<url-pattern>/upload</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.FileUploadServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<url-pattern>/upload.json</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>LogoutServlet</servlet-name>
