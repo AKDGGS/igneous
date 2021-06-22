@@ -34,10 +34,26 @@ function init()
 		.addTo(map);
 	
 	var geoJSONMarkerOptions = {
-		radius: 10,
+		radius: 8,
 		fill: false,
 		weight: 5,
 		opacity: 0.75
+	}
+
+	function textMarker(latLng, txt, circleOptions){
+		var icon = L.divIcon({
+			html:'<div class="txt">' + txt + '</div>',
+			classname:'circle-with-txt',
+			iconSize:[20, 20]
+			});
+
+		var circle = L.circleMarker(latLng,circleOptions);
+		var marker = L.marker(latLng, {
+			icon: icon,
+			color: "blue"
+			});
+			var group = L.layerGroup([circle, marker])
+		return group;
 	}
 
 	fetch('wellpoint.json')
@@ -45,10 +61,19 @@ function init()
 		.then(wellPoints => {
 			const layerGroup = L.featureGroup().addTo(map);
 			wellPoints.forEach(({geog, well_id}) => {
-				marker = L.circleMarker([geog.coordinates[1], geog.coordinates[0]], geoJSONMarkerOptions);
-				marker.well_id = well_id;
-				marker.on("click", markerOnClick);
-				map.addLayer(marker);
+				//marker = L.circleMarker([geog.coordinates[1], geog.coordinates[0]], geoJSONMarkerOptions);
+				//marker.well_id = well_id;
+				//marker.on("click", markerOnClick);
+				textMarker([geog.coordinates[1], geog.coordinates[0]], well_id, {radius: 20}).addTo(map);
+				//map.addLayer(marker);
+				
+				//marker = L.marker([geog.coordinates[1], geog.coordinates[0]], {
+				//icon:L.divIcon({
+					//	html: well_id,
+					//	classname:'text-below-marker'
+					//})		
+				//});
+			//	map.addLayer(marker);
 			});
 	});
 }

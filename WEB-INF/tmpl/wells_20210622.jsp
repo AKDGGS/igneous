@@ -24,6 +24,23 @@
 			.popupCustom, .leaflet-popup-content-wrapper, .leaflet-popup-scrolled{
 				border: none;
 			}
+			.circle-with-txt{
+				position: relative;
+				color: white;
+				font-size: 12px;
+				font-weight:bold;
+				width: 40px;
+				height: 40px;		
+			}
+			.txt{
+				margin: 0;
+				position: absolute;
+				top:50%;
+				left: 50%;
+				-ms-transform: translate(-50%, -50%);
+				transform: translate(-50%, -50%);
+				font-size: 16px
+				}
 		</style>
 	</head>
 
