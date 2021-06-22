@@ -91,6 +91,15 @@
 		<url-pattern>/search.pdf</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>WellOverviewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.page.WellOverviewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WellOverviewServlet</servlet-name>
+		<url-pattern>/wells</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>BoreholeViewServlet</servlet-name>
@@ -124,11 +133,21 @@
 		<url-pattern>/well/*</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>WellViewServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.WellViewServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WellViewServlet</servlet-name>
+		<url-pattern>/well.json</url-pattern>
+	</servlet-mapping>
+
 
 	<servlet>
 		<servlet-name>OutcropViewServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.page.OutcropViewServlet</servlet-class>
-	</servlet>
+	</servlet>	
 
 	<servlet-mapping>
 		<servlet-name>OutcropViewServlet</servlet-name>
@@ -366,6 +385,15 @@
 		<url-pattern>/quadrangle.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>WellPointServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.WellPointServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>WellPointServlet</servlet-name>
+		<url-pattern>/wellpoint.json</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>KeywordServlet</servlet-name>

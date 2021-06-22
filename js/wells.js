@@ -1,0 +1,54 @@
+var map;
+
+function init()
+{
+	function markerOnClick(e){
+		var marker = e.target;
+		fetch('well.json?id=' + marker.well_id)
+			.then(response => response.json())
+			.then(data => {
+				for(let i = 0; i < data.keywords.length; i++){
+					var keywordArr = data.keywords[i].keywords.split(",");  //needed for the keyword set's hyperlinks
+					var searchParams = "";
+					for (let j = 0; j < keywordArr.length; j++){
+						searchParams = searchParams.concat("&keyword=" + keywordArr[j]);
+					}
+					data.keywords[i].keywords = data.keywords[i].keywords.replaceAll(",", ", ");
+					data.keywords[i]["keyword_url"] = encodeURI("search#q=" + marker.well_id + searchParams);
+				}
+				data["nameURL"] = encodeURI("well/" + marker.well_id);
+				popup = L.popup({minWidth: 300, maxHeight: 100, classname:'popupCustom'})
+					.setLatLng(e.latlng)
+					.setContent(Mustache.render(
+						document.getElementById('tmpl-well-popup').innerHTML, data
+						)
+					)
+					.openOn(map);
+			});
+		}
+// Center on Fairbanks
+	map =  L.map('map')
+		.setView([64.843611, -147.723056], 3);
+	
+	L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
+		.addTo(map);
+	
+	var geoJsonMarkerOptions = {
+		radius: 8,
+		fill: false,
+		weight: 5,
+		opacity: 0.75
+	}
+
+	fetch('wellpoint.json')
+		.then(response => response.json())
+		.then(wellPoints => {
+			const layerGroup = L.featureGroup().addTo(map);
+			wellPoints.forEach(({geog, well_id}) => {
+				marker = L.circleMarker([geog.coordinates[1], geog.coordinates[0]], geoJsonMarkerOptions);
+				marker.well_id = well_id;
+				marker.on("click", markerOnClick);
+				map.addLayer(marker);
+			});
+		});
+}

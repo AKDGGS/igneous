@@ -58,6 +58,9 @@ public class Well implements Serializable
 	private String permit_status;
 	public String getPermitStatus(){ return permit_status; }
 
+	private Integer permit_number;
+	public Integer getPermitNumber(){return permit_number;}
+
 	private String completion_status;
 	public String getCompletionStatus(){ return completion_status; }
 

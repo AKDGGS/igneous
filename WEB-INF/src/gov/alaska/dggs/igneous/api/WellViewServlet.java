@@ -10,89 +10,64 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
 
 import java.util.zip.GZIPOutputStream;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Date;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 import flexjson.JSONSerializer;
-import flexjson.transformer.DateTransformer;
+import flexjson.transformer.DateTransformer; 
 
 import org.apache.ibatis.session.SqlSession;
 
-import gov.alaska.dggs.igneous.IgneousFactory;
-import gov.alaska.dggs.igneous.model.Inventory;
 import gov.alaska.dggs.igneous.transformer.ExcludeTransformer;
 import gov.alaska.dggs.igneous.transformer.IterableTransformer;
+import gov.alaska.dggs.igneous.transformer.RawTransformer;
+import gov.alaska.dggs.igneous.IgneousFactory;
+import gov.alaska.dggs.ETagUtil;
+import gov.alaska.dggs.igneous.model.Well;
 
 
-public class InventoryServlet extends HttpServlet
+public class WellViewServlet extends HttpServlet
 {
 	private static JSONSerializer serializer;
 	static {
 		serializer = new JSONSerializer();
-		serializer.include("wells");
-		serializer.include("wells.operators");
-		serializer.include("boreholes");
-		serializer.include("outcrops");
 		serializer.include("keywords");
-		serializer.include("files");
-		serializer.include("shotpoints");
-		serializer.include("collections");
-		serializer.include("publications");
-		serializer.include("container");
-		serializer.include("qualities");
-		serializer.include("qualities.issues");
-
 		serializer.exclude("*.class");
-		serializer.exclude("WKT");
 		serializer.transform(new ExcludeTransformer(), void.class);
 		serializer.transform(new DateTransformer("MM/dd/yyyy"), Date.class);
-		serializer.transform(new IterableTransformer(), Iterable.class);
+		serializer.transform(new RawTransformer(), "geog");
 	}
 
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { doPostGet(request,response); }
+
+	@SuppressWarnings("unchecked")
+	public void doPostGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		try {
-			TokenAuth.Check(request.getHeader("Authorization"));
-		} catch(Exception ex){
-			response.setStatus(403);
-			response.setContentType("text/plain");
-			response.getOutputStream().print(ex.getMessage());
-			return;
-		}
-
-		Integer id = null;
-		try { id = Integer.valueOf(request.getParameter("id")); }
-		catch(Exception ex){ }
-		String barcode = request.getParameter("barcode");
-
-		// Aggressively disable cache
-		response.setHeader("Cache-Control","no-cache");
-		response.setHeader("Pragma","no-cache");
-		response.setDateHeader("Expires", 0);
+		ServletContext context = getServletContext();
 
 		SqlSession sess = IgneousFactory.openSession();
 		try {
-			List<Inventory> output = null;
+			String path = request.getPathInfo();
+			Integer id = Integer.valueOf(request.getParameter("id"));
 
-			if(id != null){
-				output = sess.selectList(
-					"gov.alaska.dggs.igneous.Inventory.getByID", id
-				);
-			} else if(barcode != null){
-				output = sess.selectList(
-					"gov.alaska.dggs.igneous.Inventory.getByBarcode", barcode
-				);
-			}
+			HashMap<String, Object> output = new HashMap<String, Object>();
+			Well well = sess.selectOne("gov.alaska.dggs.igneous.Well.getByID", id);
+
+			if(null == well){throw new Exception("ID not Found.");}
+
+			output.put("well", well);
+			output.put("keywords", sess.selectList("gov.alaska.dggs.igneous.Keyword.getGroupsByWellID", id));
 
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
-			try { 
+
+			try {
 				// If GZIP is supported by the requesting browser, use it.
 				String encoding = request.getHeader("Accept-Encoding");
 				if(encoding != null && encoding.contains("gzip")){
@@ -113,6 +88,7 @@ public class InventoryServlet extends HttpServlet
 			response.setStatus(500);
 			response.setContentType("text/plain");
 			response.getOutputStream().print(ex.getMessage());
+			ex.printStackTrace();
 		} finally {
 			sess.close();	
 		}
