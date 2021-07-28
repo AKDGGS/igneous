@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
 	<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
 	<style>
@@ -364,5 +363,4 @@
 		</div>
 	</script>
 </body>
-
 </html>
