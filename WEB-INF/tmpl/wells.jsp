@@ -121,7 +121,6 @@
 		}
 	</style>
 </head>
-
 <body>
 	<div id="map"></div>
 	<div id="popup" class="ol-popup">
