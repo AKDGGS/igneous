@@ -35,7 +35,6 @@ public class WellPointServlet extends HttpServlet
 	static {
 		serializer = new JSONSerializer();
 		serializer.exclude("class");
-		serializer.transform(new RawTransformer(), "geog");
 	}
 
 

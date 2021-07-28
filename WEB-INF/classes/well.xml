@@ -71,7 +71,7 @@
 
 	<select id="getPointList" resultSetType="FORWARD_ONLY" resultType="Map">
 		SELECT
-			w.well_id,  ST_AsGeoJSON(wg.geog, 5) AS geog 
+			w.name, w.well_id, ST_AsText(ST_SnapToGrid(geog::geometry, 0.00001)) AS geog 
 		FROM
 			well AS w
 		JOIN (
