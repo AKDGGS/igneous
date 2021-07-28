@@ -129,7 +129,7 @@
 					<div id="prev">&#x25C0;</div>
 					<div id="numOf">
 						<div id="currentPageDiv"></div>
-						<	div id="totalPageDiv"></div>
+						<div id="totalPageDiv"></div>
 					</div>
 					<div id="next">&#x25B6;</div>
 				</div>
