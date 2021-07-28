@@ -62,8 +62,8 @@
 
 			#popup-content {
 				padding: 10px 5px 5px 5px;
-				max-height: 175px;
-				overflow: auto;
+				height: 175px;
+				overflow: scroll;
 			}
 
 			.tabs {
@@ -179,7 +179,7 @@
 
 			// Initialize the map and base layer
 			let map = new ol.Map({
-				controls: ol.control.defaults().extend([new ol.control.ScaleLine({
+				controls: ol.control.defaults({attribution: false}).extend([new ol.control.ScaleLine({
 					units: "us"
 				})]),
 				overlays: [overlay],
@@ -199,9 +199,9 @@
 				source: vectorSource,
 				style: new ol.style.Style({
 					image: new ol.style.Circle({
-						radius: 5,
+						radius: 6,
 						fill: new ol.style.Fill({
-							color: 'rgba(189, 84, 73, 0.5)'
+							color: 'rgba(9, 164, 236, 0.5)'
 						})
 					})
 				})
@@ -267,6 +267,7 @@
 
 			function displayOverlayContents() {
 				if (!clicked) {
+					content.scrollTop = 0;
 					clicked = true;
 					switch (event.target.id) {
 						case "prev":
