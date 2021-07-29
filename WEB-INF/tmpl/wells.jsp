@@ -146,7 +146,7 @@
 
 		<script src="ol/6.5.0/ol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
-		<script id="templ_well_popup" type="x-tmpl-mustchache">
+		<script id="templ_well_popup" type="x-tmpl-mustache">
 			<div>
 				{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}">{{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
 				{{#well.APINumber}}<div><b>API Number:</b> {{well.APINumber}}</div>{{/well.APINumber}}
@@ -275,7 +275,7 @@
 			let currentPage;
 			let clicked = false;
 
-			function displayOverlayContents(overlayCoor) {
+			function displayOverlayContents(e) {
 				if (!clicked) {
 					content.scrollTop = 0;
 					clicked = true;
@@ -332,8 +332,8 @@
 							content.innerHTML = Mustache.render(
 								document.getElementById('templ_well_popup').innerHTML, data
 							);
-							if (overlayCoor instanceof Array){
-								overlay.setPosition(overlayCoor);
+							if (e instanceof ol.events.Event){
+								overlay.setPosition(e.coordinate);
 							}
 							clicked = false;
 						})
@@ -362,7 +362,7 @@
 			map.on('click', function(e) {
 				fts = map.getFeaturesAtPixel(e.pixel);
 				if (fts.length > 0) {
-					displayOverlayContents(e.coordinate);
+					displayOverlayContents(e);
 				} else {
 					overlay.setPosition(undefined);
 				}
