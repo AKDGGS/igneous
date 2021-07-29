@@ -66,6 +66,7 @@
 				padding: 10px 5px 5px 5px;
 				max-height: 175px;
 				overflow: auto;
+				font-size: 15px;
 			}
 
 			#tabs {
