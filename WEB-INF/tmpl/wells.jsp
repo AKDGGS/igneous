@@ -66,7 +66,7 @@
 				padding: 10px 5px 5px 5px;
 				max-height: 175px;
 				overflow: auto;
-				font-size: 15px;
+				font-size: 16px;
 			}
 
 			#tabs {
@@ -166,7 +166,6 @@
 			</div>
 		</script>
 		<script>
-			let overlayCoor;
 			const content = document.getElementById('popup-content');
 			const overlay = new ol.Overlay({
 				element: document.getElementById('popup'),
@@ -246,7 +245,7 @@
 			tabs.style.visibility = 'visible';
 			const popupContainer = document.getElementById('popup');
 			popupContainer.style.visibility = 'visible';
-		
+
 			//Fetch the makers
 			fetch('wellpoint.json')
 				.then(response => {
@@ -276,7 +275,7 @@
 			let currentPage;
 			let clicked = false;
 
-			function displayOverlayContents() {
+			function displayOverlayContents(overlayCoor) {
 				if (!clicked) {
 					content.scrollTop = 0;
 					clicked = true;
@@ -333,7 +332,9 @@
 							content.innerHTML = Mustache.render(
 								document.getElementById('templ_well_popup').innerHTML, data
 							);
-							overlay.setPosition(overlayCoor);
+							if (overlayCoor instanceof Array){
+								overlay.setPosition(overlayCoor);
+							}
 							clicked = false;
 						})
 						.catch(error => {
@@ -361,8 +362,7 @@
 			map.on('click', function(e) {
 				fts = map.getFeaturesAtPixel(e.pixel);
 				if (fts.length > 0) {
-					displayOverlayContents();
-					overlayCoor = e.coordinate;
+					displayOverlayContents(e.coordinate);
 				} else {
 					overlay.setPosition(undefined);
 				}
