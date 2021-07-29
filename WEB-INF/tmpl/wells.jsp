@@ -26,6 +26,7 @@
 				bottom: 12px;
 				left: -50px;
 				min-width: 320px;
+				visibility: hidden;
 			}
 
 			.ol-popup-after,
@@ -238,6 +239,13 @@
 				declutter: true
 			});
 
+			//Allows the overlay to be visible.  
+			//Needed because the overlay was being displayed when the page loaded
+			const tabs = document.getElementById('tabs');
+			tabs.style.visibility = 'visible';
+			const popupContainer = document.getElementById('popup');
+			popupContainer.style.visibility = 'visible';
+		
 			//Fetch the makers
 			fetch('wellpoint.json')
 				.then(response => {
@@ -325,7 +333,6 @@
 								document.getElementById('templ_well_popup').innerHTML, data
 							);
 							overlay.setPosition(overlayCoor);
-							console.log(overlay.position);
 							clicked = false;
 						})
 						.catch(error => {
@@ -349,8 +356,6 @@
 
 			const currentPageDiv = document.getElementById('currentPageDiv');
 			const totalPageDiv = document.getElementById('totalPageDiv');
-			const tabs = document.getElementById('tabs');
-			tabs.style.visibility = 'visible';
 			let fts = [];
 			map.on('click', function(e) {
 				fts = map.getFeaturesAtPixel(e.pixel);
