@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
+		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css"/>
 		<style>
 			html,
 			body {
@@ -51,6 +51,7 @@
 				border-width: 11px;
 				left: 48px;
 				margin-left: -11px;
+
 			}
 
 			.ol-popup-closer:after {
@@ -62,19 +63,20 @@
 
 			#popup-content {
 				padding: 10px 5px 5px 5px;
-				height: 175px;
-				overflow: scroll;
+				max-height: 175px;
+				overflow: auto;
 			}
 
-			.tabs {
+			#tabs {
 				background: rgba(18, 72, 106, 255);
 				padding-left: 2px;
 				padding-right: 2px;
 				display: flex;
 				cursor: default;
+				visibility: hidden;
 			}
 
-			.tabs div {
+			#tabs div {
 				color: white;
 				padding: 3px;
 				display: flex;
@@ -98,7 +100,7 @@
 				width: 40%;
 				display: flex;
 				justify-content: center;
-				font-size: 18px;
+				font-size: 1.1em;
 			}
 
 			#currentPageDiv {
@@ -124,7 +126,7 @@
 	<body>
 		<div id="map"></div>
 		<div id="popup" class="ol-popup">
-			<div class="tabs">
+			<div id="tabs">
 				<div style="width:100%">
 					<div id="prev">&#x25C0;</div>
 					<div id="numOf">
@@ -182,8 +184,8 @@
 				controls: ol.control.defaults({attribution: false}).extend([new ol.control.ScaleLine({
 					units: "us"
 				})]),
-				overlays: [overlay],
 				target: 'map',
+				overlays: [overlay],
 				layers: [new ol.layer.Tile({
 					source: new ol.source.OSM()
 				})],
@@ -323,6 +325,7 @@
 								document.getElementById('templ_well_popup').innerHTML, data
 							);
 							overlay.setPosition(overlayCoor);
+							console.log(overlay.position);
 							clicked = false;
 						})
 						.catch(error => {
@@ -346,6 +349,8 @@
 
 			const currentPageDiv = document.getElementById('currentPageDiv');
 			const totalPageDiv = document.getElementById('totalPageDiv');
+			const tabs = document.getElementById('tabs');
+			tabs.style.visibility = 'visible';
 			let fts = [];
 			map.on('click', function(e) {
 				fts = map.getFeaturesAtPixel(e.pixel);
