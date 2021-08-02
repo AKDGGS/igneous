@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 	<head>
+		<title>Wells Overview Map</title>
 		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
 		<style>
-			html,
-			body {
+			html, body {
 				height: 100%;
 				padding: 0;
 				margin: 0;
@@ -56,30 +56,31 @@
 			}
 
 			.ol-popup-closer:after {
-				padding: 3px;
 				content: "\2715";
 				font-size: 20px;
+				margin-left: auto;
 			}
 
-			#popup-content {
+			.popup-content {
 				padding: 10px 5px 5px 5px;
 				max-height: 175px;
 				overflow: auto;
 				font-size: 16px;
 			}
 
-			#tabs {
+			.topBar {
 				background: rgba(39, 111, 147, 1);
-				padding-left: 2px;
-				padding-right: 2px;
+				padding: 5px;
 				display: flex;
+				align-items: center;
+				font-size: 20px;
 				cursor: default;
 				visibility: hidden;
 			}
 
-			#tabs div {
+			.topBar div {
 				color: white;
-				padding: 3px;
+				padding: 2px;
 				display: flex;
 				letter-spacing: 0.5px;
 				text-decoration: none;
@@ -91,30 +92,20 @@
 				-user-select: none;
 			}
 
-			#prev {
-				width: 30%;
+			.prevBtn {
+				width: 33%;
 				display: flex;
 				justify-content: center;
 			}
 
-			#numOf {
-				width: 40%;
+			.pageNumber {
+				width: 33%;
 				display: flex;
 				justify-content: center;
-				font-size: 1.1em;
 			}
 
-			#currentPageDiv {
-				justify-content: flex-end;
-				width: 35%;
-			}
-
-			#totalPageDiv {
-				width: 65%;
-			}
-
-			#next {
-				width: 30%;
+			.nextBtn {
+				width: 33%;
 				display: flex;
 				justify-content: center;
 			}
@@ -128,20 +119,13 @@
 	<body>
 		<div id="map"></div>
 		<div id="popup" class="ol-popup">
-			<div id="tabs">
-				<div style="width:100%">
-					<div id="prev">&#x25C0;</div>
-					<div id="numOf">
-						<div id="currentPageDiv"></div>
-						<div id="totalPageDiv"></div>
-					</div>
-					<div id="next">&#x25B6;</div>
-				</div>
-				<div style="margin-left:auto">
-					<div id="popup-closure" class="ol-popup-closer"></div>
-				</div>
+			<div id="topBar" class="topBar">
+				<div id="prevBtn" class="prevBtn">&#x25C0;</div>
+				<div id="pageNumber" class="pageNumber"></div>
+				<div id="nextBtn" class="nextBtn">&#x25B6;</div>
+				<div id="popup-closure" class="ol-popup-closer"></div>
 			</div>
-			<div id="popup-content"></div>
+			<div id="popup-content" class="popup-content"></div>
 		</div>
 
 		<script src="ol/6.5.0/ol.js"></script>
@@ -188,10 +172,10 @@
 				image: new ol.style.Circle({
 					radius: width * 2,
 					fill: new ol.style.Fill({
-						color: 'rgba(44, 126, 167, 0.25)'
+						color: 'rgba(44, 126,167, 0.25)'
 					}),
 					stroke: new ol.style.Stroke({
-						color: 'rgba(44, 126, 167, 255)',
+						color: 'rgba(44, 126,167, 255)',
 						width: width / 1.5
 					})
 				}),
@@ -200,14 +184,14 @@
 
 			let labelStyle = new ol.style.Style({
 				text: new ol.style.Text({
-						offsetY: -9,
-						font: '13px Calibri, sans-serif',
-						fill: new ol.style.Fill({
-							color: 'rgba(0,0, 0, 255)'
-						}),
-						backgroundFill: new ol.style.Fill({
-								color: 'rgba(255, 255, 255, 0.1)'
-						})
+					offsetY: -9,
+					font: '13px Calibri, sans-serif',
+					fill: new ol.style.Fill({
+						color: 'rgba(0,0,0,255)'
+					}),
+					backgroundFill: new ol.style.Fill({
+						color: 'rgba(255, 255, 255, 0.1)'
+					})
 				})
 			});
 
@@ -270,26 +254,26 @@
 
 			//Allows the overlay to be visible.
 			//Needed because the overlay was being displayed when the page loaded
-			const tabs = document.getElementById('tabs');
+			const tabs = document.getElementById('topBar');
 			tabs.style.visibility = 'visible';
 			popupContainer.style.visibility = 'visible';
 
 			//Pagination Code
 			//Fetch the well data
 			let currentPage;
-			let clicked = false;
+			let running = false;
 
 			function displayOverlayContents(e) {
-				if (!clicked) {
+				if (!running) {
 					content.scrollTop = 0;
-					clicked = true;
-					switch (event.target.id) {
-						case "prev":
+					running = true;
+					switch (e.target.id) {
+						case "prevBtn":
 							if (!(currentPage < 0)) {
 								currentPage--;
 							}
 							break;
-						case "next":
+						case "nextBtn":
 							if (!(currentPage > fts.length - 1)) {
 								currentPage++;
 							}
@@ -299,18 +283,17 @@
 					}
 
 					if (currentPage > 0) {
-						prev.style.visibility = 'visible';
+						prevBtn.style.visibility = 'visible';
 					} else {
-						prev.style.visibility = 'hidden';
+						prevBtn.style.visibility = 'hidden';
 					}
 					if (currentPage < (fts.length - 1)) {
-						next.style.visibility = 'visible';
+						nextBtn.style.visibility = 'visible';
 					} else {
-						next.style.visibility = 'hidden';
+						nextBtn.style.visibility = 'hidden';
 					}
 
-					currentPageDiv.innerHTML = (currentPage + 1)
-					totalPageDiv.innerHTML = " of  " + fts.length;
+					pageNumber.innerHTML = (currentPage + 1) + " of " + fts.length;
 
 					let well_id = fts[currentPage].well_id;
 					fetch('well.json?id=' + well_id)
@@ -339,29 +322,27 @@
 							if (e instanceof ol.events.Event) {
 								overlay.setPosition(e.coordinate);
 							}
-							clicked = false;
+							running = false;
 						})
 						.catch(error => {
 							handleError(error);
+							running = false;
 						});
 				}
 			}
 
 			//Popup
-			const prev = document.getElementById('prev');
-			const next = document.getElementById('next');
-			prev.addEventListener("click", displayOverlayContents);
-			next.addEventListener("click", displayOverlayContents);
+			const prevBtn = document.getElementById('prevBtn');
+			const nextBtn = document.getElementById('nextBtn');
+			prevBtn.addEventListener("click", displayOverlayContents);
+			nextBtn.addEventListener("click", displayOverlayContents);
 
-			//			const closer = document.getElementById('popup-closure');
 			closer.addEventListener("click", function() {
 				overlay.setPosition(undefined);
 				closer.blur();
 				return false;
 			});
 
-			const currentPageDiv = document.getElementById('currentPageDiv');
-			const totalPageDiv = document.getElementById('totalPageDiv');
 			map.on('click', function(e) {
 				fts = map.getFeaturesAtPixel(e.pixel);
 				if (fts.length > 0) {
