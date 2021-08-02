@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css"/>
+		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
 		<style>
 			html,
 			body {
@@ -56,8 +56,7 @@
 			}
 
 			.ol-popup-closer:after {
-				padding-left: 2px;
-				padding-right: 2px;
+				padding: 3px;
 				content: "\2715";
 				font-size: 20px;
 			}
@@ -70,7 +69,7 @@
 			}
 
 			#tabs {
-				background: rgba(18, 72, 106, 255);
+				background: rgba(39, 111, 147, 1);
 				padding-left: 2px;
 				padding-right: 2px;
 				display: flex;
@@ -125,6 +124,7 @@
 			}
 		</style>
 	</head>
+
 	<body>
 		<div id="map"></div>
 		<div id="popup" class="ol-popup">
@@ -166,85 +166,65 @@
 			</div>
 		</script>
 		<script>
+			const popupContainer = document.getElementById('popup');
 			const content = document.getElementById('popup-content');
+			const closer = document.getElementById('popup-closure');
 			const overlay = new ol.Overlay({
-				element: document.getElementById('popup'),
+				element: popupContainer,
 				autoPan: true,
 				autoPanAnimation: {
 					duration: 100
 				},
 				autoPanMargin: 300
 			});
+			let fts = [];
+			let width = 2.5;
 
 			function handleError(err) {
 				alert(err);
 			}
 
-			// Initialize the map and base layer
-			let map = new ol.Map({
-				controls: ol.control.defaults({attribution: false}).extend([new ol.control.ScaleLine({
-					units: "us"
-				})]),
-				target: 'map',
-				overlays: [overlay],
-				layers: [new ol.layer.Tile({
-					source: new ol.source.OSM()
-				})],
-				view: new ol.View({
-					center: ol.proj.fromLonLat([-150, 64]),
-					zoom: 3,
-					maxZoom: 24
-				})
-			})
-
-			let vectorSource = new ol.source.Vector();
-			let wellPointLayer = new ol.layer.VectorImage({
-				source: vectorSource,
-				style: new ol.style.Style({
-					image: new ol.style.Circle({
-						radius: 6,
-						fill: new ol.style.Fill({
-							color: 'rgba(9, 164, 236, 0.5)'
-						})
-					})
-				})
-			});
-
-			map.addLayer(wellPointLayer);
-
-			//Label the markers
-			let labelStyle = new ol.style.Style({
-				text: new ol.style.Text({
-					font: 4 * map.getView().getZoom() + 'px Calibri, sans-serif',
-					textBaseline: 'middle',
-					textAlign: 'center',
+			let markerStyle = new ol.style.Style({
+				image: new ol.style.Circle({
+					radius: width * 2,
 					fill: new ol.style.Fill({
-						color: 'rgba(0,0,0,a)'
+						color: 'rgba(44, 126, 167, 0.25)'
 					}),
 					stroke: new ol.style.Stroke({
-						color: 'rgba(0,0,0,.5)',
-						width: 0.01
+						color: 'rgba(44, 126, 167, 255)',
+						width: width / 1.5
 					})
+				}),
+				zIndex: Infinity
+			});
+
+			let labelStyle = new ol.style.Style({
+				text: new ol.style.Text({
+						offsetY: -9,
+						font: '13px Calibri, sans-serif',
+						fill: new ol.style.Fill({
+							color: 'rgba(0,0, 0, 255)'
+						}),
+						backgroundFill: new ol.style.Fill({
+								color: 'rgba(255, 255, 255, 0.1)'
+						})
 				})
 			});
 
-			let style = [labelStyle];
+			let wellPointLayer = new ol.layer.Vector({
+				source: new ol.source.Vector(),
+				style: markerStyle
+			});
 
-			let wellPointLabelLayer = new ol.layer.VectorImage({
-				source: vectorSource,
+			let wellPointLabelLayer = new ol.layer.Vector({
+				source: new ol.source.Vector(),
+				renderBuffer: 1e3,
 				style: function(feature) {
 					labelStyle.getText().setText(feature.label);
-					return style;
+					return labelStyle;
 				},
 				declutter: true
 			});
-
-			//Allows the overlay to be visible.  
-			//Needed because the overlay was being displayed when the page loaded
-			const tabs = document.getElementById('tabs');
-			tabs.style.visibility = 'visible';
-			const popupContainer = document.getElementById('popup');
-			popupContainer.style.visibility = 'visible';
 
 			//Fetch the makers
 			fetch('wellpoint.json')
@@ -255,20 +235,44 @@
 				})
 				.then(d => {
 					let markers = [];
-					d.forEach(({geog,	name, well_id}) => {
+					d.forEach(({geog, name, well_id}) => {
 						let f = new ol.Feature(new ol.format.WKT().readGeometry(geog));
 						f.getGeometry().transform("EPSG:4326", "EPSG:3857");
 						f.label = name + ' - ' + well_id;
 						f.well_id = well_id;
+						f.setId(well_id);
+						wellPointLabelLayer.getSource().addFeature(f);
 						markers.push(f);
 					});
-					vectorSource.addFeatures(markers);
+					wellPointLayer.getSource().addFeatures(markers);
 				})
 				.catch(error => {
 					handleError(error);
 				});
 
-			map.addLayer(wellPointLabelLayer);
+			let map = new ol.Map({
+				layers: [new ol.layer.Tile({
+					source: new ol.source.OSM()
+				}), wellPointLayer, wellPointLabelLayer],
+				target: 'map',
+				overlays: [overlay],
+				view: new ol.View({
+					center: ol.proj.fromLonLat([-150, 64]),
+					zoom: 3,
+					maxZoom: 24
+				}),
+				controls: ol.control.defaults({
+					attribution: false
+				}).extend([new ol.control.ScaleLine({
+					units: "us"
+				})]),
+			})
+
+			//Allows the overlay to be visible.
+			//Needed because the overlay was being displayed when the page loaded
+			const tabs = document.getElementById('tabs');
+			tabs.style.visibility = 'visible';
+			popupContainer.style.visibility = 'visible';
 
 			//Pagination Code
 			//Fetch the well data
@@ -332,7 +336,7 @@
 							content.innerHTML = Mustache.render(
 								document.getElementById('templ_well_popup').innerHTML, data
 							);
-							if (e instanceof ol.events.Event){
+							if (e instanceof ol.events.Event) {
 								overlay.setPosition(e.coordinate);
 							}
 							clicked = false;
@@ -349,7 +353,7 @@
 			prev.addEventListener("click", displayOverlayContents);
 			next.addEventListener("click", displayOverlayContents);
 
-			const closer = document.getElementById('popup-closure');
+			//			const closer = document.getElementById('popup-closure');
 			closer.addEventListener("click", function() {
 				overlay.setPosition(undefined);
 				closer.blur();
@@ -358,7 +362,6 @@
 
 			const currentPageDiv = document.getElementById('currentPageDiv');
 			const totalPageDiv = document.getElementById('totalPageDiv');
-			let fts = [];
 			map.on('click', function(e) {
 				fts = map.getFeaturesAtPixel(e.pixel);
 				if (fts.length > 0) {
