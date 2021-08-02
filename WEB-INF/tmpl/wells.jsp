@@ -267,19 +267,21 @@
 				if (!running) {
 					content.scrollTop = 0;
 					running = true;
-					switch (e.target.id) {
-						case "prevBtn":
-							if (!(currentPage < 0)) {
-								currentPage--;
-							}
-							break;
-						case "nextBtn":
-							if (!(currentPage > fts.length - 1)) {
-								currentPage++;
-							}
-							break;
-						default:
-							currentPage = 0;
+					if(e instanceof PointerEvent){
+						switch (e.target.id) {
+							case "prevBtn":
+								if (!(currentPage < 0)) {
+									currentPage--;
+								}
+								break;
+							case "nextBtn":
+								if (!(currentPage > fts.length - 1)) {
+									currentPage++;
+								}
+								break;
+						}
+					}else{
+						currentPage = 0;
 					}
 
 					if (currentPage > 0) {
