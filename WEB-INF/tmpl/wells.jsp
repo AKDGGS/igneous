@@ -1,19 +1,34 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Wells Overview Map</title>
+		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center: Wells Overivew</title>
+		<meta http-equiv="x-ua-compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=0.75,user-scalable=no">
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="css/apptmpl-fullscreen.css">
 		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
 		<style>
-			html, body {
+			html, body, .brow{
 				height: 100%;
+				width: 100%;
 				padding: 0;
 				margin: 0;
 				font-size: 18px;
 				font-family: 'Times New Roman', serif;
 			}
 
+			body{
+				display: table;
+			}
+
+			.brow{
+				display: table-row;
+			}
+
 			#map {
-				height: 100%;
+				display: table-cell;
+				height: 50%;
 				width: 100%;
 			}
 
@@ -52,7 +67,6 @@
 				border-width: 11px;
 				left: 48px;
 				margin-left: -11px;
-
 			}
 
 			.ol-popup-closer:after {
@@ -115,40 +129,71 @@
 			}
 		</style>
 	</head>
-
 	<body>
-		<div id="map"></div>
-		<div id="popup" class="ol-popup">
-			<div id="topBar" class="topBar">
-				<div id="prevBtn" class="prevBtn">&#x25C0;</div>
-				<div id="pageNumber" class="pageNumber"></div>
-				<div id="nextBtn" class="nextBtn">&#x25B6;</div>
-				<div id="popup-closure" class="ol-popup-closer"></div>
+		<div class="soa-apptmpl-header">
+			<div class="soa-apptmpl-header-top">
+				<a class="soa-apptmpl-logo" title="The Great State of Alaska" href="http://alaska.gov"></a>
+				<a class="soa-apptmpl-logo-dggs" title="The Division of Geological &amp; Geophysical Surveys" href="http://dggs.alaska.gov"></a>
+				<div class="soa-apptmpl-header-nav">
+					<a href="help">Help/Contact</a>
+				</div>
 			</div>
-			<div id="popup-content" class="popup-content"></div>
+			<div class="soa-apptmpl-header-breadcrumb">
+				<a href="http://alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">State of Alaska</span>
+					<span class="soa-apptmpl-breadcrumb-sm">Alaska</span>
+				</a>
+				|
+				<a href="http://dnr.alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">Natural Resources</span>
+					<span class="soa-apptmpl-breadcrumb-sm">DNR</span>
+				</a>
+				|
+				<a href="http://dggs.alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">Geological &amp; Geophysical Surveys</span>
+					<span class="soa-apptmpl-breadcrumb-sm">DGGS</span>
+				</a>
+				|
+				<a href=".">
+					<span class="soa-apptmpl-breadcrumb-lg">Geologic Materials Center</span>
+					<span class="soa-apptmpl-breadcrumb-sm">GMC</span>
+				</a>
+			</div>
 		</div>
-
+		<div class="brow">
+			<div id="map"></div>	
+			<div id="popup" class="ol-popup">
+				<div id="topBar" class="topBar">
+					<div id="prevBtn" class="prevBtn">&#x25C0;</div>
+					<div id="pageNumber" class="pageNumber"></div>
+					<div id="nextBtn" class="nextBtn">&#x25B6;</div>
+					<div id="popup-closure" class="ol-popup-closer"></div>
+				</div>
+				<div id="popup-content" class="popup-content"></div>
+			</div>
+		</div>
+		
 		<script src="ol/6.5.0/ol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script id="templ_well_popup" type="x-tmpl-mustache">
 			<div>
-				{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}">{{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
-				{{#well.APINumber}}<div><b>API Number:</b> {{well.APINumber}}</div>{{/well.APINumber}}
-				{{#well.wellNumber}}<div><b>Well Number:</b> {{well.wellNumber}}</div>{{/well.wellNumber}}
-				{{#well.measuredDepth}}<div><b>Measured Depth:</b> {{well.measuredDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.measuredDepth}}
-				{{#well.verticalDepth}}<div><b>Vertical Depth:</b> {{well.verticalDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.verticalDepth}}
-				{{#well.elevation}}<div><b>Elevation:</b> {{well.elevation}} {{#well.unit.abbr}} {{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.elevation}}
-				{{#well.onshore}}<div><b>Onshore:</b> {{well.onshore}}<br/></div>{{/well.onshore}}
-				{{#well.federal}}<div><b>Federal:</b> {{well.federal}}<br/></div>{{/well.federal}}
-				{{#well.permitStatus}}<div><b>Permit Status:</b> {{well.permitStatus}}</div>{{/well.permitStatus}}
-				{{#well.permitNumber}}<div><b>Permit Number:</b> {{well.permitNumber}}</div>{{/well.permitNumber}}
-				{{#well.completionStatus}}<div><b>Completion Status:</b> {{well.completionStatus}}</div>{{/well.completionStatus}}
-				{{#well.completionDate}}<div><b>Completion Date:</b> {{well.completionDate}}</div>{{/well.completionDate}}
-				{{#well.spudDate}}<div><b>Spud Date:</b> {{well.spudDate}}</div>{{/well.spudDate}}
-				<div><br/><b>Keywords:</b></div>
-				{{#keywords}}<div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a> {{count}}</div>{{/keywords}}
-			</div>
-		</script>
+					{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}">{{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
+					{{#well.APINumber}}<div><b>API Number:</b> {{well.APINumber}}</div>{{/well.APINumber}}
+					{{#well.wellNumber}}<div><b>Well Number:</b> {{well.wellNumber}}</div>{{/well.wellNumber}}
+					{{#well.measuredDepth}}<div><b>Measured Depth:</b> {{well.measuredDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.measuredDepth}}
+					{{#well.verticalDepth}}<div><b>Vertical Depth:</b> {{well.verticalDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.verticalDepth}}
+					{{#well.elevation}}<div><b>Elevation:</b> {{well.elevation}} {{#well.unit.abbr}} {{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.elevation}}
+					{{#well.onshore}}<div><b>Onshore:</b> {{well.onshore}}<br/></div>{{/well.onshore}}
+					{{#well.federal}}<div><b>Federal:</b> {{well.federal}}<br/></div>{{/well.federal}}
+					{{#well.permitStatus}}<div><b>Permit Status:</b> {{well.permitStatus}}</div>{{/well.permitStatus}}
+					{{#well.permitNumber}}<div><b>Permit Number:</b> {{well.permitNumber}}</div>{{/well.permitNumber}}
+					{{#well.completionStatus}}<div><b>Completion Status:</b> {{well.completionStatus}}</div>{{/well.completionStatus}}
+					{{#well.completionDate}}<div><b>Completion Date:</b> {{well.completionDate}}</div>{{/well.completionDate}}
+					{{#well.spudDate}}<div><b>Spud Date:</b> {{well.spudDate}}</div>{{/well.spudDate}}
+					<div><br/><b>Keywords:</b></div>
+					{{#keywords}}<div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a> {{count}}</div>{{/keywords}}
+				</div>
+			</script>
 		<script src="js/wells.js"></script>
 	</body>
 </html>
