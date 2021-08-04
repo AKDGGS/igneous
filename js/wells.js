@@ -101,7 +101,7 @@ let map = new ol.Map({
 	}).extend([new ol.control.ScaleLine({
 		units: "us"
 	})]),
-})
+});
 
 //Allows the overlay to be visible.
 //Needed because the overlay was being displayed when the page loaded
