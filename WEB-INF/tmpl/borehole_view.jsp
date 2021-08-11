@@ -28,13 +28,6 @@
 			#map { width: 100%; height: 300px; display: none; background-color: black; margin: 0px; }
 			#lonlat { display: none; }
 
-			dd a { white-space: nowrap; }
-			dl { display: table; margin: 8px 4px; }
-			dt, dd { display: table-cell; }
-			dt { width: 160px; }
-			dd { margin: 0px; }
-
-			pre { margin: 0px; }
 			.notehd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 
@@ -145,7 +138,7 @@
 				</c:if>
 				<dl id="lonlat">
 					<dt>Lon/Lat</dt>
-					<dd></dt>
+					<dd></dd>
 				</dl>
 				<c:if test="${!empty quadrangles}">
 				<dl>

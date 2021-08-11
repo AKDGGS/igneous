@@ -26,13 +26,6 @@
 
 			#map { width: 100%; height: 300px; display: none; background-color: black; margin: 0px; }
 
-			dd a { white-space: nowrap; }
-			dl { display: table; margin: 8px 4px; }
-			dt, dd { display: table-cell; }
-			dt { width: 160px; }
-			dd { margin: 0px; }
-
-			pre { margin: 0px; }
 			.notehd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 		</style>

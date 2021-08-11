@@ -15,11 +15,6 @@
 		<link rel="stylesheet" href="../css/apptmpl.min.css">
 		<link rel="stylesheet" href="../css/view.css" media="screen">
 		<style>
-			dl { display: table; margin: 8px 4px; }
-			dt, dd { display: table-cell; vertical-align: top; }
-			dt { width: 160px; }
-			dd { margin: 0px; }
-			pre { margin: 0px; }
 			.notehd, .qualityhd, .loghd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
 
