@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center: Wells Overivew</title>
@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="css/apptmpl-fullscreen.css">
 		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
 		<style>
-			html, body, .brow{
+			html, body, .brow {
 				height: 100%;
 				width: 100%;
 				padding: 0;
@@ -17,21 +17,13 @@
 				font-size: 18px;
 				font-family: 'Times New Roman', serif;
 			}
-
-			body{
-				display: table;
-			}
-
-			.brow{
-				display: table-row;
-			}
-
+			body { display: table; }
+			.brow { display: table-row; }
 			#map {
 				display: table-cell;
 				height: 50%;
 				width: 100%;
 			}
-
 			.ol-popup {
 				position: absolute;
 				background-color: white;
@@ -43,9 +35,7 @@
 				min-width: 320px;
 				visibility: hidden;
 			}
-
-			.ol-popup-after,
-			.ol-popup-before {
+			.ol-popup-after, .ol-popup-before {
 				top: 100%;
 				border: solid transparent;
 				content: " ";
@@ -54,34 +44,29 @@
 				position: absolute;
 				pointer-events: none;
 			}
-
 			.ol-popup:after {
 				border-top-color: white;
 				border-width: 10px;
 				left: 48px;
 				margin-left: -10px;
 			}
-
 			.ol-popup:before {
 				border-top-color: #cccccc;
 				border-width: 11px;
 				left: 48px;
 				margin-left: -11px;
 			}
-
 			.ol-popup-closer:after {
 				content: "\2715";
 				font-size: 20px;
 				margin-left: auto;
 			}
-
 			.popup-content {
 				padding: 10px 5px 5px 5px;
 				max-height: 175px;
 				overflow: auto;
 				font-size: 16px;
 			}
-
 			.topBar {
 				background: rgba(39, 111, 147, 1);
 				padding: 5px;
@@ -91,7 +76,6 @@
 				cursor: default;
 				visibility: hidden;
 			}
-
 			.topBar div {
 				color: white;
 				padding: 2px;
@@ -105,28 +89,22 @@
 				-ms-user-select: none;
 				-user-select: none;
 			}
-
 			.prevBtn {
 				width: 33%;
 				display: flex;
 				justify-content: center;
 			}
-
 			.pageNumber {
 				width: 33%;
 				display: flex;
 				justify-content: center;
 			}
-
 			.nextBtn {
 				width: 33%;
 				display: flex;
 				justify-content: center;
 			}
-
-			.wellList {
-				display: block
-			}
+			.wellList { display: block }
 		</style>
 	</head>
 	<body>
@@ -172,28 +150,27 @@
 				<div id="popup-content" class="popup-content"></div>
 			</div>
 		</div>
-		
 		<script src="ol/6.5.0/ol.js"></script>
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script id="templ_well_popup" type="x-tmpl-mustache">
 			<div>
-					{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}">{{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
-					{{#well.APINumber}}<div><b>API Number:</b> {{well.APINumber}}</div>{{/well.APINumber}}
-					{{#well.wellNumber}}<div><b>Well Number:</b> {{well.wellNumber}}</div>{{/well.wellNumber}}
-					{{#well.measuredDepth}}<div><b>Measured Depth:</b> {{well.measuredDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.measuredDepth}}
-					{{#well.verticalDepth}}<div><b>Vertical Depth:</b> {{well.verticalDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.verticalDepth}}
-					{{#well.elevation}}<div><b>Elevation:</b> {{well.elevation}} {{#well.unit.abbr}} {{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.elevation}}
-					{{#well.onshore}}<div><b>Onshore:</b> {{well.onshore}}<br/></div>{{/well.onshore}}
-					{{#well.federal}}<div><b>Federal:</b> {{well.federal}}<br/></div>{{/well.federal}}
-					{{#well.permitStatus}}<div><b>Permit Status:</b> {{well.permitStatus}}</div>{{/well.permitStatus}}
-					{{#well.permitNumber}}<div><b>Permit Number:</b> {{well.permitNumber}}</div>{{/well.permitNumber}}
-					{{#well.completionStatus}}<div><b>Completion Status:</b> {{well.completionStatus}}</div>{{/well.completionStatus}}
-					{{#well.completionDate}}<div><b>Completion Date:</b> {{well.completionDate}}</div>{{/well.completionDate}}
-					{{#well.spudDate}}<div><b>Spud Date:</b> {{well.spudDate}}</div>{{/well.spudDate}}
-					<div><br/><b>Keywords:</b></div>
-					{{#keywords}}<div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a> {{count}}</div>{{/keywords}}
-				</div>
-			</script>
+				{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}">{{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
+				{{#well.APINumber}}<div><b>API Number:</b> {{well.APINumber}}</div>{{/well.APINumber}}
+				{{#well.wellNumber}}<div><b>Well Number:</b> {{well.wellNumber}}</div>{{/well.wellNumber}}
+				{{#well.measuredDepth}}<div><b>Measured Depth:</b> {{well.measuredDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.measuredDepth}}
+				{{#well.verticalDepth}}<div><b>Vertical Depth:</b> {{well.verticalDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.verticalDepth}}
+				{{#well.elevation}}<div><b>Elevation:</b> {{well.elevation}} {{#well.unit.abbr}} {{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.elevation}}
+				{{#well.onshore}}<div><b>Onshore:</b> {{well.onshore}}<br/></div>{{/well.onshore}}
+				{{#well.federal}}<div><b>Federal:</b> {{well.federal}}<br/></div>{{/well.federal}}
+				{{#well.permitStatus}}<div><b>Permit Status:</b> {{well.permitStatus}}</div>{{/well.permitStatus}}
+				{{#well.permitNumber}}<div><b>Permit Number:</b> {{well.permitNumber}}</div>{{/well.permitNumber}}
+				{{#well.completionStatus}}<div><b>Completion Status:</b> {{well.completionStatus}}</div>{{/well.completionStatus}}
+				{{#well.completionDate}}<div><b>Completion Date:</b> {{well.completionDate}}</div>{{/well.completionDate}}
+				{{#well.spudDate}}<div><b>Spud Date:</b> {{well.spudDate}}</div>{{/well.spudDate}}
+				<div><br/><b>Keywords:</b></div>
+				{{#keywords}}<div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a> {{count}}</div>{{/keywords}}
+			</div>
+		</script>
 		<script src="js/wells.js"></script>
 	</body>
 </html>
