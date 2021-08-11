@@ -76,7 +76,7 @@
 					<span class="soa-apptmpl-breadcrumb-sm">GMC</span>
 				</a>
 				|
-				<a href="search">
+				<a href="../search">
 					<span class="soa-apptmpl-breadcrumb-lg">Inventory</span>
 					<span class="soa-apptmpl-breadcrumb-sm">Inventory</span>
 				</a>
