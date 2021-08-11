@@ -1,3 +1,5 @@
+.apptmpl-content { padding: 8px 16px; }
+
 .container { margin: 4px 8px; }
 
 .label {
@@ -31,38 +33,38 @@ a:hover, a:focus { color: #2a6496; text-decoration: underline; }
 .nav-tabs { display: table; }
 .nav-tabs > li {
 	display: table-cell;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #aaa;
 	border-radius: 4px 4px 0 0;
 }
 .nav-tabs > li.active {
-	border: 1px solid #ddd;
+	border: 1px solid #aaa;
 	border-bottom: none;
 	box-shadow: none;
-	background-color: #fff;
+	background-color: transparent;
 }
 .nav-tabs > li > a {
-	padding: 8px 32px;
+	padding: 8px 16px;
 	display: block;
 	text-align: center;
 	text-decoration: none;
 	white-space: nowrap;
 }
-.nav-tabs > li > a:hover { background-color: #eee; }
+.nav-tabs > li > a:hover { background-color: #ddd; }
 .nav-tabs > li.active > a:hover {
-	background-color: #fff;
+	background-color: transparent;
 	color: #428bca;
 	cursor: default;
 }
 
 .nav-pills > li > a {
-	background-color: #fff;
+	background-color: transparent;
 	padding: 4px 8px;
 	text-decoration: none;
 	border-radius: 5px;
 	white-space: nowrap;
 	display: inline-block;
 }
-.nav-pills a:hover { background-color: #eee; }
+.nav-pills a:hover { background-color: #ddd; }
 
 .nav-pills > li.active > a { color: #fff; background-color: #428bca; }
 .nav-pills > li.active > a > .badge { color: #428bca; background-color: #fff; }

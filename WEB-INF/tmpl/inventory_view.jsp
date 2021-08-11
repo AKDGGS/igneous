@@ -31,8 +31,6 @@
 			#filelist { display: flex; flex-wrap: wrap; }
 			#filelist a { display: inline-block; margin: 4px; 8px; flex-basis: 75px; text-align: center; font-size: 12px; }
 			#filelist a img { border: none; }
-
-			.nav-tabs > li > a { padding: 8px 16px; }
 		</style>
 	</head>
 	<body onload="init()">

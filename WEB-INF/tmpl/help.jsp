@@ -5,8 +5,7 @@
 %><!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center: Wells Overivew</title>
-		<meta http-equiv="x-ua-compatible" content="IE=edge">
+		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=0.75,user-scalable=no">
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
@@ -15,7 +14,7 @@
 			h2, h3, h4, h5 { margin: 16px 0; }
 			th { text-align: left; }
 			pre { margin-left: 30px; }
-			.brow { padding: 8px 16px; }
+			.apptmpl-content { padding: 8px 16px; }
 			.gmc-block {
 				width: 100%;
 				margin: auto;
@@ -83,7 +82,7 @@
 				</a>
 			</div>
 		</div>
-		<div class="brow">
+		<div class="apptmpl-content">
 			<a name="top"></a>
 			<h2 style="margin: 0 0 8px 0">GMC Inventory Search Help</h2>
 			<div class="gmc-help">
