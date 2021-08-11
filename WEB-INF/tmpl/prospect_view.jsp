@@ -28,10 +28,6 @@
 
 			.notehd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
-
-			#filelist { display: flex; flex-wrap: wrap; }
-			#filelist a { display: inline-block; margin: 4px; 8px; flex-basis: 75px; text-align: center; font-size: 12px; }
-			#filelist a img { border: none; }
 		</style>
 	</head>
 	<body onload="init()">

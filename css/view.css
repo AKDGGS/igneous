@@ -6,6 +6,17 @@ dd { margin: 0px; }
 
 pre { margin: 0px; }
 
+#filelist { display: flex; flex-wrap: wrap; }
+#filelist a {
+	display: inline-block;
+	margin: 4px; 8px;
+	flex-basis: 75px;
+	text-align: center;
+	font-size: 12px;
+}
+#filelist a img { border: none; }
+
+
 .apptmpl-content { padding: 8px 16px; }
 .apptmpl-content a { color: #428bca; text-decoration: none; }
 .apptmpl-content a:hover, a:focus {

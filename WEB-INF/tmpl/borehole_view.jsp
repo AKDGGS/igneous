@@ -30,10 +30,6 @@
 
 			.notehd { color: #777; }
 			#tab-notes > div:not(:first-child) { margin-top: 30px; }
-
-			#filelist { display: flex; flex-wrap: wrap; }
-			#filelist a { display: inline-block; margin: 4px; 8px; flex-basis: 75px; text-align: center; font-size: 12px; }
-			#filelist a img { border: none; }
 		</style>
 	</head>
 	<body>
@@ -203,7 +199,7 @@
 						<span class="label label-info">Keywords</span>
 						<ul class="nav nav-pills" id="keywords">
 						<c:forEach items="${keywords}" var="keyword">
-						<c:set var="kws" value="&keyword=${fn:join(fn:split(keyword.keywords, ','), '&keyword=')}" />
+						<c:set var="kws" value="&amp;keyword=${fn:join(fn:split(keyword.keywords, ','), '&amp;keyword=')}" />
 						<li><a href="../search#q=${fn:escapeXml(link)}${kws}">${fn:join(fn:split(keyword.keywords, ','), ' > ')} <span class="badge">${keyword.count}</span></a></li>
 						</c:forEach>
 						</ul>
