@@ -16,7 +16,6 @@ pre { margin: 0px; }
 }
 #filelist a img { border: none; }
 
-
 .apptmpl-content { padding: 8px 16px; }
 .apptmpl-content a { color: #428bca; text-decoration: none; }
 .apptmpl-content a:hover, a:focus {
@@ -54,12 +53,13 @@ pre { margin: 0px; }
 .nav-tabs { display: table; }
 .nav-tabs > li {
 	display: table-cell;
+	border: 1px solid transparent;
 	border-bottom: 1px solid #aaa;
 	border-radius: 4px 4px 0 0;
 }
 .nav-tabs > li.active {
 	border: 1px solid #aaa;
-	border-bottom: none;
+	border-bottom: 1px solid transparent;
 	box-shadow: none;
 	background-color: transparent;
 }
