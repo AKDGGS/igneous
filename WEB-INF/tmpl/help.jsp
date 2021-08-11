@@ -2,8 +2,7 @@
 	page trimDirectiveWhitespaces="true"
 %><%@
 	taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
-%>
-<!DOCTYPE html>
+%><!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center: Wells Overivew</title>
