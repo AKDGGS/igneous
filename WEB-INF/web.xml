@@ -533,8 +533,7 @@
 		<res-auth>Container</res-auth>
 	</resource-ref>
 
-	<security-role><role-name>DNR DGGS GMC</role-name></security-role>
-	<security-role><role-name>nobody</role-name></security-role>
+	<security-role><role-name>Natural Resources</role-name></security-role>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -542,7 +541,7 @@
 			<url-pattern>/login/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -555,7 +554,7 @@
 			<url-pattern>/edit_inventory/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -568,7 +567,7 @@
 			<url-pattern>/stash.json</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -581,7 +580,7 @@
 			<url-pattern>/quality_report.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -594,7 +593,7 @@
 			<url-pattern>/quality_report.json</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -607,7 +606,7 @@
 			<url-pattern>/audit_report.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -620,7 +619,7 @@
 			<url-pattern>/audit_report.json</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -633,7 +632,7 @@
 			<url-pattern>/container_log.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -646,7 +645,7 @@
 			<url-pattern>/importer.html</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -659,7 +658,7 @@
 			<url-pattern>/upload</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>DNR DGGS GMC</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
@@ -671,7 +670,7 @@
 			<web-resource-name>git files</web-resource-name>
 			<url-pattern>/.git/*</url-pattern>
 		</web-resource-collection>
-		<auth-constraint><role-name>nobody</role-name></auth-constraint>
+		<auth-constraint />
 	</security-constraint>
 
 	<login-config>
