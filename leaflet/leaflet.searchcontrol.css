@@ -20,6 +20,7 @@
 .search-input:focus {
 	/* Fixes Safari's ugly highlighting */
 	outline-width: 0;
+	outline: none;
 }
 .search-input {
 	padding: 0 2px;
