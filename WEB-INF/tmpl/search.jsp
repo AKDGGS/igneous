@@ -11,8 +11,9 @@
 	<head>
 		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center</title>
 		<meta charset="utf-8">
-		<meta http-equiv="x-ua-compatible" content="IE=edge" >
-		<link rel="stylesheet" href="css/apptmpl.min.css">
+		<meta name="viewport" content="width=device-width,initial-scale=0.75,user-scalable=no">
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="css/apptmpl-fullscreen.css">
 		<link rel="stylesheet" href="leaflet/leaflet.css" />
 		<link rel="stylesheet" href="leaflet/leaflet.draw.css" />
 		<link rel="stylesheet" href="leaflet/leaflet.mouseposition.css" />
@@ -20,110 +21,122 @@
 		<link rel="stylesheet" href="css/search.css" />
 		<style>
 			.apptmpl-container { min-width: 800px !important; }
-			.apptmpl-content { font-family: 'Georgia, serif'; }
+			.apptmpl-content { font-family: 'Georgia, serif'; padding: 8px; }
 			#list a, #controls a { color: #428bca; text-decoration: none; }
 			#list a:hover, #list a:focus, #controls a:hover, #controls a:focus { color: #2a6496; text-decoration: underline; }
 			#map { height: 450px; }
 			#advancedcontrols div { margin: 8px 0; }
 		</style>
 	</head>
-	<body onload="init()">
-		<div class="apptmpl-container">
-			<div class="apptmpl-goldbar">
-				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
-				<span class="apptmpl-goldbar-right"></span>
-
-				<c:if test="${not empty pageContext.request.userPrincipal}">
-				<a href="container_log.html">Move Log</a>
-				<a href="quality_report.html">Quality Assurance</a>
-				<a href="audit_report.html">Audit</a>
-				<a href="import.html">Data Importer</a>
-				<a href="logout/">Logout</a>
-				</c:if>
-				<c:if test="${empty pageContext.request.userPrincipal}">
-				<a href="login/">Login</a>
-				</c:if>
-				<a href="help">Search Help</a>
-			</div>
-
-			<div class="apptmpl-banner">
-				<a class="apptmpl-banner-logo" href="http://dggs.alaska.gov"></a>
-				<div class="apptmpl-banner-title">Geologic Materials Center Inventory</div>
-				<div class="apptmpl-banner-desc">Alaska Division of Geological &amp; Geophysical Surveys</div>
-			</div>
-
-			<div class="apptmpl-breadcrumb">
-				<a href="http://alaska.gov">State of Alaska</a> &gt;
-				<a href="http://dnr.alaska.gov">Natural Resources</a> &gt;
-				<a href="http://dggs.alaska.gov">Geological &amp; Geophysical Surveys</a> &gt;
-				<a href="http://dggs.alaska.gov/gmc">Geologic Materials Center</a> &gt;
-				<a href="search">Inventory</a>
-			</div>
-
-			<div class="apptmpl-content">
-				<div id="map"></div>
-				<div id="controls">
-					<input type="hidden" name="page" id="page" value="0" />
-					<div>
-						<button id="btn-reset">Reset</button>
-
-						<span class="spacer">|</span>
-
-						<label for="max">Showing</label>
-						<select name="max" id="max">
-							<option value="10">10</option>
-							<option value="25" selected="selected">25</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-							<option value="250">250</option>
-							<option value="500">500</option>
-							<option value="1000">1000</option>
-						</select>
-
-						<span class="spacer">|</span>
-
-						<button id="btn-prev">Previous</button>
-						Displaying <span id="pages"></span>
-						<button id="btn-next">Next</button>
-					</div>
-
-					<div>
-						<a id="pdf" href="#">PDF</a> / <a id="csv" href="#">CSV</a>
-
-						<span class="spacer">|</span>
-
-						<label for="sort">Sort by</label>
-						<c:forEach begin="0" end="1">
-						<select name="sort">
-							<option value="score" selected="selected">Best Match</option>
-							<c:if test="${not empty pageContext.request.userPrincipal}">
-							<option value="display_barcode">Barcode</option>
-							</c:if>
-							<option value="sort_borehole">Borehole</option>
-							<option value="box">Box</option>
-							<option value="collection">Collection</option>
-							<option value="core">Core Number</option>
-							<option value="sort_keyword">Keywords</option>
-							<c:if test="${not empty pageContext.request.userPrincipal}">
-							<option value="location">Location</option>
-							</c:if>
-							<option value="sort_prospect">Prospect</option>
-							<option value="sample">Sample</option>
-							<option value="set">Set Number</option>
-							<option value="top">Top</option>
-							<option value="bottom">Bottom</option>
-							<option value="sort_well">Well Name</option>
-							<option value="sort_wellnumber">Well Number</option>
-						</select>
-						<select name="dir">
-							<option value="asc" selected="selected">Asc</option>
-							<option value="desc">Desc</option>
-						</select>
-						</c:forEach>
-					</div>
+	<body>
+		<div class="soa-apptmpl-header">
+			<div class="soa-apptmpl-header-top">
+				<a class="soa-apptmpl-logo" title="The Great State of Alaska" href="http://alaska.gov"></a>
+				<a class="soa-apptmpl-logo-dggs" title="The Division of Geological &amp; Geophysical Surveys" href="http://dggs.alaska.gov"></a>
+				<div class="soa-apptmpl-header-nav">
+					<c:if test="${not empty pageContext.request.userPrincipal}">
+					<a href="container_log.html">Move Log</a>
+					<a href="quality_report.html">Quality Assurance</a>
+					<a href="audit_report.html">Audit</a>
+					<a href="import.html">Data Importer</a>
+					<a href="logout/">Logout</a>
+					</c:if>
+					<c:if test="${empty pageContext.request.userPrincipal}">
+					<a href="login/">Login</a>
+					</c:if>
+					<a href="help">Help/Contact</a>
 				</div>
-				<div id="list"></div>
 			</div>
+			<div class="soa-apptmpl-header-breadcrumb">
+				<a href="http://alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">State of Alaska</span>
+					<span class="soa-apptmpl-breadcrumb-sm">Alaska</span>
+				</a>
+				|
+				<a href="http://dnr.alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">Natural Resources</span>
+					<span class="soa-apptmpl-breadcrumb-sm">DNR</span>
+				</a>
+				|
+				<a href="http://dggs.alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">Geological &amp; Geophysical Surveys</span>
+					<span class="soa-apptmpl-breadcrumb-sm">DGGS</span>
+				</a>
+				|
+				<a href="http://dggs.alaska.gov/gmc/">
+					<span class="soa-apptmpl-breadcrumb-lg">Geologic Materials Center</span>
+					<span class="soa-apptmpl-breadcrumb-sm">GMC</span>
+				</a>
+				|
+				<a href="search">
+					<span class="soa-apptmpl-breadcrumb-lg">Inventory</span>
+					<span class="soa-apptmpl-breadcrumb-sm">Inventory</span>
+				</a>
+			</div>
+		</div>
+		<div class="apptmpl-content">
+			<div id="map"></div>
+			<div id="controls">
+				<input type="hidden" name="page" id="page" value="0" />
+				<div>
+					<button id="btn-reset">Reset</button>
+
+					<span class="spacer">|</span>
+
+					<label for="max">Showing</label>
+					<select name="max" id="max">
+						<option value="10">10</option>
+						<option value="25" selected="selected">25</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="250">250</option>
+						<option value="500">500</option>
+						<option value="1000">1000</option>
+					</select>
+
+					<span class="spacer">|</span>
+
+					<button id="btn-prev">Previous</button>
+					Displaying <span id="pages"></span>
+					<button id="btn-next">Next</button>
+				</div>
+
+				<div>
+					<a id="pdf" href="#">PDF</a> / <a id="csv" href="#">CSV</a>
+
+					<span class="spacer">|</span>
+
+					<label for="sort">Sort by</label>
+					<c:forEach begin="0" end="1">
+					<select name="sort">
+						<option value="score" selected="selected">Best Match</option>
+						<c:if test="${not empty pageContext.request.userPrincipal}">
+						<option value="display_barcode">Barcode</option>
+						</c:if>
+						<option value="sort_borehole">Borehole</option>
+						<option value="box">Box</option>
+						<option value="collection">Collection</option>
+						<option value="core">Core Number</option>
+						<option value="sort_keyword">Keywords</option>
+						<c:if test="${not empty pageContext.request.userPrincipal}">
+						<option value="location">Location</option>
+						</c:if>
+						<option value="sort_prospect">Prospect</option>
+						<option value="sample">Sample</option>
+						<option value="set">Set Number</option>
+						<option value="top">Top</option>
+						<option value="bottom">Bottom</option>
+						<option value="sort_well">Well Name</option>
+						<option value="sort_wellnumber">Well Number</option>
+					</select>
+					<select name="dir">
+						<option value="asc" selected="selected">Asc</option>
+						<option value="desc">Desc</option>
+					</select>
+					</c:forEach>
+				</div>
+			</div>
+			<div id="list"></div>
 		</div>
 		<script id="tmpl-popup" type="x-tmpl-mustache">
 			<div>

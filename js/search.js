@@ -260,345 +260,342 @@ function handlegeojson(ele)
 }
 
 
-function init()
-{
-	// Disable bfcache (firefox compatibility)
-	if('onunload' in window){
-		window.onunload = function(){};
+// Disable bfcache (firefox compatibility)
+if('onunload' in window){
+	window.onunload = function(){};
+}
+
+// IE8 fix -- support trim()
+if(typeof String.prototype.trim !== 'function') {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, ''); 
 	}
+}
 
-	// IE8 fix -- support trim()
-	if(typeof String.prototype.trim !== 'function') {
-		String.prototype.trim = function() {
-			return this.replace(/^\s+|\s+$/g, ''); 
-		}
-	}
-
-	// If this browser supports hash updates, and
-	// we're not currently searching, go ahead
-	// and search based on the new hash
-	if('onhashchange' in window){
-		window.onhashchange = function(){
-			if(searchok && window.location.hash.length > 1){
-				var show = decodeParameters(
-					window.location.hash.substring(1)
-				);
-				if(show){
-					var adv = document.getElementById('advancedcontrols');
-					if(adv != null) adv.style.display = 'block';
-				}
-
-				var md_el = document.getElementById('mining_district_id');
-				if(md_el !== null) handlegeojson(md_el);
-
-				var q_el = document.getElementById('quadrangle_id');
-				if(q_el !== null) handlegeojson(q_el);
-				search(true, true);
+// If this browser supports hash updates, and
+// we're not currently searching, go ahead
+// and search based on the new hash
+if('onhashchange' in window){
+	window.onhashchange = function(){
+		if(searchok && window.location.hash.length > 1){
+			var show = decodeParameters(
+				window.location.hash.substring(1)
+			);
+			if(show){
+				var adv = document.getElementById('advancedcontrols');
+				if(adv != null) adv.style.display = 'block';
 			}
-		};
-	}
 
-	features = mirroredLayer(null, function(f){
-		return {
-			color: f.properties.color,
-			opacity: 1,
-			weight: 2,
-			radius: 6,
-			fill: false,
-			'z-index': 20
-		};
-	});
-	// Bind the generated popup
-	features.options.onEachFeature = function(f, l){
-		l.bindPopup(f.properties.popup);
+			var md_el = document.getElementById('mining_district_id');
+			if(md_el !== null) handlegeojson(md_el);
+
+			var q_el = document.getElementById('quadrangle_id');
+			if(q_el !== null) handlegeojson(q_el);
+			search(true, true);
+		}
 	};
+}
 
-	aoi = mirroredLayer(null, {
-		color: '#f00',
+features = mirroredLayer(null, function(f){
+	return {
+		color: f.properties.color,
 		opacity: 1,
 		weight: 2,
 		radius: 6,
 		fill: false,
-		clickable: false,
 		'z-index': 20
-	});
-
-	var baselayers = {
-		'Open Street Maps Monochrome': L.tileLayer(
-			'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 18, zIndex: 1 }
-		),
-		'Open Street Maps': new L.TileLayer(
-			'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 19, zIndex: 2 }
-		),
-		'OpenTopoMap': new L.TileLayer(
-			'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 17, zIndex: 3 }
-		),
-		'ESRI Imagery': new L.TileLayer(
-			'//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-			{ minZoom: 3, maxZoom: 19, zIndex: 4 }
-		),
-		'ESRI Topographic': new L.TileLayer(
-			'//server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-			{ minZoom: 3, maxZoom: 19, zIndex: 5 }
-		),
-		'ESRI Shaded Relief': new L.TileLayer(
-			'//server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
-			{ minZoom: 3, maxZoom: 13, zIndex: 6 }
-		),
-		'ESRI DeLorme': new L.TileLayer(
-			'//server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}',
-			{ minZoom: 3, maxZoom: 11, zIndex: 7 }
-		),
-		'ESRI National Geographic': new L.TileLayer(
-			'//server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
-			{ minZoom: 3, maxZoom: 16, zIndex: 8 }
-		),
-		'Stamen Watercolor': new L.TileLayer(
-			'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
-			{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 11 }
-		)
 	};
+});
+// Bind the generated popup
+features.options.onEachFeature = function(f, l){
+	l.bindPopup(f.properties.popup);
+};
+
+aoi = mirroredLayer(null, {
+	color: '#f00',
+	opacity: 1,
+	weight: 2,
+	radius: 6,
+	fill: false,
+	clickable: false,
+	'z-index': 20
+});
+
+var baselayers = {
+	'Open Street Maps Monochrome': L.tileLayer(
+		'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+		{ minZoom: 3, maxZoom: 18, zIndex: 1 }
+	),
+	'Open Street Maps': new L.TileLayer(
+		'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		{ minZoom: 3, maxZoom: 19, zIndex: 2 }
+	),
+	'OpenTopoMap': new L.TileLayer(
+		'http://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+		{ minZoom: 3, maxZoom: 17, zIndex: 3 }
+	),
+	'ESRI Imagery': new L.TileLayer(
+		'//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+		{ minZoom: 3, maxZoom: 19, zIndex: 4 }
+	),
+	'ESRI Topographic': new L.TileLayer(
+		'//server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+		{ minZoom: 3, maxZoom: 19, zIndex: 5 }
+	),
+	'ESRI Shaded Relief': new L.TileLayer(
+		'//server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+		{ minZoom: 3, maxZoom: 13, zIndex: 6 }
+	),
+	'ESRI DeLorme': new L.TileLayer(
+		'//server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}',
+		{ minZoom: 3, maxZoom: 11, zIndex: 7 }
+	),
+	'ESRI National Geographic': new L.TileLayer(
+		'//server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+		{ minZoom: 3, maxZoom: 16, zIndex: 8 }
+	),
+	'Stamen Watercolor': new L.TileLayer(
+		'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png',
+		{ minZoom: 3, maxZoom: 16, subdomains: 'abcd', zIndex: 11 }
+	)
+};
 
 
-	var overlays = {
-		'PLSS (BLM)': new L.tileLayer.wms(
-			'http://maps.dggs.alaska.gov/arcgis/services/apps/plss/MapServer/WMSServer',
-			{
-				layers: '1,2,3',
-				transparent: true,
-				format: 'image/png',
-				minZoom: 3, maxZoom: 16, zIndex: 12
-			}
-		),
-		'Quadrangles': new L.tileLayer.wms(
-			'http://maps.dggs.alaska.gov/arcgis/services/apps/Quad_Boundaries/MapServer/WMSServer',
-			{
-				layers: '1,2,3',
-				transparent: true,
-				format: 'image/png',
-				minZoom: 3, maxZoom: 16, zIndex: 12
-			}
-		)
-	};
-
-	map = L.map('map', {
-		attributionControl: false,
-		zoomControl: false,
-		worldCopyJump: true,
-		layers: [ baselayers['Open Street Maps'] ]
-	});
-
-	map.addLayer(features);
-	map.addLayer(aoi);
-
-	// Add zoom control
-	map.addControl(L.control.zoom({ position: 'topleft' }));
-
-	// Add mouse position control
-	map.addControl(L.control.mousePosition({
-		emptyString: 'Unknown', numDigits: 4
-	}));
-
-	// Add scale bar
-	map.addControl(L.control.scale({ position: 'bottomleft' }));
-
-	// Add layer control
-	map.addControl(L.control.layers(
-		baselayers, overlays, {
-			position: 'bottomleft', autoZIndex: false
+var overlays = {
+	'PLSS (BLM)': new L.tileLayer.wms(
+		'http://maps.dggs.alaska.gov/arcgis/services/apps/plss/MapServer/WMSServer',
+		{
+			layers: '1,2,3',
+			transparent: true,
+			format: 'image/png',
+			minZoom: 3, maxZoom: 16, zIndex: 12
 		}
-	));
+	),
+	'Quadrangles': new L.tileLayer.wms(
+		'http://maps.dggs.alaska.gov/arcgis/services/apps/Quad_Boundaries/MapServer/WMSServer',
+		{
+			layers: '1,2,3',
+			transparent: true,
+			format: 'image/png',
+			minZoom: 3, maxZoom: 16, zIndex: 12
+		}
+	)
+};
 
-	// Modify the button text
-	L.drawLocal.draw.toolbar.buttons.rectangle = 'Draw an area of interest';
-	L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Click and draw to draw an area of interest';
+map = L.map('map', {
+	attributionControl: false,
+	zoomControl: false,
+	worldCopyJump: true,
+	layers: [ baselayers['Open Street Maps'] ]
+});
 
-	// Initialize drawing control
-	map.addControl(
-		new L.Control.Draw({
-			position: 'topleft',
-			draw: {
-				polygon: false, polyline: false,
-				marker: false, circle: false,
-				rectangle: {
-					metric: true,
-					shapeOptions: {
-						color: '#f00',
-						opacity: 1,
-						weight: 2,
-						radius: 6,
-						fill: false,
-						clickable: false
-					}
+map.addLayer(features);
+map.addLayer(aoi);
+
+// Add zoom control
+map.addControl(L.control.zoom({ position: 'topleft' }));
+
+// Add mouse position control
+map.addControl(L.control.mousePosition({
+	emptyString: 'Unknown', numDigits: 4
+}));
+
+// Add scale bar
+map.addControl(L.control.scale({ position: 'bottomleft' }));
+
+// Add layer control
+map.addControl(L.control.layers(
+	baselayers, overlays, {
+		position: 'bottomleft', autoZIndex: false
+	}
+));
+
+// Modify the button text
+L.drawLocal.draw.toolbar.buttons.rectangle = 'Draw an area of interest';
+L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Click and draw to draw an area of interest';
+
+// Initialize drawing control
+map.addControl(
+	new L.Control.Draw({
+		position: 'topleft',
+		draw: {
+			polygon: false, polyline: false,
+			marker: false, circle: false,
+			rectangle: {
+				metric: true,
+				shapeOptions: {
+					color: '#f00',
+					opacity: 1,
+					weight: 2,
+					radius: 6,
+					fill: false,
+					clickable: false
 				}
-			},
-			edit: {
-				featureGroup: aoi,
-				edit: false,
-				remove: false
 			}
-		})
-	);
-
-	// When drawing starts, empty out the
-	// old drawing
-	map.on('draw:drawstart', function(e){
-		aoi.clearLayers();
-	});
-
-	// When you draw, add it to the aoi
-	// and the anti-aoi
-	map.on('draw:created', function(e){
-		aoi.addLayer(e.layer);
-	});
-	
-	// Search when drawing ends
-	map.on('draw:drawstop', function(e){
-		search();
-	});
-
-	// Add search control
-	var searchctl = L.control.searchControl({
-		position: 'topright',
-		menubutton: true,
-		// Search on submit
-		onSubmit: function(evt){
-			search(false);
-
-			var e = evt === undefined ? window.event : evt;	
-			if('preventDefault' in e) e.preventDefault();
-			return false;
 		},
-		// If the menu button is clicked, show and hide
-		// the advanced controls
-		onMenuButton: function(){
-			var adv = document.getElementById('advancedcontrols');
-			if(adv != null){
-				if(adv.style.display === 'block'){
-					adv.style.display = 'none';
-				} else {
-					adv.style.display = 'block';
-				}
+		edit: {
+			featureGroup: aoi,
+			edit: false,
+			remove: false
+		}
+	})
+);
+
+// When drawing starts, empty out the
+// old drawing
+map.on('draw:drawstart', function(e){
+	aoi.clearLayers();
+});
+
+// When you draw, add it to the aoi
+// and the anti-aoi
+map.on('draw:created', function(e){
+	aoi.addLayer(e.layer);
+});
+
+// Search when drawing ends
+map.on('draw:drawstop', function(e){
+	search();
+});
+
+// Add search control
+var searchctl = L.control.searchControl({
+	position: 'topright',
+	menubutton: true,
+	// Search on submit
+	onSubmit: function(evt){
+		search(false);
+
+		var e = evt === undefined ? window.event : evt;	
+		if('preventDefault' in e) e.preventDefault();
+		return false;
+	},
+	// If the menu button is clicked, show and hide
+	// the advanced controls
+	onMenuButton: function(){
+		var adv = document.getElementById('advancedcontrols');
+		if(adv != null){
+			if(adv.style.display === 'block'){
+				adv.style.display = 'none';
+			} else {
+				adv.style.display = 'block';
 			}
 		}
-	});
-	map.addControl(searchctl);
+	}
+});
+map.addControl(searchctl);
 
-	// Add the advanced controls
-	var advanced = L.DomUtil.create(
-		'div', 'search-advanced-container',
-		searchctl.getContainer()
-	);
-	advanced.id = 'advancedcontrols';
+// Add the advanced controls
+var advanced = L.DomUtil.create(
+	'div', 'search-advanced-container',
+	searchctl.getContainer()
+);
+advanced.id = 'advancedcontrols';
 
-	queueRequests({
-		requests: [
-			'mining_district.json', 'keyword.json',
-			'collection.json', 'prospect.json',
-			'quadrangle.json'
-		],
-		complete: function(){
-			advanced.innerHTML = Mustache.render(
-				document.getElementById('tmpl-advanced').innerHTML,
-				this.data
+queueRequests({
+	requests: [
+		'mining_district.json', 'keyword.json',
+		'collection.json', 'prospect.json',
+		'quadrangle.json'
+	],
+	complete: function(){
+		advanced.innerHTML = Mustache.render(
+			document.getElementById('tmpl-advanced').innerHTML,
+			this.data
+		);
+
+		// Top/Bottom key submit
+		var top = document.getElementById('top');
+		var bottom = document.getElementById('bottom');
+		top.onkeydown = bottom.onkeydown = function(evt){
+			var e = evt === undefined ? window.event : evt;	
+			if(e.keyCode === 13){
+				search();
+				if('preventDefault' in e) e.preventDefault();
+				return false;
+			}
+		};
+
+		// Setup the preview for mining district
+		var md_el = document.getElementById('mining_district_id');
+		md_el.layer = mirroredLayer(null, {
+			color: '#f00',
+			opacity: 1,
+			weight: 2,
+			radius: 6,
+			fill: false,
+			clickable: false
+		});
+		map.addLayer(md_el.layer);
+		md_el.onchange = function(){
+			handlegeojson(this);
+			search();
+		}
+
+		// Setup the preview for quadrangles
+		var q_el = document.getElementById('quadrangle_id');
+		q_el.layer = mirroredLayer(null, {
+			color: '#f00',
+			opacity: 1,
+			weight: 2,
+			radius: 6,
+			fill: false,
+			clickable: false
+		});
+		map.addLayer(q_el.layer);
+		q_el.onchange = function(){
+			handlegeojson(this);
+			search();
+		}
+
+		// After all the resources have loaded, do the hashed
+		// search, if there is one.
+		if(window.location.hash.length > 1){
+			var show = decodeParameters(
+				window.location.hash.substring(1)
 			);
-
-			// Top/Bottom key submit
-			var top = document.getElementById('top');
-			var bottom = document.getElementById('bottom');
-			top.onkeydown = bottom.onkeydown = function(evt){
-				var e = evt === undefined ? window.event : evt;	
-				if(e.keyCode === 13){
-					search();
-					if('preventDefault' in e) e.preventDefault();
-					return false;
-				}
-			};
-
-			// Setup the preview for mining district
-			var md_el = document.getElementById('mining_district_id');
-			md_el.layer = mirroredLayer(null, {
-				color: '#f00',
-				opacity: 1,
-				weight: 2,
-				radius: 6,
-				fill: false,
-				clickable: false
-			});
-			map.addLayer(md_el.layer);
-			md_el.onchange = function(){
-				handlegeojson(this);
-				search();
+			if(show){
+				var adv = document.getElementById('advancedcontrols');
+				if(adv != null) adv.style.display = 'block';
 			}
 
-			// Setup the preview for quadrangles
-			var q_el = document.getElementById('quadrangle_id');
-			q_el.layer = mirroredLayer(null, {
-				color: '#f00',
-				opacity: 1,
-				weight: 2,
-				radius: 6,
-				fill: false,
-				clickable: false
-			});
-			map.addLayer(q_el.layer);
-			q_el.onchange = function(){
-				handlegeojson(this);
-				search();
-			}
-
-			// After all the resources have loaded, do the hashed
-			// search, if there is one.
-			if(window.location.hash.length > 1){
-				var show = decodeParameters(
-					window.location.hash.substring(1)
-				);
-				if(show){
-					var adv = document.getElementById('advancedcontrols');
-					if(adv != null) adv.style.display = 'block';
-				}
-
-				handlegeojson(md_el);
-				handlegeojson(q_el);
-				search(true, true);
-			}
+			handlegeojson(md_el);
+			handlegeojson(q_el);
+			search(true, true);
 		}
-	});
-
-	// Start in Fairbanks
-	map.setView([64.843611, -147.723056], 3);
-
-	document.getElementById('max').onchange = search;
-
-	document.getElementById('btn-next').onclick = function(){
-		var pg = document.getElementById('page');
-		pg.value = Number(pg.value) + 1;
-		search(true);
-	};
-
-	document.getElementById('btn-prev').onclick = function(){
-		var pg = document.getElementById('page');
-		pg.value = Math.max(0, Number(pg.value) - 1);
-		search(true);
-	};
-
-	var sorts = document.getElementsByName('sort');
-	for(var i=0; i < sorts.length; i++){
-		sorts[i].onchange = search;
 	}
+});
 
-	var dirs = document.getElementsByName('dir');
-	for(var i=0; i < dirs.length; i++){
-		dirs[i].onchange = search;
-	}
+// Start in Fairbanks
+map.setView([64.843611, -147.723056], 3);
 
-	document.getElementById('btn-reset').onclick = function(){
-		window.location.hash = '';
-		window.location.reload(false);
-	}
+document.getElementById('max').onchange = search;
 
-	document.getElementById('q').focus();
+document.getElementById('btn-next').onclick = function(){
+	var pg = document.getElementById('page');
+	pg.value = Number(pg.value) + 1;
+	search(true);
+};
+
+document.getElementById('btn-prev').onclick = function(){
+	var pg = document.getElementById('page');
+	pg.value = Math.max(0, Number(pg.value) - 1);
+	search(true);
+};
+
+var sorts = document.getElementsByName('sort');
+for(var i=0; i < sorts.length; i++){
+	sorts[i].onchange = search;
 }
+
+var dirs = document.getElementsByName('dir');
+for(var i=0; i < dirs.length; i++){
+	dirs[i].onchange = search;
+}
+
+document.getElementById('btn-reset').onclick = function(){
+	window.location.hash = '';
+	window.location.reload(false);
+}
+
+document.getElementById('q').focus();
