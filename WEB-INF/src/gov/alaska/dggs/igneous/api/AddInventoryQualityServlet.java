@@ -55,7 +55,7 @@ public class AddInventoryQualityServlet extends HttpServlet
 				barcode
 			);
 			
-			if(inventory_ids == null){
+			if(inventory_ids == null || inventory_ids.size() < 1){
 				throw new Exception("Not found in Inventory");
 			}
 
