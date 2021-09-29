@@ -405,6 +405,15 @@
 		<url-pattern>/keyword.json</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>QualityListServlet</servlet-name>
+		<servlet-class>gov.alaska.dggs.igneous.api.QualityListServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>QualityListServlet</servlet-name>
+		<url-pattern>/qualitylist.json</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>AuditReportServlet</servlet-name>
@@ -415,7 +424,6 @@
 		<servlet-name>AuditReportServlet</servlet-name>
 		<url-pattern>/audit_report.json</url-pattern>
 	</servlet-mapping>
-
 
 	<servlet>
 		<servlet-name>AuditReportViewServlet</servlet-name>

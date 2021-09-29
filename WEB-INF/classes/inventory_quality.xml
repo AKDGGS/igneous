@@ -12,6 +12,10 @@
 		FROM inventory_quality
 	</sql>
 
+	<select id="getIssuesList" resultSetType="FORWARD_ONLY" resultType="String">
+		SELECT UNNEST(ENUM_RANGE(NULL::issue))::text AS issue
+	</select>
+
 	<select id="getByInventoryID" parameterType="Integer" resultSetType="FORWARD_ONLY" resultMap="InventoryQualityMap">
 		<include refid="getBy" />
 		WHERE inventory_id = #{inventory_id}
@@ -24,7 +28,6 @@
 		ORDER BY check_date DESC
 		LIMIT 1
 	</select>
-
 
 	<resultMap id="InventoryQualityMap" type="InventoryQuality">
 		<id property="id" column="inventory_quality_id" />
