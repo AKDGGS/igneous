@@ -54,15 +54,19 @@ public class AddInventoryQualityServlet extends HttpServlet
 				"gov.alaska.dggs.igneous.Inventory.getInventoryIDsByBarcode",
 				barcode
 			);
-			
+
 			if(inventory_ids == null || inventory_ids.size() < 1){
 				throw new Exception("Not found in Inventory");
+			}
+
+			String[] issues = request.getParameterValues("i");
+			if (issues != null && issues.length == 0){
+				issues = null;
 			}
 
 			for (Integer inventory_id : inventory_ids){
 				Inventory i = new Inventory();
 				i.setID(inventory_id);
-				
 				InventoryQuality iq = new InventoryQuality(i);
 				iq.setUsername("token_id " + String.valueOf(token.getID()));
 				String remark = request.getParameter("remark");
@@ -71,16 +75,13 @@ public class AddInventoryQualityServlet extends HttpServlet
 				} else {
 					iq.setRemark("Added via scanner.");
 				}
-				String[] issues = request.getParameterValues("i");
-				
-				if(issues == null) throw new Exception("Issues can't be null.");
 				iq.setIssues(issues);
 				sess.insert("gov.alaska.dggs.igneous.InventoryQuality.insert", iq);
 				if(iq.getID() == null){
 					throw new Exception("Inventory quality insert failed.");
 				}
 			}
-			
+
 			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
