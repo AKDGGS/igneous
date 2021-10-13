@@ -480,12 +480,12 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-name>APIFileUploadServlet</servlet-name>
 		<servlet-class>gov.alaska.dggs.igneous.api.FileUploadServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-name>APIFileUploadServlet</servlet-name>
 		<url-pattern>/upload.json</url-pattern>
 	</servlet-mapping>
 
