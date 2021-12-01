@@ -104,7 +104,8 @@ let map = new ol.Map({
 });
 
 //Allows the overlay to be visible.
-//Needed because the overlay was being displayed when the page loaded
+//The overlay needs to be hidden by default to prevent it being 
+//displayed at startup
 document.getElementById('topBar').style.visibility = 'visible';
 popupContainer.style.visibility = 'visible';
 
@@ -130,22 +131,13 @@ function displayOverlayContents(e) {
 					}
 					break;
 			}
+			prevBtn.disable = true;
+			prevBtn.style.color = "rgba(134, 134, 134, 0.75)";
+			nextBtn.disable = true;
+			nextBtn.style.color = "rgba(134,134,134, 0.75)";
 		} else {
 			currentPage = 0;
 		}
-
-		if (currentPage > 0) {
-			prevBtn.style.visibility = 'visible';
-		} else {
-			prevBtn.style.visibility = 'hidden';
-		}
-		if (currentPage < (fts.length - 1)) {
-			nextBtn.style.visibility = 'visible';
-		} else {
-			nextBtn.style.visibility = 'hidden';
-		}
-
-		pageNumber.innerHTML = (currentPage + 1) + " of " + fts.length;
 
 		let well_id = fts[currentPage].well_id;
 		fetch('well.json?id=' + well_id)
@@ -174,6 +166,20 @@ function displayOverlayContents(e) {
 				if (e instanceof ol.events.Event) {
 					overlay.setPosition(e.coordinate);
 				}
+				pageNumber.innerHTML = (currentPage + 1) + " of " + fts.length;
+
+				if (currentPage > 0) {
+					prevBtn.style.visibility = 'visible';
+				} else {
+					prevBtn.style.visibility = 'hidden';
+				}
+				if (currentPage < (fts.length - 1)) {
+					nextBtn.style.visibility = 'visible';
+				} else {
+					nextBtn.style.visibility = 'hidden';
+				}
+				prevBtn.style.color = "#ffffff";
+				nextBtn.style.color = "#ffffff";
 				running = false;
 			})
 			.catch(error => {
