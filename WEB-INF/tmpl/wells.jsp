@@ -159,7 +159,7 @@
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script id="templ_well_popup" type="x-tmpl-mustache">
 			<div>
-				{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}">{{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
+				{{#well.name}}<div><b>Name:</b><a href="{{nameURL}}"> {{well.name}} {{#well_id}} - {{well_id}} {{/well_id}}</a></div>{{/well.name}}
 				{{#well.APINumber}}<div><b>API Number:</b> {{well.APINumber}}</div>{{/well.APINumber}}
 				{{#well.wellNumber}}<div><b>Well Number:</b> {{well.wellNumber}}</div>{{/well.wellNumber}}
 				{{#well.measuredDepth}}<div><b>Measured Depth:</b> {{well.measuredDepth}} {{#well.unit.abbr}}{{well.unit.abbr}}{{/well.unit.abbr}}</div>{{/well.measuredDepth}}
