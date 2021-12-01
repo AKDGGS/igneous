@@ -56,9 +56,13 @@ public class AuditServlet extends HttpServlet
 			AuditGroup group = new AuditGroup();
 			group.setRemark(remark);
 
+			if (remark == null && codes.length < 1 ) {
+				throw new Exception("Both the remark and the items list were empty. Audit insert failed.");
+			}
+			
 			sess.insert("gov.alaska.dggs.igneous.Audit.insertGroup", group);
 			if(group.getID() == 0){ throw new Exception("Audit group insert failed"); }
-			
+
 			for(String code : codes){
 				Audit a = new Audit();
 				a.setGroup(group);
@@ -66,7 +70,7 @@ public class AuditServlet extends HttpServlet
 				sess.insert("gov.alaska.dggs.igneous.Audit.insert", a);
 				if(a.getID() == 0){ throw new Exception("Audit insert failed."); }
 			}
-			
+		
 			sess.commit();
 			response.setContentType("application/json");
 			response.getOutputStream().print("{\"success\":true}");
