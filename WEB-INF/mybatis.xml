@@ -28,7 +28,6 @@
 		<typeAlias alias="Note" type="gov.alaska.dggs.igneous.model.Note" />
 		<typeAlias alias="NoteType" type="gov.alaska.dggs.igneous.model.NoteType" />
 		<typeAlias alias="URL" type="gov.alaska.dggs.igneous.model.URL" />
-		<typeAlias alias="URLType" type="gov.alaska.dggs.igneous.model.URLType" />
 		<typeAlias alias="Organization" type="gov.alaska.dggs.igneous.model.Organization" />
 		<typeAlias alias="OrganizationType" type="gov.alaska.dggs.igneous.model.OrganizationType" />
 		<typeAlias alias="Token" type="gov.alaska.dggs.igneous.model.Token" />

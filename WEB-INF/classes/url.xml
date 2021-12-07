@@ -5,13 +5,9 @@
 
 <mapper namespace="gov.alaska.dggs.igneous.URL">
 	<sql id="getBy">
-		SELECT u.url_id, u.url, u.description,
-			ut.url_type_id, ut.name
-		FROM url AS u
-		JOIN url_type AS ut
-			ON ut.url_type_id = u.url_type_id
+		SELECT u.url_id, u.url, u.description, u.url_type::text
+		From url AS u
 	</sql>
-
 
 	<select id="getByInventoryID" resultSetType="FORWARD_ONLY" parameterType="int" resultMap="URLMap">
 		<include refid="getBy" />
@@ -48,11 +44,7 @@
 	<resultMap id="URLMap" type="URL">
 		<id property="id" column="url_id" />
 		<result property="url" column="url" />
-		<result property="description" column="description" />
-
-		<association property="type" javaType="URLType">
-			<id property="id" column="url_type_id" />
-			<result property="name" column="name" />
-		</association>
+		<result property="description" column="description"/>
+		<result property="url_type" column="url_type"/>
 	</resultMap>
 </mapper>

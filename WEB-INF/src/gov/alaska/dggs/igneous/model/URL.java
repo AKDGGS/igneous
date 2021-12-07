@@ -3,7 +3,6 @@ package gov.alaska.dggs.igneous.model;
 import java.io.Serializable;
 import java.util.Date;
 
-
 public class URL implements Serializable
 {
 	private static final long serialVersionUID = 1L;
@@ -17,6 +16,6 @@ public class URL implements Serializable
 	private String description;
 	public String getDescription(){ return description; }
 
-	private URLType type;
-	public URLType getType(){ return type; }
+	private String url_type;
+	public String getURLType(){ return url_type; }
 }

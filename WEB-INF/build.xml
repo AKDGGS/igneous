@@ -6,8 +6,6 @@
 	<target name="clean">
 		<delete>
 			<fileset dir="classes" includes="**/*.class" />
-			<fileset dir="../js" includes="*-min.js" />
-			<fileset dir="../css" includes="*-min.css" />
 		</delete>
 	</target>
 
