@@ -25,14 +25,14 @@
 				width: 100%;
 			}
 			.ol-popup {
-				position: absolute;
+				position: relative;
 				background-color: white;
 				box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 				padding-bottom: 5px;
 				border: 1px solid #cccccc;
 				bottom: 12px;
 				left: -50px;
-				min-width: 320px;
+				width: 320px;
 				visibility: hidden;
 			}
 			.ol-popup-after, .ol-popup-before {
@@ -63,7 +63,7 @@
 			}
 			.popup-content {
 				padding: 10px 5px 5px 5px;
-				max-height: 175px;
+				max-height: 350px;
 				overflow: auto;
 				font-size: 16px;
 			}
@@ -172,7 +172,9 @@
 				{{#well.completionStatus}}<div><b>Completion Status:</b> {{well.completionStatus}}</div>{{/well.completionStatus}}
 				{{#well.completionDate}}<div><b>Completion Date:</b> {{well.completionDate}}</div>{{/well.completionDate}}
 				{{#well.spudDate}}<div><b>Spud Date:</b> {{well.spudDate}}</div>{{/well.spudDate}}
-				<div><br/><b>Keywords:</b></div>
+				{{#urls.0}}<div><br/><b><label for="URL">Links:</label></b></div>{{/urls.0}}
+				{{#urls}}<div style="padding-left:10px"><a href="{{URL}}">{{URLType}}</a></div>{{/urls}}
+				{{#keywords.0}}<div><br/><b>Keywords:</b></div>{{/keywords.0}}
 				{{#keywords}}<div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a> {{count}}</div>{{/keywords}}
 			</div>
 		</script>

@@ -37,6 +37,7 @@ public class WellViewServlet extends HttpServlet
 	static {
 		serializer = new JSONSerializer();
 		serializer.include("keywords");
+		serializer.include("urls");
 		serializer.exclude("*.class");
 		serializer.transform(new ExcludeTransformer(), void.class);
 		serializer.transform(new DateTransformer("MM/dd/yyyy"), Date.class);
@@ -63,6 +64,7 @@ public class WellViewServlet extends HttpServlet
 
 			output.put("well", well);
 			output.put("keywords", sess.selectList("gov.alaska.dggs.igneous.Keyword.getGroupsByWellID", id));
+			output.put("urls", sess.selectList("gov.alaska.dggs.igneous.URL.getByWellID", id));
 
 			OutputStreamWriter out = null;
 			GZIPOutputStream gos = null;
