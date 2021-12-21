@@ -23,7 +23,7 @@
 				display: table-cell;
 				height: 50%;
 				width: 100%;
-			}
+			}	
 			.ol-popup {
 				position: relative;
 				background-color: white;
@@ -32,7 +32,7 @@
 				border: 1px solid #cccccc;
 				bottom: 12px;
 				left: -50px;
-				width: 320px;
+				width: 17em;
 				visibility: hidden;
 			}
 			.ol-popup-after, .ol-popup-before {
@@ -57,13 +57,14 @@
 				margin-left: -11px;
 			}
 			.ol-popup-closer:after {
+				cursor: pointer;
 				content: "\2715";
 				font-size: 20px;
 				margin-left: auto;
-			}
+			}	
 			.popup-content {
 				padding: 10px 5px 5px 5px;
-				max-height: 350px;
+				max-height:300px;
 				overflow: auto;
 				font-size: 16px;
 			}
@@ -89,22 +90,187 @@
 				-ms-user-select: none;
 				-user-select: none;
 			}
+			.spacer {
+				width: 25%;
+			}
 			.prevBtn {
-				width: 33%;
+				cursor: pointer;
+				width: 50%;
 				display: flex;
 				justify-content: center;
 			}
 			.pageNumber {
-				width: 33%;
+				width: 50%;
 				display: flex;
 				justify-content: center;
 			}
 			.nextBtn {
-				width: 33%;
+				cursor: pointer;
+				width: 50%;
 				display: flex;
 				justify-content: center;
 			}
 			.wellList { display: block }
+			table {
+				table-layout: auto;
+				width: 100%;
+				border-collapse: collapse;
+			}
+			td {
+				float: top;
+			}
+			td.rightalign {
+				float: right;
+				padding-right: 3px;
+			}
+			tr:nth-child(even) {
+				background-color: #e3e5ed;
+			}
+			@media (min-width: 30em)
+				and (orientation: portrait){
+				.ol-popup {
+					position: relative;
+					background-color: white;
+					box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+					padding-bottom: 5px;
+					border: 1px solid #cccccc;
+					bottom: 12px;
+					left: -50px;
+					width: 17em;
+					visibility: hidden;
+				}
+				.popup-content {
+					padding: 10px 10px 10px 10px;
+					max-height: 50vh;
+					overflow: auto;
+					font-size: 16px;
+				}
+				.topBar {
+					background: rgba(39, 111, 147, 1);
+					padding: 5px;
+					display: flex;
+					align-items: center;
+					font-size: 20px;
+					cursor: default;
+					visibility: hidden;
+				}
+			}
+			@media (min-width: 30em)
+				and (orientation: landscape){
+				.ol-popup {
+					position: relative;
+					background-color: white;
+					box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+					padding-bottom: 5px;
+					border: 1px solid #cccccc;
+					bottom: 12px;
+					left: -50px;
+					width: 17em;
+					visibility: hidden;
+				}
+				.popup-content {
+					padding: 10px 10px 10px 10px;
+					max-height: 50vh;
+					overflow: auto;
+					font-size: 16px;
+				}
+				.topBar {
+					background: rgba(39, 111, 147, 1);
+					padding: 5px;
+					display: flex;
+					align-items: center;
+					font-size: 20px;
+					cursor: default;
+					visibility: hidden;
+				}
+			}
+			@media (min-width: 50em) 
+				and (orientation: landscape) {
+				.ol-popup {
+					position: relative;
+					background-color: white;
+					box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+					padding-bottom: 5px;
+					border: 1px solid #cccccc;
+					bottom: 12px;
+					left: -50px;
+					width: 17em;
+					visibility: hidden;
+				}
+				.popup-content {
+					padding: 10px 10px 10px 10px;
+					max-height: 50vh;
+					overflow: auto;
+					font-size: 16px;
+				}
+				.topBar {
+					background: rgba(39, 111, 147, 1);
+					padding: 5px;
+					display: flex;
+					align-items: center;
+					font-size: 20px;
+					cursor: default;
+					visibility: hidden;
+				}
+			}
+			@media (min-width: 80em)
+				and (orientation: landscape) {
+				.ol-popup {
+					position: relative;
+					background-color: white;
+					box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+					padding-bottom: 5px;
+					border: 1px solid #cccccc;
+					bottom: 12px;
+					left: -50px;
+					width: 17em;
+					visibility: hidden;
+				}
+				.popup-content {
+					padding: 10px 10px 10px 10px;
+					max-height: 50vh;
+					overflow: auto;
+					font-size: 16px;
+				}
+				.topBar {
+					background: rgba(39, 111, 147, 1);
+					padding: 5px;
+					display: flex;
+					align-items: center;
+					font-size: 20px;
+					cursor: default;
+					visibility: hidden;
+				}
+			}
+			@media (min-width: 60em)
+				and (orientation: portrait) {
+				.ol-popup {
+					position: relative;
+					background-color: white;
+					box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+					padding-bottom: 5px;
+					border: 1px solid #cccccc;
+					bottom: 12px;
+					left: -50px;
+					width: 17em;
+					visibility: hidden;
+				}
+				.popup-content {
+					padding: 10px 10px 10px 10px;
+					max-height: 50vh;
+					overflow: auto;
+					font-size: 16px;
+				}
+				.topBar {
+					background: rgba(39, 111, 147, 1);
+					padding: 5px;
+					display: flex;
+					align-items: center;
+					font-size: 20px;
+					cursor: default;
+					visibility: hidden;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -147,9 +313,13 @@
 			<div id="map"></div>	
 			<div id="popup" class="ol-popup">
 				<div id="topBar" class="topBar">
-					<div id="prevBtn" class="prevBtn">&#x25C0;</div>
+					<div class="spacer">
+						<div id="prevBtn" class="prevBtn">&#x25C0;</div>
+					</div>
 					<div id="pageNumber" class="pageNumber"></div>
-					<div id="nextBtn" class="nextBtn">&#x25B6;</div>
+					<div class="spacer">
+						<div id="nextBtn" class="nextBtn">&#x25B6;</div>
+					</div>
 					<div id="popup-closure" class="ol-popup-closer"></div>
 				</div>
 				<div id="popup-content" class="popup-content"></div>
@@ -175,7 +345,9 @@
 				{{#urls.0}}<div><br/><b><label for="URL">Links:</label></b></div>{{/urls.0}}
 				{{#urls}}<div style="padding-left:10px"><a href="{{URL}}">{{URLType}}</a></div>{{/urls}}
 				{{#keywords.0}}<div><br/><b>Keywords:</b></div>{{/keywords.0}}
-				{{#keywords}}<div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a> {{count}}</div>{{/keywords}}
+				<table>
+					{{#keywords}}<tr><td><div style="padding-left:10px"><a href="{{keywordsURL}}">{{keywords}}</a></td><td class="rightalign"> {{count}}</div></td></tr>{{/keywords}}
+				</table>
 			</div>
 		</script>
 		<script src="js/wells.js"></script>

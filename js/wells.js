@@ -153,8 +153,8 @@ function displayOverlayContents(e) {
 					for (let j = 0; j < arr.length; j++) {
 						qParams = qParams.concat("&keyword=" + arr[j]);
 					}
-					data.keywords[i].keywords = data.keywords[i].
-						keywords.replaceAll(",", ", ");
+					data.keywords[i].keywords = data.keywords[i]
+						.keywords.replaceAll(",", ", ");
 					data.keywords[i]["keywordsURL"] = encodeURI("search#q=well_id:" +
 						well_id + qParams);
 				}
