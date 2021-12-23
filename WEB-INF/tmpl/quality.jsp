@@ -20,7 +20,7 @@
 			th { text-align: left; }
 		</style>
 	</head>
-	<body onload="init()">
+	<body>
 		<div class="apptmpl-container">
 			<div class="apptmpl-goldbar">
 				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
@@ -65,40 +65,25 @@
 			</div>
 		</div>
 		<script src="js/mustache-2.2.0.min.js"></script>
+		<script id="tmpl-detail" type="x-tmpl-mustache">
+			<table>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#.}}
+					<tr>
+						<td class="nowrap">{{id}}</td>
+						<td>{{desc}}</td>
+					</tr>
+					{{/.}}
+				</tbody>
+			</table>
+		</script>
 		<script>
-			function init()
-			{
-				var dest = document.getElementById('dest');
-				if(dest !== null){
-					// Query the list of reports available
-					var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
-					xhr.onreadystatechange = function(){
-						if(xhr.readyState === 4 && xhr.status === 200){
-							var json = JSON.parse(xhr.responseText);
-							for(var i in json){
-								var div = document.createElement('div');
-								div.className = 'result';
-								div.appendChild(document.createTextNode(
-									json[i]['desc'] + ' : '
-								));
-
-								var span = document.createElement('span');
-								span.id = i;
-								span.appendChild(document.createTextNode(
-									'Running ..'
-								));
-								div.appendChild(span);
-								dest.appendChild(div);
-
-								updateReportCount(i, span, json[i]['type']);
-							}
-						}
-					};
-					xhr.open('GET', 'quality_report.json', true);
-					xhr.send();
-				}
-			}
-
 			function updateReportCount(id, el, type)
 			{
 				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
@@ -155,24 +140,36 @@
 				if('preventDefault' in e) e.preventDefault();
 				return false;
 			}
-		</script>
-		<script id="tmpl-detail" type="x-tmpl-mustache">
-			<table>
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Description</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{#.}}
-					<tr>
-						<td class="nowrap">{{id}}</td>
-						<td>{{desc}}</td>
-					</tr>
-					{{/.}}
-				</tbody>
-			</table>
+
+			var dest = document.getElementById('dest');
+			if(dest !== null){
+				// Query the list of reports available
+				var xhr = (window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest());
+				xhr.onreadystatechange = function(){
+					if(xhr.readyState === 4 && xhr.status === 200){
+						var json = JSON.parse(xhr.responseText);
+						for(var i in json){
+							var div = document.createElement('div');
+							div.className = 'result';
+							div.appendChild(document.createTextNode(
+								json[i]['desc'] + ' : '
+							));
+
+							var span = document.createElement('span');
+							span.id = i;
+							span.appendChild(document.createTextNode(
+								'Running ..'
+							));
+							div.appendChild(span);
+							dest.appendChild(div);
+
+							updateReportCount(i, span, json[i]['type']);
+						}
+					}
+				};
+				xhr.open('GET', 'quality_report.json', true);
+				xhr.send();
+			}
 		</script>
 	</body>
 </html>
