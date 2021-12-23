@@ -44,6 +44,7 @@
 				JOIN inventory AS i
 					ON i.inventory_id = ib.inventory_id
 				WHERE i.active AND b.prospect_id = #{id}
+				GROUP BY i.inventory_id
 			) AS q1
 			GROUP BY q1.inventory_id
 		) AS q2
