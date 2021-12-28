@@ -7,8 +7,9 @@
 	<head>
 		<title>Alaska Division of Geological &amp; Geophysical Surveys Geologic Materials Center</title>
 		<meta charset="utf-8">
-		<meta http-equiv="x-ua-compatible" content="IE=edge" >
-		<link rel="stylesheet" href="css/apptmpl.min.css">
+		<meta name="viewport" content="width=device-width,initial-scale=0.75,user-scalable=no">
+		<link rel="stylesheet" href="css/apptmpl-fullscreen.css">
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 		<style>
 			.ok { background-color: green; color: white; }
 			.warning { background-color: yellow; }
@@ -21,49 +22,62 @@
 		</style>
 	</head>
 	<body>
-		<div class="apptmpl-container">
-			<div class="apptmpl-goldbar">
-				<a class="apptmpl-goldbar-left" href="http://alaska.gov"></a>
-				<span class="apptmpl-goldbar-right"></span>
-
-				<c:if test="${not empty pageContext.request.userPrincipal}">
-				<a href="container_log.html">Move Log</a>
-				<a href="quality_report.html">Quality Assurance</a>
-				<a href="audit_report.html">Audit</a>
-				<a href="import.html">Data Importer</a>
-				<a href="logout/">Logout</a>
-				</c:if>
-				<c:if test="${empty pageContext.request.userPrincipal}">
-				<a href="login/">Login</a>
-				</c:if>
-				<a href="help">Search Help</a>
+		<div class="soa-apptmpl-header">
+			<div class="soa-apptmpl-header-top">
+				<a class="soa-apptmpl-logo" title="The Great State of Alaska" href="https://alaska.gov"></a>
+				<a class="soa-apptmpl-logo-dggs" title="The Division of Geological &amp; Geophysical Surveys" href="https://dggs.alaska.gov"></a>
+			 	<div class="soa-apptmpl-header-nav">
+					<c:if test="${not empty pageContext.request.userPrincipal}">
+					<a href="container_log.html">Move Log</a>
+					<a href="quality_report.html">Quality Assurance</a>
+					<a href="audit_report.html">Audit</a>
+					<a href="import.html">Data Importer</a>
+					<a href="logout/">Logout</a>
+					</c:if>
+					<c:if test="${empty pageContext.request.userPrincipal}">
+					<a href="login/">Login</a>
+					</c:if>
+					<a href="help"> Help/Contact</a>
+				</div>
 			</div>
-
-			<div class="apptmpl-banner">
-				<a class="apptmpl-banner-logo" href="http://dggs.alaska.gov"></a>
-				<div class="apptmpl-banner-title">Geologic Materials Center Inventory</div>
-				<div class="apptmpl-banner-desc">Alaska Division of Geological &amp; Geophysical Surveys</div>
-			</div>
-
-			<div class="apptmpl-breadcrumb">
-				<a href="http://alaska.gov">State of Alaska</a> &gt;
-				<a href="http://dnr.alaska.gov">Natural Resources</a> &gt;
-				<a href="http://dggs.alaska.gov">Geological &amp; Geophysical Surveys</a> &gt;
-				<a href="http://dggs.alaska.gov/gmc">Geologic Materials Center</a> &gt;
-				<a href="search">Inventory</a>
-			</div>
-
-			<div class="apptmpl-content">
-				<table>
-					<tbody>
-						<tr>
-							<td id="dest"></td>
-							<td id="detail"></td>
-						</tr>
-					</tbody>
-				</table>
+ 			<div class="soa-apptmpl-header-breadcrumb">
+				<a href="https://alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">State of Alaska</span>
+					<span class="soa-apptmpl-breadcrumb-sm">Alaska</span>
+				</a>
+				|
+				<a href="http://dnr.alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">Natural Resources</span>
+					<span class="soa-apptmpl-breadcrumb-sm">DNR</span>
+				</a>
+				|
+					<a href="https://dggs.alaska.gov">
+					<span class="soa-apptmpl-breadcrumb-lg">Geological &amp; Geophysical Surveys</span>
+			 		<span class="soa-apptmpl-breadcrumb-sm">DGGS</span>
+				</a>
+				|
+				<a href="https://dggs.alaska.gov/gmc/">
+					<span class="soa-apptmpl-breadcrumb-lg">Geologic Materials Center</span>
+					<span class="soa-apptmpl-breadcrumb-sm">GMC</span>
+				</a>
+				|
+					<a href="search">
+					<span class="soa-apptmpl-breadcrumb-lg">Inventory</span>
+					<span class="soa-apptmpl-breadcrumb-sm">Inventory</span>
+				</a>
 			</div>
 		</div>
+		<div class="apptmpl-content">
+			<table>
+				<tbody>
+					<tr>
+						<td id="dest"></td>
+						<td id="detail"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
 		<script src="js/mustache-2.2.0.min.js"></script>
 		<script id="tmpl-detail" type="x-tmpl-mustache">
 			<table>
