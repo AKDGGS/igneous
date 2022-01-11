@@ -26,6 +26,9 @@
 			#list a:hover, #list a:focus, #controls a:hover, #controls a:focus { color: #2a6496; text-decoration: underline; }
 			#map { height: 450px; }
 			#advancedcontrols div { margin: 8px 0; }
+			ul { display: inline-block; list-style: none; margin: 0; padding:0; }
+			li {display: inline-block}
+			.comma li:not(:last-of-type)::after{ content: ', ';} 
 		</style>
 	</head>
 	<body>
@@ -147,10 +150,13 @@
 			</div>
 			{{#boreholes}}
 			<div>
-				{{#prospect}}
-				<div>Prospect: <a href="prospect/{{id}}">{{name}}</a></div>
-				{{/prospect}}
-				Borehole: <a href="borehole/{{id}}">{{name}}</a>
+			<div>Prospect: <a href="prospect/{{prospect.id}}">{{prospect.name}}</a></div>
+			<ul class='comma'>
+				{{#boreholes.0}}Borehole: {{/boreholes.0}}
+			{{#prospect.boreholes}}
+				<li><a href="borehole/{{bID}}">{{bName}}</a></li>
+			{{/prospect.boreholes}}
+			</ul>
 			</div>
 			{{/boreholes}}
 			{{#wells}}
@@ -201,10 +207,13 @@
 							<td>
 								{{#boreholes}}
 								<div>
-									{{#prospect}}
-									<div>Prospect: <a href="prospect/{{id}}">{{name}}</a></div>
-									{{/prospect}}
-									Borehole: <a href="borehole/{{id}}">{{name}}</a>
+									<div>Prospect: <a href="prospect/{{prospect.id}}">{{prospect.name}}</a></div>
+									<ul class='comma'>
+									{{#boreholes.0}}Borehole: {{/boreholes.0}}
+									{{#prospect.boreholes}}
+										<li><a href="borehole/{{bID}}">{{bName}}</a></li>
+									{{/prospect.boreholes}}
+									</ul>
 								</div>
 								{{/boreholes}}
 								{{#wells}}

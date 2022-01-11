@@ -191,11 +191,31 @@ function search(clean, noupdate)
 
 				// Iterate over the geoJSON in the results
 				// and populate the map
-				for(var i = 0; i < obj['docs'].length; i++){
+				for (var i = 0; i < obj['docs'].length; i++){
 					var o = obj['docs'][i];
+					var prospects = [];
+
+					if ('boreholes' in o){
+						prospectMap = new Map();
+						for (j = 0; j < o.boreholes.length; j++){
+							prospectMap.set(o.boreholes[j].prospect.id, {id:o.boreholes[j].prospect.id,
+								name: o.boreholes[j].prospect.name, boreholes: []});
+						}
+
+						prospectMap.forEach((value, key, prospectMap) => {
+							for (j = 0; j < o.boreholes.length; j++){
+								if (o.boreholes[j].prospect.name === value.name){
+									value.boreholes.push({bName: o.boreholes[j].name, bID: o.boreholes[j].id});
+								}
+							}
+						});
+						prospects = Array.from(prospectMap, ([prospectID, prospect]) => ({prospectID, prospect}));
+					}
+					o.boreholes = prospects;
+
 					if('geojson' in o){
-						// Clone the geojson object, allowing
-						// the original reference to be freed
+					// Clone the geojson object, allowing
+					// the original reference to be freed
 						var geojson = {
 							type: 'Feature', 
 							properties: {
@@ -216,7 +236,6 @@ function search(clean, noupdate)
 						} else if('shotlines' in o){
 							geojson.properties.color = '#ed2939';
 						}
-
 						features.addData(geojson);
 					}
 				}
