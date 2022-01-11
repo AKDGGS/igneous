@@ -86,10 +86,75 @@ fetch('wellpoint.json')
 	});
 
 let map = new ol.Map({
-	layers: [new ol.layer.Tile({
-		source: new ol.source.OSM()
-	}), wellPointLayer, wellPointLabelLayer],
 	target: 'map',
+	layers: [
+		new ol.layer.Group({
+			title: 'Base Maps',
+			layers:[
+				new ol.layer.Tile({
+					title: 'Watercolor',
+					type: 'base',
+					source: new ol.source.Stamen({
+						layer: 'watercolor'
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'Esri Topo',
+					type: 'base',
+					source: new ol.source.XYZ({
+						url: '//server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'Esri Imagery',
+					type: 'base',
+					source: new ol.source.XYZ({
+						url: '//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'Esri Shaded Relief',
+					type: 'base',
+					source: new ol.source.XYZ({
+						url: '//server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}' 
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'Esri DeLorme',
+					type: 'base',
+					source: new ol.source.XYZ({
+						url: '//server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}' 
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'Esri National Geographic',
+					type: 'base',
+					source: new ol.source.XYZ({
+						url: '//server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}' 
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'Monochrome',
+					type: 'base',
+					source: new ol.source.XYZ({
+						url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png' 
+					})
+				}),
+				new ol.layer.Tile({
+					title: 'OSM',
+					type: 'base',
+					source: new ol.source.OSM()
+					}),
+			]
+		}),
+		new ol.layer.Group({
+			visible: true,
+			layers:[
+				wellPointLayer,
+				wellPointLabelLayer
+			]
+		})
+	],	
 	overlays: [overlay],
 	view: new ol.View({
 		center: ol.proj.fromLonLat([-150, 64]),
@@ -102,6 +167,15 @@ let map = new ol.Map({
 		units: "us"
 	})]),
 });
+
+
+
+var layerSwitcher = new ol.control.LayerSwitcher({
+	tipLabel: 'Legend',
+	groupSelectStyle: 'children'
+});
+
+map.addControl(layerSwitcher);
 
 //Allows the overlay to be visible.
 //The overlay needs to be hidden by default to prevent it being 

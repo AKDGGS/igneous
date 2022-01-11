@@ -8,6 +8,7 @@
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 		<link rel="stylesheet" href="css/apptmpl-fullscreen.css">
 		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
+		<link rel="stylesheet" href="ol/6.5.0/ol-layerswitcher.css" type="text/css" />
 		<style>
 			html, body, .brow {
 				height: 100%;
@@ -350,6 +351,7 @@
 				</table>
 			</div>
 		</script>
+		<script src="ol/6.5.0/ol-layerswitcher.js"></script>
 		<script src="js/wells.js"></script>
 	</body>
 </html>
