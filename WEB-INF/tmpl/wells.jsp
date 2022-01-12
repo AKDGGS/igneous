@@ -8,7 +8,7 @@
 		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 		<link rel="stylesheet" href="css/apptmpl-fullscreen.css">
 		<link rel="stylesheet" href="ol/6.5.0/ol.css" type="text/css" />
-		<link rel="stylesheet" href="ol/6.5.0/ol-layerswitcher.css" type="text/css" />
+		<link rel="stylesheet" href="ol/ol-layerswitcher.min.css" type="text/css" />
 		<style>
 			html, body, .brow {
 				height: 100%;
@@ -129,6 +129,30 @@
 			}
 			.layer-switcher {
 				max-width: 300px;
+				top: auto;
+				bottom: 0.5em;
+			}
+			.layer-switcher button {
+				background-color: transparent;
+			}
+			.layer-switcher ul {
+				margin: 0.6em 0.4em;
+			}
+			.layer-switcher ul ul {
+				padding-left: 0.4em;
+				margin: 0.1em 0 0 0;
+			}
+			.layer-switcher li input {
+				margin-top: 4px;
+				left: 0.2em;
+				height: 0.8em;
+				weight: 0.8em;
+			}
+			.layer-switcher li label {
+				padding-left: 1.8em;
+				padding-right: 0.2em;
+				margin-top: 1px;
+				font-size: 0.8em;
 			}
 			@media (min-width: 30em)
 				and (orientation: portrait){
@@ -354,7 +378,7 @@
 				</table>
 			</div>
 		</script>
-		<script src="ol/6.5.0/ol-layerswitcher.js"></script>
+		<script src="ol/ol-layerswitcher.min.js"></script>
 		<script src="js/wells.js"></script>
 	</body>
 </html>
