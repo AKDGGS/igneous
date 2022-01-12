@@ -1,6 +1,6 @@
 .layer-switcher {
   position: absolute;
-  top: 3.5em;
+  bottom: 0.5em;
   right: 0.5em;
   text-align: left;
 }
@@ -26,7 +26,7 @@
     /*logo.png*/;
   background-repeat: no-repeat;
   background-position: 2px;
-  background-color: white;
+  background-color: transparent;
   color: black;
   border: none;
 }
@@ -74,11 +74,11 @@
 
 .layer-switcher ul {
   list-style: none;
-  margin: 1.6em 0.4em;
+  margin: .6em 0.4em;
   padding-left: 0;
 }
 .layer-switcher ul ul {
-  padding-left: 1.2em;
+  padding-left: .4em;
   margin: 0.1em 0 0 0;
 }
 .layer-switcher li.group + li.group {
@@ -102,16 +102,18 @@
 
 .layer-switcher li input {
   position: absolute;
-  left: 1.2em;
-  height: 1em;
-  width: 1em;
+	margin-top: 4px;
+  left: .2em;
+  height: .8em;
+  width: .8em;
   font-size: 1em;
 }
 .layer-switcher li label {
-  padding-left: 2.7em;
-  padding-right: 1.2em;
+  padding-left: 1.8em;
+  padding-right: .2em;
   display: inline-block;
   margin-top: 1px;
+	font-size: .8em;
 }
 
 .layer-switcher label.disabled {

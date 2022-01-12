@@ -127,6 +127,9 @@
 			tr:nth-child(even) {
 				background-color: #e3e5ed;
 			}
+			.layer-switcher {
+				max-width: 300px;
+			}
 			@media (min-width: 30em)
 				and (orientation: portrait){
 				.ol-popup {
