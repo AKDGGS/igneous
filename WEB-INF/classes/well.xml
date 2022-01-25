@@ -12,11 +12,8 @@
 			w.measured_depth, w.vertical_depth,
 			w.elevation, w.elevation_kb,
 			w.permit_status, w.completion_status, w.permit_number,
-			u.unit_id, u.name AS unit_name, u.abbr AS unit_abbr,
-			u.description AS unit_description
+			w.unit
 		FROM well AS w
-		LEFT OUTER JOIN unit AS u
-			ON u.unit_id = w.unit_id
 	</sql>
 
 
@@ -50,14 +47,7 @@
 		<result property="permit_status" column="permit_status" />
 		<result property="completion_status" column="completion_status" />
 		<result property="permit_number" column="permit_number" />
-
-		<association property="unit" javaType="Unit">
-			<id property="id" column="unit_id" />
-			<result property="abbr" column="unit_abbr" />
-			<result property="name" column="unit_name" />
-			<result property="description" column="unit_description" />
-		</association>
-
+		<result property="unit" column="unit" />
 		<collection property="operators" column="well_id"
 			ofType="Organization" select="gov.alaska.dggs.igneous.Organization.getByWellID" />
 		<collection property="notes" column="well_id"

@@ -123,13 +123,13 @@
 				<c:if test="${!empty borehole.measuredDepth}">
 				<dl>
 					<dt>Measured Depth</dt>
-					<dd><fmt:formatNumber value="${borehole.measuredDepth}" /> <c:if test="${!empty borehole.measuredDepthUnit}">&nbsp;${borehole.measuredDepthUnit.abbr}</c:if></dd>
+					<dd><fmt:formatNumber value="${borehole.measuredDepth}" /> <c:if test="${!empty borehole.measuredDepthUnit}">&nbsp;${borehole.measuredDepthUnit}</c:if></dd>
 				</dl>
 				</c:if>
 				<c:if test="${!empty borehole.elevation}">
 				<dl>
 					<dt>Elevation</dt>
-					<dd><fmt:formatNumber value="${borehole.elevation}" /> <c:if test="${!empty borehole.elevationUnit}">&nbsp;${borehole.elevationUnit.abbr}</c:if></dd>
+					<dd><fmt:formatNumber value="${borehole.elevation}" /> <c:if test="${!empty borehole.elevationUnit}">&nbsp;${borehole.elevationUnit}</c:if></dd>
 				</dl>
 				</c:if>
 				<dl id="lonlat">

@@ -29,14 +29,14 @@ public class Borehole implements Serializable
 	private BigDecimal measured_depth;
 	public BigDecimal getMeasuredDepth(){ return measured_depth; }
 
-	private Unit measured_depth_unit;
-	public Unit getMeasuredDepthUnit(){ return measured_depth_unit; }
+	private String measured_depth_unit;
+	public String getMeasuredDepthUnit(){ return measured_depth_unit; }
 
 	private BigDecimal elevation;
 	public BigDecimal getElevation(){ return elevation; }
 
-	private Unit elevation_unit;
-	public Unit getElevationUnit(){ return elevation_unit; }
+	private String elevation_unit;
+	public String getElevationUnit(){ return elevation_unit; }
 
 	private Prospect prospect;
 	public Prospect getProspect(){ return prospect; }

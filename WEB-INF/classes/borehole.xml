@@ -10,12 +10,10 @@
 			bh.alt_names AS alt_borehole_names,
 			bh.is_onshore, bh.completion_date,
 
-			bh.measured_depth, mdu.unit_id AS mdu_unit_id,
-			mdu.abbr AS mdu_unit_abbr, mdu.name AS mdu_unit_name,
-
-			bh.elevation, evu.unit_id AS evu_unit_id,
-			evu.abbr AS evu_unit_abbr, evu.name AS evu_unit_name,
-
+			bh.measured_depth, 
+			bh.measured_depth_unit,
+			bh.elevation, 
+			bh.elevation_unit,
 			ph.prospect_id,
 			ph.name AS prospect_name,
 			ph.alt_names AS alt_prospect_names,
@@ -23,10 +21,6 @@
 		FROM borehole AS bh
 		LEFT OUTER JOIN prospect AS ph
 			ON ph.prospect_id = bh.prospect_id
-		LEFT OUTER JOIN unit AS mdu
-			ON mdu.unit_id = measured_depth_unit_id
-		LEFT OUTER JOIN unit AS evu
-			ON evu.unit_id = elevation_unit_id
 	</sql>
 
 
@@ -62,18 +56,8 @@
 		<result property="measured_depth" column="measured_depth" />
 		<result property="elevation" column="elevation" />
 
-		<association property="measured_depth_unit" javaType="Unit">
-			<id property="id" column="mdu_unit_id" />
-			<result property="abbr" column="mdu_unit_abbr" />
-			<result property="name" column="mdu_unit_name" />
-		</association>
-
-		<association property="elevation_unit" javaType="Unit">
-			<id property="id" column="evu_unit_id" />
-			<result property="abbr" column="evu_unit_abbr" />
-			<result property="name" column="evu_unit_name" />
-		</association>
-
+		<result property="measured_depth_unit" column="measured_depth_unit" />
+		<result property="elevation_unit" column="elevation_unit" />
 		<association property="prospect" javaType="Prospect">
 			<id property="id" column="prospect_id" />
 			<result property="name" column="prospect_name" />

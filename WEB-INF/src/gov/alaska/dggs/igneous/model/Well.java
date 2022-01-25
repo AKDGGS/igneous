@@ -51,9 +51,9 @@ public class Well implements Serializable
 
 	private BigDecimal elevation_kb;
 	public BigDecimal getElevationKB(){ return elevation_kb; }
-
-	private Unit unit;
-	public Unit getUnit(){ return unit; }
+	
+	private String unit;
+	public String getUnit(){ return unit; }
 
 	private String permit_status;
 	public String getPermitStatus(){ return permit_status; }

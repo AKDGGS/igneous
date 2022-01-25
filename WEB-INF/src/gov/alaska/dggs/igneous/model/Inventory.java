@@ -325,8 +325,8 @@ public class Inventory implements Serializable
 		}
 	}
 
-	private Unit interval_unit;
-	public Unit getIntervalUnit(){ return interval_unit; }
+	private String interval_unit;
+	public String getIntervalUnit(){ return interval_unit; }
 
 	private String core_number;
 	public String getCoreNumber(){ return core_number; }
@@ -361,8 +361,8 @@ public class Inventory implements Serializable
 		}
 	}
 
-	private Unit weight_unit;
-	public Unit getWeightUnit(){ return weight_unit; }
+	private String weight_unit;
+	public String getWeightUnit(){ return weight_unit; }
 
 	private String sample_frequency;
 	public String getSampleFrequency(){ return sample_frequency; }

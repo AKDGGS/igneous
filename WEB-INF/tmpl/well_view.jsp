@@ -134,25 +134,25 @@
 				<c:if test="${!empty well.measuredDepth}">
 				<dl>
 					<dt>Measured Depth</dt>
-					<dd><fmt:formatNumber value="${well.measuredDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					<dd><fmt:formatNumber value="${well.measuredDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit}</c:if></dd>
 				</dl>
 				</c:if>
 				<c:if test="${!empty well.verticalDepth}">
 				<dl>
 					<dt>Vertical Depth</dt>
-					<dd><fmt:formatNumber value="${well.verticalDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					<dd><fmt:formatNumber value="${well.verticalDepth}" /> <c:if test="${!empty well.unit}"> ${well.unit}</c:if></dd>
 				</dl>
 				</c:if>
 				<c:if test="${!empty well.elevation}">
 				<dl>
 					<dt>Elevation</dt>
-					<dd><fmt:formatNumber value="${well.elevation}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					<dd><fmt:formatNumber value="${well.elevation}" /> <c:if test="${!empty well.unit}"> ${well.unit}</c:if></dd>
 				</dl>
 				</c:if>
 				<c:if test="${!empty well.elevationKB}">
 				<dl>
 					<dt>Kelly Bushing Elevation</dt>
-					<dd><fmt:formatNumber value="${well.elevationKB}" /> <c:if test="${!empty well.unit}"> ${well.unit.abbr}</c:if></dd>
+					<dd><fmt:formatNumber value="${well.elevationKB}" /> <c:if test="${!empty well.unit}"> ${well.unit}</c:if></dd>
 				</dl>
 				</c:if>
 				<c:if test="${!empty well.permitStatus}">

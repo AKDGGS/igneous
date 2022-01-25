@@ -198,7 +198,7 @@
 						<dt>Weight</dt>
 						<dd${!empty err.weight ? ' class="err"' : ''}>
 							<input type="text" name="weight" value="${fn:escapeXml(empty param.weight ? inventory.weight : param.weight)}">
-							<c:if test="${!empty inventory.weightUnit}"> ${inventory.weightUnit.abbr}</c:if>
+							<c:if test="${!empty inventory.weightUnit}"> ${inventory.weightUnit}</c:if>
 							<span>${fn:escapeXml(err.weight)}</span>
 						</dd>
 					</dl>
@@ -206,7 +206,7 @@
 						<dt>Interval Top</dt>
 						<dd${!empty err.interval_top ? ' class="err"' : ''}>
 							<input type="text" size="8" name="interval_top" value="${fn:escapeXml(empty param.interval_top ? inventory.intervalTop : param.interval_top)}">
-							<c:if test="${!empty inventory.intervalUnit}"> ${inventory.intervalUnit.abbr}</c:if>
+							<c:if test="${!empty inventory.intervalUnit}"> ${inventory.intervalUnit}</c:if>
 							<span>${fn:escapeXml(err.interval_top)}</span>
 						</dd>
 					</dl>
@@ -214,7 +214,7 @@
 						<dt>Interval Bottom</dt>
 						<dd${!empty err.interval_bottom ? ' class="err"' : ''}>
 							<input type="text" size="8" name="interval_bottom" value="${fn:escapeXml(empty param.interval_bottom ? inventory.intervalBottom : param.interval_bottom)}">
-							<c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit.abbr}</c:if>
+							<c:if test="${!empty inventory.intervalUnit}">${inventory.intervalUnit}</c:if>
 							<span>${fn:escapeXml(err.interval_bottom)}</span>
 						</dd>
 					</dl>

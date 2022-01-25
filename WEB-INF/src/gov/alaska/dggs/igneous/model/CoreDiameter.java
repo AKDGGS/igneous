@@ -18,6 +18,6 @@ public class CoreDiameter implements Serializable
 	BigDecimal diameter;
 	public BigDecimal getDiameter(){ return diameter; }
 
-	private Unit unit;
-	public Unit getUnit(){ return unit; }
+	private String unit;
+	public String getUnit(){ return unit; }
 }
