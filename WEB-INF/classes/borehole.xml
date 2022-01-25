@@ -11,9 +11,9 @@
 			bh.is_onshore, bh.completion_date,
 
 			bh.measured_depth, 
-			bh.measured_depth_unit,
+			bh.measured_depth_unit::text,
 			bh.elevation, 
-			bh.elevation_unit,
+			bh.elevation_unit::text,
 			ph.prospect_id,
 			ph.name AS prospect_name,
 			ph.alt_names AS alt_prospect_names,

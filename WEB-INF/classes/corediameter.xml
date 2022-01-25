@@ -7,7 +7,7 @@
 	<sql id="getBy">
 		SELECT cd.core_diameter_id,
 			cd.core_diameter, cd.name,
-			cd.unit,
+			cd.unit::text,
 	</sql>
 
 
