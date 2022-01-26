@@ -10,7 +10,6 @@
 		<typeAlias alias="Borehole" type="gov.alaska.dggs.igneous.model.Borehole" />
 		<typeAlias alias="Prospect" type="gov.alaska.dggs.igneous.model.Prospect" />
 		<typeAlias alias="iCollection" type="gov.alaska.dggs.igneous.model.Collection" />
-		<typeAlias alias="Unit" type="gov.alaska.dggs.igneous.model.Unit" />
 		<typeAlias alias="CoreDiameter" type="gov.alaska.dggs.igneous.model.CoreDiameter" />
 		<typeAlias alias="Well" type="gov.alaska.dggs.igneous.model.Well" />
 		<typeAlias alias="Outcrop" type="gov.alaska.dggs.igneous.model.Outcrop" />
