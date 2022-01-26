@@ -480,15 +480,15 @@
 							<dt>URL Description</dt>
 							<dd>${url.description}</dd>
 						</dl>
-						<c:if test="${!empty url.type}">
+						<c:if test="${!empty url}">
 						<dl>
 							<dt>URL Type</dt>
-							<dd>${url.type.name}</dd>
+							<dd>${url}</dd>
 						</dl>
 						</c:if>
 						<dl>
 							<dt>URL</dt>
-							<dd><a href="${url.URL}">${url.URL}</a></dd>
+							<dd><a href="${url}">${url}</a></dd>
 						</dl>
 					</div>
 					</c:forEach>
