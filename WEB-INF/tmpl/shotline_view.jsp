@@ -178,7 +178,7 @@
 					<c:if test="${!empty url.type}">
 					<dl>
 						<dt>URL Type</dt>
-						<dd>${url.type.name}</dd>
+						<dd>${url.URLType}</dd>
 					</dl>
 					</c:if>
 					<dl>
