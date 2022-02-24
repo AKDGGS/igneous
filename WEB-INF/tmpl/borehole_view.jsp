@@ -215,7 +215,7 @@
 						<dt>URL Description</dt>
 						<dd>${url.description}</dd>
 					</dl>
-					<c:if test="${!empty url.type}">
+					<c:if test="${!empty url.URLType}">
 					<dl>
 						<dt>URL Type</dt>
 						<dd>${url.URLType}</dd>
