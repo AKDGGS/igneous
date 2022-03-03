@@ -372,7 +372,7 @@
 						<c:if test="${!empty borehole.prospect.ARDF}">
 						<dl>
 							<dt>Prospect ARDF</dt>
-							<dd><a href="http://tin.er.usgs.gov/ardf/show.php?labno=${borehole.prospect.ARDF}">${borehole.prospect.ARDF}</a></dd>
+							<dd><a href="http://mrdata.usgs.gov/ardf/show.php?labno=${borehole.prospect.ARDF}">${borehole.prospect.ARDF}</a></dd>
 						</dl>
 						</c:if>
 						</c:if>
