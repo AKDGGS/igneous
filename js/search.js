@@ -341,10 +341,6 @@ aoi = mirroredLayer(null, {
 });
 
 var baselayers = {
-	'Open Street Maps Monochrome': L.tileLayer(
-		'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-		{ minZoom: 3, maxZoom: 18, zIndex: 1 }
-	),
 	'Open Street Maps': new L.TileLayer(
 		'//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 		{ minZoom: 3, maxZoom: 19, zIndex: 2 }
