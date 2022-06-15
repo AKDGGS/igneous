@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
 
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 
 public class SolrConnection
@@ -33,7 +33,7 @@ public class SolrConnection
 		if(username == null || password == null) return;
 
 		authorization = "Basic " +
-			DatatypeConverter.printBase64Binary(
+			Base64.getEncoder().encodeToString(
 				(username + ":" + password).getBytes()
 			);
 	}

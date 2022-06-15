@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="igneous" default="compile">
 	<!-- Change me as needed -->
-	<property name="catalina.home" value="/usr/share/tomcat" />
+	<property name="catalina.home" value="/opt/tomcat" />
 
 	<target name="clean">
 		<delete>
@@ -18,5 +18,16 @@
 				<fileset dir="${catalina.home}/lib" includes="*.jar" />
 			</classpath>
 		</javac>
+	</target>
+
+	<target name="war" depends="compile">
+		<war destfile="igneous.war" webxml="web.xml">
+			<fileset dir="..">
+				<exclude name="WEB-INF/src/**" />
+				<exclude name="WEB-INF/build.xml" />
+				<exclude name="WEB-INF/igneous.war" />
+				<exclude name="README.md" />
+			</fileset>
+		</war>
 	</target>
 </project>
