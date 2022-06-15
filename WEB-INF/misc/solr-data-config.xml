@@ -1,0 +1,273 @@
+<dataConfig>
+	<dataSource driver="org.postgresql.Driver" url="jdbc:postgresql://DBSERVER" user="USER" password="PASSWORD" readOnly="true" />
+	<document>
+		<entity name="inventory" transformer="RegexTransformer" query="
+			SELECT iv.inventory_id AS id, iv.description, iv.remark,
+				iv.barcode AS i_barcode, iv.alt_barcode AS ia_barcode,
+				ct.barcode AS c_barcode, ct.alt_barcode AS ca_barcode,
+				COALESCE(
+					iv.barcode, iv.alt_barcode,
+					ct.barcode, ct.alt_barcode
+				) AS display_barcode,
+				iv.interval_top AS top, iv.interval_bottom AS bottom,
+				iv.sample_number AS sample, iv.slide_number AS slide,
+				iv.core_number AS core,
+				cd.name AS core_diameter_name,
+				cd.core_diameter,
+				cd.unit AS core_diameter_unit,
+				iv.set_number AS set, iv.box_number AS box,
+				iv.interval_unit AS unit, iv.can_publish,
+				cl.collection_id, cl.name AS collection,
+				pj.project_id, pj.name AS project,
+				ct.container_id, ct.path_cache AS location,
+				ARRAY_TO_STRING(iv.keywords, '|') AS keywords,
+				ARRAY_TO_STRING(iq.issues, '|') AS issues,
+				DENSE_RANK() OVER (ORDER BY ARRAY_TO_STRING(iv.keywords,'|')) AS sort_keyword
+			FROM inventory AS iv
+			LEFT OUTER JOIN core_diameter AS cd
+				ON cd.core_diameter_id = iv.core_diameter_id
+			LEFT OUTER JOIN collection AS cl
+				ON cl.collection_id = iv.collection_id
+			LEFT OUTER JOIN project AS pj
+				ON pj.project_id = iv.project_id
+			LEFT OUTER JOIN container AS ct
+				ON ct.container_id = iv.container_id
+				AND ct.active
+			LEFT OUTER JOIN (
+				SELECT DISTINCT ON (inventory_id)
+					inventory_id, issues
+				FROM inventory_quality
+				ORDER BY inventory_id, check_date DESC
+			) AS iq ON iq.inventory_id = iv.inventory_id
+			WHERE iv.active
+		">
+			<field column="i_barcode" name="barcode" />
+			<field column="ia_barcode" name="barcode" />
+			<field column="c_barcode" name="barcode" />
+			<field column="ca_barcode" name="barcode" />
+			<field column="keywords" splitBy="\|" name="keyword" />
+			<field column="issues" splitBy="\|" name="issue" />
+			<field column="can_publish" name="canpublish" />
+
+			<entity name="inventory_sort_prospect" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT DISTINCT ON (ib.inventory_id)
+						ib.inventory_id,
+						DENSE_RANK() OVER (ORDER BY p.name) AS sort_prospect
+					FROM inventory_borehole AS ib
+					JOIN borehole AS b
+						ON b.borehole_id = ib.borehole_id
+					JOIN prospect AS p
+						ON p.prospect_id = b.prospect_id
+				">
+			</entity>
+
+			<entity name="inventory_sort_well" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT DISTINCT ON (iw.inventory_id)
+						iw.inventory_id,
+						DENSE_RANK() OVER (ORDER BY w.name) AS sort_well
+					FROM inventory_well AS iw
+					JOIN well AS w
+						ON w.well_id = iw.well_id
+				">
+			</entity>
+
+			<entity name="inventory_sort_borehole" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT DISTINCT ON (ib.inventory_id)
+						ib.inventory_id,
+						DENSE_RANK() OVER (ORDER BY b.name) AS sort_borehole
+					FROM inventory_borehole AS ib
+					JOIN borehole AS b
+						ON b.borehole_id = ib.borehole_id
+				">
+			</entity>
+
+			<entity name="inventory_sort_wellnumber" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT DISTINCT ON (iw.inventory_id)
+						iw.inventory_id,
+						DENSE_RANK() OVER (ORDER BY w.well_number) AS sort_wellnumber
+					FROM inventory_well AS iw
+					JOIN well AS w
+						ON w.well_id = iw.well_id
+					WHERE w.well_number IS NOT NULL
+				">
+			</entity>
+
+			<entity name="inventory_note" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT inventory_id, note_id
+					FROM inventory_note
+				">
+				<entity name="note" cacheImpl="SortedMapBackedCache"
+					cacheKey="note_id" cacheLookup="inventory_note.note_id"
+					query="
+						SELECT n.note_id, n.note, t.name
+						FROM note AS n
+						LEFT OUTER JOIN note_type AS t
+							ON t.note_type_id = n.note_type_id
+						WHERE active
+				">
+					<field column="name" name="notetype" />
+				</entity>
+			</entity>
+
+			<entity name="inventory_outcrop" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT inventory_id, outcrop_id
+					FROM inventory_outcrop
+				">
+				<entity name="outcrop" cacheImpl="SortedMapBackedCache"
+					cacheKey="outcrop_id" cacheLookup="inventory_outcrop.outcrop_id"
+					query="
+						SELECT outcrop_id, name, outcrop_number, year,
+							jsonb_strip_nulls(jsonb_build_object(
+								'id', outcrop_id,
+								'name', name,
+								'number', outcrop_number,
+								'year', year
+							))::TEXT AS outcrops
+						FROM outcrop
+				">
+					<field column="name" name="outcrop" />
+					<field column="outcrop_number" name="outcropnumber" />
+					<field column="year" name="outcropyear" />
+				</entity>
+			</entity>
+
+			<entity name="inventory_shotline" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT sp.inventory_id, sp.shotline_id,
+						sl.name, sl.alt_names, sl.year,
+						jsonb_strip_nulls(jsonb_build_object(
+							'id', sl.shotline_id,
+							'name', sl.name,
+							'year', sl.year,
+							'min', sp.shotline_min,
+							'max', sp.shotline_max
+						))::TEXT AS shotlines
+					FROM (
+						SELECT isp.inventory_id, sp.shotline_id,
+							MIN(sp.shotpoint_number) AS shotline_min,
+							MAX(sp.shotpoint_number) AS shotline_max
+						FROM inventory_shotpoint AS isp
+						JOIN shotpoint AS sp
+							ON sp.shotpoint_id = isp.shotpoint_id
+						GROUP BY isp.inventory_id, sp.shotline_id
+					) AS sp
+					JOIN shotline AS sl
+						ON sl.shotline_id = sp.shotline_id
+				">
+				<field column="name" name="shotline" />
+				<field column="alt_names" name="shotline" />
+				<field column="year" name="shotlineyear" />
+			</entity>
+
+			<entity name="inventory_well" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT inventory_id, well_id
+					FROM inventory_well
+			">
+				<entity name="well" cacheImpl="SortedMapBackedCache"
+					cacheKey="well_id" cacheLookup="inventory_well.well_id"
+					query="
+						SELECT well_id, name, alt_names, well_number,
+							api_number, alt_api_number,
+							jsonb_strip_nulls(jsonb_build_object(
+								'id', well_id,
+								'name', name,
+								'number', well_number,
+								'api', api_number
+							))::TEXT AS wells
+						FROM well
+				">
+					<field column="name" name="well" />
+					<field column="alt_names" name="well" />
+					<field column="well_number" name="wellnumber" />
+					<field column="api_number" name="api" />
+					<field column="alt_api_number" name="api" />
+				</entity>
+			</entity>
+
+			<entity name="inventory_borehole" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT inventory_id, borehole_id
+					FROM inventory_borehole
+			">
+				<entity name="borehole" cacheImpl="SortedMapBackedCache"
+					cacheKey="borehole_id" cacheLookup="inventory_borehole.borehole_id"
+					query="
+						SELECT b.borehole_id, b.name, b.alt_names,
+							p.prospect_id, p.name AS prospect_name,
+							p.alt_names AS prospect_alt_names,
+							p.ardf_number,
+							jsonb_strip_nulls(jsonb_build_object(
+								'id', b.borehole_id,
+								'name', b.name,
+								'prospect', jsonb_build_object(
+									'id', p.prospect_id,
+									'name', p.name,
+									'ardf', p.ardf_number
+								)
+							))::TEXT AS boreholes
+						FROM borehole AS b
+						LEFT OUTER JOIN prospect AS p
+							ON p.prospect_id = b.prospect_id
+				">
+					<field column="name" name="borehole" />
+					<field column="alt_names" name="borehole" />
+					<field column="prospect_name" name="prospect" />
+					<field column="prospect_alt_names" name="prospect" />
+					<field column="ardf_number" name="ardf" />
+				</entity>
+			</entity>
+
+			<entity name="quadrangle" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT DISTINCT
+						ig.inventory_id, qr.quadrangle_id
+					FROM inventory_geog AS ig
+					JOIN quadrangle AS qr
+						ON qr.scale = 250000
+						AND ST_Intersects(ig.geog, qr.geog)
+			"/>
+
+			<entity name="geog_lonlat" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT DISTINCT ON (inventory_id)
+						inventory_id,
+						ST_AsGeoJSON(geog, 5, 0) AS geog,
+						CASE WHEN ST_GeometryType(geog::GEOMETRY) = 'ST_Point'
+							THEN ST_X(geog::GEOMETRY) ELSE NULL
+						END AS longitude,
+						CASE WHEN ST_GeometryType(geog::GEOMETRY) = 'ST_Point'
+							THEN ST_Y(geog::GEOMETRY) ELSE NULL
+						END AS latitude
+					FROM inventory_geog
+					WHERE ST_NPoints(geog::GEOMETRY) &lt; 125
+			"/>
+
+			<entity name="mining_district" cacheImpl="SortedMapBackedCache"
+				cacheKey="inventory_id" cacheLookup="inventory.id"
+				query="
+					SELECT ig.inventory_id, md.mining_district_id
+					FROM inventory_geog AS ig
+					JOIN mining_district AS md
+						ON ST_Intersects(ig.geog, md.geog)
+			"/>
+		</entity>
+	</document>
+</dataConfig>
