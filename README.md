@@ -26,12 +26,14 @@ Igneous expects named resources configured for its database and Solr
 connections. Below are examples for Solr, refer to Tomcat's documentation for
 configuring a database resource and deploying web applications.
 
-`<Environment type="java.lang.String" name="igneous/solr-url"
-              value="http://127.0.0.1:8983/solr/igneous" />
+```
+<Environment type="java.lang.String" name="igneous/solr-url"
+             value="http://127.0.0.1:8983/solr/igneous" />
 <Environment type="java.lang.String" name="igneous/solr-user"
              value="solr" />
 <Environment type="java.lang.String" name="igneous/solr-pass"
-             value="password" />`
+             value="password" />
+```
 
 ### Configuration - Solr
 An example Solr data configuration can be found in
